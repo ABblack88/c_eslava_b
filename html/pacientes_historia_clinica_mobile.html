@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Gestión de Pacientes - Centro Eslava</title>
+<!-- Fonts & Icons -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind Config -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-primary": "#ffffff",
+                        "primary-fixed": "#aeecff",
+                        "on-secondary-fixed": "#001f26",
+                        "surface": "#f8fafa",
+                        "tertiary-container": "#a96418",
+                        "surface-white": "#FFFFFF",
+                        "error": "#ba1a1a",
+                        "on-primary-fixed-variant": "#004e5d",
+                        "warning": "#FF9500",
+                        "secondary-container": "#89e4fd",
+                        "secondary-fixed-dim": "#78d3eb",
+                        "surface-tint": "#00687b",
+                        "on-tertiary-fixed": "#2e1600",
+                        "secondary-fixed": "#adecff",
+                        "success": "#34C759",
+                        "surface-container-lowest": "#ffffff",
+                        "text-main": "#1C1C1E",
+                        "on-secondary": "#ffffff",
+                        "outline-variant": "#bdc8cd",
+                        "on-secondary-fixed-variant": "#004e5c",
+                        "surface-container-high": "#e6e8e8",
+                        "surface-container-low": "#f2f4f4",
+                        "outline": "#6d797d",
+                        "on-primary-container": "#f9fdff",
+                        "primary": "#006578",
+                        "on-surface-variant": "#3d494c",
+                        "secondary": "#00687a",
+                        "background": "#f8fafa",
+                        "on-tertiary-container": "#fffbff",
+                        "on-error": "#ffffff",
+                        "tertiary-fixed": "#ffdcc0",
+                        "on-secondary-container": "#006779",
+                        "on-primary-fixed": "#001f26",
+                        "error-container": "#ffdad6",
+                        "inverse-primary": "#66d5f1",
+                        "on-tertiary": "#ffffff",
+                        "on-error-container": "#93000a",
+                        "primary-container": "#008097",
+                        "text-muted": "#636366",
+                        "surface-bright": "#f8fafa",
+                        "primary-fixed-dim": "#66d5f1",
+                        "surface-dim": "#d8dada",
+                        "surface-container": "#eceeee",
+                        "surface-variant": "#e1e3e3",
+                        "surface-container-highest": "#e1e3e3",
+                        "tertiary-fixed-dim": "#ffb877",
+                        "inverse-surface": "#2e3131",
+                        "on-background": "#191c1d",
+                        "inverse-on-surface": "#eff1f1",
+                        "on-tertiary-fixed-variant": "#6b3b00",
+                        "on-surface": "#191c1d",
+                        "tertiary": "#8a4d00"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "base": "8px",
+                        "margin-desktop": "80px",
+                        "margin-mobile": "20px",
+                        "gutter": "24px",
+                        "section-gap": "120px"
+                    },
+                    "fontFamily": {
+                        "body-md": ["Hanken Grotesk"],
+                        "display-lg": ["Hanken Grotesk"],
+                        "display-lg-mobile": ["Hanken Grotesk"],
+                        "label-sm": ["Hanken Grotesk"],
+                        "body-lg": ["Hanken Grotesk"],
+                        "headline-md": ["Hanken Grotesk"]
+                    },
+                    "fontSize": {
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "display-lg-mobile": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "700" }],
+                        "label-sm": ["13px", { "lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        /* Hide scrollbar for cleaner look */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #e1e3e3; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #bdc8cd; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="bg-surface text-on-surface font-body-md min-h-screen flex antialiased">
+<!-- DESKTOP NAVIGATION DRAWER (Hidden on mobile) -->
+<nav class="hidden md:flex flex-col bg-surface-white w-72 h-full fixed left-0 top-0 z-40 p-6 shadow-[0px_10px_30px_rgba(0,0,0,0.04)]">
+<!-- Header -->
+<div class="flex items-center gap-4 mb-8">
+<div class="w-12 h-12 rounded-full bg-surface-container overflow-hidden flex items-center justify-center">
+<span class="material-symbols-outlined text-outline" style="font-size: 24px;">person</span>
+</div>
+<div>
+<h2 class="font-headline-md text-[18px] leading-tight text-primary font-bold">Dr. Eslava</h2>
+<p class="font-label-sm text-label-sm text-outline">Director Clínico</p>
+</div>
+</div>
+<!-- Navigation Links -->
+<ul class="flex flex-col gap-2 flex-1">
+<!-- Schedule -->
+<li>
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl font-label-sm text-label-sm text-on-surface-variant hover:bg-surface-container-low transition-all" href="calendario_dashboard_mobile.html" id="nav-link-calendario-desktop">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">calendar_today</span>
+                    Agenda
+                </a>
+</li>
+<!-- Patients (ACTIVE) -->
+<li>
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl font-label-sm text-label-sm bg-secondary-container text-on-secondary-container active:scale-[0.98] transition-transform" href="pacientes_historia_clinica_mobile.html" id="nav-link-pacientes-desktop">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">groups</span>
+                    Pacientes
+                </a>
+</li>
+<!-- Services -->
+<li>
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl font-label-sm text-label-sm text-on-surface-variant hover:bg-surface-container-low transition-all" href="servicios_ajustes_mobile.html" id="nav-link-servicios-desktop">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">medical_services</span>
+                    Servicios
+                </a>
+</li>
+<!-- Payments -->
+<li>
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl font-label-sm text-label-sm text-on-surface-variant hover:bg-surface-container-low transition-all" href="pagos_facturacion_mobile.html" id="nav-link-finanzas-desktop">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">payments</span>
+                    Pagos
+                </a>
+</li>
+<!-- Settings -->
+<li>
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl font-label-sm text-label-sm text-on-surface-variant hover:bg-surface-container-low transition-all mt-auto" href="servicios_ajustes_mobile.html" id="nav-link-ajustes-desktop">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">settings</span>
+                    Ajustes
+                </a>
+</li>
+</ul>
+</nav>
+<!-- MAIN CONTENT AREA -->
+<div class="flex-1 flex flex-col min-w-0 md:ml-72 relative pb-20 md:pb-0">
+<!-- TOP APP BAR -->
+<header class="w-full top-0 bg-surface flex justify-between items-center px-margin-mobile md:px-margin-desktop py-4 z-30 sticky shadow-[0px_10px_30px_rgba(0,0,0,0.02)]">
+<div class="flex items-center gap-4">
+<button class="md:hidden text-primary p-2 -ml-2 rounded-full hover:bg-surface-container-low transition-colors">
+<span class="material-symbols-outlined">menu</span>
+</button>
+<h1 class="font-headline-md text-headline-md font-bold text-primary tracking-tight">Centro Eslava</h1>
+</div>
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-full bg-surface-container overflow-hidden md:hidden">
+<img alt="Foto de perfil del doctor" class="w-full h-full object-cover" data-alt="Close up portrait of a medical professional in a brightly lit modern clinic. The lighting is soft and flattering, emphasizing a pristine, clean environment. The color palette is composed of crisp whites and subtle cool tones, creating a calm and authoritative mood." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB9dVQqVQpQP3E9p96P8X47ZsFfWdzlh5TjE7JGbm5KPJdmUMMeWT7HsbayVFz8iSv5H9HU9VVuftsrQNOgVvGvikJ8AI24sx3SykyqBDCk82ds04fdkJHPGwtn4-vip03EyQynHQ_Rahf8jy-fGukIN75hgCgT3VOZYfpyp9hzh0GiFam8fvW9YtovBT-4BI7xmSHmmwGFd3y5VWafNuiUlpslSoja7bM5lzdqYCswuzrLPGjhRGH2L7gLdDvpBXf84hZrxA1G6lU"/>
+</div>
+</div>
+</header>
+<!-- PAGE CONTENT CANVAS -->
+<main class="flex-1 px-margin-mobile md:px-margin-desktop py-8 max-w-[1280px] w-full mx-auto flex flex-col gap-8">
+<!-- Page Header & Search -->
+<div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+<div>
+<h2 class="font-display-lg-mobile md:font-display-lg text-display-lg-mobile md:text-display-lg text-on-surface mb-2">Registros de Pacientes</h2>
+<p class="font-body-md text-body-md text-outline">Gestionar historias clínicas y tratamientos activos.</p>
+</div>
+<div class="w-full md:w-auto flex items-center relative">
+<span class="material-symbols-outlined absolute left-4 text-outline z-10 pointer-events-none">search</span>
+<input class="w-full md:w-[320px] pl-12 pr-4 py-3 bg-surface-white border border-transparent rounded-xl font-body-md text-body-md text-on-surface placeholder:text-outline focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 shadow-[0px_4px_20px_rgba(0,0,0,0.03)] transition-all" placeholder="Buscar por nombre, ID o condición..." type="text"/>
+</div>
+</div>
+<!-- Filters -->
+<div class="flex gap-2 overflow-x-auto pb-2 -mx-margin-mobile px-margin-mobile md:mx-0 md:px-0">
+<button class="whitespace-nowrap px-4 py-2 rounded-full font-label-sm text-label-sm bg-primary text-on-primary shadow-sm">Todos los Pacientes</button>
+<button class="whitespace-nowrap px-4 py-2 rounded-full font-label-sm text-label-sm bg-surface-white text-on-surface hover:bg-surface-container-low transition-colors shadow-[0px_2px_10px_rgba(0,0,0,0.02)]">Tratamiento Activo</button>
+<button class="whitespace-nowrap px-4 py-2 rounded-full font-label-sm text-label-sm bg-surface-white text-on-surface hover:bg-surface-container-low transition-colors shadow-[0px_2px_10px_rgba(0,0,0,0.02)]">En Recuperación</button>
+<button class="whitespace-nowrap px-4 py-2 rounded-full font-label-sm text-label-sm bg-surface-white text-on-surface hover:bg-surface-container-low transition-colors shadow-[0px_2px_10px_rgba(0,0,0,0.02)]">Alta</button>
+</div>
+<!-- Patient Grid (Bento/Card Layout) -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-gutter">
+<!-- Patient Card 1 -->
+<div class="bg-surface-white rounded-2xl p-6 shadow-[0px_10px_30px_rgba(0,0,0,0.04)] flex flex-col gap-5 hover:shadow-[0px_15px_40px_rgba(0,0,0,0.08)] hover:-translate-y-1 transition-all duration-300 group">
+<div class="flex justify-between items-start">
+<div class="flex gap-4 items-center">
+<div class="w-12 h-12 rounded-full bg-secondary-container flex items-center justify-center text-on-secondary-container font-headline-md text-headline-md">
+                                MR
+                            </div>
+<div>
+<h3 class="font-body-lg text-body-lg font-semibold text-on-surface">Mateo Rojas</h3>
+<p class="font-label-sm text-label-sm text-outline">ID: 849201 • 34 años</p>
+</div>
+</div>
+<span class="px-3 py-1 bg-success/10 text-success rounded-full font-label-sm text-label-sm flex items-center gap-1">
+<div class="w-1.5 h-1.5 rounded-full bg-success"></div> Activo
+                        </span>
+</div>
+<div class="bg-surface rounded-xl p-4 mt-2">
+<div class="flex items-center gap-2 mb-2 text-outline">
+<span class="material-symbols-outlined text-[18px]">healing</span>
+<span class="font-label-sm text-label-sm uppercase tracking-wider">Tratamiento Actual</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface">Protocolo de reconstrucción de LCA posoperatorio. Ejercicios de movilidad de fase 2.</p>
+<p class="font-label-sm text-label-sm text-primary mt-2">Sesión 4 de 12</p>
+</div>
+<div class="mt-auto pt-2">
+<button class="w-full flex items-center justify-between text-primary font-label-sm text-label-sm px-4 py-3 rounded-xl hover:bg-surface-container-low transition-colors">
+                            Historia Clínica
+                            <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</button>
+</div>
+</div>
+<!-- Patient Card 2 -->
+<div class="bg-surface-white rounded-2xl p-6 shadow-[0px_10px_30px_rgba(0,0,0,0.04)] flex flex-col gap-5 hover:shadow-[0px_15px_40px_rgba(0,0,0,0.08)] hover:-translate-y-1 transition-all duration-300 group">
+<div class="flex justify-between items-start">
+<div class="flex gap-4 items-center">
+<div class="w-12 h-12 rounded-full bg-tertiary-fixed flex items-center justify-center text-on-tertiary-fixed font-headline-md text-headline-md">
+                                LC
+                            </div>
+<div>
+<h3 class="font-body-lg text-body-lg font-semibold text-on-surface">Lucía Castro</h3>
+<p class="font-label-sm text-label-sm text-outline">ID: 552190 • 42 años</p>
+</div>
+</div>
+<span class="px-3 py-1 bg-warning/10 text-warning rounded-full font-label-sm text-label-sm flex items-center gap-1">
+<div class="w-1.5 h-1.5 rounded-full bg-warning"></div> En Recuperación
+                        </span>
+</div>
+<div class="bg-surface rounded-xl p-4 mt-2">
+<div class="flex items-center gap-2 mb-2 text-outline">
+<span class="material-symbols-outlined text-[18px]">healing</span>
+<span class="font-label-sm text-label-sm uppercase tracking-wider">Tratamiento Actual</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface">Manejo crónico del dolor lumbar. Terapia manual y punción seca.</p>
+<p class="font-label-sm text-label-sm text-outline mt-2">Última visita: hace 2 días</p>
+</div>
+<div class="mt-auto pt-2">
+<button class="w-full flex items-center justify-between text-primary font-label-sm text-label-sm px-4 py-3 rounded-xl hover:bg-surface-container-low transition-colors">
+                            Historia Clínica
+                            <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</button>
+</div>
+</div>
+<!-- Patient Card 3 -->
+<div class="bg-surface-white rounded-2xl p-6 shadow-[0px_10px_30px_rgba(0,0,0,0.04)] flex flex-col gap-5 hover:shadow-[0px_15px_40px_rgba(0,0,0,0.08)] hover:-translate-y-1 transition-all duration-300 group">
+<div class="flex justify-between items-start">
+<div class="flex gap-4 items-center">
+<div class="w-12 h-12 rounded-full bg-primary-container flex items-center justify-center text-on-primary-container font-headline-md text-headline-md">
+                                DV
+                            </div>
+<div>
+<h3 class="font-body-lg text-body-lg font-semibold text-on-surface">Diego Vargas</h3>
+<p class="font-label-sm text-label-sm text-outline">ID: 992014 • 28 años</p>
+</div>
+</div>
+<span class="px-3 py-1 bg-success/10 text-success rounded-full font-label-sm text-label-sm flex items-center gap-1">
+<div class="w-1.5 h-1.5 rounded-full bg-success"></div> Activo
+                        </span>
+</div>
+<div class="bg-surface rounded-xl p-4 mt-2">
+<div class="flex items-center gap-2 mb-2 text-outline">
+<span class="material-symbols-outlined text-[18px]">healing</span>
+<span class="font-label-sm text-label-sm uppercase tracking-wider">Tratamiento Actual</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface">Tendinopatía del manguito rotador. Terapia de ondas de choque focalizadas.</p>
+<p class="font-label-sm text-label-sm text-primary mt-2">Sesión 1 de 6</p>
+</div>
+<div class="mt-auto pt-2">
+<button class="w-full flex items-center justify-between text-primary font-label-sm text-label-sm px-4 py-3 rounded-xl hover:bg-surface-container-low transition-colors">
+                            Historia Clínica
+                            <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</button>
+</div>
+</div>
+</div>
+</main>
+</div>
+<!-- MOBILE BOTTOM NAV BAR (Hidden on desktop) -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 py-3 md:hidden bg-surface-white/90 backdrop-blur-md rounded-t-xl shadow-[0px_-10px_30px_rgba(0,0,0,0.04)]">
+<!-- Calendar -->
+<a class="flex flex-col items-center justify-center text-outline gap-1 active:scale-90 transition-all duration-150 w-16" href="calendario_dashboard_mobile.html" id="nav-link-calendario">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">event</span>
+<span class="font-label-sm text-[10px]">Agenda</span>
+</a>
+<!-- Patients (ACTIVE) -->
+<a class="flex flex-col items-center justify-center text-primary font-bold gap-1 active:scale-90 transition-all duration-150 w-16" href="pacientes_historia_clinica_mobile.html" id="nav-link-pacientes">
+<div class="px-4 py-1 bg-secondary-container rounded-full mb-1">
+<span class="material-symbols-outlined text-on-secondary-container" style="font-variation-settings: 'FILL' 1;">person_search</span>
+</div>
+<span class="font-label-sm text-[10px]">Pacientes</span>
+</a>
+<!-- Treatments -->
+<a class="flex flex-col items-center justify-center text-outline gap-1 active:scale-90 transition-all duration-150 w-16" href="servicios_ajustes_mobile.html" id="nav-link-servicios">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">healing</span>
+<span class="font-label-sm text-[10px]">Tratamientos</span>
+</a>
+<!-- Finance -->
+<a class="flex flex-col items-center justify-center text-outline gap-1 active:scale-90 transition-all duration-150 w-16" href="pagos_facturacion_mobile.html" id="nav-link-finanzas">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">account_balance_wallet</span>
+<span class="font-label-sm text-[10px]">Finanzas</span>
+</a>
+</nav>
+<script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const currentRole = urlParams.get('role') || 'developer';
+
+    function applyRBACRules() {
+        if (currentRole === 'medico' || currentRole === 'asistente') {
+            const linkFinanzas = document.getElementById("nav-link-finanzas");
+            if (linkFinanzas) linkFinanzas.style.display = "none";
+            const linkFinanzasDesktop = document.getElementById("nav-link-finanzas-desktop");
+            if (linkFinanzasDesktop) linkFinanzasDesktop.style.display = "none";
+        }
+        if (currentRole === 'asistente') {
+            const linkAjustesDesktop = document.getElementById("nav-link-ajustes-desktop");
+            if (linkAjustesDesktop) linkAjustesDesktop.style.display = "none";
+        }
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+        // Append role parameter to all links inside the page
+        document.querySelectorAll("a").forEach(link => {
+            let href = link.getAttribute("href");
+            if (href && href !== "#" && !href.startsWith("http")) {
+                const separator = href.includes("?") ? "&" : "?";
+                link.setAttribute("href", `${href}${separator}role=${currentRole}`);
+            }
+        });
+
+        applyRBACRules();
+    });
+</script>
+</body></html>

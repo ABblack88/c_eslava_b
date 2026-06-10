@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+
+<html lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Centro Eslava - Panel de Calendario</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-primary": "#ffffff",
+                        "primary-fixed": "#aeecff",
+                        "on-secondary-fixed": "#001f26",
+                        "surface": "#f8fafa",
+                        "tertiary-container": "#a96418",
+                        "surface-white": "#FFFFFF",
+                        "error": "#ba1a1a",
+                        "on-primary-fixed-variant": "#004e5d",
+                        "warning": "#FF9500",
+                        "secondary-container": "#89e4fd",
+                        "secondary-fixed-dim": "#78d3eb",
+                        "surface-tint": "#00687b",
+                        "on-tertiary-fixed": "#2e1600",
+                        "secondary-fixed": "#adecff",
+                        "success": "#34C759",
+                        "surface-container-lowest": "#ffffff",
+                        "text-main": "#1C1C1E",
+                        "on-secondary": "#ffffff",
+                        "outline-variant": "#bdc8cd",
+                        "on-secondary-fixed-variant": "#004e5c",
+                        "surface-container-high": "#e6e8e8",
+                        "surface-container-low": "#f2f4f4",
+                        "outline": "#6d797d",
+                        "on-primary-container": "#f9fdff",
+                        "primary": "#006578",
+                        "on-surface-variant": "#3d494c",
+                        "secondary": "#00687a",
+                        "background": "#f8fafa",
+                        "on-tertiary-container": "#fffbff",
+                        "on-error": "#ffffff",
+                        "tertiary-fixed": "#ffdcc0",
+                        "on-secondary-container": "#006779",
+                        "on-primary-fixed": "#001f26",
+                        "error-container": "#ffdad6",
+                        "inverse-primary": "#66d5f1",
+                        "on-tertiary": "#ffffff",
+                        "on-error-container": "#93000a",
+                        "primary-container": "#008097",
+                        "text-muted": "#636366",
+                        "surface-bright": "#f8fafa",
+                        "primary-fixed-dim": "#66d5f1",
+                        "surface-dim": "#d8dada",
+                        "surface-container": "#eceeee",
+                        "surface-variant": "#e1e3e3",
+                        "surface-container-highest": "#e1e3e3",
+                        "tertiary-fixed-dim": "#ffb877",
+                        "inverse-surface": "#2e3131",
+                        "on-background": "#191c1d",
+                        "inverse-on-surface": "#eff1f1",
+                        "on-tertiary-fixed-variant": "#6b3b00",
+                        "on-surface": "#191c1d",
+                        "tertiary": "#8a4d00"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "base": "8px",
+                        "margin-desktop": "80px",
+                        "margin-mobile": "20px",
+                        "gutter": "24px",
+                        "section-gap": "120px"
+                    },
+                    "fontFamily": {
+                        "body-md": ["Hanken Grotesk"],
+                        "display-lg": ["Hanken Grotesk"],
+                        "display-lg-mobile": ["Hanken Grotesk"],
+                        "label-sm": ["Hanken Grotesk"],
+                        "body-lg": ["Hanken Grotesk"],
+                        "headline-md": ["Hanken Grotesk"]
+                    },
+                    "fontSize": {
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "display-lg-mobile": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "700" }],
+                        "label-sm": ["13px", { "lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Hanken Grotesk', sans-serif;
+            background-color: #f8fafa; /* surface */
+        }
+        
+        /* Smooth scrolling and transitions */
+        html { scroll-behavior: smooth; }
+        
+        /* Drag-and-drop visual hints */
+        .draggable-card {
+            cursor: grab;
+            transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease;
+        }
+        .draggable-card:active {
+            cursor: grabbing;
+            transform: scale(1.02) rotate(-1deg);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+            z-index: 50;
+        }
+        
+        /* Calendar grid lines */
+        .calendar-grid {
+            background-image: linear-gradient(to bottom, #eceeee 1px, transparent 1px);
+            background-size: 100% 60px; /* Represents 1 hour slots */
+        }
+        
+        /* Hide scrollbar for clean look */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #d8dada; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #bdc8cd; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="text-on-surface antialiased bg-surface selection:bg-primary-container selection:text-on-primary-container">
+<!-- TopAppBar (Mobile & Desktop) -->
+<header class="bg-surface dark:bg-surface-dim shadow-[0px_10px_30px_rgba(0,0,0,0.04)] w-full top-0 flex justify-between items-center px-margin-mobile md:px-margin-desktop py-4 z-50 sticky">
+<div class="flex items-center gap-4">
+<button aria-label="Menu" class="md:hidden text-primary dark:text-primary-fixed hover:bg-surface-container-low dark:hover:bg-surface-container-high transition-colors active:scale-95 transition-transform duration-200 p-2 rounded-full">
+<span class="material-symbols-outlined" data-icon="menu">menu</span>
+</button>
+<h1 class="font-headline-md text-headline-md font-bold text-primary dark:text-primary-fixed">Centro Eslava</h1>
+</div>
+<!-- Desktop Nav -->
+<nav class="hidden md:flex gap-8 items-center">
+<a class="text-primary dark:text-primary-fixed font-semibold hover:bg-surface-container-low dark:hover:bg-surface-container-high transition-colors px-4 py-2 rounded-lg active:scale-95 transition-transform duration-200" href="calendario_dashboard_mobile.html">Agenda</a>
+<a class="text-on-surface-variant dark:text-outline hover:bg-surface-container-low dark:hover:bg-surface-container-high transition-colors px-4 py-2 rounded-lg active:scale-95 transition-transform duration-200" href="pacientes_historia_clinica_mobile.html">Pacientes</a>
+<a id="nav-link-servicios" class="text-on-surface-variant dark:text-outline hover:bg-surface-container-low dark:hover:bg-surface-container-high transition-colors px-4 py-2 rounded-lg active:scale-95 transition-transform duration-200" href="servicios_ajustes_mobile.html">Servicios</a>
+</nav>
+<div class="flex items-center gap-4">
+<button onclick="openAppointmentModal()" class="bg-primary text-on-primary font-label-sm text-label-sm px-4 py-2 rounded-full hover:bg-secondary transition-colors shadow-sm hidden md:flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">add</span>
+                Nueva Sesión
+            </button>
+<div class="h-10 w-10 rounded-full bg-surface-container-high overflow-hidden border-2 border-surface-white shadow-sm flex-shrink-0 cursor-pointer hover:ring-2 hover:ring-primary transition-all">
+<img alt="Foto de perfil del doctor" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDsNpwEcwdTkPT4FC8ZJXGU7sG7gtOoRkORMlToeG_901MuVsyDSxOxiGNzoHH2UwiSHegguoJqCKz-fe15ztRKfOW_4nlggJ_pPSL8Z0MQKQLz0ET53UPuXzk2Swt3W3i-y5XIgeq3EAQoT7Sa6ei2fdhVzhGwI-VtRHC4MdY611AmyVQfvhk4W9EWoNNE4SNLtsMlGbhign61k1AMWRLYBznw4d_u5eMnf6HRY4eTR4mQzTIRIF-QFoTSlOn2LLKN6k0aAlvM8wE"/>
+</div>
+</div>
+</header>
+<!-- NavigationDrawer (Desktop SideNav) -->
+<aside class="fixed left-0 top-18 h-[calc(100vh-72px)] w-72 bg-surface-white dark:bg-surface-container-lowest shadow-[0px_10px_30px_rgba(0,0,0,0.04)] z-40 hidden md:flex flex-col p-6 overflow-y-auto">
+<!-- Profile Header -->
+<div class="flex items-center gap-4 mb-8 pb-6 border-b border-surface-container">
+<div class="h-12 w-12 rounded-full bg-surface-container-high overflow-hidden flex-shrink-0">
+<img alt="Foto de perfil del administrador clínico" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBjMEh4SemiD9nurmauOrO4D1bIGoLuAlXsA0ZxZkEppy0rs19b0XNcul5AosYSCfc84y3fN0xMAUZvNXMXCLEUC9-avUrzGOzYgDC6RoP8d02bvCHdps_YsVf97hMIR7GBhUGqsoFNd83QoWTdrk9XbJXrVKq4Lu1NsjXItx9Uo1f6JMY75zbdQsLXqmeQKIhj_bYPAxdilnTGOAz5I6WC8MxXSwsKDCfFt9_k7ko9A5RY-TTq-BR4WneOmB_HRZeMebslNzM022E"/>
+</div>
+<div>
+<h2 id="drawer-profile-name" class="font-body-md text-body-md font-semibold text-primary">Dr. Eslava</h2>
+<p id="drawer-profile-role" class="font-label-sm text-label-sm text-outline">Director Clínico</p>
+<span id="drawer-profile-badge" class="inline-block mt-1 px-2 py-0.5 bg-secondary-container/30 text-on-secondary-container rounded font-label-sm text-[10px]">Acceso Admin</span>
+</div>
+</div>
+<!-- Navigation Links -->
+<nav class="flex flex-col gap-2 flex-grow">
+<a class="flex items-center gap-3 px-4 py-3 bg-secondary-container dark:bg-secondary-fixed-variant text-on-secondary-container dark:text-secondary-fixed rounded-xl hover:bg-surface-container-low transition-all active:scale-[0.98] transition-transform font-body-md text-body-md" href="calendario_dashboard_mobile.html">
+<span class="material-symbols-outlined" data-icon="calendar_today">calendar_today</span>
+                Agenda
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant dark:text-outline hover:bg-surface-container-low transition-all active:scale-[0.98] transition-transform rounded-xl font-body-md text-body-md" href="pacientes_historia_clinica_mobile.html">
+<span class="material-symbols-outlined" data-icon="groups">groups</span>
+                Pacientes
+            </a>
+<a id="drawer-link-servicios" class="flex items-center gap-3 px-4 py-3 text-on-surface-variant dark:text-outline hover:bg-surface-container-low transition-all active:scale-[0.98] transition-transform rounded-xl font-body-md text-body-md" href="servicios_ajustes_mobile.html">
+<span class="material-symbols-outlined" data-icon="medical_services">medical_services</span>
+                Servicios
+            </a>
+<a id="drawer-link-pagos" class="flex items-center gap-3 px-4 py-3 text-on-surface-variant dark:text-outline hover:bg-surface-container-low transition-all active:scale-[0.98] transition-transform rounded-xl font-body-md text-body-md" href="pagos_facturacion_mobile.html">
+<span class="material-symbols-outlined" data-icon="payments">payments</span>
+                Pagos
+            </a>
+</nav>
+<div class="mt-auto pt-6 border-t border-surface-container">
+<a id="drawer-link-ajustes" class="flex items-center gap-3 px-4 py-3 text-on-surface-variant dark:text-outline hover:bg-surface-container-low transition-all active:scale-[0.98] transition-transform rounded-xl font-body-md text-body-md" href="servicios_ajustes_mobile.html">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+                Ajustes
+            </a>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="md:ml-72 min-h-screen px-margin-mobile md:px-margin-desktop py-8 pb-24 md:pb-8">
+<!-- Dashboard Header -->
+<div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 mb-8">
+<div>
+<p class="font-label-sm text-label-sm text-outline uppercase tracking-wider mb-1">Agenda de Hoy</p>
+<h2 class="font-display-lg-mobile md:font-display-lg text-display-lg-mobile md:text-display-lg text-on-surface">Jueves, 26 Oct</h2>
+</div>
+<div class="flex items-center bg-surface-white rounded-lg shadow-sm border border-surface-container p-1 w-full md:w-auto">
+<button class="flex-1 md:flex-none px-4 py-2 bg-surface-container-low text-primary rounded-md font-label-sm text-label-sm transition-colors">Día</button>
+<button class="flex-1 md:flex-none px-4 py-2 text-outline hover:bg-surface hover:text-on-surface transition-colors rounded-md font-label-sm text-label-sm">Semana</button>
+<button class="flex-1 md:flex-none px-4 py-2 text-outline hover:bg-surface hover:text-on-surface transition-colors rounded-md font-label-sm text-label-sm">Mes</button>
+</div>
+</div>
+<!-- Quick Stats / Bento Top -->
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+<div class="bg-surface-white rounded-xl p-4 shadow-[0px_10px_30px_rgba(0,0,0,0.04)] border border-surface-container/50">
+<div class="flex items-center gap-2 text-outline mb-2">
+<span class="material-symbols-outlined text-[20px]">people</span>
+<span class="font-label-sm text-label-sm">Total Pacientes</span>
+</div>
+<p class="font-headline-md text-headline-md text-primary">12</p>
+</div>
+<div class="bg-surface-white rounded-xl p-4 shadow-[0px_10px_30px_rgba(0,0,0,0.04)] border border-surface-container/50">
+<div class="flex items-center gap-2 text-outline mb-2">
+<span class="material-symbols-outlined text-[20px]">healing</span>
+<span class="font-label-sm text-label-sm">Tratamientos</span>
+</div>
+<p class="font-headline-md text-headline-md text-primary">8</p>
+</div>
+<div class="bg-surface-white rounded-xl p-4 shadow-[0px_10px_30px_rgba(0,0,0,0.04)] border border-surface-container/50">
+<div class="flex items-center gap-2 text-outline mb-2">
+<span class="material-symbols-outlined text-[20px]">bolt</span>
+<span class="font-label-sm text-label-sm">Ondas de Choque</span>
+</div>
+<p class="font-headline-md text-headline-md text-primary">3</p>
+</div>
+<div class="bg-surface-white rounded-xl p-4 shadow-[0px_10px_30px_rgba(0,0,0,0.04)] border border-surface-container/50">
+<div class="flex items-center gap-2 text-outline mb-2">
+<span class="material-symbols-outlined text-[20px]">fitness_center</span>
+<span class="font-label-sm text-label-sm">Descarga Muscular</span>
+</div>
+<p class="font-headline-md text-headline-md text-primary">4</p>
+</div>
+</div>
+<!-- Calendar Board -->
+<div class="bg-surface-white rounded-2xl shadow-[0px_10px_30px_rgba(0,0,0,0.04)] border border-surface-container overflow-hidden flex flex-col h-[700px]">
+<!-- Room Headers -->
+<div class="flex border-b border-surface-container bg-surface/50">
+<div class="w-20 flex-shrink-0 border-r border-surface-container p-4"></div> <!-- Time column spacer -->
+<div class="flex-1 grid grid-cols-2 md:grid-cols-3 divide-x divide-surface-container">
+<div class="p-4 text-center">
+<h3 class="font-label-sm text-label-sm text-on-surface font-semibold">Sala 1 - Principal</h3>
+</div>
+<div class="p-4 text-center">
+<h3 class="font-label-sm text-label-sm text-on-surface font-semibold">Sala 2 - Ondas de Choque</h3>
+</div>
+<div class="p-4 text-center hidden md:block">
+<h3 class="font-label-sm text-label-sm text-on-surface font-semibold">Sala 3 - Rehab</h3>
+</div>
+</div>
+</div>
+<!-- Calendar Grid Container -->
+<div class="flex flex-1 overflow-y-auto relative calendar-grid" style="background-color: #fafbfb;">
+<!-- Current Time Line Indicator (e.g. 10:30 AM) -->
+<div class="absolute left-20 right-0 h-0 border-t-2 border-warning z-20 pointer-events-none flex items-center" style="top: 150px;">
+<div class="absolute -left-20 w-20 text-right pr-2 font-label-sm text-[11px] text-warning font-bold">10:30 AM</div>
+<div class="w-2 h-2 rounded-full bg-warning -ml-1"></div>
+</div>
+<!-- Time Column -->
+<div class="w-20 flex-shrink-0 border-r border-surface-container flex flex-col pt-3 bg-surface-white/80 backdrop-blur z-10 sticky left-0">
+<div class="h-[60px] text-right pr-4 font-label-sm text-label-sm text-outline">08:00</div>
+<div class="h-[60px] text-right pr-4 font-label-sm text-label-sm text-outline">09:00</div>
+<div class="h-[60px] text-right pr-4 font-label-sm text-label-sm text-outline">10:00</div>
+<div class="h-[60px] text-right pr-4 font-label-sm text-label-sm text-outline">11:00</div>
+<div class="h-[60px] text-right pr-4 font-label-sm text-label-sm text-outline">12:00</div>
+<div class="h-[60px] text-right pr-4 font-label-sm text-label-sm text-outline">13:00</div>
+<div class="h-[60px] text-right pr-4 font-label-sm text-label-sm text-outline">14:00</div>
+<div class="h-[60px] text-right pr-4 font-label-sm text-label-sm text-outline">15:00</div>
+<div class="h-[60px] text-right pr-4 font-label-sm text-label-sm text-outline">16:00</div>
+</div>
+<!-- Appointments Grid -->
+<div class="flex-1 grid grid-cols-2 md:grid-cols-3 divide-x divide-surface-container relative">
+<!-- Column 1 -->
+<div class="relative">
+<!-- Appointment Card 1 (Descarga Muscular) -->
+<div class="absolute top-[60px] left-2 right-2 h-[56px] bg-primary-container/10 border border-primary-container/20 rounded-lg p-2 draggable-card flex flex-col justify-between overflow-hidden group">
+<div class="absolute top-0 right-0 p-1 opacity-0 group-hover:opacity-100 transition-opacity">
+<span class="material-symbols-outlined text-[16px] text-outline">drag_indicator</span>
+</div>
+<div class="flex justify-between items-start">
+<span class="font-label-sm text-[11px] text-primary font-bold">09:00 - 10:00</span>
+<span class="bg-primary/10 text-primary px-1.5 py-0.5 rounded text-[10px] font-bold">En Progreso</span>
+</div>
+<div>
+<h4 class="font-body-md text-[13px] font-semibold text-on-surface truncate">Maria Garcia</h4>
+<p class="font-label-sm text-[11px] text-outline truncate">Descarga Muscular</p>
+</div>
+</div>
+<!-- Appointment Card 2 -->
+<div class="absolute top-[180px] left-2 right-2 h-[86px] bg-surface-white border border-surface-container rounded-lg p-2 shadow-sm draggable-card flex flex-col justify-between overflow-hidden group">
+<div class="absolute top-0 right-0 p-1 opacity-0 group-hover:opacity-100 transition-opacity cursor-grab">
+<span class="material-symbols-outlined text-[16px] text-outline">drag_indicator</span>
+</div>
+<div class="flex justify-between items-start">
+<span class="font-label-sm text-[11px] text-on-surface-variant font-bold">11:00 - 12:30</span>
+</div>
+<div>
+<h4 class="font-body-md text-[13px] font-semibold text-on-surface truncate">Carlos Ruiz</h4>
+<p class="font-label-sm text-[11px] text-outline truncate">Evaluación Inicial</p>
+</div>
+</div>
+</div>
+<!-- Column 2 (Ondas de Choque) -->
+<div class="relative">
+<!-- Appointment Card 3 -->
+<div class="absolute top-[120px] left-2 right-2 h-[56px] bg-tertiary-container/10 border border-tertiary-container/20 rounded-lg p-2 draggable-card flex flex-col justify-between overflow-hidden group">
+<div class="absolute top-0 right-0 p-1 opacity-0 group-hover:opacity-100 transition-opacity">
+<span class="material-symbols-outlined text-[16px] text-outline">drag_indicator</span>
+</div>
+<div class="flex justify-between items-start">
+<span class="font-label-sm text-[11px] text-tertiary font-bold">10:00 - 11:00</span>
+</div>
+<div>
+<h4 class="font-body-md text-[13px] font-semibold text-on-surface truncate">Ana Martinez</h4>
+<p class="font-label-sm text-[11px] text-outline truncate">Ondas de Choque</p>
+</div>
+</div>
+<!-- Appointment Card 4 -->
+<div class="absolute top-[240px] left-2 right-2 h-[56px] bg-tertiary-container/10 border border-tertiary-container/20 rounded-lg p-2 draggable-card flex flex-col justify-between overflow-hidden group opacity-80">
+<div class="absolute top-0 right-0 p-1 opacity-0 group-hover:opacity-100 transition-opacity">
+<span class="material-symbols-outlined text-[16px] text-outline">drag_indicator</span>
+</div>
+<div class="flex justify-between items-start">
+<span class="font-label-sm text-[11px] text-tertiary font-bold">12:00 - 13:00</span>
+</div>
+<div>
+<h4 class="font-body-md text-[13px] font-semibold text-on-surface truncate">Roberto Fernandez</h4>
+<p class="font-label-sm text-[11px] text-outline truncate">Ondas de Choque</p>
+</div>
+</div>
+</div>
+<!-- Column 3 (Hidden on mobile) -->
+<div class="relative hidden md:block">
+<!-- Empty slot with drag target hint -->
+<div class="absolute top-[60px] left-2 right-2 h-[56px] border-2 border-dashed border-surface-container/50 rounded-lg p-2 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
+<span class="font-label-sm text-outline text-[11px]">Soltar cita aquí</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Floating Action Button (Mobile) -->
+<button onclick="openAppointmentModal()" class="md:hidden fixed bottom-20 right-4 h-14 w-14 bg-primary text-on-primary rounded-full shadow-lg flex items-center justify-center z-50 active:scale-90 transition-transform">
+<span class="material-symbols-outlined text-[24px]">add</span>
+</button>
+<!-- BottomNavBar (Mobile Only) -->
+<nav class="bg-surface-white/80 dark:bg-surface-container/80 backdrop-blur-md shadow-[0px_-10px_30px_rgba(0,0,0,0.04)] fixed bottom-0 w-full rounded-t-xl z-50 flex justify-around items-center px-4 py-3 md:hidden">
+<a class="flex flex-col items-center justify-center text-primary dark:text-primary-fixed font-bold hover:bg-surface-container-high/50 active:scale-90 transition-all duration-150 p-2 rounded-lg" href="calendario_dashboard_mobile.html">
+<span class="material-symbols-outlined" data-icon="event" style="font-variation-settings: 'FILL' 1;">event</span>
+<span class="font-label-sm text-label-sm mt-1">Calendario</span>
+</a>
+<a class="flex flex-col items-center justify-center text-outline dark:text-outline-variant hover:bg-surface-container-high/50 active:scale-90 transition-all duration-150 p-2 rounded-lg" href="pacientes_historia_clinica_mobile.html">
+<span class="material-symbols-outlined" data-icon="person_search">person_search</span>
+<span class="font-label-sm text-label-sm mt-1">Pacientes</span>
+</a>
+<a id="bottom-link-servicios" class="flex flex-col items-center justify-center text-outline dark:text-outline-variant hover:bg-surface-container-high/50 active:scale-90 transition-all duration-150 p-2 rounded-lg" href="servicios_ajustes_mobile.html">
+<span class="material-symbols-outlined" data-icon="healing">healing</span>
+<span class="font-label-sm text-label-sm mt-1">Tratamientos</span>
+</a>
+<a id="bottom-link-finanzas" class="flex flex-col items-center justify-center text-outline dark:text-outline-variant hover:bg-surface-container-high/50 active:scale-90 transition-all duration-150 p-2 rounded-lg" href="pagos_facturacion_mobile.html">
+<span class="material-symbols-outlined" data-icon="account_balance_wallet">account_balance_wallet</span>
+<span class="font-label-sm text-label-sm mt-1">Finanzas</span>
+</a>
+</nav>
+
+<!-- Modal Nueva Cita -->
+<div id="new-appointment-modal" class="fixed inset-0 bg-on-surface/50 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+    <div class="bg-surface-white rounded-3xl p-6 w-full max-w-lg shadow-2xl border border-surface-container-high transition-all transform scale-95 duration-200">
+        <div class="flex justify-between items-center mb-4">
+            <h3 class="text-lg font-bold text-on-surface">Agendar Nueva Cita</h3>
+            <button onclick="closeAppointmentModal()" class="text-outline hover:text-primary">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+        <form id="new-appointment-form" onsubmit="saveAppointment(event)" class="space-y-3">
+            <div>
+                <label class="block text-xs font-semibold text-on-surface-variant mb-1">Nombre del Paciente</label>
+                <input type="text" id="appt-patient-name" required class="w-full bg-surface-container-low border-none rounded-xl py-2.5 px-4 text-body-md focus:ring-2 focus:ring-primary" placeholder="ej. Juan Pérez">
+            </div>
+            <div>
+                <label class="block text-xs font-semibold text-on-surface-variant mb-1">Correo Electrónico</label>
+                <input type="email" id="appt-patient-email" class="w-full bg-surface-container-low border-none rounded-xl py-2.5 px-4 text-body-md focus:ring-2 focus:ring-primary" placeholder="ej. juan@gmail.com">
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="block text-xs font-semibold text-on-surface-variant mb-1">Tratamiento</label>
+                    <select id="appt-treatment" required class="w-full bg-surface-container-low border-none rounded-xl py-2.5 px-3 text-body-md focus:ring-2 focus:ring-primary">
+                        <option value="Ondas de Choque">Ondas de Choque</option>
+                        <option value="Fisioterapia Deportiva">Fisioterapia Deportiva</option>
+                        <option value="Descarga Muscular">Descarga Muscular</option>
+                        <option value="Evaluación Inicial">Evaluación Inicial</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-on-surface-variant mb-1">Consultorio</label>
+                    <select id="appt-room" required class="w-full bg-surface-container-low border-none rounded-xl py-2.5 px-3 text-body-md focus:ring-2 focus:ring-primary">
+                        <option value="Consultorio 1">Consultorio 1</option>
+                        <option value="Consultorio 2">Consultorio 2</option>
+                    </select>
+                </div>
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="block text-xs font-semibold text-on-surface-variant mb-1">Fecha</label>
+                    <input type="date" id="appt-date" required class="w-full bg-surface-container-low border-none rounded-xl py-2.5 px-3 text-body-md focus:ring-2 focus:ring-primary">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-on-surface-variant mb-1">Hora</label>
+                    <select id="appt-time" required class="w-full bg-surface-container-low border-none rounded-xl py-2.5 px-3 text-body-md focus:ring-2 focus:ring-primary">
+                        <option value="08:00 AM">08:00 AM</option>
+                        <option value="09:00 AM">09:00 AM</option>
+                        <option value="10:00 AM">10:00 AM</option>
+                        <option value="11:00 AM">11:00 AM</option>
+                        <option value="12:00 PM">12:00 PM</option>
+                        <option value="01:00 PM">01:00 PM</option>
+                        <option value="02:00 PM">02:00 PM</option>
+                        <option value="03:00 PM">03:00 PM</option>
+                    </select>
+                </div>
+            </div>
+            <div>
+                <label class="block text-xs font-semibold text-on-surface-variant mb-1">Notas</label>
+                <textarea id="appt-notes" rows="2" class="w-full bg-surface-container-low border-none rounded-xl py-2.5 px-4 text-body-md focus:ring-2 focus:ring-primary" placeholder="Observaciones de la cita..."></textarea>
+            </div>
+            <div class="flex gap-3 pt-2">
+                <button type="button" onclick="closeAppointmentModal()" class="flex-1 py-3 border border-outline rounded-xl font-bold text-on-surface-variant hover:bg-surface-container-low transition-all">Cancelar</button>
+                <button type="submit" class="flex-1 py-3 bg-primary text-on-primary rounded-xl font-bold hover:opacity-90 transition-all">Guardar Cita</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Success Confirmation Modal -->
+<div id="success-confirmation-modal" class="fixed inset-0 bg-on-surface/50 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+    <div class="bg-surface-white rounded-3xl p-6 w-full max-w-md shadow-2xl border border-surface-container-high text-center">
+        <div class="w-14 h-14 bg-emerald-500/10 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-3">
+            <span class="material-symbols-outlined text-3xl">check_circle</span>
+        </div>
+        <h3 class="text-lg font-bold text-on-surface mb-1">¡Cita Guardada Exitosamente!</h3>
+        <p class="text-on-surface-variant text-xs mb-4">La cita ha sido registrada en el sistema del Centro Eslava.</p>
+        <div class="space-y-2">
+            <a id="sync-gcal-btn" href="#" target="_blank" class="w-full bg-primary text-on-primary py-3 px-4 rounded-xl font-bold flex items-center justify-center gap-2 hover:opacity-90 active:scale-95 transition-all text-sm">
+                <span class="material-symbols-outlined text-lg">sync</span>
+                Sincronizar a Google Calendar
+            </a>
+            <button onclick="closeSuccessModal()" class="w-full py-3 border border-outline rounded-xl font-bold text-on-surface-variant hover:bg-surface-container-low transition-all text-sm">
+                Listo
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const currentRole = urlParams.get('role') || 'developer';
+
+    // Set today's date as default in date input
+    document.getElementById('appt-date').value = new Date().toISOString().split('T')[0];
+
+    // Enforce role-based element locking/hiding inside the page
+    function applyRBACRules() {
+        const nameEl = document.getElementById("drawer-profile-name");
+        const roleEl = document.getElementById("drawer-profile-role");
+        const badgeEl = document.getElementById("drawer-profile-badge");
+
+        if (currentRole === 'developer') {
+            if (nameEl) nameEl.textContent = "Desarrollador";
+            if (roleEl) roleEl.textContent = "Soporte Técnico";
+            if (badgeEl) {
+                badgeEl.textContent = "Acceso Total";
+                badgeEl.className = "inline-block mt-1 px-2 py-0.5 bg-primary/20 text-primary rounded font-label-sm text-[10px]";
+            }
+        } else if (currentRole === 'admin') {
+            if (nameEl) nameEl.textContent = "Dr. Eslava";
+            if (roleEl) roleEl.textContent = "Director Clínico";
+            if (badgeEl) {
+                badgeEl.textContent = "Acceso Admin";
+                badgeEl.className = "inline-block mt-1 px-2 py-0.5 bg-secondary-container/30 text-on-secondary-container rounded font-label-sm text-[10px]";
+            }
+        } else if (currentRole === 'medico') {
+            if (nameEl) nameEl.textContent = "Dr. Pérez";
+            if (roleEl) roleEl.textContent = "Médico Terapeuta";
+            if (badgeEl) {
+                badgeEl.textContent = "Acceso Médico";
+                badgeEl.className = "inline-block mt-1 px-2 py-0.5 bg-tertiary-container/30 text-on-tertiary-container rounded font-label-sm text-[10px]";
+            }
+        } else if (currentRole === 'asistente') {
+            if (nameEl) nameEl.textContent = "Sra. Gómez";
+            if (roleEl) roleEl.textContent = "Asistente Clínico";
+            if (badgeEl) {
+                badgeEl.textContent = "Acceso Asistente";
+                badgeEl.className = "inline-block mt-1 px-2 py-0.5 bg-error-container/30 text-on-error-container rounded font-label-sm text-[10px]";
+            }
+        }
+
+        if (currentRole === 'medico' || currentRole === 'asistente') {
+            // Hide Finanzas links
+            const linkPagos = document.getElementById("drawer-link-pagos");
+            if (linkPagos) linkPagos.style.display = "none";
+            const linkFinanzas = document.getElementById("bottom-link-finanzas");
+            if (linkFinanzas) linkFinanzas.style.display = "none";
+        }
+
+        if (currentRole === 'asistente') {
+            // Hide Ajustes and Servicios links
+            const linkAjustes = document.getElementById("drawer-link-ajustes");
+            if (linkAjustes) linkAjustes.style.display = "none";
+            const linkServiciosDrawer = document.getElementById("drawer-link-servicios");
+            if (linkServiciosDrawer) linkServiciosDrawer.style.display = "none";
+            const linkServiciosNav = document.getElementById("nav-link-servicios");
+            if (linkServiciosNav) linkServiciosNav.style.display = "none";
+            const linkServiciosBottom = document.getElementById("bottom-link-servicios");
+            if (linkServiciosBottom) linkServiciosBottom.style.display = "none";
+        }
+    }
+
+    // Modal Control Functions
+    function openAppointmentModal() {
+        document.getElementById("new-appointment-modal").classList.remove("hidden");
+    }
+
+    // Direct click in slot scheduling helper
+    window.openSlotSchedule = function(time, room) {
+        document.getElementById("appt-time").value = time;
+        document.getElementById("appt-room").value = room;
+        openAppointmentModal();
+    }
+
+    function closeAppointmentModal() {
+        document.getElementById("new-appointment-modal").classList.add("hidden");
+        document.getElementById("new-appointment-form").reset();
+        document.getElementById('appt-date').value = new Date().toISOString().split('T')[0];
+    }
+
+    function closeSuccessModal() {
+        document.getElementById("success-confirmation-modal").classList.add("hidden");
+    }
+
+    function generateGoogleCalendarUrl(appointment) {
+        const title = encodeURIComponent(`Cita Centro Eslava: ${appointment.treatment} - ${appointment.name}`);
+        const details = encodeURIComponent(`Cita médica programada en Centro Eslava.\nPaciente: ${appointment.name}\nTratamiento: ${appointment.treatment}\nSala/Consultorio: ${appointment.room}\nNotas: ${appointment.notes || 'Ninguna'}`);
+        const location = encodeURIComponent("Centro Eslava, Lima, Perú");
+        
+        let time24 = appointment.time;
+        if (appointment.time.includes('AM') || appointment.time.includes('PM')) {
+            const [timeStr, modifier] = appointment.time.split(' ');
+            let [hours, minutes] = timeStr.split(':');
+            if (hours === '12') hours = '00';
+            if (modifier === 'PM') hours = parseInt(hours, 10) + 12;
+            time24 = `${hours.toString().padStart(2, '0')}:${minutes}`;
+        }
+        
+        const dateStr = appointment.date.replace(/-/g, '');
+        const timeStr = time24.replace(/:/g, '') + '00';
+        const startDateTime = `${dateStr}T${timeStr}`;
+        
+        const endHours = (parseInt(time24.split(':')[0], 10) + 1).toString().padStart(2, '0');
+        const endMinutes = time24.split(':')[1];
+        const endDateTime = `${dateStr}T${endHours}${endMinutes}00`;
+        
+        return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${startDateTime}/${endDateTime}&details=${details}&location=${location}`;
+    }
+
+    function saveAppointment(event) {
+        event.preventDefault();
+        
+        const appt = {
+            name: document.getElementById("appt-patient-name").value,
+            email: document.getElementById("appt-patient-email").value,
+            treatment: document.getElementById("appt-treatment").value,
+            room: document.getElementById("appt-room").value,
+            date: document.getElementById("appt-date").value,
+            time: document.getElementById("appt-time").value,
+            notes: document.getElementById("appt-notes").value
+        };
+
+        // Generate sync link and set it on the success modal button
+        const gcalUrl = generateGoogleCalendarUrl(appt);
+        const gcalBtn = document.getElementById("sync-gcal-btn");
+        gcalBtn.setAttribute("href", gcalUrl);
+
+        // Hide form modal and open success modal
+        closeAppointmentModal();
+        document.getElementById("success-confirmation-modal").classList.remove("hidden");
+    }
+
+    // Initialize logic
+    document.addEventListener("DOMContentLoaded", () => {
+        // Append role parameter to all links inside the page
+        document.querySelectorAll("a").forEach(link => {
+            let href = link.getAttribute("href");
+            if (href && href !== "#" && !href.startsWith("http")) {
+                const separator = href.includes("?") ? "&" : "?";
+                link.setAttribute("href", `${href}${separator}role=${currentRole}`);
+            }
+        });
+
+        applyRBACRules();
+
+        // Simple drag-drop feedback and slot click interactions
+        const draggables = document.querySelectorAll('.draggable-card');
+        draggables.forEach(card => {
+            card.addEventListener('mousedown', () => {
+                card.style.opacity = '0.8';
+            });
+            document.addEventListener('mouseup', () => {
+                card.style.opacity = '1';
+            });
+        });
+    });
+</script>
+</body></html>

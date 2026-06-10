@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Centro Eslava - Resumen Financiero</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Design System Tokens & Configuration -->
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-container": "#eceeee",
+                    "primary-fixed-dim": "#66d5f1",
+                    "tertiary": "#8a4d00",
+                    "outline": "#6d797d",
+                    "on-tertiary-fixed": "#2e1600",
+                    "on-primary-container": "#f9fdff",
+                    "surface-container-low": "#f2f4f4",
+                    "error-container": "#ffdad6",
+                    "surface-bright": "#f8fafa",
+                    "secondary-fixed-dim": "#78d3eb",
+                    "on-primary-fixed": "#001f26",
+                    "text-muted": "#636366",
+                    "tertiary-fixed-dim": "#ffb877",
+                    "on-surface": "#191c1d",
+                    "inverse-on-surface": "#eff1f1",
+                    "outline-variant": "#bdc8cd",
+                    "error": "#ba1a1a",
+                    "tertiary-container": "#a96418",
+                    "on-surface-variant": "#3d494c",
+                    "on-tertiary": "#ffffff",
+                    "on-background": "#191c1d",
+                    "surface-container-lowest": "#ffffff",
+                    "on-secondary-fixed": "#001f26",
+                    "surface-dim": "#d8dada",
+                    "surface-white": "#FFFFFF",
+                    "surface": "#f8fafa",
+                    "inverse-surface": "#2e3131",
+                    "primary-container": "#008097",
+                    "warning": "#FF9500",
+                    "secondary-container": "#89e4fd",
+                    "on-primary-fixed-variant": "#004e5d",
+                    "background": "#f8fafa",
+                    "text-main": "#1C1C1E",
+                    "on-primary": "#ffffff",
+                    "on-error-container": "#93000a",
+                    "success": "#34C759",
+                    "on-secondary": "#ffffff",
+                    "inverse-primary": "#66d5f1",
+                    "primary-fixed": "#aeecff",
+                    "on-error": "#ffffff",
+                    "tertiary-fixed": "#ffdcc0",
+                    "secondary": "#00687a",
+                    "on-tertiary-fixed-variant": "#6b3b00",
+                    "surface-container-highest": "#e1e3e3",
+                    "secondary-fixed": "#adecff",
+                    "primary": "#006578",
+                    "on-secondary-fixed-variant": "#004e5c",
+                    "on-secondary-container": "#006779",
+                    "surface-container-high": "#e6e8e8",
+                    "surface-variant": "#e1e3e3",
+                    "surface-tint": "#00687b",
+                    "on-tertiary-container": "#fffbff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "margin-desktop": "80px",
+                    "margin-mobile": "20px",
+                    "section-gap": "120px",
+                    "base": "8px",
+                    "gutter": "24px"
+            },
+            "fontFamily": {
+                    "headline-md": ["Hanken Grotesk"],
+                    "display-lg-mobile": ["Hanken Grotesk"],
+                    "display-lg": ["Hanken Grotesk"],
+                    "body-lg": ["Hanken Grotesk"],
+                    "label-sm": ["Hanken Grotesk"],
+                    "body-md": ["Hanken Grotesk"]
+            },
+            "fontSize": {
+                    "headline-md": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "display-lg-mobile": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                    "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                    "label-sm": ["13px", {"lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "600"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Hanken Grotesk', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            vertical-align: middle;
+        }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="bg-surface text-on-surface min-h-screen">
+<!-- SideNavBar (Authority: JSON) -->
+<aside class="h-screen w-64 fixed left-0 top-0 bg-surface-white dark:bg-surface-container shadow-[0px_10px_30px_rgba(0,0,0,0.04)] dark:shadow-none flex flex-col py-base z-50">
+<div class="px-6 py-8">
+<h1 class="font-headline-md text-headline-md font-bold text-primary dark:text-primary-fixed-dim">Centro Eslava</h1>
+<p class="text-on-surface-variant font-label-sm text-label-sm mt-1">Gestión Clínica</p>
+</div>
+<nav class="flex-1 px-2 space-y-1">
+<a class="flex items-center px-4 py-3 font-body-md text-body-md text-on-surface-variant dark:text-outline-variant hover:bg-surface-container-low dark:hover:bg-surface-container-high transition-colors duration-200 group" href="calendario_dashboard_desktop.html">
+<span class="material-symbols-outlined mr-3">calendar_today</span>
+<span>Calendario</span>
+</a>
+<a class="flex items-center px-4 py-3 font-body-md text-body-md text-on-surface-variant dark:text-outline-variant hover:bg-surface-container-low dark:hover:bg-surface-container-high transition-colors duration-200 group" href="pacientes_historia_clinica_desktop.html">
+<span class="material-symbols-outlined mr-3">groups</span>
+<span>Pacientes</span>
+</a>
+<a class="flex items-center px-4 py-3 font-body-md text-body-md text-on-surface-variant dark:text-outline-variant hover:bg-surface-container-low dark:hover:bg-surface-container-high transition-colors duration-200 group" href="servicios_ajustes_desktop.html">
+<span class="material-symbols-outlined mr-3">medical_services</span>
+<span>Tratamientos</span>
+</a>
+<!-- Active Tab: Finance -->
+<a id="nav-link-finanzas" class="flex items-center px-4 py-3 font-body-md text-body-md text-primary dark:text-primary-fixed-dim border-r-4 border-primary dark:border-primary-fixed-dim font-bold bg-surface-container-low dark:bg-surface-container-high" href="pagos_facturacion_desktop.html">
+<span class="material-symbols-outlined mr-3">payments</span>
+<span>Finanzas</span>
+</a>
+<a id="nav-link-ajustes" class="flex items-center px-4 py-3 font-body-md text-body-md text-on-surface-variant dark:text-outline-variant hover:bg-surface-container-low dark:hover:bg-surface-container-high transition-colors duration-200 group" href="servicios_ajustes_desktop.html">
+<span class="material-symbols-outlined mr-3">settings</span>
+<span>Ajustes</span>
+</a>
+</nav>
+<div class="px-4 pb-6">
+<button class="w-full py-4 bg-primary text-on-primary rounded-xl font-bold flex items-center justify-center gap-2 hover:opacity-90 active:scale-95 transition-all">
+<span class="material-symbols-outlined">add</span>
+                Nueva Cita
+            </button>
+</div>
+</aside>
+<!-- TopNavBar (Authority: JSON) -->
+<header class="flex justify-between items-center h-16 ml-64 px-margin-desktop w-[calc(100%-16rem)] bg-surface-bright dark:bg-surface-dim shadow-sm dark:shadow-none sticky top-0 z-40">
+<div class="flex items-center flex-1 max-w-xl">
+<div class="relative w-full focus-within:ring-2 focus-within:ring-primary rounded-lg transition-all">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+<input class="w-full bg-surface-container-low dark:bg-surface-container border-none rounded-lg py-2 pl-10 pr-4 focus:ring-0 text-body-md font-body-md" placeholder="Buscar pacientes, facturas o seguros..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-6 ml-auto">
+<button class="text-on-surface-variant hover:text-primary transition-all relative">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-0 right-0 w-2 h-2 bg-error rounded-full border-2 border-surface-bright"></span>
+</button>
+<button class="text-on-surface-variant hover:text-primary transition-all">
+<span class="material-symbols-outlined">help</span>
+</button>
+<div class="flex items-center gap-3 pl-4 border-l border-outline-variant">
+<div class="text-right">
+<p class="text-body-md font-bold text-on-surface">Dr. Ricardo Eslava</p>
+<p class="text-label-sm text-on-surface-variant">Administrador</p>
+</div>
+<img alt="Foto de perfil del Dr. Alejandro Eslava" class="w-10 h-10 rounded-full border-2 border-primary object-cover" data-alt="A professional headshot of a mature male doctor in a clean white medical coat, smiling warmly. He is in a brightly lit, high-end medical clinic with minimalist decor and soft teal accents. The photograph is captured with a shallow depth of field, highlighting his empathetic expression against a clean, modern clinic background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC1rta0eU6xdLoHATSqbFvpZ0KNg_9pbile3r5Ynjn9hiShaaNfzFbh10orQ42wvLJ52aqQGCM3-xHin5BbwpoHh_nU5si2ya3fCfaF3VheoWQk_NWNdIC53IkbxWNgeAyRbyPD9hCsmFGF7rVZL6lYxEaQMDiLJOkzdlBtii-QCyqS5YqBwy1OuUa-oHe-pzENuFQkzZXABM5cTqnOUqcS90IbOH5QK4aCX9rLzBE_yyXeJLeKWHDWcvXM5FaS-G5h-xAabMV5xx4"/>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="ml-64 p-margin-desktop min-h-[calc(100vh-4rem)]">
+<!-- Header Section -->
+<section class="mb-10 flex justify-between items-end">
+<div>
+<h2 class="font-display-lg text-display-lg text-on-surface mb-2">Resumen Financiero</h2>
+<p class="text-body-lg font-body-lg text-on-surface-variant">Visualización del rendimiento clínico y estados de cuenta pendientes.</p>
+</div>
+<div class="flex gap-4">
+<button class="bg-surface-white border border-outline-variant px-6 py-2 rounded-full font-bold flex items-center gap-2 hover:bg-surface-container transition-all">
+<span class="material-symbols-outlined">download</span> Exportar PDF
+                </button>
+<button class="bg-primary text-on-primary px-6 py-2 rounded-xl font-bold flex items-center gap-2 hover:opacity-90 transition-all">
+<span class="material-symbols-outlined">sync</span> Sincronizar Datos
+                </button>
+</div>
+</section>
+<!-- Financial Overview Bento Grid -->
+<div class="grid grid-cols-12 gap-gutter">
+<!-- Main Monthly Revenue Card (Large) -->
+<div class="col-span-8 bg-surface-white p-8 rounded-xl shadow-[0px_10px_30px_rgba(0,0,0,0.04)] relative overflow-hidden group">
+<div class="flex justify-between items-start relative z-10">
+<div>
+<p class="text-label-sm font-label-sm text-primary uppercase tracking-widest mb-2">Ingresos Mensuales Actuales</p>
+<h3 class="font-display-lg text-display-lg text-on-surface">S/ 42,500.00</h3>
+<p class="text-success flex items-center gap-1 font-bold mt-2">
+<span class="material-symbols-outlined">trending_up</span> +12.4% vs mes anterior
+                        </p>
+</div>
+<div class="text-right">
+<p class="text-label-sm font-label-sm text-on-surface-variant">Meta del Mes</p>
+<p class="font-headline-md text-headline-md text-on-surface-variant opacity-60">S/ 50,000</p>
+</div>
+</div>
+<div class="mt-10 relative z-10">
+<div class="flex justify-between items-end mb-2">
+<span class="text-body-md font-bold text-on-surface">Progreso de Objetivos</span>
+<span class="text-body-md font-bold text-primary">85%</span>
+</div>
+<div class="h-4 w-full bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-primary transition-all duration-1000 ease-out" style="width: 85%"></div>
+</div>
+</div>
+<!-- Abstract Decorative Background -->
+<div class="absolute -right-20 -bottom-20 w-64 h-64 bg-primary/5 rounded-full blur-3xl group-hover:scale-110 transition-transform duration-700"></div>
+</div>
+<!-- Pending Claims Side Card -->
+<div class="col-span-4 bg-primary text-on-primary p-8 rounded-xl shadow-[0px_10px_30px_rgba(0,0,0,0.04)] flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between mb-4">
+<span class="material-symbols-outlined text-4xl">receipt_long</span>
+<span class="bg-primary-container text-on-primary-container px-3 py-1 rounded-full text-label-sm">En Revisión</span>
+</div>
+<h4 class="font-headline-md text-headline-md mb-1">Reclamaciones</h4>
+<p class="text-primary-fixed text-body-md">Seguros y coberturas pendientes de validar</p>
+</div>
+<div class="mt-8">
+<p class="font-display-lg text-display-lg leading-none">S/ 8,240</p>
+<p class="text-label-sm mt-4 opacity-80">14 expedientes abiertos este mes</p>
+</div>
+</div>
+<!-- Overdue Balances -->
+<div class="col-span-4 bg-surface-white p-8 rounded-xl shadow-[0px_10px_30px_rgba(0,0,0,0.04)]">
+<div class="flex items-center gap-4 mb-6">
+<div class="w-12 h-12 bg-error-container text-on-error-container rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined">warning</span>
+</div>
+<div>
+<h4 class="font-headline-md text-headline-md text-on-surface">Saldos Vencidos</h4>
+<p class="text-label-sm text-on-surface-variant">Pagos con más de 30 días</p>
+</div>
+</div>
+<p class="font-display-lg text-display-lg text-error mb-4">S/ 3,120</p>
+<div class="space-y-3">
+<div class="flex justify-between text-body-md border-b border-surface-container pb-2">
+<span class="text-on-surface-variant">Paciente Crítico</span>
+<span class="font-bold">12</span>
+</div>
+<div class="flex justify-between text-body-md border-b border-surface-container pb-2">
+<span class="text-on-surface-variant">Monto Promedio</span>
+<span class="font-bold">S/ 260</span>
+</div>
+</div>
+</div>
+<!-- Pending Payments List -->
+<div class="col-span-8 bg-surface-white p-8 rounded-xl shadow-[0px_10px_30px_rgba(0,0,0,0.04)]">
+<div class="flex justify-between items-center mb-8">
+<h4 class="font-headline-md text-headline-md text-on-surface">Pagos Pendientes</h4>
+<button class="text-primary font-bold text-body-md hover:underline">Ver todos</button>
+</div>
+<div class="space-y-4">
+<!-- Item 1 -->
+<div class="flex items-center justify-between p-4 bg-surface-container-lowest rounded-lg group hover:bg-surface-container-low transition-colors">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center font-bold">ML</div>
+<div>
+<p class="text-body-md font-bold text-on-surface">Maria Lozano</p>
+<p class="text-label-sm text-on-surface-variant">Rehabilitación Post-Operatoria</p>
+</div>
+</div>
+<div class="text-right flex items-center gap-8">
+<div>
+<p class="text-body-md font-bold text-on-surface">S/ 450.00</p>
+<p class="text-label-sm text-error">Vence en 2 días</p>
+</div>
+<button class="bg-surface-container px-4 py-2 rounded-full text-label-sm font-bold text-on-surface hover:bg-primary hover:text-on-primary transition-all flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">mail</span>
+                                Enviar Recordatorio
+                            </button>
+</div>
+</div>
+<!-- Item 2 -->
+<div class="flex items-center justify-between p-4 bg-surface-container-lowest rounded-lg group hover:bg-surface-container-low transition-colors">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-full bg-tertiary-fixed text-on-tertiary-fixed flex items-center justify-center font-bold">JA</div>
+<div>
+<p class="text-body-md font-bold text-on-surface">Jorge Alva</p>
+<p class="text-label-sm text-on-surface-variant">Terapia Física Intensiva</p>
+</div>
+</div>
+<div class="text-right flex items-center gap-8">
+<div>
+<p class="text-body-md font-bold text-on-surface">S/ 1,200.00</p>
+<p class="text-label-sm text-on-surface-variant">Emitido hoy</p>
+</div>
+<button class="bg-surface-container px-4 py-2 rounded-full text-label-sm font-bold text-on-surface hover:bg-primary hover:text-on-primary transition-all flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">mail</span>
+                                Enviar Recordatorio
+                            </button>
+</div>
+</div>
+<!-- Item 3 -->
+<div class="flex items-center justify-between p-4 bg-surface-container-lowest rounded-lg group hover:bg-surface-container-low transition-colors">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-full bg-primary-fixed text-on-primary-fixed flex items-center justify-center font-bold">SC</div>
+<div>
+<p class="text-body-md font-bold text-on-surface">Sofia Cárdenas</p>
+<p class="text-label-sm text-on-surface-variant">Consulta Especializada</p>
+</div>
+</div>
+<div class="text-right flex items-center gap-8">
+<div>
+<p class="text-body-md font-bold text-on-surface">S/ 180.00</p>
+<p class="text-label-sm text-on-surface-variant">Vence mañana</p>
+</div>
+<button class="bg-surface-container px-4 py-2 rounded-full text-label-sm font-bold text-on-surface hover:bg-primary hover:text-on-primary transition-all flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">mail</span>
+                                Enviar Recordatorio
+                            </button>
+</div>
+</div>
+</div>
+</div>
+<!-- Recent Activity Ledger -->
+<div class="col-span-12 bg-surface-white p-8 rounded-xl shadow-[0px_10px_30px_rgba(0,0,0,0.04)] mb-section-gap">
+<div class="flex justify-between items-center mb-8">
+<h4 class="font-headline-md text-headline-md text-on-surface">Actividad Reciente</h4>
+<div class="flex items-center gap-4">
+<select class="bg-surface-container-low border-none rounded-lg text-label-sm px-4">
+<option>Todos los tipos</option>
+<option>Pagos</option>
+<option>Facturas</option>
+<option>Reembolsos</option>
+</select>
+</div>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left">
+<thead>
+<tr class="text-label-sm text-on-surface-variant uppercase tracking-widest border-b border-surface-container-highest">
+<th class="pb-4 font-semibold">Fecha / Hora</th>
+<th class="pb-4 font-semibold">Descripción</th>
+<th class="pb-4 font-semibold">Tipo</th>
+<th class="pb-4 font-semibold text-right">Monto</th>
+<th class="pb-4 font-semibold text-right">Estado</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-surface-container">
+<tr class="group hover:bg-surface-bright transition-colors">
+<td class="py-5">
+<p class="text-body-md font-bold">Hoy, 10:45 AM</p>
+<p class="text-label-sm text-on-surface-variant">ID: #INV-9021</p>
+</td>
+<td class="py-5">
+<p class="text-body-md font-bold">Pago Recibido - Carlos Ruiz</p>
+<p class="text-label-sm text-on-surface-variant">Transferencia Bancaria</p>
+</td>
+<td class="py-5">
+<span class="bg-success/10 text-success px-3 py-1 rounded-full text-label-sm font-bold">Ingreso</span>
+</td>
+<td class="py-5 text-right">
+<p class="text-body-md font-bold">+ S/ 320.00</p>
+</td>
+<td class="py-5 text-right">
+<span class="material-symbols-outlined text-success">check_circle</span>
+</td>
+</tr>
+<tr class="group hover:bg-surface-bright transition-colors">
+<td class="py-5">
+<p class="text-body-md font-bold">Hoy, 09:12 AM</p>
+<p class="text-label-sm text-on-surface-variant">ID: #EXP-4521</p>
+</td>
+<td class="py-5">
+<p class="text-body-md font-bold">Suministros Médicos - BioTech</p>
+<p class="text-label-sm text-on-surface-variant">Gasto Operativo</p>
+</td>
+<td class="py-5">
+<span class="bg-error/10 text-error px-3 py-1 rounded-full text-label-sm font-bold">Gasto</span>
+</td>
+<td class="py-5 text-right">
+<p class="text-body-md font-bold text-error">- S/ 1,450.00</p>
+</td>
+<td class="py-5 text-right">
+<span class="material-symbols-outlined text-on-surface-variant">schedule</span>
+</td>
+</tr>
+<tr class="group hover:bg-surface-bright transition-colors">
+<td class="py-5">
+<p class="text-body-md font-bold">Ayer, 04:30 PM</p>
+<p class="text-label-sm text-on-surface-variant">ID: #INV-9018</p>
+</td>
+<td class="py-5">
+<p class="text-body-md font-bold">Cobertura Pacífico Seguros</p>
+<p class="text-label-sm text-on-surface-variant">Reclamación Procesada</p>
+</td>
+<td class="py-5">
+<span class="bg-success/10 text-success px-3 py-1 rounded-full text-label-sm font-bold">Ingreso</span>
+</td>
+<td class="py-5 text-right">
+<p class="text-body-md font-bold">+ S/ 2,100.00</p>
+</td>
+<td class="py-5 text-right">
+<span class="material-symbols-outlined text-success">check_circle</span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</main>
+<!-- Micro-interaction Scripts -->
+<script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const currentRole = urlParams.get('role') || 'developer';
+
+        function applyRBACRules() {
+            // Hide Finanzas and Ajustes tabs in sidebar as needed
+            if (currentRole === 'medico' || currentRole === 'asistente') {
+                const linkFinanzas = document.getElementById("nav-link-finanzas");
+                if (linkFinanzas) linkFinanzas.style.display = "none";
+            }
+            if (currentRole === 'asistente') {
+                const linkAjustes = document.getElementById("nav-link-ajustes");
+                if (linkAjustes) linkAjustes.style.display = "none";
+            }
+
+            // Since this is the payments module, block entirely for medico and asistente
+            if (currentRole === 'medico' || currentRole === 'asistente') {
+                const mainContent = document.querySelector('main');
+                if (mainContent) {
+                    mainContent.innerHTML = `
+                        <div class="flex flex-col items-center justify-center min-h-[60vh] text-center p-8 bg-surface-white dark:bg-surface-container rounded-2xl shadow-[0px_10px_30px_rgba(0,0,0,0.04)] max-w-2xl mx-auto my-12 border border-error-container/20">
+                            <span class="material-symbols-outlined text-error text-6xl mb-6 animate-pulse">lock</span>
+                            <h3 class="font-headline-md text-headline-md text-on-surface mb-2 font-bold">Acceso Restringido</h3>
+                            <p class="text-on-surface-variant font-body-md mb-6 max-w-md">Este módulo contiene información financiera confidencial. Se requieren permisos de Administrador o Desarrollador para visualizar este contenido.</p>
+                            <a href="calendario_dashboard_desktop.html?role=${currentRole}" class="bg-primary text-on-primary px-6 py-3 rounded-xl font-bold flex items-center gap-2 hover:opacity-90 transition-all">
+                                <span class="material-symbols-outlined">arrow_back</span>
+                                Volver al Panel Principal
+                            </a>
+                        </div>
+                    `;
+                }
+            }
+        }
+
+        // Subtle scroll behavior for the Top Bar
+        window.addEventListener('scroll', () => {
+            const header = document.querySelector('header');
+            if (window.scrollY > 20) {
+                header.classList.add('shadow-md');
+                header.classList.remove('shadow-sm');
+            } else {
+                header.classList.remove('shadow-md');
+                header.classList.add('shadow-sm');
+            }
+        });
+
+        // Simple notification for "Send Reminder" buttons
+        document.querySelectorAll('button').forEach(btn => {
+            if (btn.innerText.includes('Enviar Recordatorio')) {
+                btn.addEventListener('click', function() {
+                    const originalContent = this.innerHTML;
+                    this.innerHTML = '<span class="material-symbols-outlined text-sm">done</span> Enviado';
+                    this.classList.add('bg-success', 'text-white');
+                    this.classList.remove('bg-surface-container');
+                    
+                    setTimeout(() => {
+                        this.innerHTML = originalContent;
+                        this.classList.remove('bg-success', 'text-white');
+                        this.classList.add('bg-surface-container');
+                    }, 2000);
+                });
+            }
+        });
+
+        document.addEventListener("DOMContentLoaded", () => {
+            // Append role parameter to all links inside the page
+            document.querySelectorAll("a").forEach(link => {
+                let href = link.getAttribute("href");
+                if (href && href !== "#" && !href.startsWith("http")) {
+                    const separator = href.includes("?") ? "&" : "?";
+                    link.setAttribute("href", `${href}${separator}role=${currentRole}`);
+                }
+            });
+
+            applyRBACRules();
+        });
+    </script>
+</body></html>

@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Historial Médico - Mateo Rojas</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-background": "#191c1d",
+                    "secondary-container": "#89e4fd",
+                    "outline": "#6d797d",
+                    "text-main": "#1C1C1E",
+                    "on-error-container": "#93000a",
+                    "on-surface-variant": "#3d494c",
+                    "inverse-on-surface": "#eff1f1",
+                    "inverse-primary": "#66d5f1",
+                    "tertiary": "#8a4d00",
+                    "surface": "#f8fafa",
+                    "secondary": "#00687a",
+                    "inverse-surface": "#2e3131",
+                    "surface-variant": "#e1e3e3",
+                    "surface-container-high": "#e6e8e8",
+                    "primary-fixed": "#aeecff",
+                    "secondary-fixed": "#adecff",
+                    "error": "#ba1a1a",
+                    "warning": "#FF9500",
+                    "outline-variant": "#bdc8cd",
+                    "surface-container-low": "#f2f4f4",
+                    "primary-fixed-dim": "#66d5f1",
+                    "error-container": "#ffdad6",
+                    "primary": "#006578",
+                    "background": "#f8fafa",
+                    "surface-container": "#eceeee",
+                    "surface-container-highest": "#e1e3e3",
+                    "on-primary-container": "#f9fdff",
+                    "surface-bright": "#f8fafa",
+                    "text-muted": "#636366",
+                    "success": "#34C759",
+                    "on-primary-fixed": "#001f26",
+                    "on-error": "#ffffff",
+                    "on-secondary-container": "#006779",
+                    "tertiary-fixed-dim": "#ffb877",
+                    "surface-dim": "#d8dada",
+                    "tertiary-fixed": "#ffdcc0",
+                    "tertiary-container": "#a96418",
+                    "on-secondary-fixed-variant": "#004e5c",
+                    "on-tertiary-fixed": "#2e1600",
+                    "primary-container": "#008097",
+                    "on-surface": "#191c1d",
+                    "surface-tint": "#00687b",
+                    "on-tertiary-container": "#fffbff",
+                    "secondary-fixed-dim": "#78d3eb",
+                    "on-primary-fixed-variant": "#004e5d",
+                    "surface-white": "#FFFFFF",
+                    "on-secondary": "#ffffff",
+                    "surface-container-lowest": "#ffffff",
+                    "on-tertiary-fixed-variant": "#6b3b00",
+                    "on-secondary-fixed": "#001f26",
+                    "on-tertiary": "#ffffff",
+                    "on-primary": "#ffffff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "margin-desktop": "80px",
+                    "margin-mobile": "20px",
+                    "base": "8px",
+                    "gutter": "24px",
+                    "section-gap": "120px"
+            },
+            "fontFamily": {
+                    "body-lg": ["Hanken Grotesk"],
+                    "headline-md": ["Hanken Grotesk"],
+                    "display-lg": ["Hanken Grotesk"],
+                    "label-sm": ["Hanken Grotesk"],
+                    "body-md": ["Hanken Grotesk"],
+                    "display-lg-mobile": ["Hanken Grotesk"]
+            },
+            "fontSize": {
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "label-sm": ["13px", {"lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "600"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "display-lg-mobile": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "700"}]
+            }
+          }
+        }
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="bg-background text-on-background antialiased min-h-screen flex flex-col md:flex-row">
+<!-- Navigation Drawer (Desktop) -->
+<nav class="hidden md:flex flex-col bg-surface-white dark:bg-surface-container-lowest text-primary dark:text-primary-fixed font-body-md text-body-md h-full w-72 shadow-[0px_10px_30px_rgba(0,0,0,0.04)] fixed left-0 top-0 z-40 p-6">
+<div class="mb-8 flex flex-col left_align">
+<div class="w-16 h-16 rounded-full overflow-hidden mb-4 bg-surface-container">
+<img alt="Foto de perfil del administrador clínico" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBeAs7MGI6u9f4Ehi1iEIGdfelhmuROyWPNeC4r_Xlwb48a0WGASRWBflipAbjCwa_YV5WcfZch3u610FM2YkGfOT_X5AkjeEcGFEFxchkrD8O_foGJIMPm3DdiUdMJLU5ZnaMkYRvPAj3qo_paOvCoPk4MzZ1v7lc_lnb0W5vsuge-mg7W8hILLvwAybWCCEtkxK78uAMJd0bTS2iXBHg-zMyVgJYP4VIp8_3E3UVvs3mFhuqRlFN7-f68aeWTqiaE1pp66V6K7fA"/>
+</div>
+<h2 class="font-headline-md text-headline-md text-primary">Dr. Eslava</h2>
+<p class="text-on-surface-variant dark:text-outline text-sm">Director Clínico</p>
+<p class="text-text-muted text-xs mt-1">Acceso de Administrador</p>
+</div>
+<ul class="flex flex-col space-y-2 flex-grow">
+<li>
+<a class="flex items-center space-x-3 p-3 text-on-surface-variant dark:text-outline hover:bg-surface-container-low transition-all active:scale-[0.98] rounded-xl" href="#">
+<span class="material-symbols-outlined" data-icon="calendar_today">calendar_today</span>
+<span>Agenda</span>
+</a>
+</li>
+<li>
+<a class="flex items-center space-x-3 p-3 bg-secondary-container dark:bg-secondary-fixed-variant text-on-secondary-container dark:text-secondary-fixed rounded-xl transition-all active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined" data-icon="groups">groups</span>
+<span>Pacientes</span>
+</a>
+</li>
+<li>
+<a class="flex items-center space-x-3 p-3 text-on-surface-variant dark:text-outline hover:bg-surface-container-low transition-all active:scale-[0.98] rounded-xl" href="#">
+<span class="material-symbols-outlined" data-icon="medical_services">medical_services</span>
+<span>Servicios</span>
+</a>
+</li>
+<li>
+<a class="flex items-center space-x-3 p-3 text-on-surface-variant dark:text-outline hover:bg-surface-container-low transition-all active:scale-[0.98] rounded-xl" href="#" id="nav-link-finanzas-drawer">
+<span class="material-symbols-outlined" data-icon="payments">payments</span>
+<span>Pagos</span>
+</a>
+</li>
+<li>
+<a class="flex items-center space-x-3 p-3 text-on-surface-variant dark:text-outline hover:bg-surface-container-low transition-all active:scale-[0.98] rounded-xl mt-auto" href="#" id="nav-link-ajustes-drawer">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span>Configuración</span>
+</a>
+</li>
+</ul>
+</nav>
+<!-- Main Content Area -->
+<div class="flex-1 flex flex-col md:ml-72 pb-20 md:pb-0">
+<!-- TopAppBar (Mobile & Desktop) -->
+<header class="flex justify-between items-center px-margin-mobile md:px-margin-desktop py-4 w-full z-50 bg-surface dark:bg-surface-dim text-primary dark:text-primary-fixed font-headline-md text-headline-md w-full top-0 shadow-[0px_10px_30px_rgba(0,0,0,0.04)] active:scale-95 transition-transform duration-200">
+<div class="flex items-center space-x-4">
+<button class="md:hidden text-primary dark:text-primary-fixed hover:bg-surface-container-low dark:hover:bg-surface-container-high transition-colors p-2 rounded-full">
+<span class="material-symbols-outlined" data-icon="menu">menu</span>
+</button>
+<h1 class="font-headline-md text-headline-md font-bold text-primary dark:text-primary-fixed">Centro Eslava</h1>
+</div>
+<div class="flex items-center">
+<div class="w-10 h-10 rounded-full overflow-hidden bg-surface-container-low">
+<img alt="Foto de perfil del doctor" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCxI00qwtNawfTDU0dIaizCFHMyW0yuKUOc6qjcLSCjq1c552nxfyBDeviuv1qTcVKFlWLOm3EQaMBqov9r7pxxF3zhI_haxaWM2ROO9V9AC2wUCyphkc-98fhdYy3t8X2RGpGWfq6A1bK9v8zJ7Jn7bUAnQo1uhJ1P6ebCKU92HqdoThFXHu7xLHSMXhbl2wmm2RpnrrL3EJaKouHv3EI0uQy0jwNVHHPuO-eHf0S3afGFXFl21ZnEpFLNcQNoEWHbFbB9pVy-QqQ"/>
+</div>
+</div>
+</header>
+<!-- Main Canvas -->
+<main class="flex-1 px-margin-mobile md:px-margin-desktop py-8 max-w-[1280px] w-full mx-auto">
+<!-- Header Section -->
+<div class="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-4">
+<div>
+<div class="flex items-center space-x-3 mb-2">
+<h1 class="font-display-lg-mobile md:font-display-lg text-display-lg-mobile md:text-display-lg text-on-background">Mateo Rojas</h1>
+<span class="bg-success/10 text-success px-3 py-1 rounded-full text-sm font-semibold flex items-center">
+<span class="w-2 h-2 bg-success rounded-full mr-2"></span> Activo
+                        </span>
+</div>
+<p class="text-outline font-body-lg text-body-lg">ID: CR-8942-001</p>
+</div>
+<div class="flex space-x-3">
+<button class="bg-surface-white hover:bg-surface-container-low text-primary border border-surface-variant font-label-sm text-label-sm px-6 py-3 rounded-full shadow-[0px_4px_10px_rgba(0,0,0,0.02)] transition-colors flex items-center space-x-2">
+<span class="material-symbols-outlined" data-icon="note_add" style="font-variation-settings: 'FILL' 1;">note_add</span>
+<span>Añadir Nota</span>
+</button>
+<button class="bg-primary hover:bg-surface-tint text-on-primary font-label-sm text-label-sm px-6 py-3 rounded-full shadow-[0px_4px_10px_rgba(0,0,0,0.05)] transition-colors flex items-center space-x-2">
+<span class="material-symbols-outlined" data-icon="upload_file">upload_file</span>
+<span>Nuevo Adjunto</span>
+</button>
+</div>
+</div>
+<!-- Bento Grid Layout -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-gutter">
+<!-- General Info & Vitals (Col 4) -->
+<div class="md:col-span-4 flex flex-col gap-gutter">
+<!-- Patient Snapshot -->
+<div class="bg-surface-white rounded-xl p-6 shadow-[0px_10px_30px_rgba(0,0,0,0.04)]">
+<h3 class="font-headline-md text-headline-md text-on-background mb-6 flex items-center text-lg">
+<span class="material-symbols-outlined mr-2 text-primary" data-icon="vital_signs">vital_signs</span>
+                            Info General
+                        </h3>
+<div class="grid grid-cols-2 gap-4">
+<div class="bg-surface p-4 rounded-lg">
+<p class="text-text-muted text-sm mb-1">Edad</p>
+<p class="font-headline-md text-headline-md text-primary-container text-xl">34 años</p>
+</div>
+<div class="bg-surface p-4 rounded-lg">
+<p class="text-text-muted text-sm mb-1">Peso</p>
+<p class="font-headline-md text-headline-md text-primary-container text-xl">78 kg</p>
+</div>
+<div class="bg-surface p-4 rounded-lg">
+<p class="text-text-muted text-sm mb-1">Tipo de Sangre</p>
+<p class="font-headline-md text-headline-md text-primary-container text-xl">O+</p>
+</div>
+<div class="bg-surface p-4 rounded-lg">
+<p class="text-text-muted text-sm mb-1">Altura</p>
+<p class="font-headline-md text-headline-md text-primary-container text-xl">182 cm</p>
+</div>
+</div>
+</div>
+<!-- Clinical History -->
+<div class="bg-surface-white rounded-xl p-6 shadow-[0px_10px_30px_rgba(0,0,0,0.04)] flex-grow">
+<h3 class="font-headline-md text-headline-md text-on-background mb-4 flex items-center text-lg">
+<span class="material-symbols-outlined mr-2 text-primary" data-icon="history">history</span>
+                            Historial Clínico
+                        </h3>
+<div class="space-y-4 font-body-md text-body-md text-on-surface-variant">
+<div>
+<h4 class="text-sm font-semibold text-text-muted mb-1 uppercase tracking-wider">Condiciones Previas</h4>
+<ul class="list-disc pl-5 space-y-1">
+<li>Hipertensión leve (controlada)</li>
+<li>Dislocación hombro derecho (2018)</li>
+</ul>
+</div>
+<div>
+<h4 class="text-sm font-semibold text-text-muted mb-1 uppercase tracking-wider">Alergias</h4>
+<div class="flex flex-wrap gap-2 mt-2">
+<span class="bg-error-container text-on-error-container px-3 py-1 rounded-md text-sm">Penicilina</span>
+<span class="bg-surface-container-high text-on-surface-variant px-3 py-1 rounded-md text-sm">Ácaros</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Main Treatment Area (Col 8) -->
+<div class="md:col-span-8 flex flex-col gap-gutter">
+<!-- Current Treatment Plan -->
+<div class="bg-surface-white rounded-xl p-6 shadow-[0px_10px_30px_rgba(0,0,0,0.04)] border-l-4 border-primary">
+<div class="flex justify-between items-start mb-4">
+<div>
+<h3 class="font-headline-md text-headline-md text-on-background text-xl mb-1">Protocolo reconstrucción LCA postoperatorio</h3>
+<p class="text-outline font-body-md text-body-md">Plan de Tratamiento Principal</p>
+</div>
+<span class="bg-primary/10 text-primary px-3 py-1 rounded-full text-sm font-semibold">Fase 2</span>
+</div>
+<!-- Progress Bar -->
+<div class="mb-6">
+<div class="flex justify-between text-sm mb-2 font-body-md text-body-md">
+<span class="text-text-muted">Progreso Sesiones</span>
+<span class="font-bold text-primary">Sesión 4 de 12</span>
+</div>
+<div class="w-full bg-surface-container-high rounded-full h-2.5">
+<div class="bg-primary h-2.5 rounded-full" style="width: 33%"></div>
+</div>
+</div>
+<!-- Objectives -->
+<div>
+<h4 class="text-sm font-semibold text-text-muted mb-3 uppercase tracking-wider">Objetivos Actuales</h4>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+<div class="flex items-start space-x-2 bg-surface p-3 rounded-lg">
+<span class="material-symbols-outlined text-success text-lg mt-0.5" data-icon="check_circle">check_circle</span>
+<span class="font-body-md text-body-md text-on-surface-variant">Reducir inflamación e hinchazón</span>
+</div>
+<div class="flex items-start space-x-2 bg-surface p-3 rounded-lg">
+<span class="material-symbols-outlined text-outline text-lg mt-0.5" data-icon="radio_button_unchecked">radio_button_unchecked</span>
+<span class="font-body-md text-body-md text-on-surface-variant">Lograr flexión de rodilla 90°</span>
+</div>
+<div class="flex items-start space-x-2 bg-surface p-3 rounded-lg">
+<span class="material-symbols-outlined text-outline text-lg mt-0.5" data-icon="radio_button_unchecked">radio_button_unchecked</span>
+<span class="font-body-md text-body-md text-on-surface-variant">Extensión activa completa</span>
+</div>
+<div class="flex items-start space-x-2 bg-surface p-3 rounded-lg">
+<span class="material-symbols-outlined text-outline text-lg mt-0.5" data-icon="radio_button_unchecked">radio_button_unchecked</span>
+<span class="font-body-md text-body-md text-on-surface-variant">Normalizar mecánica marcha</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Treatment Evolution & Files Row -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-gutter flex-grow">
+<!-- Evolution Timeline -->
+<div class="bg-surface-white rounded-xl p-6 shadow-[0px_10px_30px_rgba(0,0,0,0.04)] h-[400px] flex flex-col">
+<div class="flex justify-between items-center mb-6">
+<h3 class="font-headline-md text-headline-md text-on-background text-lg flex items-center">
+<span class="material-symbols-outlined mr-2 text-primary" data-icon="trending_up">trending_up</span>
+                                    Notas Evolución
+                                </h3>
+</div>
+<div class="flex-grow overflow-y-auto pr-2 space-y-6 relative before:absolute before:inset-0 before:ml-2 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-transparent before:via-surface-container-high before:to-transparent">
+<!-- Note Item -->
+<div class="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active">
+<div class="flex items-center justify-center w-5 h-5 rounded-full border-2 border-surface-white bg-primary shadow shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 z-10 absolute left-0 md:left-1/2 -translate-x-1/2"></div>
+<div class="w-[calc(100%-2.5rem)] md:w-[calc(50%-1.5rem)] ml-10 md:ml-0 p-4 rounded-lg bg-surface hover:bg-surface-container-low transition-colors">
+<div class="flex items-center justify-between mb-1">
+<span class="font-label-sm text-label-sm text-primary">24 Oct, 2023</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant text-sm">Paciente reporta reducción de dolor (3/10). Inflamación ha disminuido significativamente. Se inician ejercicios suaves con banda elástica.</p>
+<p class="text-xs text-text-muted mt-2">- FT. Sarah Jenkins</p>
+</div>
+</div>
+<!-- Note Item -->
+<div class="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active">
+<div class="flex items-center justify-center w-5 h-5 rounded-full border-2 border-surface-white bg-surface-variant shadow shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 z-10 absolute left-0 md:left-1/2 -translate-x-1/2"></div>
+<div class="w-[calc(100%-2.5rem)] md:w-[calc(50%-1.5rem)] ml-10 md:ml-0 p-4 rounded-lg bg-surface hover:bg-surface-container-low transition-colors">
+<div class="flex items-center justify-between mb-1">
+<span class="font-label-sm text-label-sm text-text-muted">17 Oct, 2023</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant text-sm">Sesión 3. Toleró bien terapia manual. Flexión alcanzó 75°. Paciente con ligera dificultad en elevaciones piernas estiradas.</p>
+<p class="text-xs text-text-muted mt-2">- FT. Sarah Jenkins</p>
+</div>
+</div>
+<!-- Note Item -->
+<div class="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active">
+<div class="flex items-center justify-center w-5 h-5 rounded-full border-2 border-surface-white bg-surface-variant shadow shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 z-10 absolute left-0 md:left-1/2 -translate-x-1/2"></div>
+<div class="w-[calc(100%-2.5rem)] md:w-[calc(50%-1.5rem)] ml-10 md:ml-0 p-4 rounded-lg bg-surface hover:bg-surface-container-low transition-colors">
+<div class="flex items-center justify-between mb-1">
+<span class="font-label-sm text-label-sm text-text-muted">10 Oct, 2023</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant text-sm">Evaluación inicial. Alta protección. Enfoque en movilidad básica y técnicas manejo de dolor.</p>
+<p class="text-xs text-text-muted mt-2">- Dr. Eslava</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Medical Files -->
+<div class="bg-surface-white rounded-xl p-6 shadow-[0px_10px_30px_rgba(0,0,0,0.04)] h-[400px] flex flex-col">
+<div class="flex justify-between items-center mb-6">
+<h3 class="font-headline-md text-headline-md text-on-background text-lg flex items-center">
+<span class="material-symbols-outlined mr-2 text-primary" data-icon="folder_open">folder_open</span>
+                                    Archivos Médicos
+                                </h3>
+<button class="text-primary hover:text-surface-tint text-sm font-semibold">Ver Todos</button>
+</div>
+<div class="space-y-3 overflow-y-auto flex-grow pr-2">
+<!-- File Item -->
+<div class="flex items-center justify-between p-3 rounded-lg border border-surface-variant hover:bg-surface transition-colors cursor-pointer group">
+<div class="flex items-center space-x-3">
+<div class="bg-error-container text-on-error-container p-2 rounded-md flex items-center justify-center">
+<span class="material-symbols-outlined" data-icon="picture_as_pdf">picture_as_pdf</span>
+</div>
+<div>
+<p class="font-body-md text-body-md text-on-surface font-medium group-hover:text-primary transition-colors">Reporte_Cirugia_LCA.pdf</p>
+<p class="text-xs text-text-muted">28 Sep, 2023 • 1.2 MB</p>
+</div>
+</div>
+<button class="text-outline hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="download">download</span>
+</button>
+</div>
+<!-- File Item -->
+<div class="flex items-center justify-between p-3 rounded-lg border border-surface-variant hover:bg-surface transition-colors cursor-pointer group">
+<div class="flex items-center space-x-3">
+<div class="bg-surface-container-highest text-on-surface p-2 rounded-md flex items-center justify-center">
+<span class="material-symbols-outlined" data-icon="image">image</span>
+</div>
+<div>
+<p class="font-body-md text-body-md text-on-surface font-medium group-hover:text-primary transition-colors">RM_Rodilla_Derecha_PreOp.jpg</p>
+<p class="text-xs text-text-muted">15 Sep, 2023 • 4.5 MB</p>
+</div>
+</div>
+<button class="text-outline hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="download">download</span>
+</button>
+</div>
+<!-- File Item -->
+<div class="flex items-center justify-between p-3 rounded-lg border border-surface-variant hover:bg-surface transition-colors cursor-pointer group">
+<div class="flex items-center space-x-3">
+<div class="bg-surface-container-highest text-on-surface p-2 rounded-md flex items-center justify-center">
+<span class="material-symbols-outlined" data-icon="image">image</span>
+</div>
+<div>
+<p class="font-body-md text-body-md text-on-surface font-medium group-hover:text-primary transition-colors">Radiografia_PostOp_Alta.png</p>
+<p class="text-xs text-text-muted">05 Oct, 2023 • 2.8 MB</p>
+</div>
+</div>
+<button class="text-outline hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="download">download</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+<!-- BottomNavBar (Mobile) -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 py-3 md:hidden bg-surface-white/80 dark:bg-surface-container/80 backdrop-blur-md text-primary dark:text-primary-fixed font-label-sm text-label-sm fixed bottom-0 w-full rounded-t-xl shadow-[0px_-10px_30px_rgba(0,0,0,0.04)] hover:bg-surface-container-high/50 active:scale-90 transition-all duration-150">
+<a class="flex flex-col items-center justify-center text-outline dark:text-outline-variant w-1/4" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="event">event</span>
+<span>Agenda</span>
+</a>
+<a class="flex flex-col items-center justify-center text-primary dark:text-primary-fixed font-bold w-1/4" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="person_search" style="font-variation-settings: 'FILL' 1;">person_search</span>
+<span>Pacientes</span>
+</a>
+<a class="flex flex-col items-center justify-center text-outline dark:text-outline-variant w-1/4" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="healing">healing</span>
+<span>Tratamientos</span>
+</a>
+<a class="flex flex-col items-center justify-center text-outline dark:text-outline-variant w-1/4" href="#" id="nav-link-finanzas-bottom">
+<span class="material-symbols-outlined mb-1" data-icon="account_balance_wallet">account_balance_wallet</span>
+<span>Finanzas</span>
+</a>
+</nav>
+    <script>
+        // --- START RBAC LOGIC ---
+        function applyRBACRules() {
+            const urlParams = new URLSearchParams(window.location.search);
+            let role = urlParams.get('role');
+            if (!role) role = 'developer';
+
+            const finanzasDrawer = document.getElementById('nav-link-finanzas-drawer');
+            const ajustesDrawer = document.getElementById('nav-link-ajustes-drawer');
+            const finanzasBottom = document.getElementById('nav-link-finanzas-bottom');
+
+            if (role === 'medico') {
+                if (finanzasDrawer) finanzasDrawer.style.display = 'none';
+                if (finanzasBottom) finanzasBottom.style.display = 'none';
+            } else if (role === 'asistente') {
+                if (finanzasDrawer) finanzasDrawer.style.display = 'none';
+                if (finanzasBottom) finanzasBottom.style.display = 'none';
+                if (ajustesDrawer) ajustesDrawer.style.display = 'none';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            applyRBACRules();
+
+            // Append role parameter to all relative links
+            const urlParams = new URLSearchParams(window.location.search);
+            const role = urlParams.get('role');
+            if (role) {
+                document.querySelectorAll('a').forEach(link => {
+                    const href = link.getAttribute('href');
+                    if (href && !href.startsWith('http') && !href.startsWith('#')) {
+                        const url = new URL(href, window.location.origin);
+                        url.searchParams.set('role', role);
+                        link.setAttribute('href', url.pathname + url.search + url.hash);
+                    }
+                });
+            }
+        });
+        // --- END RBAC LOGIC ---
+    </script>
+</body></html>

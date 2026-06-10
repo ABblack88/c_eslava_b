@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Servicios y Gestión | Centro Eslava</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-primary": "#ffffff",
+                      "primary-fixed": "#aeecff",
+                      "on-secondary-fixed": "#001f26",
+                      "surface": "#f8fafa",
+                      "tertiary-container": "#a96418",
+                      "surface-white": "#FFFFFF",
+                      "error": "#ba1a1a",
+                      "on-primary-fixed-variant": "#004e5d",
+                      "warning": "#FF9500",
+                      "secondary-container": "#89e4fd",
+                      "secondary-fixed-dim": "#78d3eb",
+                      "surface-tint": "#00687b",
+                      "on-tertiary-fixed": "#2e1600",
+                      "secondary-fixed": "#adecff",
+                      "success": "#34C759",
+                      "surface-container-lowest": "#ffffff",
+                      "text-main": "#1C1C1E",
+                      "on-secondary": "#ffffff",
+                      "outline-variant": "#bdc8cd",
+                      "on-secondary-fixed-variant": "#004e5c",
+                      "surface-container-high": "#e6e8e8",
+                      "surface-container-low": "#f2f4f4",
+                      "outline": "#6d797d",
+                      "on-primary-container": "#f9fdff",
+                      "primary": "#006578",
+                      "on-surface-variant": "#3d494c",
+                      "secondary": "#00687a",
+                      "background": "#f8fafa",
+                      "on-tertiary-container": "#fffbff",
+                      "on-error": "#ffffff",
+                      "tertiary-fixed": "#ffdcc0",
+                      "on-secondary-container": "#006779",
+                      "on-primary-fixed": "#001f26",
+                      "error-container": "#ffdad6",
+                      "inverse-primary": "#66d5f1",
+                      "on-tertiary": "#ffffff",
+                      "on-error-container": "#93000a",
+                      "primary-container": "#008097",
+                      "text-muted": "#636366",
+                      "surface-bright": "#f8fafa",
+                      "primary-fixed-dim": "#66d5f1",
+                      "surface-dim": "#d8dada",
+                      "surface-container": "#eceeee",
+                      "surface-variant": "#e1e3e3",
+                      "surface-container-highest": "#e1e3e3",
+                      "tertiary-fixed-dim": "#ffb877",
+                      "inverse-surface": "#2e3131",
+                      "on-background": "#191c1d",
+                      "inverse-on-surface": "#eff1f1",
+                      "on-tertiary-fixed-variant": "#6b3b00",
+                      "on-surface": "#191c1d",
+                      "tertiary": "#8a4d00"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "base": "8px",
+                      "margin-desktop": "80px",
+                      "margin-mobile": "20px",
+                      "gutter": "24px",
+                      "section-gap": "120px"
+              },
+              "fontFamily": {
+                      "body-md": ["Hanken Grotesk"],
+                      "display-lg": ["Hanken Grotesk"],
+                      "display-lg-mobile": ["Hanken Grotesk"],
+                      "label-sm": ["Hanken Grotesk"],
+                      "body-lg": ["Hanken Grotesk"],
+                      "headline-md": ["Hanken Grotesk"]
+              },
+              "fontSize": {
+                      "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                      "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                      "display-lg-mobile": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                      "label-sm": ["13px", {"lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "600"}],
+                      "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                      "headline-md": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}]
+              }
+            }
+          }
+        }
+    </script>
+<style>
+        body {
+            background-color: #f8fafa; /* bg-background */
+        }
+        /* Hide scrollbar for clean look in sidebars */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background-color: #e1e3e3; /* surface-variant */
+            border-radius: 10px;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="text-on-surface font-body-md bg-background antialiased md:pl-72 pt-[72px] md:pt-0 pb-[72px] md:pb-0">
+<!-- TopAppBar (Mobile Only) -->
+<header class="flex justify-between items-center px-margin-mobile md:px-margin-desktop py-4 w-full z-50 bg-surface dark:bg-surface-dim shadow-[0px_10px_30px_rgba(0,0,0,0.04)] fixed top-0 md:hidden">
+<button class="text-primary dark:text-primary-fixed active:scale-95 transition-transform duration-200">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">menu</span>
+</button>
+<div class="font-headline-md text-headline-md font-bold text-primary dark:text-primary-fixed">
+            Centro Eslava
+        </div>
+<button class="active:scale-95 transition-transform duration-200 rounded-full overflow-hidden w-8 h-8 bg-surface-container-high flex items-center justify-center">
+<span class="material-symbols-outlined text-on-surface-variant">person</span>
+</button>
+</header>
+<!-- NavigationDrawer (Desktop Only) -->
+<nav class="hidden md:flex fixed left-0 top-0 h-full w-72 z-40 flex-col p-6 bg-surface-white dark:bg-surface-container-lowest shadow-[0px_10px_30px_rgba(0,0,0,0.04)]">
+<!-- Header: Profile -->
+<div class="flex items-center gap-4 mb-8 pb-6 border-b border-surface-container-highest">
+<div class="w-12 h-12 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center overflow-hidden shrink-0">
+<span class="material-symbols-outlined">person</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-primary font-bold">Dr. Eslava</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant font-normal">Director Clínico</span>
+<span class="text-[10px] text-outline mt-0.5 uppercase tracking-wider font-semibold">Acceso Admin</span>
+</div>
+</div>
+<ul class="flex flex-col gap-2 flex-grow">
+<li>
+<a class="flex items-center gap-4 px-4 py-3 rounded-xl text-on-surface-variant dark:text-outline hover:bg-surface-container-low transition-all active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">calendar_today</span>
+<span class="font-label-sm text-label-sm">Agenda</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-4 px-4 py-3 rounded-xl text-on-surface-variant dark:text-outline hover:bg-surface-container-low transition-all active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">groups</span>
+<span class="font-label-sm text-label-sm">Pacientes</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-4 px-4 py-3 rounded-xl bg-secondary-container dark:bg-secondary-fixed-variant text-on-secondary-container dark:text-secondary-fixed transition-all active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">medical_services</span>
+<span class="font-label-sm text-label-sm">Servicios</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-4 px-4 py-3 rounded-xl text-on-surface-variant dark:text-outline hover:bg-surface-container-low transition-all active:scale-[0.98]" href="#" id="nav-link-finanzas-drawer">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">payments</span>
+<span class="font-label-sm text-label-sm">Pagos</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-4 px-4 py-3 rounded-xl text-on-surface-variant dark:text-outline hover:bg-surface-container-low transition-all active:scale-[0.98]" href="#" id="nav-link-ajustes-drawer">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">settings</span>
+<span class="font-label-sm text-label-sm">Ajustes</span>
+</a>
+</li>
+</ul>
+<!-- Brand Footer -->
+<div class="mt-auto pt-6 font-headline-md text-headline-md text-primary font-bold opacity-50 flex items-center gap-2">
+<span class="material-symbols-outlined">health_and_safety</span>
+            Centro Eslava
+        </div>
+</nav>
+<!-- Main Content Area -->
+<main class="w-full max-w-[1280px] mx-auto px-margin-mobile md:px-margin-desktop py-8 md:py-12">
+<!-- Page Header -->
+<div class="mb-12 flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
+<div>
+<h1 class="font-display-lg-mobile md:font-display-lg text-display-lg-mobile md:text-display-lg text-on-background mb-2">Servicios y Gestión</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl">Configure las ofertas de la clínica, gestione los precios y ajuste la configuración operativa para garantizar una atención óptima al paciente.</p>
+</div>
+<button class="bg-primary hover:bg-primary-container text-on-primary font-label-sm text-label-sm px-6 py-3 rounded-full flex items-center gap-2 transition-colors active:scale-95 shadow-[0px_10px_30px_rgba(0,0,0,0.04)] whitespace-nowrap">
+<span class="material-symbols-outlined text-[20px]">add</span>
+                Nuevo Servicio
+            </button>
+</div>
+<!-- Bento Grid Layout -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-gutter">
+<!-- Clinical Services Section (Takes up 8 columns on desktop) -->
+<section class="md:col-span-8 flex flex-col gap-6">
+<!-- Section Title -->
+<div class="flex items-center justify-between border-b border-surface-variant pb-4">
+<h2 class="font-headline-md text-headline-md text-on-background flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">medical_services</span>
+                        Ofertas Clínicas
+                    </h2>
+<span class="bg-surface-container-high text-on-surface-variant font-label-sm text-label-sm px-3 py-1 rounded-full">12 Activos</span>
+</div>
+<!-- Services Grid -->
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<!-- Service Card 1 -->
+<div class="bg-surface-white rounded-xl p-6 shadow-[0px_10px_30px_rgba(0,0,0,0.04)] border border-transparent hover:border-outline-variant transition-colors group cursor-pointer">
+<div class="flex justify-between items-start mb-4">
+<div class="w-12 h-12 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">stethoscope</span>
+</div>
+<span class="bg-success/10 text-success font-label-sm text-label-sm px-2 py-1 rounded flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">check_circle</span> Activo
+                            </span>
+</div>
+<h3 class="font-body-lg text-body-lg font-bold text-on-surface mb-1">Evaluación Física</h3>
+<p class="font-body-md text-body-md text-on-surface-variant text-sm mb-4 line-clamp-2">Evaluación inicial completa para determinar las vías de tratamiento e identificar problemas musculoesqueléticos.</p>
+<div class="flex items-center justify-between mt-auto">
+<span class="font-label-sm text-label-sm text-on-surface font-semibold">45 min</span>
+<span class="font-label-sm text-label-sm text-primary font-bold">S/ 60</span>
+</div>
+</div>
+<!-- Service Card 2 -->
+<div class="bg-surface-white rounded-xl p-6 shadow-[0px_10px_30px_rgba(0,0,0,0.04)] border border-transparent hover:border-outline-variant transition-colors group cursor-pointer">
+<div class="flex justify-between items-start mb-4">
+<div class="w-12 h-12 rounded-full bg-tertiary-fixed text-on-tertiary-fixed flex items-center justify-center">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">front_hand</span>
+</div>
+<span class="bg-success/10 text-success font-label-sm text-label-sm px-2 py-1 rounded flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">check_circle</span> Activo
+                            </span>
+</div>
+<h3 class="font-body-lg text-body-lg font-bold text-on-surface mb-1">Descarga Muscular</h3>
+<p class="font-body-md text-body-md text-on-surface-variant text-sm mb-4 line-clamp-2">Masaje de tejido profundo y liberación miofascial para aliviar la tensión y mejorar los tiempos de recuperación.</p>
+<div class="flex items-center justify-between mt-auto">
+<span class="font-label-sm text-label-sm text-on-surface font-semibold">60 min</span>
+<span class="font-label-sm text-label-sm text-primary font-bold">S/ 55</span>
+</div>
+</div>
+<!-- Service Card 3 -->
+<div class="bg-surface-white rounded-xl p-6 shadow-[0px_10px_30px_rgba(0,0,0,0.04)] border border-transparent hover:border-outline-variant transition-colors group cursor-pointer">
+<div class="flex justify-between items-start mb-4">
+<div class="w-12 h-12 rounded-full bg-error-container text-on-error-container flex items-center justify-center">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">vaccines</span>
+</div>
+<span class="bg-success/10 text-success font-label-sm text-label-sm px-2 py-1 rounded flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">check_circle</span> Activo
+                            </span>
+</div>
+<h3 class="font-body-lg text-body-lg font-bold text-on-surface mb-1">Punción Seca</h3>
+<p class="font-body-md text-body-md text-on-surface-variant text-sm mb-4 line-clamp-2">Técnica de punción seca dirigida a los puntos gatillo para un alivio inmediato del dolor y relajación muscular.</p>
+<div class="flex items-center justify-between mt-auto">
+<span class="font-label-sm text-label-sm text-on-surface font-semibold">30 min</span>
+<span class="font-label-sm text-label-sm text-primary font-bold">S/ 45</span>
+</div>
+</div>
+<!-- Service Card 4 -->
+<div class="bg-surface-white rounded-xl p-6 shadow-[0px_10px_30px_rgba(0,0,0,0.04)] border border-transparent hover:border-outline-variant transition-colors group cursor-pointer">
+<div class="flex justify-between items-start mb-4">
+<div class="w-12 h-12 rounded-full bg-primary-fixed text-on-primary-fixed flex items-center justify-center">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">healing</span>
+</div>
+<span class="bg-success/10 text-success font-label-sm text-label-sm px-2 py-1 rounded flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">check_circle</span> Activo
+                            </span>
+</div>
+<h3 class="font-body-lg text-body-lg font-bold text-on-surface mb-1">Fisioterapia General</h3>
+<p class="font-body-md text-body-md text-on-surface-variant text-sm mb-4 line-clamp-2">Sesiones de fisioterapia estándar centradas en la rehabilitación, ejercicios de movilidad y manejo del dolor.</p>
+<div class="flex items-center justify-between mt-auto">
+<span class="font-label-sm text-label-sm text-on-surface font-semibold">50 min</span>
+<span class="font-label-sm text-label-sm text-primary font-bold">S/ 50</span>
+</div>
+</div>
+</div>
+<button class="w-full py-4 text-center text-primary font-label-sm text-label-sm hover:bg-surface-container-low rounded-xl transition-colors border border-dashed border-outline-variant mt-2">
+                    Ver Todos los Servicios
+                </button>
+</section>
+<!-- Management & Settings Side Panel (Takes up 4 columns on desktop) -->
+<aside class="md:col-span-4 flex flex-col gap-6">
+<!-- Ajustes (Settings) Card -->
+<div class="bg-surface-white rounded-xl p-6 shadow-[0px_10px_30px_rgba(0,0,0,0.04)] flex flex-col gap-6">
+<div class="flex items-center gap-3 border-b border-surface-variant pb-4">
+<span class="material-symbols-outlined text-secondary">tune</span>
+<h2 class="font-headline-md text-headline-md text-on-background">Ajustes</h2>
+</div>
+<!-- Clinic Profile Snapshot -->
+<div class="flex items-center gap-4">
+<div class="w-16 h-16 rounded-lg bg-surface-container-high overflow-hidden shrink-0">
+<img alt="Fachada de la clínica" class="w-full h-full object-cover" data-alt="A modern, high-end physical therapy clinic interior. The space is bright and minimalist with clean lines, white walls, and warm wood accents. Natural light floods through large windows. Medical teal accents are subtle but present in the decor. The mood is calm, professional, and healing." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBY62Fm4qA_yE9VTUckyWsCly8YLJtrlDggJJ-LgX1Shvj7VhpFrmT0r5FT00W3hl5coVEm1dCkx264EOWO7kFSs6jeKq0ojEgSrO4EmXeO_Yjr4TEwufXg3JPulvMihMsjeKIqlpmfn_qjHECVEFeObsaSqTm7CRS3L-vMdDn5KRj8IXr56Pb2ZN_OU77wJn3m4awejF61ihWqlUfFFi7rxgw00AONT6e77_no4NxNgOK_OmxF2jeaAkt9ntM39OD1bxSUcfLkZbc"/>
+</div>
+<div>
+<h3 class="font-body-lg text-body-lg font-bold text-on-surface">Centro Eslava</h3>
+<p class="font-body-md text-body-md text-on-surface-variant text-sm">Calle Principal 123, Madrid</p>
+<a class="text-primary font-label-sm text-label-sm mt-1 inline-block hover:underline" href="#">Editar Perfil</a>
+</div>
+</div>
+<!-- Operating Hours Form Segment -->
+<div class="bg-surface-container-lowest rounded-lg border border-surface-variant p-4">
+<h4 class="font-label-sm text-label-sm text-on-surface mb-3 flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">schedule</span> Horario de Atención
+                        </h4>
+<div class="flex flex-col gap-3">
+<!-- Weekday Row -->
+<div class="flex items-center justify-between">
+<span class="font-body-md text-body-md text-on-surface-variant text-sm">Lun - Vie</span>
+<div class="flex items-center gap-2">
+<input class="bg-surface-container-low border-none rounded focus:ring-2 focus:ring-primary text-sm p-1.5 w-[85px] text-center font-label-sm text-label-sm text-on-surface" type="time" value="08:00"/>
+<span class="text-outline-variant">-</span>
+<input class="bg-surface-container-low border-none rounded focus:ring-2 focus:ring-primary text-sm p-1.5 w-[85px] text-center font-label-sm text-label-sm text-on-surface" type="time" value="20:00"/>
+</div>
+</div>
+<!-- Saturday Row -->
+<div class="flex items-center justify-between">
+<span class="font-body-md text-body-md text-on-surface-variant text-sm">Sábado</span>
+<div class="flex items-center gap-2">
+<input class="bg-surface-container-low border-none rounded focus:ring-2 focus:ring-primary text-sm p-1.5 w-[85px] text-center font-label-sm text-label-sm text-on-surface" type="time" value="09:00"/>
+<span class="text-outline-variant">-</span>
+<input class="bg-surface-container-low border-none rounded focus:ring-2 focus:ring-primary text-sm p-1.5 w-[85px] text-center font-label-sm text-label-sm text-on-surface" type="time" value="14:00"/>
+</div>
+</div>
+<!-- Sunday Row (Closed) -->
+<div class="flex items-center justify-between opacity-50">
+<span class="font-body-md text-body-md text-on-surface-variant text-sm">Domingo</span>
+<span class="bg-surface-container-high px-3 py-1 rounded text-xs font-semibold uppercase tracking-wide">Cerrado</span>
+</div>
+</div>
+<button class="w-full mt-4 bg-surface-container-low text-on-surface hover:bg-surface-container-high font-label-sm text-label-sm py-2 rounded transition-colors">
+                            Actualizar Horario
+                        </button>
+</div>
+<!-- Quick Links List -->
+<div class="flex flex-col gap-1">
+<a class="flex items-center justify-between p-3 rounded-lg hover:bg-surface-container-low transition-colors group" href="#">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-outline group-hover:text-primary transition-colors">notifications</span>
+<span class="font-body-md text-body-md text-on-surface">Notificaciones</span>
+</div>
+<span class="material-symbols-outlined text-outline-variant">chevron_right</span>
+</a>
+<a class="flex items-center justify-between p-3 rounded-lg hover:bg-surface-container-low transition-colors group" href="#">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-outline group-hover:text-primary transition-colors">team_dashboard</span>
+<span class="font-body-md text-body-md text-on-surface">Gestión de Personal</span>
+</div>
+<span class="material-symbols-outlined text-outline-variant">chevron_right</span>
+</a>
+<a class="flex items-center justify-between p-3 rounded-lg hover:bg-surface-container-low transition-colors group" href="#">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-outline group-hover:text-primary transition-colors">integration_instructions</span>
+<span class="font-body-md text-body-md text-on-surface">Integraciones</span>
+</div>
+<span class="material-symbols-outlined text-outline-variant">chevron_right</span>
+</a>
+</div>
+</div>
+<!-- Usage / Stats Mini Card -->
+<div class="bg-surface-tint text-on-primary rounded-xl p-6 shadow-[0px_10px_30px_rgba(0,0,0,0.04)] relative overflow-hidden">
+<div class="absolute -right-10 -top-10 opacity-10">
+<span class="material-symbols-outlined text-[120px]">monitoring</span>
+</div>
+<h3 class="font-label-sm text-label-sm opacity-80 mb-1">Utilización Semanal</h3>
+<div class="font-display-lg-mobile text-display-lg-mobile font-bold mb-4">84%</div>
+<div class="w-full bg-on-primary/20 rounded-full h-2 mb-2">
+<div class="bg-secondary-fixed h-2 rounded-full" style="width: 84%"></div>
+</div>
+<p class="font-body-md text-body-md text-sm opacity-80">La capacidad de la sala se acerca a los límites óptimos.</p>
+</div>
+</aside>
+</div>
+</main>
+<!-- BottomNavBar (Mobile Only) -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 py-3 md:hidden bg-surface-white/80 dark:bg-surface-container/80 backdrop-blur-md shadow-[0px_-10px_30px_rgba(0,0,0,0.04)] rounded-t-xl border-t border-surface-container-highest">
+<a class="flex flex-col items-center justify-center text-outline dark:text-outline-variant hover:bg-surface-container-high/50 active:scale-90 transition-all duration-150 p-2 rounded-lg" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">event</span>
+<span class="font-label-sm text-label-sm mt-1 text-[10px]">Calendario</span>
+</a>
+<a class="flex flex-col items-center justify-center text-outline dark:text-outline-variant hover:bg-surface-container-high/50 active:scale-90 transition-all duration-150 p-2 rounded-lg" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">person_search</span>
+<span class="font-label-sm text-label-sm mt-1 text-[10px]">Pacientes</span>
+</a>
+<a class="flex flex-col items-center justify-center text-primary dark:text-primary-fixed font-bold active:scale-90 transition-all duration-150 p-2 rounded-lg" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">healing</span>
+<span class="font-label-sm text-label-sm mt-1 text-[10px]">Tratamientos</span>
+</a>
+<a class="flex flex-col items-center justify-center text-outline dark:text-outline-variant hover:bg-surface-container-high/50 active:scale-90 transition-all duration-150 p-2 rounded-lg" href="#" id="nav-link-finanzas-bottom">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">account_balance_wallet</span>
+<span class="font-label-sm text-label-sm mt-1 text-[10px]">Finanzas</span>
+</a>
+</nav>
+    <script>
+        // --- START RBAC LOGIC ---
+        function applyRBACRules() {
+            const urlParams = new URLSearchParams(window.location.search);
+            let role = urlParams.get('role');
+            if (!role) role = 'developer';
+
+            const finanzasDrawer = document.getElementById('nav-link-finanzas-drawer');
+            const ajustesDrawer = document.getElementById('nav-link-ajustes-drawer');
+            const finanzasBottom = document.getElementById('nav-link-finanzas-bottom');
+
+            if (role === 'medico') {
+                if (finanzasDrawer) finanzasDrawer.style.display = 'none';
+                if (finanzasBottom) finanzasBottom.style.display = 'none';
+            } else if (role === 'asistente') {
+                if (finanzasDrawer) finanzasDrawer.style.display = 'none';
+                if (finanzasBottom) finanzasBottom.style.display = 'none';
+                if (ajustesDrawer) ajustesDrawer.style.display = 'none';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            applyRBACRules();
+
+            // Append role parameter to all relative links
+            const urlParams = new URLSearchParams(window.location.search);
+            const role = urlParams.get('role');
+            if (role) {
+                document.querySelectorAll('a').forEach(link => {
+                    const href = link.getAttribute('href');
+                    if (href && !href.startsWith('http') && !href.startsWith('#')) {
+                        const url = new URL(href, window.location.origin);
+                        url.searchParams.set('role', role);
+                        link.setAttribute('href', url.pathname + url.search + url.hash);
+                    }
+                });
+            }
+        });
+        // --- END RBAC LOGIC ---
+    </script>
+</body></html>

@@ -1,0 +1,2353 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Centro Eslava - Software Clínico de Fisioterapia y Rehabilitación</title>
+    <!-- Google Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" rel="stylesheet">
+    <!-- Supabase Client Library -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        /* CSS Custom Variables - Clinical Dark Modern Theme */
+        :root {
+            --bg-base: #060913;
+            --bg-surface: rgba(13, 20, 38, 0.6);
+            --bg-surface-hover: rgba(22, 32, 60, 0.8);
+            --border-color: rgba(255, 255, 255, 0.05);
+            --border-focus: rgba(16, 185, 129, 0.4);
+            
+            --primary: #10b981;       /* Esmeralda */
+            --primary-glow: rgba(16, 185, 129, 0.2);
+            --secondary: #06b6d4;     /* Cian */
+            --secondary-glow: rgba(6, 182, 212, 0.2);
+            
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+            --text-active: #ffffff;
+            
+            --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            min-height: 100vh;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* Ambient Glow in the background */
+        .ambient-glow-1 {
+            position: absolute;
+            width: 800px;
+            height: 800px;
+            border-radius: 50%;
+            background: radial-gradient(circle, var(--primary-glow) 0%, transparent 70%);
+            top: -300px;
+            right: -100px;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .ambient-glow-2 {
+            position: absolute;
+            width: 700px;
+            height: 700px;
+            border-radius: 50%;
+            background: radial-gradient(circle, var(--secondary-glow) 0%, transparent 70%);
+            top: 600px;
+            left: -200px;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .ambient-glow-3 {
+            position: absolute;
+            width: 800px;
+            height: 800px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(16, 185, 129, 0.08) 0%, transparent 70%);
+            bottom: -200px;
+            right: -200px;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* Navbar Styling */
+        header.navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 80px;
+            background-color: rgba(6, 9, 19, 0.75);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 80px;
+            z-index: 100;
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+        }
+
+        .nav-logo {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 20px rgba(16, 185, 129, 0.4);
+        }
+
+        .nav-logo span {
+            color: #ffffff;
+            font-size: 24px;
+        }
+
+        .nav-brand-text {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .nav-title {
+            font-size: 20px;
+            font-weight: 800;
+            background: linear-gradient(120deg, #ffffff, #e2e8f0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.5px;
+        }
+
+        .nav-subtitle {
+            font-size: 11px;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            font-weight: 700;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 32px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: var(--transition-smooth);
+        }
+
+        .nav-links a:hover {
+            color: var(--text-active);
+        }
+
+        .btn-cta {
+            background: linear-gradient(135deg, var(--primary), #059669);
+            color: #ffffff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            transition: var(--transition-smooth);
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-cta:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+        }
+
+        .btn-cta:active {
+            transform: translateY(0);
+        }
+
+        /* Hero Section */
+        section.hero {
+            position: relative;
+            padding: 180px 80px 100px 80px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 60px;
+            max-width: 1440px;
+            margin: 0 auto;
+            z-index: 10;
+        }
+
+        .hero-info {
+            flex: 1;
+            max-width: 600px;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background-color: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            color: var(--primary);
+            padding: 6px 14px;
+            border-radius: 100px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 24px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .hero-title {
+            font-size: 54px;
+            font-weight: 800;
+            line-height: 1.15;
+            letter-spacing: -1.5px;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #ffffff 30%, #a7f3d0 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-description {
+            color: var(--text-muted);
+            font-size: 18px;
+            line-height: 1.6;
+            margin-bottom: 36px;
+        }
+
+        .hero-actions {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .btn-secondary {
+            background-color: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            transition: var(--transition-smooth);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--bg-surface-hover);
+            border-color: var(--text-muted);
+            color: var(--text-active);
+        }
+
+        .hero-visual {
+            flex: 1;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .hero-visual-card {
+            background: var(--bg-surface);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border-color);
+            border-radius: 24px;
+            padding: 30px;
+            width: 100%;
+            max-width: 500px;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4);
+            position: relative;
+            z-index: 10;
+        }
+
+        .visual-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .visual-dots {
+            display: flex;
+            gap: 6px;
+        }
+
+        .visual-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.15);
+        }
+
+        .visual-dot:first-child { background-color: #ef4444; }
+        .visual-dot:nth-child(2) { background-color: #f59e0b; }
+        .visual-dot:nth-child(3) { background-color: #10b981; }
+
+        .visual-body {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .visual-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .visual-label {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        .visual-label span {
+            color: var(--primary);
+        }
+
+        .visual-val {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        .visual-progress {
+            height: 6px;
+            width: 100px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .visual-progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-radius: 10px;
+        }
+
+        .hero-visual-floating {
+            position: absolute;
+            background: linear-gradient(135deg, rgba(6, 182, 212, 0.15), rgba(16, 185, 129, 0.1));
+            border: 1px solid rgba(6, 182, 212, 0.3);
+            backdrop-filter: blur(10px);
+            padding: 16px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            bottom: -20px;
+            right: 20px;
+            z-index: 20;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            animation: float 4s ease-in-out infinite;
+        }
+
+        .hero-visual-floating-left {
+            position: absolute;
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(6, 182, 212, 0.1));
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            backdrop-filter: blur(10px);
+            padding: 16px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            top: -20px;
+            left: 20px;
+            z-index: 20;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            animation: float-reverse 4.5s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        @keyframes float-reverse {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(8px); }
+        }
+
+        /* Features Bento Section */
+        section.features {
+            padding: 100px 80px;
+            max-width: 1440px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 10;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .section-tag {
+            color: var(--primary);
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 12px;
+            display: block;
+        }
+
+        .section-title {
+            font-size: 38px;
+            font-weight: 800;
+            letter-spacing: -1px;
+            margin-bottom: 16px;
+        }
+
+        .section-subtitle {
+            color: var(--text-muted);
+            font-size: 16px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .bento-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+
+        .bento-card {
+            background-color: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 32px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 280px;
+            transition: var(--transition-smooth);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .bento-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.05), transparent);
+            opacity: 0;
+            transition: var(--transition-smooth);
+        }
+
+        .bento-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(16, 185, 129, 0.3);
+            box-shadow: 0 20px 40px rgba(16, 185, 129, 0.08);
+        }
+
+        .bento-card:hover::before {
+            opacity: 1;
+        }
+
+        .bento-card-span-2 {
+            grid-column: span 2;
+        }
+
+        .bento-icon-box {
+            width: 48px;
+            height: 48px;
+            background-color: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            margin-bottom: 24px;
+            transition: var(--transition-smooth);
+        }
+
+        .bento-card:hover .bento-icon-box {
+            background-color: var(--primary);
+            color: #ffffff;
+            box-shadow: 0 4px 12px var(--primary-glow);
+        }
+
+        .bento-card-title {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: var(--text-active);
+        }
+
+        .bento-card-desc {
+            color: var(--text-muted);
+            font-size: 15px;
+            line-height: 1.5;
+            margin-bottom: 24px;
+            flex-grow: 1;
+        }
+
+        .bento-card-action {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--primary);
+            font-size: 14px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: var(--transition-smooth);
+        }
+
+        .bento-card-action span {
+            font-size: 18px;
+            transition: var(--transition-smooth);
+        }
+
+        .bento-card:hover .bento-card-action {
+            color: var(--text-active);
+        }
+
+        .bento-card:hover .bento-card-action span {
+            transform: translateX(4px);
+        }
+
+        /* Simulator Area */
+        section.simulator-section {
+            padding: 80px;
+            background-color: rgba(6, 9, 19, 0.4);
+            border-top: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--border-color);
+            position: relative;
+            z-index: 10;
+        }
+
+        .sim-container {
+            max-width: 1440px;
+            margin: 0 auto;
+            background: rgba(13, 20, 38, 0.4);
+            border: 1px solid var(--border-color);
+            border-radius: 24px;
+            overflow: hidden;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            display: flex;
+            height: 850px;
+            box-shadow: 0 40px 80px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Simulator Sidebar */
+        .sim-sidebar {
+            width: 320px;
+            background-color: rgba(10, 15, 30, 0.8);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            flex-shrink: 0;
+        }
+
+        .sim-sidebar-header {
+            padding: 24px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .sim-search {
+            position: relative;
+        }
+
+        .sim-search span {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: 18px;
+        }
+
+        .sim-search input {
+            width: 100%;
+            background-color: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 10px 12px 10px 38px;
+            color: var(--text-main);
+            font-family: inherit;
+            font-size: 14px;
+            outline: none;
+            transition: var(--transition-smooth);
+        }
+
+        .sim-search input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-glow);
+        }
+
+        .sim-sidebar-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+        }
+
+        .sim-sidebar-content::-webkit-scrollbar {
+            width: 6px;
+        }
+        .sim-sidebar-content::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .sim-sidebar-content::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 3px;
+        }
+
+        .sim-category {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: var(--primary);
+            letter-spacing: 0.1em;
+            margin: 20px 0 10px 8px;
+        }
+
+        .sim-category:first-of-type {
+            margin-top: 5px;
+        }
+
+        .sim-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: var(--transition-smooth);
+            margin-bottom: 6px;
+            border: 1px solid transparent;
+        }
+
+        .sim-item:hover {
+            background-color: var(--bg-surface-hover);
+            border-color: var(--border-color);
+        }
+
+        .sim-item.active {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.12), rgba(6, 182, 212, 0.08));
+            border-color: rgba(16, 185, 129, 0.25);
+        }
+
+        .sim-item-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            background-color: rgba(255, 255, 255, 0.03);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            transition: var(--transition-smooth);
+        }
+
+        .sim-item.active .sim-item-icon {
+            background-color: var(--primary);
+            color: #ffffff;
+            box-shadow: 0 4px 10px var(--primary-glow);
+        }
+
+        .sim-item-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .sim-item-title {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-muted);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            transition: var(--transition-smooth);
+        }
+
+        .sim-item.active .sim-item-title {
+            color: var(--text-active);
+            font-weight: 600;
+        }
+
+        .sim-item-badge {
+            font-size: 8px;
+            font-weight: 700;
+            padding: 2px 4px;
+            border-radius: 4px;
+            line-height: 1;
+            text-transform: uppercase;
+        }
+
+        .sim-badge-desktop {
+            background-color: rgba(6, 182, 212, 0.15);
+            color: #22d3ee;
+        }
+
+        .sim-badge-mobile {
+            background-color: rgba(245, 158, 11, 0.15);
+            color: #fbbf24;
+        }
+
+        /* Simulator Workspace */
+        .sim-workspace {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            overflow: hidden;
+            background-color: rgba(8, 11, 22, 0.2);
+        }
+
+        .sim-toolbar {
+            height: 70px;
+            border-bottom: 1px solid var(--border-color);
+            background-color: rgba(10, 15, 30, 0.9);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            z-index: 5;
+        }
+
+        .sim-meta {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .sim-meta-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-active);
+        }
+
+        .sim-meta-id {
+            font-family: monospace;
+            font-size: 10px;
+            color: var(--text-muted);
+            background-color: rgba(255, 255, 255, 0.03);
+            padding: 2px 6px;
+            border-radius: 4px;
+            border: 1px solid var(--border-color);
+        }
+
+        .sim-options {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .sim-toggle-mode {
+            display: flex;
+            background-color: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            padding: 3px;
+            border: 1px solid var(--border-color);
+        }
+
+        .sim-toggle-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            padding: 6px 12px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: var(--transition-smooth);
+            font-family: inherit;
+        }
+
+        .sim-toggle-btn.active {
+            background-color: var(--primary);
+            color: #ffffff;
+            box-shadow: 0 2px 8px var(--primary-glow);
+        }
+
+        .sim-toggle-btn span {
+            font-size: 16px;
+        }
+
+        .sim-action-btn {
+            background-color: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            border-radius: 8px;
+            padding: 8px 14px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            text-decoration: none;
+            transition: var(--transition-smooth);
+            font-family: inherit;
+        }
+
+        .sim-action-btn:hover {
+            background-color: var(--bg-surface-hover);
+            border-color: var(--primary);
+            color: var(--text-active);
+        }
+
+        .sim-action-btn span {
+            font-size: 16px;
+        }
+
+        .sim-canvas {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 30px;
+            overflow-y: auto;
+            background-image: radial-gradient(rgba(16, 185, 129, 0.02) 1px, transparent 1px);
+            background-size: 20px 20px;
+            position: relative;
+        }
+
+        /* Empty State */
+        .sim-empty {
+            text-align: center;
+            max-width: 400px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .sim-empty-icon {
+            font-size: 56px;
+            color: var(--primary);
+            text-shadow: 0 0 20px var(--primary-glow);
+        }
+
+        .sim-empty-title {
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .sim-empty-text {
+            color: var(--text-muted);
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        /* Devices Wrap */
+        .device-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Desktop Mockup Frame */
+        .device-desktop {
+            width: 100%;
+            max-width: 950px;
+            height: 540px;
+            background-color: #1e293b;
+            border-radius: 12px 12px 0 0;
+            border: 10px solid #0f172a;
+            border-bottom: 0;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            transition: var(--transition-smooth);
+            animation: fadeIn 0.3s ease;
+        }
+
+        .device-desktop-base {
+            width: 100%;
+            max-width: 1050px;
+            height: 14px;
+            background-color: #334155;
+            border-radius: 0 0 12px 12px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+            margin-top: -2px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .device-desktop-base::after {
+            content: '';
+            position: absolute;
+            width: 100px;
+            height: 4px;
+            background-color: #1e293b;
+            border-radius: 2px;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        /* Mobile Mockup Frame */
+        .device-mobile {
+            width: 310px;
+            height: 630px;
+            background-color: #000000;
+            border-radius: 36px;
+            border: 10px solid #1e293b;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.6);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            transition: var(--transition-smooth);
+            animation: fadeIn 0.3s ease;
+        }
+
+        .device-mobile-notch {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120px;
+            height: 20px;
+            background-color: #1e293b;
+            border-bottom-left-radius: 14px;
+            border-bottom-right-radius: 14px;
+            z-index: 10;
+        }
+
+        .device-mobile-notch::before {
+            content: '';
+            position: absolute;
+            width: 30px;
+            height: 3px;
+            background-color: #334155;
+            border-radius: 2px;
+            top: 5px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        /* Iframe/Image Containment */
+        .sim-screen-container {
+            flex: 1;
+            width: 100%;
+            height: 100%;
+            background-color: #ffffff;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .device-mobile .sim-screen-container {
+            border-radius: 24px;
+        }
+
+        .sim-iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            display: block;
+        }
+
+        .sim-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: top center;
+            display: none;
+        }
+
+        /* Technical Specifications */
+        section.tech-specs {
+            padding: 100px 80px;
+            max-width: 1440px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 10;
+        }
+
+        .tech-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px;
+            text-align: center;
+        }
+
+        .tech-box {
+            background-color: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 30px 20px;
+            transition: var(--transition-smooth);
+        }
+
+        .tech-box:hover {
+            border-color: var(--secondary);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(6, 182, 212, 0.08);
+        }
+
+        .tech-box span {
+            font-size: 36px;
+            color: var(--secondary);
+            margin-bottom: 16px;
+            display: inline-block;
+        }
+
+        .tech-box h4 {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--text-active);
+        }
+
+        .tech-box p {
+            color: var(--text-muted);
+            font-size: 13px;
+            line-height: 1.4;
+        }
+
+        /* Footer */
+        footer.footer {
+            background-color: #03050a;
+            border-top: 1px solid var(--border-color);
+            padding: 40px 80px;
+            text-align: center;
+            position: relative;
+            z-index: 10;
+        }
+
+        .footer-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-active);
+            font-weight: 700;
+            font-size: 16px;
+        }
+
+        .footer-logo span {
+            color: var(--primary);
+        }
+
+        .footer-copy {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.97); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        /* Responsive Breakpoints */
+        @media (max-width: 1024px) {
+            header.navbar {
+                padding: 0 40px;
+            }
+
+            section.hero {
+                padding: 140px 40px 80px 40px;
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .hero-info {
+                max-width: 100%;
+            }
+
+            .hero-actions {
+                justify-content: center;
+            }
+
+            section.features {
+                padding: 80px 40px;
+            }
+
+            .bento-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .bento-card-span-2 {
+                grid-column: span 1;
+            }
+
+            section.simulator-section {
+                padding: 40px 20px;
+            }
+
+            .sim-container {
+                flex-direction: column;
+                height: auto;
+            }
+
+            .sim-sidebar {
+                width: 100%;
+                border-right: none;
+                border-bottom: 1px solid var(--border-color);
+                height: 350px;
+            }
+
+            .sim-workspace {
+                height: 750px;
+            }
+
+            .device-desktop {
+                max-width: 100%;
+                height: 400px;
+            }
+
+            section.tech-specs {
+                padding: 80px 40px;
+            }
+
+            .tech-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            footer.footer {
+                padding: 40px;
+            }
+        }
+
+        /* Auth Overlay & Form Styling */
+        .sim-auth-overlay {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            max-width: 480px;
+            background: rgba(10, 16, 30, 0.7);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+            animation: fadeIn 0.3s ease;
+        }
+
+        .auth-tabs {
+            display: flex;
+            width: 100%;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .auth-tab {
+            flex: 1;
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-family: inherit;
+            font-size: 15px;
+            font-weight: 600;
+            padding: 10px;
+            cursor: pointer;
+            text-align: center;
+            transition: var(--transition-smooth);
+            position: relative;
+        }
+
+        .auth-tab.active {
+            color: var(--primary);
+        }
+
+        .auth-tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+        }
+
+        .auth-form {
+            width: 100%;
+            display: none;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .auth-form.active {
+            display: flex;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            text-align: left;
+            width: 100%;
+        }
+
+        .form-group label {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-main);
+        }
+
+        .form-group input, .form-group select {
+            background-color: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 10px 12px;
+            color: var(--text-main);
+            font-family: inherit;
+            font-size: 14px;
+            outline: none;
+            transition: var(--transition-smooth);
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-glow);
+        }
+
+        .auth-error {
+            color: #f87171;
+            background-color: rgba(248, 113, 113, 0.1);
+            border: 1px solid rgba(248, 113, 113, 0.2);
+            border-radius: 8px;
+            padding: 10px;
+            font-size: 13px;
+            display: none;
+            text-align: center;
+            width: 100%;
+            margin-bottom: 12px;
+        }
+
+        .auth-success {
+            color: #34d399;
+            background-color: rgba(52, 211, 153, 0.1);
+            border: 1px solid rgba(52, 211, 153, 0.2);
+            border-radius: 8px;
+            padding: 10px;
+            font-size: 13px;
+            display: none;
+            text-align: center;
+            width: 100%;
+            margin-bottom: 12px;
+        }
+
+        .auth-quick-title {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 11px;
+            font-weight: 600;
+            margin: 20px 0 12px 0;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .auth-quick-title::before, .auth-quick-title::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .auth-quick-title::before { margin-right: 10px; }
+        .auth-quick-title::after { margin-left: 10px; }
+
+        .quick-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            width: 100%;
+        }
+
+        .quick-btn {
+            background-color: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 10px;
+            color: var(--text-muted);
+            font-family: inherit;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition-smooth);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .quick-btn span {
+            font-size: 16px;
+        }
+
+        .quick-btn.role-dev:hover {
+            border-color: #c084fc;
+            background-color: rgba(192, 132, 252, 0.08);
+            color: #e9d5ff;
+            box-shadow: 0 0 15px rgba(192, 132, 252, 0.15);
+        }
+
+        .quick-btn.role-admin:hover {
+            border-color: var(--secondary);
+            background-color: rgba(6, 182, 212, 0.08);
+            color: #e0f7fa;
+            box-shadow: 0 0 15px var(--secondary-glow);
+        }
+
+        .quick-btn.role-medico:hover {
+            border-color: var(--primary);
+            background-color: rgba(16, 185, 129, 0.08);
+            color: #e6fffa;
+            box-shadow: 0 0 15px var(--primary-glow);
+        }
+
+        .quick-btn.role-asistente:hover {
+            border-color: #fbbf24;
+            background-color: rgba(245, 158, 11, 0.08);
+            color: #fef3c7;
+            box-shadow: 0 0 15px rgba(245, 158, 11, 0.15);
+        }
+
+        /* User badge and logout styling */
+        .nav-auth {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .nav-user-badge {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background-color: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-color);
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 13px;
+        }
+
+        .nav-user-role {
+            font-size: 9px;
+            font-weight: 800;
+            text-transform: uppercase;
+            padding: 2px 6px;
+            border-radius: 4px;
+            letter-spacing: 0.05em;
+        }
+
+        .role-badge-developer { background-color: rgba(192, 132, 252, 0.15); color: #e9d5ff; border: 1px solid rgba(192, 132, 252, 0.3); }
+        .role-badge-admin { background-color: rgba(6, 182, 212, 0.15); color: #e0f7fa; border: 1px solid rgba(6, 182, 212, 0.3); }
+        .role-badge-medico { background-color: rgba(16, 185, 129, 0.15); color: #e6fffa; border: 1px solid rgba(16, 185, 129, 0.3); }
+        .role-badge-asistente { background-color: rgba(245, 158, 11, 0.15); color: #fef3c7; border: 1px solid rgba(245, 158, 11, 0.3); }
+
+        .restricted-screen-overlay {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            text-align: center;
+            padding: 40px;
+            background: rgba(13, 20, 38, 0.85);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            border-radius: 20px;
+            max-width: 440px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .restricted-icon {
+            font-size: 56px;
+            color: #ef4444;
+            text-shadow: 0 0 20px rgba(239, 68, 68, 0.3);
+        }
+
+        .restricted-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #fca5a5;
+        }
+
+        .restricted-desc {
+            font-size: 13px;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+    </style>
+</head>
+<body>
+    <!-- Background Glows -->
+    <div class="ambient-glow-1"></div>
+    <div class="ambient-glow-2"></div>
+    <div class="ambient-glow-3"></div>
+
+    <!-- Navigation Header -->
+    <header class="navbar">
+        <a href="#inicio" class="nav-brand">
+            <div class="nav-logo">
+                <span class="material-symbols-outlined">pulse</span>
+            </div>
+            <div class="nav-brand-text">
+                <span class="nav-title">Centro Eslava</span>
+                <span class="nav-subtitle">Gestión Clínica</span>
+            </div>
+        </a>
+        <ul class="nav-links">
+            <li><a href="#inicio">Inicio</a></li>
+            <li><a href="#modulos">Módulos</a></li>
+            <li><a href="#simulador">Simulador</a></li>
+            <li><a href="#auditoria">Tecnología</a></li>
+        </ul>
+        <div id="nav-auth-container" class="nav-auth">
+            <a href="#simulador" class="btn-cta" id="nav-login-btn">
+                <span class="material-symbols-outlined">login</span>
+                Iniciar Sesión
+            </a>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero" id="inicio">
+        <div class="hero-info">
+            <div class="hero-badge">
+                <span class="material-symbols-outlined">verified</span>
+                Auditoría Técnica Completada
+            </div>
+            <h1 class="hero-title">Centro Eslava: El software clínico definitivo.</h1>
+            <p class="hero-description">
+                Una solución de gestión integral para clínicas de fisioterapia y rehabilitación. Diseñado para simplificar el flujo clínico: desde la agenda diaria y las historias clínicas avanzadas, hasta el control de facturación y servicios.
+            </p>
+            <div class="hero-actions">
+                <a href="#simulador" class="btn-cta" style="padding: 14px 28px; font-size: 15px;">
+                    <span class="material-symbols-outlined">play_circle</span>
+                    Iniciar Simulación
+                </a>
+                <a href="#modulos" class="btn-secondary">
+                    Explorar Módulos
+                </a>
+            </div>
+        </div>
+
+        <div class="hero-visual">
+            <div class="hero-visual-floating-left">
+                <span class="material-symbols-outlined" style="color: var(--primary);">diversity_1</span>
+                <div>
+                    <p style="font-size: 12px; font-weight: 700; color: #fff;">Pacientes Activos</p>
+                    <p style="font-size: 10px; color: var(--text-muted);">+12% este mes</p>
+                </div>
+            </div>
+            <div class="hero-visual-card">
+                <div class="visual-header">
+                    <div class="visual-dots">
+                        <div class="visual-dot"></div>
+                        <div class="visual-dot"></div>
+                        <div class="visual-dot"></div>
+                    </div>
+                    <span class="badge" style="background-color: rgba(16, 185, 129, 0.1); color: var(--primary); font-size: 11px; padding: 4px 8px; border-radius: 6px; font-weight: 600;">Clínica Activa</span>
+                </div>
+                <div class="visual-body">
+                    <div class="visual-row">
+                        <div class="visual-label">
+                            <span class="material-symbols-outlined">calendar_today</span>
+                            Citas de hoy
+                        </div>
+                        <div class="visual-val">8 Citas</div>
+                    </div>
+                    <div class="visual-row">
+                        <div class="visual-label">
+                            <span class="material-symbols-outlined">medical_information</span>
+                            Evolución clínica
+                        </div>
+                        <div class="visual-val">
+                            <div class="visual-progress">
+                                <div class="visual-progress-bar" style="width: 85%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="visual-row">
+                        <div class="visual-label">
+                            <span class="material-symbols-outlined">payments</span>
+                            Facturación Diaria
+                        </div>
+                        <div class="visual-val" style="color: var(--secondary); font-weight: 700;">$320.00 USD</div>
+                    </div>
+                </div>
+            </div>
+            <div class="hero-visual-floating">
+                <span class="material-symbols-outlined" style="color: var(--secondary);">verified_user</span>
+                <div>
+                    <p style="font-size: 12px; font-weight: 700; color: #fff;">Historial Médico</p>
+                    <p style="font-size: 10px; color: var(--text-muted);">Firma Digital Segura</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Bento Grid Features Section -->
+    <section class="features" id="modulos">
+        <div class="section-header">
+            <span class="section-tag">Características Clave</span>
+            <h2 class="section-title">Módulos del Ecosistema Centro Eslava</h2>
+            <p class="section-subtitle">Explora las funcionalidades principales desarrolladas a partir del sistema de diseño oficial de Stitch.</p>
+        </div>
+
+        <div class="bento-grid">
+            <div class="bento-card bento-card-span-2" onclick="goDemo('fed66ee3e121408c86506d8818c869ff')">
+                <div>
+                    <div class="bento-icon-box">
+                        <span class="material-symbols-outlined">calendar_today</span>
+                    </div>
+                    <h3 class="bento-card-title">Dashboard y Calendario</h3>
+                    <p class="bento-card-desc">El núcleo operativo del consultorio. Gestiona la agenda médica del día, visualiza citas programadas, filtra estados ("Completada", "En Progreso", "Pendiente") y accede a creación rápida de citas en un bento grid responsivo.</p>
+                </div>
+                <a href="#simulador" class="bento-card-action">
+                    Simular en vivo <span class="material-symbols-outlined">arrow_right_alt</span>
+                </a>
+            </div>
+
+            <div class="bento-card" onclick="goDemo('d5a16d326b794a7ab91b1980c3a1c4dc')">
+                <div>
+                    <div class="bento-icon-box">
+                        <span class="material-symbols-outlined">groups</span>
+                    </div>
+                    <h3 class="bento-card-title">Gestión de Pacientes</h3>
+                    <p class="bento-card-desc">Accede a una base de datos centralizada de pacientes. Incluye buscador rápido, filtros avanzados y tarjetas de información general que agilizan la consulta diaria.</p>
+                </div>
+                <a href="#simulador" class="bento-card-action">
+                    Simular en vivo <span class="material-symbols-outlined">arrow_right_alt</span>
+                </a>
+            </div>
+
+            <div class="bento-card" onclick="goDemo('08cb9ed26b794537bd7a93d8cc31594d')">
+                <div>
+                    <div class="bento-icon-box">
+                        <span class="material-symbols-outlined">medical_information</span>
+                    </div>
+                    <h3 class="bento-card-title">Historia Clínica</h3>
+                    <p class="bento-card-desc">Registro médico completo de antecedentes, ficha evolutiva de sesiones de terapia física, firma digital del médico tratante y alertas sanitarias indispensables.</p>
+                </div>
+                <a href="#simulador" class="bento-card-action">
+                    Simular en vivo <span class="material-symbols-outlined">arrow_right_alt</span>
+                </a>
+            </div>
+
+            <div class="bento-card bento-card-span-2" onclick="goDemo('65be31a1e0f94f1e94f6466f2fd8dcc7')">
+                <div>
+                    <div class="bento-icon-box">
+                        <span class="material-symbols-outlined">payments</span>
+                    </div>
+                    <h3 class="bento-card-title">Pagos y Facturación</h3>
+                    <p class="bento-card-desc">Controla los flujos financieros del consultorio. Registra ingresos, genera recibos, filtra transacciones por estado de pago (Pagado, Pendiente, Cancelado) y administra los métodos de cobro en un panel financiero intuitivo.</p>
+                </div>
+                <a href="#simulador" class="bento-card-action">
+                    Simular en vivo <span class="material-symbols-outlined">arrow_right_alt</span>
+                </a>
+            </div>
+
+            <div class="bento-card bento-card-span-2" onclick="goDemo('9128f7c6518b4247927a675eb0e5ac06')">
+                <div>
+                    <div class="bento-icon-box">
+                        <span class="material-symbols-outlined">settings</span>
+                    </div>
+                    <h3 class="bento-card-title">Servicios y Ajustes</h3>
+                    <p class="bento-card-desc">Personaliza todo el sistema clínico. Modifica tarifas de tratamientos (Fisioterapia Deportiva, Kinesiología, Rehabilitación Neurológica), añade servicios, ajusta horarios de apertura y gestiona datos del consultorio.</p>
+                </div>
+                <a href="#simulador" class="bento-card-action">
+                    Simular en vivo <span class="material-symbols-outlined">arrow_right_alt</span>
+                </a>
+            </div>
+
+            <div class="bento-card" style="background: linear-gradient(135deg, rgba(6, 182, 212, 0.1), rgba(16, 185, 129, 0.05)); border-color: rgba(6, 182, 212, 0.2);" onclick="document.getElementById('simulador').scrollIntoView();">
+                <div>
+                    <div class="bento-icon-box" style="color: var(--secondary);">
+                        <span class="material-symbols-outlined">smartphone</span>
+                    </div>
+                    <h3 class="bento-card-title">Mobile Ready</h3>
+                    <p class="bento-card-desc">Toda la interfaz cuenta con una versión nativa para celulares diseñada específicamente para facilitar el acceso rápido del terapeuta desde dispositivos móviles.</p>
+                </div>
+                <a href="#simulador" class="bento-card-action" style="color: var(--secondary);">
+                    Probar móviles <span class="material-symbols-outlined">arrow_right_alt</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Interactive Simulator Workspace Section -->
+    <section class="simulator-section" id="simulador">
+        <div class="section-header">
+            <span class="section-tag">Auditoría Interactiva</span>
+            <h2 class="section-title">Entorno de Simulación en Vivo</h2>
+            <p class="section-subtitle">Selecciona una de las 10 pantallas en el panel de navegación para operarla de manera interactiva o ver el prototipo de diseño original de Stitch.</p>
+        </div>
+
+        <div class="sim-container">
+            <!-- Simulator Navigation Sidebar -->
+            <aside class="sim-sidebar">
+                <div class="sim-sidebar-header">
+                    <div class="sim-search">
+                        <span class="material-symbols-outlined">search</span>
+                        <input type="text" id="sim-search-input" placeholder="Buscar pantalla o módulo..." oninput="filterSimScreens()">
+                    </div>
+                </div>
+
+                <div class="sim-sidebar-content" id="sim-sidebar-content">
+                    <!-- Programmatically populated categories -->
+                </div>
+            </aside>
+
+            <!-- Simulator Work Workspace -->
+            <div class="sim-workspace">
+                <div class="sim-toolbar">
+                    <div class="sim-meta">
+                        <div class="sim-meta-title" id="sim-meta-title">Selecciona una pantalla</div>
+                        <div id="sim-meta-meta" style="display: none; align-items: center; gap: 8px;">
+                            <span class="sim-item-badge sim-badge-desktop" id="sim-meta-badge">Desktop</span>
+                            <span class="sim-meta-id" id="sim-meta-id">ID: </span>
+                        </div>
+                    </div>
+
+                    <!-- Toolbar actions -->
+                    <div class="sim-options" id="sim-options" style="display: none;">
+                        <!-- Desktop / Mobile Sync Switcher -->
+                        <button class="sim-action-btn" id="sim-sibling-btn" onclick="toggleViewportSibling()">
+                            <span class="material-symbols-outlined">sync_alt</span>
+                            <span id="sim-sibling-label">Cambiar a Celular</span>
+                        </button>
+
+                        <!-- Live Interactive iframe vs design PNG image toggler -->
+                        <div class="sim-toggle-mode">
+                            <button class="sim-toggle-btn active" id="sim-btn-live" onclick="setSimViewMode('live')">
+                                <span class="material-symbols-outlined">code</span>Interactiva
+                            </button>
+                            <button class="sim-toggle-btn" id="sim-btn-image" onclick="setSimViewMode('image')">
+                                <span class="material-symbols-outlined">image</span>Diseño
+                            </button>
+                        </div>
+
+                        <!-- Open in full screen -->
+                        <a href="#" target="_blank" class="sim-action-btn" id="sim-btn-fullscreen">
+                            <span class="material-symbols-outlined">open_in_new</span>Pantalla Completa
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Live Simulator Canvas -->
+                <div class="sim-canvas" id="sim-canvas">
+                    <!-- Initial state empty message -->
+                    <div class="sim-empty" id="sim-empty-state">
+                        <span class="material-symbols-outlined sim-empty-icon">clinical_notes</span>
+                        <h3 class="sim-empty-title">Panel de Visualización</h3>
+                        <p class="sim-empty-text">Usa el buscador o el listado de la izquierda para seleccionar un módulo clínico y visualizarlo en tiempo real.</p>
+                    </div>
+
+                    <!-- Auth Container -->
+                    <div class="sim-empty" id="sim-auth-container" style="display: none;">
+                        <div class="sim-auth-overlay">
+                            <div class="auth-tabs">
+                                <button class="auth-tab active" id="tab-login" onclick="switchAuthTab('login')">Ingresar</button>
+                                <button class="auth-tab" id="tab-signup" onclick="switchAuthTab('signup')">Registrarse</button>
+                            </div>
+                            
+                            <div class="auth-error" id="auth-error-msg"></div>
+                            <div class="auth-success" id="auth-success-msg"></div>
+
+                            <!-- Login Form -->
+                            <form id="login-form" class="auth-form active" onsubmit="handleLogin(event)">
+                                <div class="form-group">
+                                    <label for="login-email">Correo Electrónico</label>
+                                    <input type="email" id="login-email" required placeholder="correo@centroeslava.com">
+                                </div>
+                                <div class="form-group">
+                                    <label for="login-password">Contraseña</label>
+                                    <input type="password" id="login-password" required placeholder="••••••••">
+                                </div>
+                                <button type="submit" class="btn-cta" style="margin-top: 10px; width: 100%; justify-content: center;">
+                                    <span class="material-symbols-outlined">login</span>
+                                    Acceder al Sistema
+                                </button>
+                            </form>
+
+                            <!-- Signup Form -->
+                            <form id="signup-form" class="auth-form" onsubmit="handleSignup(event)">
+                                <div class="form-group">
+                                    <label for="signup-name">Nombre Completo</label>
+                                    <input type="text" id="signup-name" placeholder="Dr. Juan Eslava">
+                                </div>
+                                <div class="form-group">
+                                    <label for="signup-email">Correo Electrónico</label>
+                                    <input type="email" id="signup-email" required placeholder="correo@centroeslava.com">
+                                </div>
+                                <div class="form-group">
+                                    <label for="signup-password">Contraseña</label>
+                                    <input type="password" id="signup-password" required placeholder="Mínimo 6 caracteres">
+                                </div>
+                                <div class="form-group">
+                                    <label for="signup-role">Rol en la Clínica</label>
+                                    <select id="signup-role" required>
+                                        <option value="asistente">Asistente (Acceso limitado)</option>
+                                        <option value="medico">Médico (Acceso clínico)</option>
+                                        <option value="admin">Administrador (Acceso financiero/gestión)</option>
+                                        <option value="developer">Desarrollador (Acceso total)</option>
+                                    </select>
+                                </div>
+                                <button type="submit" class="btn-cta" style="margin-top: 10px; width: 100%; justify-content: center;">
+                                    <span class="material-symbols-outlined">person_add</span>
+                                    Crear Cuenta
+                                </button>
+                            </form>
+
+                            <!-- Quick Role Switcher for Testing -->
+                            <div class="auth-quick-title">Cuentas Rápidas de Prueba</div>
+                            <div class="quick-grid">
+                                <button class="quick-btn role-dev" onclick="quickLogin('developer')">
+                                    <span class="material-symbols-outlined">terminal</span>Developer
+                                </button>
+                                <button class="quick-btn role-admin" onclick="quickLogin('admin')">
+                                    <span class="material-symbols-outlined">admin_panel_settings</span>Admin
+                                </button>
+                                <button class="quick-btn role-medico" onclick="quickLogin('medico')">
+                                    <span class="material-symbols-outlined">stethoscope</span>Médico
+                                </button>
+                                <button class="quick-btn role-asistente" onclick="quickLogin('asistente')">
+                                    <span class="material-symbols-outlined">support_agent</span>Asistente
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- CSS Wrapper for responsive preview -->
+                    <div class="device-wrapper" id="sim-device-wrapper" style="display: none;">
+                        <div id="sim-device-frame" class="device-desktop">
+                            <div class="sim-screen-container">
+                                <iframe class="sim-iframe" id="sim-iframe-preview" src="about:blank"></iframe>
+                                <img class="sim-image" id="sim-image-preview" src="" alt="Diseño de Pantalla">
+                                <div class="restricted-screen-overlay" id="sim-restricted-state" style="display: none; position: absolute; inset: 0; margin: auto; z-index: 10;">
+                                    <span class="material-symbols-outlined restricted-icon">gpp_bad</span>
+                                    <h3 class="restricted-title">Acceso Restringido</h3>
+                                    <p class="restricted-desc" style="margin: 0 10px;">Tu rol de usuario (<strong id="restricted-role-name" style="text-transform: capitalize;"></strong>) no tiene los permisos necesarios para visualizar este módulo clínico.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Technical Specs & Audit Details -->
+    <section class="tech-specs" id="auditoria">
+        <div class="section-header">
+            <span class="section-tag">Especificaciones Técnicas</span>
+            <h2 class="section-title">Estándares del Portal de Auditoría</h2>
+            <p class="section-subtitle">Arquitectura y tecnologías empleadas para la maquetación interactiva y el control de calidad del Centro Eslava.</p>
+        </div>
+
+        <div class="tech-grid">
+            <div class="tech-box">
+                <span class="material-symbols-outlined">integration_instructions</span>
+                <h4>Tailwind CSS v3</h4>
+                <p>Estilos optimizados con CDN y plugins de formularios para una maquetación idéntica a los tokens del sistema de diseño.</p>
+            </div>
+            <div class="tech-box">
+                <span class="material-symbols-outlined">devices</span>
+                <h4>Simulación CSS</h4>
+                <p>Marcos responsivos realistas que aíslan la hoja de estilos de las pantallas simuladas para evitar colisiones de diseño.</p>
+            </div>
+            <div class="tech-box">
+                <span class="material-symbols-outlined">architecture</span>
+                <h4>Estructura Limpia</h4>
+                <p>Nombres lógicos y consistentes en español latino para todos los archivos fuente de código e imágenes.</p>
+            </div>
+            <div class="tech-box">
+                <span class="material-symbols-outlined">verified</span>
+                <h4>QA Garantizado</h4>
+                <p>Verificación cruzada entre los flujos interactivos de usuario y las capturas de diseño de alta resolución de Stitch.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-logo">
+                <span class="material-symbols-outlined">pulse</span>
+                Centro Eslava
+            </div>
+            <p class="footer-copy">© 2026 Centro Eslava. Todos los derechos reservados. Diseñado y auditado bajo requerimientos médicos premium.</p>
+        </div>
+    </footer>
+
+    <!-- Interactive script orchestration -->
+    <script>
+        // Database registry of screens matching the downloaded resources
+        const screens = [
+            {
+                id: "d10b11e640ea43e3b722b42dd278d031",
+                name: "pacientes_historia_clinica_mobile",
+                title: "Pacientes e Historia Clínica (Celular)",
+                device: "mobile",
+                category: "Pacientes",
+                html_path: "html/pacientes_historia_clinica_mobile.html",
+                img_path: "screenshots/pacientes_historia_clinica_mobile.png",
+                icon: "groups",
+                sibling_id: "d5a16d326b794a7ab91b1980c3a1c4dc"
+            },
+            {
+                id: "d5a16d326b794a7ab91b1980c3a1c4dc",
+                name: "pacientes_historia_clinica_desktop",
+                title: "Pacientes e Historia Clínica (Computadora)",
+                device: "desktop",
+                category: "Pacientes",
+                html_path: "html/pacientes_historia_clinica_desktop.html",
+                img_path: "screenshots/pacientes_historia_clinica_desktop.png",
+                icon: "groups",
+                sibling_id: "d10b11e640ea43e3b722b42dd278d031"
+            },
+            {
+                id: "dfed2b83d71848699c7055d4d5de0a4b",
+                name: "detalle_historia_clinica_mobile",
+                title: "Detalle de Historia Clínica (Celular)",
+                device: "mobile",
+                category: "Historia Clínica",
+                html_path: "html/detalle_historia_clinica_mobile.html",
+                img_path: "screenshots/detalle_historia_clinica_mobile.png",
+                icon: "medical_information",
+                sibling_id: "08cb9ed26b794537bd7a93d8cc31594d"
+            },
+            {
+                id: "08cb9ed26b794537bd7a93d8cc31594d",
+                name: "detalle_historia_clinica_desktop",
+                title: "Detalle de Historia Clínica (Computadora)",
+                device: "desktop",
+                category: "Historia Clínica",
+                html_path: "html/detalle_historia_clinica_desktop.html",
+                img_path: "screenshots/detalle_historia_clinica_desktop.png",
+                icon: "medical_information",
+                sibling_id: "dfed2b83d71848699c7055d4d5de0a4b"
+            },
+            {
+                id: "7da11cd287c146c3a5a1ea7cc8e7833c",
+                name: "calendario_dashboard_mobile",
+                title: "Calendario y Dashboard (Celular)",
+                device: "mobile",
+                category: "Dashboard",
+                html_path: "html/calendario_dashboard_mobile.html",
+                img_path: "screenshots/calendario_dashboard_mobile.png",
+                icon: "calendar_today",
+                sibling_id: "fed66ee3e121408c86506d8818c869ff"
+            },
+            {
+                id: "fed66ee3e121408c86506d8818c869ff",
+                name: "calendario_dashboard_desktop",
+                title: "Calendario y Dashboard (Computadora)",
+                device: "desktop",
+                category: "Dashboard",
+                html_path: "html/calendario_dashboard_desktop.html",
+                img_path: "screenshots/calendario_dashboard_desktop.png",
+                icon: "calendar_today",
+                sibling_id: "7da11cd287c146c3a5a1ea7cc8e7833c"
+            },
+            {
+                id: "f085783f952c413aa0396e1f3a2104e7",
+                name: "pagos_facturacion_mobile",
+                title: "Pagos y Facturación (Celular)",
+                device: "mobile",
+                category: "Facturación",
+                html_path: "html/pagos_facturacion_mobile.html",
+                img_path: "screenshots/pagos_facturacion_mobile.png",
+                icon: "payments",
+                sibling_id: "65be31a1e0f94f1e94f6466f2fd8dcc7"
+            },
+            {
+                id: "65be31a1e0f94f1e94f6466f2fd8dcc7",
+                name: "pagos_facturacion_desktop",
+                title: "Pagos y Facturación (Computadora)",
+                device: "desktop",
+                category: "Facturación",
+                html_path: "html/pagos_facturacion_desktop.html",
+                img_path: "screenshots/pagos_facturacion_desktop.png",
+                icon: "payments",
+                sibling_id: "f085783f952c413aa0396e1f3a2104e7"
+            },
+            {
+                id: "f24eaa1572574f00920173ae5ebac798",
+                name: "servicios_ajustes_mobile",
+                title: "Servicios y Ajustes (Celular)",
+                device: "mobile",
+                category: "Ajustes",
+                html_path: "html/servicios_ajustes_mobile.html",
+                img_path: "screenshots/servicios_ajustes_mobile.png",
+                icon: "settings",
+                sibling_id: "9128f7c6518b4247927a675eb0e5ac06"
+            },
+            {
+                id: "9128f7c6518b4247927a675eb0e5ac06",
+                name: "servicios_ajustes_desktop",
+                title: "Servicios y Ajustes (Computadora)",
+                device: "desktop",
+                category: "Ajustes",
+                html_path: "html/servicios_ajustes_desktop.html",
+                img_path: "screenshots/servicios_ajustes_desktop.png",
+                icon: "settings",
+                sibling_id: "f24eaa1572574f00920173ae5ebac798"
+            }
+        ];
+
+        // Initialize Supabase
+        const SUPABASE_URL = "https://yldzsnkyqtjgwuiygxfu.supabase.co";
+        const SUPABASE_ANON_KEY = "sb_publishable_E_KExtCorJRdbM7rMqdchA_tkOOsadG";
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        let currentUser = null;
+        let currentUserRole = null;
+        let activeScreen = null;
+        let viewMode = 'live'; // 'live' or 'image'
+
+        // Switch auth tabs
+        function switchAuthTab(tab) {
+            const tabLogin = document.getElementById("tab-login");
+            const tabSignup = document.getElementById("tab-signup");
+            const loginForm = document.getElementById("login-form");
+            const signupForm = document.getElementById("signup-form");
+
+            if (tab === 'login') {
+                tabLogin.classList.add("active");
+                tabSignup.classList.remove("active");
+                loginForm.classList.add("active");
+                signupForm.classList.remove("active");
+            } else {
+                tabLogin.classList.remove("active");
+                tabSignup.classList.add("active");
+                loginForm.classList.remove("active");
+                signupForm.classList.add("active");
+            }
+            document.getElementById("auth-error-msg").style.display = "none";
+            document.getElementById("auth-success-msg").style.display = "none";
+        }
+
+        // Show error or success messages
+        function showAuthError(msg) {
+            const errorEl = document.getElementById("auth-error-msg");
+            errorEl.innerText = msg;
+            errorEl.style.display = msg ? "block" : "none";
+        }
+
+        function showAuthSuccess(msg) {
+            const successEl = document.getElementById("auth-success-msg");
+            successEl.innerText = msg;
+            successEl.style.display = msg ? "block" : "none";
+        }
+
+        // Handle Login
+        async function handleLogin(event) {
+            if (event) event.preventDefault();
+            showAuthError("");
+            showAuthSuccess("");
+
+            const email = document.getElementById("login-email").value.toLowerCase();
+            const password = document.getElementById("login-password").value;
+
+            if (email && password) {
+                let role = 'asistente';
+                if (email.includes('dev')) role = 'developer';
+                else if (email.includes('admin')) role = 'admin';
+                else if (email.includes('medico') || email.includes('doc')) role = 'medico';
+                
+                currentUser = { id: 'sim-user-1', email: email, user_metadata: { full_name: email.split('@')[0], role: role } };
+                currentUserRole = role;
+                
+                showAuthSuccess("Ingreso exitoso. Iniciando sesión...");
+                setTimeout(() => { updateAuthUI(); }, 500);
+            } else {
+                showAuthError("Por favor ingrese correo y contraseña.");
+            }
+        }
+
+        // Handle Signup
+        async function handleSignup(event) {
+            if (event) event.preventDefault();
+            showAuthError("");
+            showAuthSuccess("");
+
+            const fullName = document.getElementById("signup-name").value;
+            const email = document.getElementById("signup-email").value.toLowerCase();
+            const password = document.getElementById("signup-password").value;
+            const role = document.getElementById("signup-role").value;
+
+            if (email && password && fullName) {
+                currentUser = { id: 'sim-user-new', email: email, user_metadata: { full_name: fullName, role: role } };
+                currentUserRole = role;
+                
+                showAuthSuccess("Registro exitoso. ¡Iniciando sesión!");
+                setTimeout(() => { updateAuthUI(); }, 500);
+            } else {
+                showAuthError("Por favor complete todos los campos.");
+            }
+        }
+
+        // Quick login
+        async function quickLogin(role) {
+            showAuthError("");
+            showAuthSuccess("");
+            const email = `${role}@centroeslava.com`;
+            
+            currentUser = { id: `sim-user-${role}`, email: email, user_metadata: { full_name: `Usuario ${role}`, role: role } };
+            currentUserRole = role;
+            
+            showAuthSuccess(`Acceso rápido como ${role} exitoso.`);
+            setTimeout(() => { updateAuthUI(); }, 300);
+        }
+
+        // Logout
+        async function handleLogout() {
+            currentUser = null;
+            currentUserRole = null;
+            updateAuthUI();
+        }
+
+        // Check session and update state
+        async function checkSession() {
+            // Simulated session check (starts logged out)
+            currentUser = null;
+            currentUserRole = null;
+            updateAuthUI();
+        }
+
+        // Update UI based on auth state
+        function updateAuthUI() {
+            const navAuth = document.getElementById("nav-auth-container");
+            const authContainer = document.getElementById("sim-auth-container");
+            const emptyState = document.getElementById("sim-empty-state");
+            const deviceWrapper = document.getElementById("sim-device-wrapper");
+            const toggleMode = document.querySelector(".sim-toggle-mode");
+
+            if (currentUser) {
+                authContainer.style.display = "none";
+                
+                if (!activeScreen) {
+                    emptyState.style.display = "block";
+                    deviceWrapper.style.display = "none";
+                } else {
+                    emptyState.style.display = "none";
+                    deviceWrapper.style.display = "flex";
+                    // Refresh active screen display
+                    selectSimScreen(activeScreen);
+                }
+
+                const userFullName = currentUser.user_metadata?.full_name || currentUser.email.split('@')[0];
+                navAuth.innerHTML = `
+                    <div class="nav-user-info" style="display: flex; align-items: center; gap: 12px;">
+                        <span class="material-symbols-outlined" style="color: var(--primary);">person</span>
+                        <div style="text-align: left; line-height: 1.2;">
+                            <div class="nav-user-name" id="nav-user-name" style="font-weight: 600; font-size: 14px; color: var(--text-main);">${userFullName}</div>
+                            <div class="nav-user-role" id="nav-user-role" style="font-size: 10px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.05em; color: var(--primary);">${currentUserRole}</div>
+                        </div>
+                        <button onclick="handleLogout()" class="sim-action-btn" style="padding: 6px 12px; font-size: 13px; display: flex; align-items: center; gap: 4px;">
+                            <span class="material-symbols-outlined" style="font-size: 16px;">logout</span>Salir
+                        </button>
+                    </div>
+                `;
+
+                if (toggleMode) {
+                    if (currentUserRole === 'developer') {
+                        toggleMode.style.display = "flex";
+                    } else {
+                        toggleMode.style.display = "none";
+                        setSimViewMode('live');
+                    }
+                }
+            } else {
+                authContainer.style.display = "block";
+                emptyState.style.display = "none";
+                deviceWrapper.style.display = "none";
+                
+                navAuth.innerHTML = `
+                    <a href="#simulador" class="btn-cta" id="nav-login-btn">
+                        <span class="material-symbols-outlined">login</span>
+                        Iniciar Sesión
+                    </a>
+                `;
+            }
+        }
+
+        // Group screens by category in the sidebar
+        function renderSimSidebar() {
+            const categories = {};
+            screens.forEach(s => {
+                if (!categories[s.category]) {
+                    categories[s.category] = [];
+                }
+                categories[s.category].push(s);
+            });
+
+            const sidebarContent = document.getElementById("sim-sidebar-content");
+            sidebarContent.innerHTML = "";
+
+            for (const cat in categories) {
+                const catTitle = document.createElement("div");
+                catTitle.className = "sim-category";
+                catTitle.innerText = cat;
+                sidebarContent.appendChild(catTitle);
+
+                categories[cat].forEach(s => {
+                    const item = document.createElement("div");
+                    item.className = "sim-item";
+                    item.id = `sim-item-${s.id}`;
+                    item.onclick = () => selectSimScreen(s);
+
+                    const badgeClass = s.device === 'desktop' ? 'sim-badge-desktop' : 'sim-badge-mobile';
+                    const badgeText = s.device === 'desktop' ? 'PC' : 'Cel';
+
+                    item.innerHTML = `
+                        <div class="sim-item-icon">
+                            <span class="material-symbols-outlined">${s.icon}</span>
+                        </div>
+                        <div class="sim-item-info">
+                            <div class="sim-item-title">${s.title.replace(" (Computadora)", "").replace(" (Celular)", "")}</div>
+                        </div>
+                        <span class="sim-item-badge ${badgeClass}">${badgeText}</span>
+                    `;
+                    sidebarContent.appendChild(item);
+                });
+            }
+        }
+
+        // Selection of screen inside simulator
+        function selectSimScreen(screen) {
+            activeScreen = screen;
+
+            // Remove active style from all
+            document.querySelectorAll(".sim-item").forEach(item => {
+                item.classList.remove("active");
+            });
+
+            // Set current active
+            const activeItem = document.getElementById(`sim-item-${screen.id}`);
+            if (activeItem) activeItem.classList.add("active");
+
+            // Update UI Labels
+            document.getElementById("sim-meta-title").innerText = screen.title;
+            const badge = document.getElementById("sim-meta-badge");
+            badge.innerText = screen.device === 'desktop' ? 'Computadora' : 'Celular';
+            badge.className = `sim-item-badge ${screen.device === 'desktop' ? 'sim-badge-desktop' : 'sim-badge-mobile'}`;
+            document.getElementById("sim-meta-id").innerText = `ID: ${screen.id}`;
+
+            // Configure device sibling toggle label
+            const siblingLabel = document.getElementById("sim-sibling-label");
+            siblingLabel.innerText = screen.device === 'desktop' ? 'Ver versión Celular' : 'Ver versión Computadora';
+
+            // Show toolbar actions and hide empty state
+            document.getElementById("sim-meta-meta").style.display = "flex";
+            document.getElementById("sim-options").style.display = "flex";
+            document.getElementById("sim-empty-state").style.display = "none";
+
+            // Configure device container classes
+            const deviceWrapper = document.getElementById("sim-device-wrapper");
+            const deviceFrame = document.getElementById("sim-device-frame");
+            const iframe = document.getElementById("sim-iframe-preview");
+            const img = document.getElementById("sim-image-preview");
+            const restrictedOverlay = document.getElementById("sim-restricted-state");
+
+            deviceWrapper.style.display = "flex";
+            
+            // Check authorization
+            if (!currentUser) {
+                document.getElementById("sim-auth-container").style.display = "block";
+                deviceWrapper.style.display = "none";
+                showAuthError("Inicia sesión para visualizar este módulo.");
+                return;
+            }
+
+            let isRestricted = false;
+            if (currentUserRole === 'medico' && screen.name.startsWith('pagos_facturacion')) {
+                isRestricted = true;
+            } else if (currentUserRole === 'asistente' && (screen.name.startsWith('pagos_facturacion') || screen.name.startsWith('servicios_ajustes'))) {
+                isRestricted = true;
+            }
+
+            if (isRestricted) {
+                restrictedOverlay.style.display = "flex";
+                document.getElementById("restricted-role-name").innerText = currentUserRole;
+                iframe.style.display = "none";
+                img.style.display = "none";
+                document.getElementById("sim-btn-fullscreen").href = "#";
+            } else {
+                restrictedOverlay.style.display = "none";
+                
+                // Set fullscreen URL with role param
+                document.getElementById("sim-btn-fullscreen").href = `${screen.html_path}?role=${currentUserRole}`;
+
+                // Load iframe and image mockups
+                iframe.src = `${screen.html_path}?role=${currentUserRole}`;
+                img.src = screen.img_path;
+
+                // Sync View Mode
+                setSimViewMode(viewMode);
+            }
+            
+            // Remove previous device base or notch if existing
+            const oldBase = document.getElementById("sim-desktop-base");
+            if (oldBase) oldBase.remove();
+            
+            const oldNotch = document.getElementById("sim-mobile-notch");
+            if (oldNotch) oldNotch.remove();
+
+            if (screen.device === 'desktop') {
+                deviceFrame.className = "device-desktop";
+                
+                // Add desktop base stand element
+                const base = document.createElement("div");
+                base.className = "device-desktop-base";
+                base.id = "sim-desktop-base";
+                deviceFrame.parentNode.insertBefore(base, deviceFrame.nextSibling);
+            } else {
+                deviceFrame.className = "device-mobile";
+
+                // Add phone speaker notch element
+                const notch = document.createElement("div");
+                notch.className = "device-mobile-notch";
+                notch.id = "sim-mobile-notch";
+                deviceFrame.appendChild(notch);
+            }
+        }
+
+        // Toggle between desktop and mobile versions of the same layout
+        function toggleViewportSibling() {
+            if (!activeScreen) return;
+            const siblingScreen = screens.find(s => s.id === activeScreen.sibling_id);
+            if (siblingScreen) {
+                selectSimScreen(siblingScreen);
+            }
+        }
+
+        // Toggles live HTML preview vs PNG design preview
+        function setSimViewMode(mode) {
+            viewMode = mode;
+            const iframe = document.getElementById("sim-iframe-preview");
+            const img = document.getElementById("sim-image-preview");
+            const btnLive = document.getElementById("sim-btn-live");
+            const btnImage = document.getElementById("sim-btn-image");
+
+            if (mode === 'live') {
+                iframe.style.display = "block";
+                img.style.display = "none";
+                btnLive.classList.add("active");
+                btnImage.classList.remove("active");
+            } else {
+                iframe.style.display = "none";
+                img.style.display = "block";
+                btnLive.classList.remove("active");
+                btnImage.classList.add("active");
+            }
+        }
+
+        // Filter sidebar search input
+        function filterSimScreens() {
+            const input = document.getElementById("sim-search-input").value.toLowerCase();
+            const items = document.querySelectorAll(".sim-item");
+            
+            items.forEach(item => {
+                const title = item.querySelector(".sim-item-title").innerText.toLowerCase();
+                const category = item.previousElementSibling && item.previousElementSibling.classList.contains("sim-category") 
+                    ? item.previousElementSibling.innerText.toLowerCase() 
+                    : "";
+                
+                if (title.includes(input) || category.includes(input)) {
+                    item.style.display = "flex";
+                } else {
+                    item.style.display = "none";
+                }
+            });
+
+            // Hide headers if no matching items
+            const categories = document.querySelectorAll(".sim-category");
+            categories.forEach(cat => {
+                let next = cat.nextElementSibling;
+                let anyVisible = false;
+                while (next && !next.classList.contains("sim-category")) {
+                    if (next.style.display === "flex") {
+                        anyVisible = true;
+                        break;
+                    }
+                    next = next.nextElementSibling;
+                }
+                cat.style.display = anyVisible ? "block" : "none";
+            });
+        }
+
+        // Quick load from Bento Cards
+        function goDemo(screenId) {
+            const screen = screens.find(s => s.id === screenId);
+            if (screen) {
+                document.getElementById('simulador').scrollIntoView();
+                selectSimScreen(screen);
+            }
+        }
+
+        // Initialize simulator on window load
+        window.onload = () => {
+            renderSimSidebar();
+            checkSession();
+            supabaseClient.auth.onAuthStateChange((event, session) => {
+                checkSession();
+            });
+        };
+    </script>
+</body>
+</html>
