@@ -105,6 +105,7 @@
         }
     </script>
     <script src="../js/rbac.js"></script>
+    <link rel="manifest" href="../manifest.json">
 </head>
 <body>
     <div class="ambient-glow-1"></div>
@@ -331,6 +332,18 @@
 
         function quickLogin(role) {
             window.location.href = `calendario_dashboard_desktop.html?role=${role}`;
+        }
+    </script>
+
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('../sw.js').then(registration => {
+                    console.log('SW registered: ', registration);
+                }).catch(registrationError => {
+                    console.log('SW registration failed: ', registrationError);
+                });
+            });
         }
     </script>
 </body>
