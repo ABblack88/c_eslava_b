@@ -4,6 +4,9 @@
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <!-- Supabase SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../js/supabase.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
@@ -118,6 +121,7 @@
             }
         }
     </script>
+    <script src="../js/rbac.js"></script>
 </head>
 <body class="bg-surface text-on-surface">
 <!-- Side Navigation Shell -->
@@ -193,7 +197,7 @@
 <span class="text-success text-label-sm">+12%</span>
 </div>
 <p class="text-on-surface-variant font-label-sm">Total Pacientes</p>
-<h3 class="font-headline-md text-headline-md mt-1">12</h3>
+<h3 id="stat-total-pacientes" class="font-headline-md text-headline-md mt-1">...</h3>
 </div>
 <div class="bg-surface-white p-6 rounded-xl shadow-[0px_10px_30px_rgba(0,0,0,0.04)] border border-surface-container-low">
 <div class="flex justify-between items-start mb-4">
@@ -202,8 +206,8 @@
 </div>
 <span class="text-on-surface-variant text-label-sm">Hoy</span>
 </div>
-<p class="text-on-surface-variant font-label-sm">Tratamientos</p>
-<h3 class="font-headline-md text-headline-md mt-1">8</h3>
+<p class="text-on-surface-variant font-label-sm">Tratamientos Hoy</p>
+<h3 id="stat-tratamientos-hoy" class="font-headline-md text-headline-md mt-1">...</h3>
 </div>
 <div class="bg-surface-white p-6 rounded-xl shadow-[0px_10px_30px_rgba(0,0,0,0.04)] border border-surface-container-low">
 <div class="flex justify-between items-start mb-4">
@@ -211,8 +215,8 @@
 <span class="material-symbols-outlined text-warning" data-icon="electric_bolt">electric_bolt</span>
 </div>
 </div>
-<p class="text-on-surface-variant font-label-sm">Ondas de Choque</p>
-<h3 class="font-headline-md text-headline-md mt-1">3</h3>
+<p class="text-on-surface-variant font-label-sm">Pendientes Hoy</p>
+<h3 id="stat-pendientes-hoy" class="font-headline-md text-headline-md mt-1">...</h3>
 </div>
 <div class="bg-surface-white p-6 rounded-xl shadow-[0px_10px_30px_rgba(0,0,0,0.04)] border border-surface-container-low">
 <div class="flex justify-between items-start mb-4">
@@ -220,8 +224,8 @@
 <span class="material-symbols-outlined text-tertiary" data-icon="massage">massage</span>
 </div>
 </div>
-<p class="text-on-surface-variant font-label-sm">Descarga Muscular</p>
-<h3 class="font-headline-md text-headline-md mt-1">4</h3>
+<p class="text-on-surface-variant font-label-sm">Completados Hoy</p>
+<h3 id="stat-completados-hoy" class="font-headline-md text-headline-md mt-1">...</h3>
 </div>
 </section>
 <!-- Agenda Section -->
@@ -254,60 +258,8 @@
 </div>
 </div>
 <!-- Schedule Rows -->
-<div class="divide-y divide-surface-container-high">
-<!-- 08:00 AM -->
-<div class="grid grid-cols-[100px_1fr_1fr] min-h-[120px]">
-<div class="p-4 border-r border-surface-container-high flex justify-center items-start text-on-surface-variant font-bold text-sm">08:00 AM</div>
-<div class="p-2 border-r border-surface-container-high relative">
-<div class="h-full w-full bg-primary-fixed/20 rounded-xl p-3 border-l-4 border-primary group hover:scale-[1.02] transition-transform cursor-pointer">
-<p class="text-xs font-bold text-primary-container uppercase">Fisioterapia Deportiva</p>
-<p class="font-bold text-on-surface">Carlos Mendoza</p>
-<p class="text-xs text-on-surface-variant">Ondas de Choque • S/. 120</p>
-</div>
-</div>
-<div class="p-2 relative bg-surface-container-lowest/50">
-<!-- Empty slot -->
-</div>
-</div>
-<!-- 09:00 AM -->
-<div class="grid grid-cols-[100px_1fr_1fr] min-h-[120px]">
-<div class="p-4 border-r border-surface-container-high flex justify-center items-start text-on-surface-variant font-bold text-sm">09:00 AM</div>
-<div class="p-2 border-r border-surface-container-high relative">
-<!-- Empty slot -->
-</div>
-<div class="p-2 relative">
-<div class="h-full w-full bg-secondary-container/20 rounded-xl p-3 border-l-4 border-secondary group hover:scale-[1.02] transition-transform cursor-pointer">
-<p class="text-xs font-bold text-secondary-container uppercase">Recuperación Post-Op</p>
-<p class="font-bold text-on-surface">Ana Lucia Ortiz</p>
-<p class="text-xs text-on-surface-variant">Descarga Muscular • S/. 80</p>
-</div>
-</div>
-</div>
-<!-- 10:00 AM -->
-<div class="grid grid-cols-[100px_1fr_1fr] min-h-[120px]">
-<div class="p-4 border-r border-surface-container-high flex justify-center items-start text-on-surface-variant font-bold text-sm">10:00 AM</div>
-<div class="p-2 border-r border-surface-container-high relative">
-<div class="h-full w-full bg-tertiary-fixed/20 rounded-xl p-3 border-l-4 border-tertiary group hover:scale-[1.02] transition-transform cursor-pointer">
-<p class="text-xs font-bold text-tertiary-container uppercase">Evaluación Inicial</p>
-<p class="font-bold text-on-surface">Roberto Gómez</p>
-<p class="text-xs text-on-surface-variant">Consulta General • S/. 150</p>
-</div>
-</div>
-<div class="p-2 relative">
-<div class="h-full w-full bg-primary-fixed/20 rounded-xl p-3 border-l-4 border-primary group hover:scale-[1.02] transition-transform cursor-pointer">
-<p class="text-xs font-bold text-primary-container uppercase">Ondas de Choque</p>
-<p class="font-bold text-on-surface">Elena Ramos</p>
-<p class="text-xs text-on-surface-variant">Sesión 3/5 • S/. 120</p>
-</div>
-</div>
-</div>
-<!-- 11:00 AM -->
-<div class="grid grid-cols-[100px_1fr_1fr] min-h-[120px]">
-<div class="p-4 border-r border-surface-container-high flex justify-center items-start text-on-surface-variant font-bold text-sm">11:00 AM</div>
-<div class="col-span-2 flex items-center justify-center bg-surface-container-low/30 italic text-outline-variant font-body-md">
-                            No hay citas programadas para este bloque
-                        </div>
-</div>
+<div class="divide-y divide-surface-container-high" id="calendarGrid">
+<!-- Contenido dinámico cargado vía Supabase -->
 </div>
 </div>
 </section>
@@ -316,7 +268,7 @@
 <div id="financial-insight-card" class="lg:col-span-2 bg-surface-white rounded-3xl p-8 shadow-[0px_10px_30px_rgba(0,0,0,0.04)] border border-surface-container-low relative overflow-hidden h-[300px]">
 <div class="relative z-10">
 <h3 class="font-headline-md text-headline-md text-on-surface mb-2">Resumen de Ingresos</h3>
-<p class="text-on-surface-variant font-body-md mb-6">Total proyectado para hoy: <span class="font-bold text-primary">S/. 1,240.00</span></p>
+<p class="text-on-surface-variant font-body-md mb-6">Total proyectado para hoy: <span id="stat-ingresos-hoy" class="font-bold text-primary">S/. ...</span></p>
 <div class="flex items-end gap-4 h-32 mt-4">
 <div class="flex-1 bg-primary/20 rounded-t-lg h-[40%] transition-all hover:bg-primary/40"></div>
 <div class="flex-1 bg-primary/20 rounded-t-lg h-[60%] transition-all hover:bg-primary/40"></div>
@@ -335,31 +287,8 @@
 </div>
 <div class="bg-surface-white rounded-3xl p-8 shadow-[0px_10px_30px_rgba(0,0,0,0.04)] border border-surface-container-low flex flex-col">
 <h3 class="font-headline-md text-headline-md text-on-surface mb-6">Próximos Pacientes</h3>
-<div class="space-y-6">
-<div class="flex items-center gap-4">
-<img alt="Paciente 1" class="w-12 h-12 rounded-full object-cover" data-alt="A medium shot of a young adult woman with an optimistic expression in a modern, light-filled room. The environment is minimalist and clinical with soft, warm lighting. The overall mood is peaceful and professional, maintaining the high-end boutique medical feel of the clinic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCd1Ih6DXufNM0TE2LrCNXEbh904szj93ZITAxqy1mvLWJpB9NPRKx4wFjElKK8owkheIdz9fJ57suzAX6XNcMZKu3Cwkphj6J1lR5YkqLVbfE9MqVvhf3nVzibUtWxB9WqkFHl4ItUmjp-FWyUjSnv6v_qIwrRgPzoBFiz4ek4MKVKMOj0SEuoXn8SYfzR5fFAsqK5VN7wx-YrZcf-Ttg2w9hUunR5RxIFhOVqHDZvoWxmtrKCEk6K011o8AYfLsrY_RKq-FAanKg"/>
-<div class="flex-1">
-<p class="font-bold text-on-surface">Mariana Solis</p>
-<p class="text-xs text-on-surface-variant">12:30 PM • Consultorio 1</p>
-</div>
-<span class="material-symbols-outlined text-outline-variant" data-icon="chevron_right">chevron_right</span>
-</div>
-<div class="flex items-center gap-4">
-<img alt="Paciente 2" class="w-12 h-12 rounded-full object-cover" data-alt="Close-up portrait of an elderly man with silver hair and a gentle, trusting smile. The background is a blurred, high-end medical facility with neutral tones and clean aesthetics. The lighting is soft and natural, emphasizing a feeling of calm and personalized care." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA0nmWRLETccMD7TWfoy7T-hEFqACxBPZp4O4ery2FuXPvMfRWh3w7rR9937WrgCnA9oA4JDwIMR8WJQcRPZQNzkOLU9rGbNdmJBZ48m0Pd7o1_iANxJtJ0Er8-c0ug69hQwpbivQeARV8QRslI0wHIVOMiTvk3alzLBXZ5x8MlcxGujR_EJ7rIUdZfjQgI7JIrLO0XeyCPbyl2JQNwio4InNdGFvJusgbr1QE8-LMlGk6nmToAeatCIFlzaJoU8iia7KNk_9ruPkM"/>
-<div class="flex-1">
-<p class="font-bold text-on-surface">Jorge Pineda</p>
-<p class="text-xs text-on-surface-variant">01:15 PM • Consultorio 2</p>
-</div>
-<span class="material-symbols-outlined text-outline-variant" data-icon="chevron_right">chevron_right</span>
-</div>
-<div class="flex items-center gap-4">
-<img alt="Paciente 3" class="w-12 h-12 rounded-full object-cover" data-alt="Portrait of a professional athletic man looking forward, set in a bright, modern interior with minimal decor. The lighting is high-key and soft, creating an aura of health and vitality. The style is consistent with high-end technology interfaces, clean and empathetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAlZOOGu11Fha7ofpMvggt6lLgpEwP74aB2o0j_Eot8CPpBftM69UXf43G4b8WMylph1dHjW57BbPci-HH8s6Gs4Cgp2e6U_rW-IxaYE_fa2XGceZOdIO-81M891RbgmJReo4ouNxgK4rzjhavpxnR4em3PPAiER8VuoLJ_gIoO2gpnEMPGLmrhOMg-spmD-gZHF2xYyGPst7tq_out_IW2P2-IKObWQpwWEfp2QosCOR2Q9NyTau8cTNq1vYQi6YS9yr60BmmGxmM"/>
-<div class="flex-1">
-<p class="font-bold text-on-surface">Kevin Duarte</p>
-<p class="text-xs text-on-surface-variant">02:00 PM • Consultorio 1</p>
-</div>
-<span class="material-symbols-outlined text-outline-variant" data-icon="chevron_right">chevron_right</span>
-</div>
+<div id="proximos-pacientes-list" class="space-y-6">
+    <!-- Próximos pacientes renderizados aquí -->
 </div>
 <button class="mt-auto w-full py-3 text-primary font-bold hover:bg-primary/5 rounded-xl transition-all">Ver todos</button>
 </div>
@@ -459,61 +388,12 @@
 </div>
 
 <script>
-    const urlParams = new URLSearchParams(window.location.search);
-    const currentRole = urlParams.get('role') || 'developer';
+    
 
     // Set today's date as default in date input
     document.getElementById('appt-date').value = new Date().toISOString().split('T')[0];
 
     // Enforce role-based element locking/hiding inside the page
-    function applyRBACRules() {
-        if (currentRole === 'medico' || currentRole === 'asistente') {
-            // Hide Finanzas tab
-            const linkFinanzas = document.getElementById("nav-link-finanzas");
-            if (linkFinanzas) linkFinanzas.style.display = "none";
-
-            // Replace financial overview card with clinical stats
-            const financialCard = document.getElementById("financial-insight-card");
-            if (financialCard) {
-                financialCard.innerHTML = `
-                    <div class="relative z-10 flex flex-col justify-between h-full">
-                        <div>
-                            <h3 class="font-headline-md text-headline-md text-on-surface mb-2">Resumen Clínico Semanal</h3>
-                            <p class="text-on-surface-variant font-body-md mb-6">Estadísticas operativas de terapias</p>
-                        </div>
-                        <div class="grid grid-cols-4 gap-4 text-center">
-                            <div class="bg-primary/5 rounded-2xl p-4 border border-primary/10">
-                                <span class="material-symbols-outlined text-primary text-3xl mb-1">groups</span>
-                                <div class="text-2xl font-bold text-on-surface">48</div>
-                                <div class="text-xs text-on-surface-variant">Atendidos esta semana</div>
-                            </div>
-                            <div class="bg-primary/5 rounded-2xl p-4 border border-primary/10">
-                                <span class="material-symbols-outlined text-primary text-3xl mb-1">clinical_notes</span>
-                                <div class="text-2xl font-bold text-on-surface">12</div>
-                                <div class="text-xs text-on-surface-variant">Sesiones Pendientes</div>
-                            </div>
-                            <div class="bg-primary/5 rounded-2xl p-4 border border-primary/10">
-                                <span class="material-symbols-outlined text-primary text-3xl mb-1">healing</span>
-                                <div class="text-2xl font-bold text-on-surface">60%</div>
-                                <div class="text-xs text-on-surface-variant">Ondas de Choque</div>
-                            </div>
-                            <div class="bg-primary/5 rounded-2xl p-4 border border-primary/10">
-                                <span class="material-symbols-outlined text-primary text-3xl mb-1">thumb_up</span>
-                                <div class="text-2xl font-bold text-on-surface">94%</div>
-                                <div class="text-xs text-on-surface-variant">Tasa de Recuperación</div>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            }
-        }
-
-        if (currentRole === 'asistente') {
-            // Hide Ajustes tab
-            const linkAjustes = document.getElementById("nav-link-ajustes");
-            if (linkAjustes) linkAjustes.style.display = "none";
-        }
-    }
 
     // Modal Control Functions
     function openAppointmentModal() {
@@ -555,41 +435,315 @@
         return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${startDateTime}/${endDateTime}&details=${details}&location=${location}`;
     }
 
-    function saveAppointment(event) {
+    window.serviciosActivos = [];
+
+    async function cargarServicios() {
+        try {
+            const { data, error } = await supabaseClient
+                .from('servicios')
+                .select('*')
+                .eq('estado', 'Activo');
+            if (error) throw error;
+            window.serviciosActivos = data;
+            
+            const selectTratamiento = document.getElementById('appt-treatment');
+            if (selectTratamiento) {
+                selectTratamiento.innerHTML = '';
+                data.forEach(s => {
+                    const option = document.createElement('option');
+                    option.value = s.nombre;
+                    option.textContent = s.nombre;
+                    selectTratamiento.appendChild(option);
+                });
+            }
+        } catch (error) {
+            console.error('Error al cargar servicios:', error);
+        }
+    }
+
+    async function cargarEstadisticas() {
+        try {
+            const today = new Date().toISOString().split('T')[0];
+            
+            // Pacientes count
+            const { count: totalPacientes, error: errorPacientes } = await supabaseClient
+                .from('pacientes')
+                .select('*', { count: 'exact', head: true });
+            
+            // Citas for today
+            const { data: citasHoy, error: errorCitas } = await supabaseClient
+                .from('citas')
+                .select('estado')
+                .eq('fecha', today);
+                
+            // Pagos for today
+            const { data: pagosHoy, error: errorPagos } = await supabaseClient
+                .from('pagos')
+                .select('monto, estado')
+                .eq('fecha', today);
+
+            if (errorPacientes || errorCitas || errorPagos) throw new Error("Error fetching stats");
+
+            const elTotalPacientes = document.getElementById('stat-total-pacientes');
+            if (elTotalPacientes) elTotalPacientes.textContent = totalPacientes || 0;
+            
+            const tratamientosHoy = citasHoy ? citasHoy.length : 0;
+            const completadosHoy = citasHoy ? citasHoy.filter(c => c.estado === 'Completado').length : 0;
+            const pendientesHoy = citasHoy ? citasHoy.filter(c => c.estado === 'Pendiente').length : 0;
+
+            const elTratamientosHoy = document.getElementById('stat-tratamientos-hoy');
+            if (elTratamientosHoy) elTratamientosHoy.textContent = tratamientosHoy;
+            
+            const elCompletadosHoy = document.getElementById('stat-completados-hoy');
+            if (elCompletadosHoy) elCompletadosHoy.textContent = completadosHoy;
+            
+            const elPendientesHoy = document.getElementById('stat-pendientes-hoy');
+            if (elPendientesHoy) elPendientesHoy.textContent = pendientesHoy;
+
+            // Calculate ingresos
+            const ingresos = pagosHoy ? pagosHoy.reduce((sum, p) => sum + Number(p.monto || 0), 0) : 0;
+            const elIngresos = document.getElementById('stat-ingresos-hoy');
+            if (elIngresos) {
+                elIngresos.textContent = new Intl.NumberFormat('es-PE', { style: 'currency', currency: 'PEN' }).format(ingresos);
+            }
+
+        } catch (error) {
+            console.error('Error al cargar estadísticas:', error);
+        }
+    }
+
+    function getInitials(name) {
+        if (!name) return '??';
+        const parts = name.split(' ');
+        if (parts.length >= 2) {
+            return (parts[0][0] + parts[1][0]).toUpperCase();
+        }
+        return name.substring(0, 2).toUpperCase();
+    }
+
+    async function saveAppointment(event) {
         event.preventDefault();
         
-        const appt = {
-            name: document.getElementById("appt-patient-name").value,
-            email: document.getElementById("appt-patient-email").value,
-            treatment: document.getElementById("appt-treatment").value,
-            room: document.getElementById("appt-room").value,
-            date: document.getElementById("appt-date").value,
-            time: document.getElementById("appt-time").value,
-            notes: document.getElementById("appt-notes").value
-        };
+        const name = document.getElementById("appt-patient-name").value;
+        const email = document.getElementById("appt-patient-email").value;
+        const treatment = document.getElementById("appt-treatment").value;
+        const room = document.getElementById("appt-room").value;
+        const date = document.getElementById("appt-date").value;
+        
+        let time = document.getElementById("appt-time").value;
+        let time24 = time;
+        if (time.includes('AM') || time.includes('PM')) {
+            const [timeStr, modifier] = time.split(' ');
+            let [hours, minutes] = timeStr.split(':');
+            if (hours === '12') hours = '00';
+            if (modifier === 'PM') hours = (parseInt(hours, 10) + 12).toString();
+            time24 = `${hours.padStart(2, '0')}:${minutes}:00`;
+        }
+        
+        const notes = document.getElementById("appt-notes").value;
 
-        // Generate sync link and set it on the success modal button
-        const gcalUrl = generateGoogleCalendarUrl(appt);
-        const gcalBtn = document.getElementById("sync-gcal-btn");
-        gcalBtn.setAttribute("href", gcalUrl);
+        try {
+            // Check if patient exists or create new
+            let paciente_id = null;
+            const { data: existingPacientes, error: searchError } = await supabaseClient
+                .from('pacientes')
+                .select('id')
+                .ilike('nombre', name)
+                .limit(1);
+            
+            if (searchError) throw searchError;
 
-        // Hide form modal and open success modal
-        closeAppointmentModal();
-        document.getElementById("success-confirmation-modal").classList.remove("hidden");
+            if (existingPacientes && existingPacientes.length > 0) {
+                paciente_id = existingPacientes[0].id;
+            } else {
+                const { data: newPaciente, error: insertError } = await supabaseClient
+                    .from('pacientes')
+                    .insert([{ nombre: name, email: email, estado: 'Activo' }])
+                    .select('id');
+                
+                if (insertError) throw insertError;
+                if (newPaciente && newPaciente.length > 0) {
+                    paciente_id = newPaciente[0].id;
+                }
+            }
+
+            // Create appointment
+            const { data: newCita, error: apptError } = await supabaseClient
+                .from('citas')
+                .insert([{
+                    paciente_id: paciente_id,
+                    fecha: date,
+                    hora: time24,
+                    estado: 'Pendiente',
+                    notas: notes,
+                    tratamiento: treatment,
+                    consultorio: room
+                }])
+                .select('id');
+            
+            if (apptError) throw apptError;
+            
+            const cita_id = newCita && newCita.length > 0 ? newCita[0].id : null;
+
+            // Encontrar el precio del tratamiento
+            const servicioObj = window.serviciosActivos.find(s => s.nombre === treatment);
+            const montoPago = servicioObj ? servicioObj.precio : 0.00;
+
+            if (cita_id) {
+                // Crear pago pendiente asociado
+                const { error: pagoError } = await supabaseClient
+                    .from('pagos')
+                    .insert([{
+                        paciente_id: paciente_id,
+                        cita_id: cita_id,
+                        monto: montoPago,
+                        estado: 'Pendiente',
+                        metodo: 'Efectivo', // Default, assuming will be updated on payment
+                        fecha: date
+                    }]);
+                if (pagoError) console.error("Error creating payment:", pagoError);
+            }
+
+            const appt = { name, email, treatment, room, date, time, notes };
+
+            // Generate sync link and set it on the success modal button
+            const gcalUrl = generateGoogleCalendarUrl(appt);
+            const gcalBtn = document.getElementById("sync-gcal-btn");
+            gcalBtn.setAttribute("href", gcalUrl);
+
+            // Hide form modal and open success modal
+            closeAppointmentModal();
+            document.getElementById("success-confirmation-modal").classList.remove("hidden");
+            
+            // Reload dashboard data
+            cargarCitas();
+            cargarEstadisticas();
+
+        } catch (error) {
+            console.error('Error al guardar cita:', error);
+            alert('Hubo un error al guardar la cita. Verifica la consola para más detalles.');
+        }
+    }
+
+    async function cargarCitas() {
+        try {
+            const gridBody = document.getElementById('calendarGrid');
+            const proximosContainer = document.getElementById('proximos-pacientes-list');
+            if (!gridBody) return;
+            
+            const today = new Date().toISOString().split('T')[0];
+
+            const { data, error } = await supabaseClient
+                .from('citas')
+                .select('*, pacientes(nombre)')
+                .eq('fecha', today)
+                .order('hora', { ascending: true });
+                
+            if (error) throw error;
+
+            const timeSlots = [
+                { time: '08:00:00', label: '08:00 AM' },
+                { time: '09:00:00', label: '09:00 AM' },
+                { time: '10:00:00', label: '10:00 AM' },
+                { time: '11:00:00', label: '11:00 AM' },
+                { time: '12:00:00', label: '12:00 PM' },
+                { time: '13:00:00', label: '01:00 PM' },
+                { time: '14:00:00', label: '02:00 PM' },
+                { time: '15:00:00', label: '03:00 PM' },
+                { time: '16:00:00', label: '04:00 PM' },
+                { time: '17:00:00', label: '05:00 PM' }
+            ];
+
+            gridBody.innerHTML = '';
+
+            timeSlots.forEach(slot => {
+                const apptC1 = data.find(c => c.hora.startsWith(slot.time.substring(0,2)) && c.consultorio === 'Consultorio 1');
+                const apptC2 = data.find(c => c.hora.startsWith(slot.time.substring(0,2)) && c.consultorio === 'Consultorio 2');
+
+                const renderCard = (appt) => {
+                    if (!appt) return \`<div class="p-2 relative bg-surface-container-lowest/50"></div>\`;
+                    
+                    let color = 'primary';
+                    if (appt.tratamiento === 'Descarga Muscular') color = 'secondary';
+                    if (appt.tratamiento === 'Evaluación Inicial') color = 'tertiary';
+                    if (appt.tratamiento === 'Fisioterapia Deportiva') color = 'warning';
+
+                    const bgMap = {
+                        'primary': 'bg-primary-fixed/20 border-primary text-primary-container',
+                        'secondary': 'bg-secondary-container/20 border-secondary text-secondary-container',
+                        'tertiary': 'bg-tertiary-fixed/20 border-tertiary text-tertiary-container',
+                        'warning': 'bg-warning/20 border-warning text-warning'
+                    };
+
+                    const styleClasses = bgMap[color] || bgMap['primary'];
+                    const pacienteNombre = appt.pacientes ? appt.pacientes.nombre : 'Paciente Desconocido';
+
+                    return \`
+                    <div class="p-2 border-r border-surface-container-high relative">
+                        <div class="h-full w-full \${styleClasses.split(' ')[0]} rounded-xl p-3 border-l-4 \${styleClasses.split(' ')[1]} group hover:scale-[1.02] transition-transform cursor-pointer">
+                            <p class="text-xs font-bold \${styleClasses.split(' ')[2]} uppercase">\${appt.tratamiento || 'Cita Médica'}</p>
+                            <p class="font-bold text-on-surface">\${pacienteNombre}</p>
+                            <p class="text-xs text-on-surface-variant">\${appt.estado}</p>
+                        </div>
+                    </div>\`;
+                };
+
+                const rowHTML = \`
+                <div class="grid grid-cols-[100px_1fr_1fr] min-h-[120px]">
+                    <div class="p-4 border-r border-surface-container-high flex justify-center items-start text-on-surface-variant font-bold text-sm">\${slot.label}</div>
+                    \${renderCard(apptC1)}
+                    \${renderCard(apptC2)}
+                </div>
+                \`;
+                
+                gridBody.insertAdjacentHTML('beforeend', rowHTML);
+            });
+            
+            // Render upcoming patients
+            if (proximosContainer) {
+                const proximos = data.filter(c => c.estado === 'Pendiente').slice(0, 3);
+                if (proximos.length === 0) {
+                    proximosContainer.innerHTML = '<p class="text-outline text-center py-4">No hay pacientes próximos para hoy.</p>';
+                } else {
+                    let html = '';
+                    proximos.forEach(c => {
+                        const pacienteNombre = c.pacientes ? c.pacientes.nombre : 'Desconocido';
+                        const iniciales = getInitials(pacienteNombre);
+                        
+                        let horaFormat = c.hora;
+                        if (c.hora) {
+                            const [h, m] = c.hora.split(':');
+                            const hInt = parseInt(h);
+                            const ampm = hInt >= 12 ? 'PM' : 'AM';
+                            const h12 = hInt % 12 || 12;
+                            horaFormat = \`\${h12}:\${m} \${ampm}\`;
+                        }
+
+                        html += \`
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center font-bold">\${iniciales}</div>
+                            <div class="flex-1">
+                                <p class="font-bold text-on-surface">\${pacienteNombre}</p>
+                                <p class="text-xs text-on-surface-variant">\${horaFormat} • \${c.consultorio}</p>
+                            </div>
+                            <span class="material-symbols-outlined text-outline-variant" data-icon="chevron_right">chevron_right</span>
+                        </div>\`;
+                    });
+                    proximosContainer.innerHTML = html;
+                }
+            }
+
+        } catch (error) {
+            console.error('Error al cargar citas:', error);
+        }
     }
 
     // Initialize logic
-    document.addEventListener("DOMContentLoaded", () => {
-        // Append role parameter to all links inside the page
-        document.querySelectorAll("a").forEach(link => {
-            let href = link.getAttribute("href");
-            if (href && href !== "#" && !href.startsWith("http")) {
-                const separator = href.includes("?") ? "&" : "?";
-                link.setAttribute("href", `${href}${separator}role=${currentRole}`);
-            }
-        });
-
-        applyRBACRules();
+    document.addEventListener("DOMContentLoaded", async () => {
+        
+        await cargarServicios();
+        cargarCitas();
+        cargarEstadisticas();
 
         // Micro-interactions for the calendar cards
         document.querySelectorAll('.group').forEach(card => {

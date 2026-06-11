@@ -123,31 +123,31 @@
 </div>
 <ul class="flex flex-col space-y-2 flex-grow">
 <li>
-<a class="flex items-center space-x-3 p-3 text-on-surface-variant dark:text-outline hover:bg-surface-container-low transition-all active:scale-[0.98] rounded-xl" href="#">
+<a class="flex items-center space-x-3 p-3 text-on-surface-variant dark:text-outline hover:bg-surface-container-low transition-all active:scale-[0.98] rounded-xl" href="calendario_dashboard_mobile.html">
 <span class="material-symbols-outlined" data-icon="calendar_today">calendar_today</span>
 <span>Agenda</span>
 </a>
 </li>
 <li>
-<a class="flex items-center space-x-3 p-3 bg-secondary-container dark:bg-secondary-fixed-variant text-on-secondary-container dark:text-secondary-fixed rounded-xl transition-all active:scale-[0.98]" href="#">
+<a class="flex items-center space-x-3 p-3 bg-secondary-container dark:bg-secondary-fixed-variant text-on-secondary-container dark:text-secondary-fixed rounded-xl transition-all active:scale-[0.98]" href="pacientes_historia_clinica_mobile.html">
 <span class="material-symbols-outlined" data-icon="groups">groups</span>
 <span>Pacientes</span>
 </a>
 </li>
 <li>
-<a class="flex items-center space-x-3 p-3 text-on-surface-variant dark:text-outline hover:bg-surface-container-low transition-all active:scale-[0.98] rounded-xl" href="#">
+<a class="flex items-center space-x-3 p-3 text-on-surface-variant dark:text-outline hover:bg-surface-container-low transition-all active:scale-[0.98] rounded-xl" href="servicios_ajustes_mobile.html">
 <span class="material-symbols-outlined" data-icon="medical_services">medical_services</span>
 <span>Servicios</span>
 </a>
 </li>
 <li>
-<a class="flex items-center space-x-3 p-3 text-on-surface-variant dark:text-outline hover:bg-surface-container-low transition-all active:scale-[0.98] rounded-xl" href="#" id="nav-link-finanzas-drawer">
+<a class="flex items-center space-x-3 p-3 text-on-surface-variant dark:text-outline hover:bg-surface-container-low transition-all active:scale-[0.98] rounded-xl" href="pagos_facturacion_mobile.html" id="nav-link-finanzas-drawer">
 <span class="material-symbols-outlined" data-icon="payments">payments</span>
 <span>Pagos</span>
 </a>
 </li>
 <li>
-<a class="flex items-center space-x-3 p-3 text-on-surface-variant dark:text-outline hover:bg-surface-container-low transition-all active:scale-[0.98] rounded-xl mt-auto" href="#" id="nav-link-ajustes-drawer">
+<a class="flex items-center space-x-3 p-3 text-on-surface-variant dark:text-outline hover:bg-surface-container-low transition-all active:scale-[0.98] rounded-xl mt-auto" href="servicios_ajustes_mobile.html" id="nav-link-ajustes-drawer">
 <span class="material-symbols-outlined" data-icon="settings">settings</span>
 <span>Configuración</span>
 </a>
@@ -401,61 +401,23 @@
 </div>
 <!-- BottomNavBar (Mobile) -->
 <nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 py-3 md:hidden bg-surface-white/80 dark:bg-surface-container/80 backdrop-blur-md text-primary dark:text-primary-fixed font-label-sm text-label-sm fixed bottom-0 w-full rounded-t-xl shadow-[0px_-10px_30px_rgba(0,0,0,0.04)] hover:bg-surface-container-high/50 active:scale-90 transition-all duration-150">
-<a class="flex flex-col items-center justify-center text-outline dark:text-outline-variant w-1/4" href="#">
+<a class="flex flex-col items-center justify-center text-outline dark:text-outline-variant w-1/4" href="calendario_dashboard_mobile.html">
 <span class="material-symbols-outlined mb-1" data-icon="event">event</span>
 <span>Agenda</span>
 </a>
-<a class="flex flex-col items-center justify-center text-primary dark:text-primary-fixed font-bold w-1/4" href="#">
+<a class="flex flex-col items-center justify-center text-primary dark:text-primary-fixed font-bold w-1/4" href="pacientes_historia_clinica_mobile.html">
 <span class="material-symbols-outlined mb-1" data-icon="person_search" style="font-variation-settings: 'FILL' 1;">person_search</span>
 <span>Pacientes</span>
 </a>
-<a class="flex flex-col items-center justify-center text-outline dark:text-outline-variant w-1/4" href="#">
+<a class="flex flex-col items-center justify-center text-outline dark:text-outline-variant w-1/4" href="servicios_ajustes_mobile.html">
 <span class="material-symbols-outlined mb-1" data-icon="healing">healing</span>
 <span>Tratamientos</span>
 </a>
-<a class="flex flex-col items-center justify-center text-outline dark:text-outline-variant w-1/4" href="#" id="nav-link-finanzas-bottom">
+<a class="flex flex-col items-center justify-center text-outline dark:text-outline-variant w-1/4" href="pagos_facturacion_mobile.html" id="nav-link-finanzas-bottom">
 <span class="material-symbols-outlined mb-1" data-icon="account_balance_wallet">account_balance_wallet</span>
 <span>Finanzas</span>
 </a>
 </nav>
-    <script>
-        // --- START RBAC LOGIC ---
-        function applyRBACRules() {
-            const urlParams = new URLSearchParams(window.location.search);
-            let role = urlParams.get('role');
-            if (!role) role = 'developer';
+    <script src="../js/rbac.js"></script>
 
-            const finanzasDrawer = document.getElementById('nav-link-finanzas-drawer');
-            const ajustesDrawer = document.getElementById('nav-link-ajustes-drawer');
-            const finanzasBottom = document.getElementById('nav-link-finanzas-bottom');
-
-            if (role === 'medico') {
-                if (finanzasDrawer) finanzasDrawer.style.display = 'none';
-                if (finanzasBottom) finanzasBottom.style.display = 'none';
-            } else if (role === 'asistente') {
-                if (finanzasDrawer) finanzasDrawer.style.display = 'none';
-                if (finanzasBottom) finanzasBottom.style.display = 'none';
-                if (ajustesDrawer) ajustesDrawer.style.display = 'none';
-            }
-        }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            applyRBACRules();
-
-            // Append role parameter to all relative links
-            const urlParams = new URLSearchParams(window.location.search);
-            const role = urlParams.get('role');
-            if (role) {
-                document.querySelectorAll('a').forEach(link => {
-                    const href = link.getAttribute('href');
-                    if (href && !href.startsWith('http') && !href.startsWith('#')) {
-                        const url = new URL(href, window.location.origin);
-                        url.searchParams.set('role', role);
-                        link.setAttribute('href', url.pathname + url.search + url.hash);
-                    }
-                });
-            }
-        });
-        // --- END RBAC LOGIC ---
-    </script>
 </body></html>

@@ -5,6 +5,8 @@
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
     <title>Acceso - Centro Eslava</title>
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../js/supabase.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;700&display=swap" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
     <style>
@@ -102,6 +104,7 @@
             }
         }
     </script>
+    <script src="../js/rbac.js"></script>
 </head>
 <body>
     <div class="ambient-glow-1"></div>
@@ -136,7 +139,7 @@
                 <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Contraseña</label>
                 <div class="relative">
                     <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 text-xl">lock</span>
-                    <input type="password" required class="form-input w-full rounded-xl py-3 pl-10 pr-4 text-sm" placeholder="••••••••">
+                    <input type="password" id="login-pass" required class="form-input w-full rounded-xl py-3 pl-10 pr-4 text-sm" placeholder="••••••••">
                 </div>
             </div>
             
@@ -179,21 +182,21 @@
                 <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Nombre Completo</label>
                 <div class="relative">
                     <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 text-xl">badge</span>
-                    <input type="text" required class="form-input w-full rounded-xl py-3 pl-10 pr-4 text-sm" placeholder="Juan Pérez">
+                    <input type="text" id="signup-name" required class="form-input w-full rounded-xl py-3 pl-10 pr-4 text-sm" placeholder="Juan Pérez">
                 </div>
             </div>
             <div>
                 <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Correo Electrónico</label>
                 <div class="relative">
                     <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 text-xl">mail</span>
-                    <input type="email" required class="form-input w-full rounded-xl py-3 pl-10 pr-4 text-sm" placeholder="correo@centroeslava.com">
+                    <input type="email" id="signup-email" required class="form-input w-full rounded-xl py-3 pl-10 pr-4 text-sm" placeholder="correo@centroeslava.com">
                 </div>
             </div>
             <div>
                 <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Contraseña</label>
                 <div class="relative">
                     <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 text-xl">lock</span>
-                    <input type="password" required class="form-input w-full rounded-xl py-3 pl-10 pr-4 text-sm" placeholder="••••••••">
+                    <input type="password" id="signup-pass" required class="form-input w-full rounded-xl py-3 pl-10 pr-4 text-sm" placeholder="••••••••">
                 </div>
             </div>
             <div>
@@ -254,25 +257,76 @@
             errorMsg.classList.remove('hidden');
         }
 
-        // Simulating authentication based on roles for the simulator
-        function handleLogin(event) {
-            event.preventDefault();
-            const user = document.getElementById('login-user').value.toLowerCase();
-            
-            let role = 'asistente'; // default
-            if (user.includes('dev')) role = 'developer';
-            else if (user.includes('admin')) role = 'admin';
-            else if (user.includes('medico') || user.includes('doc')) role = 'medico';
-            else role = 'asistente';
+        document.addEventListener("DOMContentLoaded", async () => {
+            const { data } = await supabaseClient.auth.getSession();
+            if (data.session) {
+                const role = data.session.user?.user_metadata?.role || 'asistente';
+                window.location.href = `calendario_dashboard_desktop.html?role=${role}`;
+            }
+        });
 
-            window.location.href = `calendario_dashboard_desktop.html?role=${role}`;
+        // Autenticación usando Supabase Auth
+        async function handleLogin(event) {
+            event.preventDefault();
+            const email = document.getElementById('login-user').value;
+            const pass = document.getElementById('login-pass').value;
+
+            const submitBtn = event.target.querySelector('button[type="submit"]');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="material-symbols-outlined animate-spin text-sm">sync</span> Ingresando...';
+
+            try {
+                const { data, error } = await supabaseClient.auth.signInWithPassword({
+                    email: email,
+                    password: pass,
+                });
+
+                if (error) throw error;
+                
+                const role = data.user?.user_metadata?.role || 'asistente';
+                window.location.href = `calendario_dashboard_desktop.html?role=${role}`;
+            } catch (error) {
+                showError("Credenciales incorrectas o error de red: " + error.message);
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = 'Ingresar al Portal <span class="material-symbols-outlined text-xl">arrow_forward</span>';
+            }
         }
 
-        function handleSignup(event) {
+        async function handleSignup(event) {
             event.preventDefault();
+            const name = document.getElementById('signup-name').value;
+            const email = document.getElementById('signup-email').value;
+            const pass = document.getElementById('signup-pass').value;
             const role = document.getElementById('signup-role').value;
-            // Simulated signup success, direct to dashboard
-            window.location.href = `calendario_dashboard_desktop.html?role=${role}`;
+
+            const submitBtn = event.target.querySelector('button[type="submit"]');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="material-symbols-outlined animate-spin text-sm">sync</span> Creando...';
+
+            try {
+                const { data, error } = await supabaseClient.auth.signUp({
+                    email: email,
+                    password: pass,
+                    options: {
+                        data: {
+                            full_name: name,
+                            role: role
+                        }
+                    }
+                });
+
+                if (error) throw error;
+
+                if (data.user) {
+                    window.location.href = `calendario_dashboard_desktop.html?role=${role}`;
+                }
+            } catch(error) {
+                showError("Error al crear la cuenta: " + error.message);
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = 'Crear Cuenta <span class="material-symbols-outlined text-xl">person_add</span>';
+            }
         }
 
         function quickLogin(role) {

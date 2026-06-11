@@ -5,9 +5,10 @@
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>Centro Eslava - Servicios y Gestión</title>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;700;800&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../js/supabase.js"></script>
 <style>
         .material-symbols-outlined {
             font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
@@ -122,6 +123,7 @@
             }
         }
     </script>
+    <script src="../js/rbac.js"></script>
 </head>
 <body class="bg-background font-body-md text-on-surface">
 <!-- SideNavBar Integration -->
@@ -131,23 +133,23 @@
 <span class="text-on-surface-variant font-label-sm uppercase tracking-widest opacity-70">Gestión Clínica</span>
 </div>
 <nav class="flex-1 px-4 space-y-2 mt-4">
-<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-on-surface-variant hover:bg-surface-container-low transition-colors duration-200" href="#" id="nav-link-agenda">
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-on-surface-variant hover:bg-surface-container-low transition-colors duration-200" href="calendario_dashboard_desktop.html" id="nav-link-agenda">
 <span class="material-symbols-outlined">calendar_today</span>
 <span class="font-body-md">Calendario</span>
 </a>
-<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-on-surface-variant hover:bg-surface-container-low transition-colors duration-200" href="#" id="nav-link-pacientes">
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-on-surface-variant hover:bg-surface-container-low transition-colors duration-200" href="pacientes_historia_clinica_desktop.html" id="nav-link-pacientes">
 <span class="material-symbols-outlined">groups</span>
 <span class="font-body-md">Pacientes</span>
 </a>
-<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-on-surface-variant hover:bg-surface-container-low transition-colors duration-200" href="#" id="nav-link-servicios">
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-on-surface-variant hover:bg-surface-container-low transition-colors duration-200" href="servicios_ajustes_desktop.html" id="nav-link-servicios">
 <span class="material-symbols-outlined">medical_services</span>
 <span class="font-body-md">Tratamientos</span>
 </a>
-<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-on-surface-variant hover:bg-surface-container-low transition-colors duration-200" href="#" id="nav-link-finanzas">
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-on-surface-variant hover:bg-surface-container-low transition-colors duration-200" href="pagos_facturacion_desktop.html" id="nav-link-finanzas">
 <span class="material-symbols-outlined">payments</span>
 <span class="font-body-md">Finanzas</span>
 </a>
-<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-primary border-r-4 border-primary font-bold bg-surface-container-low" href="#" id="nav-link-ajustes">
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-primary border-r-4 border-primary font-bold bg-surface-container-low" href="servicios_ajustes_desktop.html" id="nav-link-ajustes">
 <span class="material-symbols-outlined">settings</span>
 <span class="font-body-md">Ajustes</span>
 </a>
@@ -209,72 +211,13 @@
 <span class="material-symbols-outlined text-primary">medical_services</span>
                             Oferta Clínica
                         </h3>
-<button class="flex items-center gap-1 text-primary font-bold hover:underline">
+<button onclick="abrirModalNuevo()" class="flex items-center gap-1 text-primary font-bold hover:underline">
 <span class="material-symbols-outlined text-sm">add_circle</span>
                             Nuevo Servicio
                         </button>
 </div>
-<div class="grid grid-cols-2 gap-4">
-<!-- Service Card 1 -->
-<div class="bg-surface-white p-6 rounded-2xl shadow-[0px_10px_30px_rgba(0,0,0,0.04)] border border-transparent hover:border-primary/20 transition-all group">
-<div class="flex justify-between items-start mb-4">
-<div class="p-3 bg-primary/5 rounded-xl text-primary group-hover:bg-primary group-hover:text-white transition-colors">
-<span class="material-symbols-outlined">analytics</span>
-</div>
-<span class="text-headline-md font-bold text-on-surface">S/. 120</span>
-</div>
-<h4 class="font-bold text-lg mb-1">Evaluación Inicial</h4>
-<p class="text-sm text-on-surface-variant mb-4">Diagnóstico integral y plan de rehabilitación personalizado.</p>
-<div class="flex items-center gap-2">
-<span class="px-2 py-1 bg-surface-container-high rounded text-[11px] font-bold text-on-surface-variant">45 MIN</span>
-<span class="px-2 py-1 bg-success/10 rounded text-[11px] font-bold text-success uppercase">Activo</span>
-</div>
-</div>
-<!-- Service Card 2 -->
-<div class="bg-surface-white p-6 rounded-2xl shadow-[0px_10px_30px_rgba(0,0,0,0.04)] border border-transparent hover:border-primary/20 transition-all group">
-<div class="flex justify-between items-start mb-4">
-<div class="p-3 bg-primary/5 rounded-xl text-primary group-hover:bg-primary group-hover:text-white transition-colors">
-<span class="material-symbols-outlined">fitness_center</span>
-</div>
-<span class="text-headline-md font-bold text-on-surface">S/. 85</span>
-</div>
-<h4 class="font-bold text-lg mb-1">Descarga Muscular</h4>
-<p class="text-sm text-on-surface-variant mb-4">Terapia manual para atletas y recuperación post-esfuerzo.</p>
-<div class="flex items-center gap-2">
-<span class="px-2 py-1 bg-surface-container-high rounded text-[11px] font-bold text-on-surface-variant">60 MIN</span>
-<span class="px-2 py-1 bg-success/10 rounded text-[11px] font-bold text-success uppercase">Activo</span>
-</div>
-</div>
-<!-- Service Card 3 -->
-<div class="bg-surface-white p-6 rounded-2xl shadow-[0px_10px_30px_rgba(0,0,0,0.04)] border border-transparent hover:border-primary/20 transition-all group">
-<div class="flex justify-between items-start mb-4">
-<div class="p-3 bg-primary/5 rounded-xl text-primary group-hover:bg-primary group-hover:text-white transition-colors">
-<span class="material-symbols-outlined">healing</span>
-</div>
-<span class="text-headline-md font-bold text-on-surface">S/. 95</span>
-</div>
-<h4 class="font-bold text-lg mb-1">Punción Seca</h4>
-<p class="text-sm text-on-surface-variant mb-4">Técnica invasiva para tratamiento de puntos gatillo.</p>
-<div class="flex items-center gap-2">
-<span class="px-2 py-1 bg-surface-container-high rounded text-[11px] font-bold text-on-surface-variant">30 MIN</span>
-<span class="px-2 py-1 bg-success/10 rounded text-[11px] font-bold text-success uppercase">Activo</span>
-</div>
-</div>
-<!-- Service Card 4 -->
-<div class="bg-surface-white p-6 rounded-2xl shadow-[0px_10px_30px_rgba(0,0,0,0.04)] border border-transparent hover:border-primary/20 transition-all group">
-<div class="flex justify-between items-start mb-4">
-<div class="p-3 bg-primary/5 rounded-xl text-primary group-hover:bg-primary group-hover:text-white transition-colors">
-<span class="material-symbols-outlined">water_drop</span>
-</div>
-<span class="text-headline-md font-bold text-on-surface">S/. 150</span>
-</div>
-<h4 class="font-bold text-lg mb-1">Hidroterapia</h4>
-<p class="text-sm text-on-surface-variant mb-4">Sesión guiada en piscina térmica de rehabilitación.</p>
-<div class="flex items-center gap-2">
-<span class="px-2 py-1 bg-surface-container-high rounded text-[11px] font-bold text-on-surface-variant">50 MIN</span>
-<span class="px-2 py-1 bg-warning/10 rounded text-[11px] font-bold text-warning uppercase">Cupos Limitados</span>
-</div>
-</div>
+<div class="grid grid-cols-2 gap-4" id="serviciosGrid">
+<!-- Dynamic content will be injected here via Supabase -->
 </div>
 <!-- Additional Promo Card -->
 <div class="relative overflow-hidden bg-primary rounded-3xl p-8 text-on-primary">
@@ -368,6 +311,62 @@
 </div>
 </div>
 </main>
+
+<!-- Modal for New/Edit Service -->
+<dialog id="modalNuevoServicio" class="backdrop:bg-black/50 p-6 rounded-2xl shadow-xl border-none max-w-md w-full bg-surface-white">
+    <div class="flex justify-between items-center mb-6">
+        <h3 id="modalTitle" class="text-xl font-bold text-on-surface">Nuevo Servicio</h3>
+        <button onclick="document.getElementById('modalNuevoServicio').close()" class="text-on-surface-variant hover:text-error transition-colors">
+            <span class="material-symbols-outlined">close</span>
+        </button>
+    </div>
+    <form id="formNuevoServicio" class="space-y-4">
+        <input type="hidden" name="id" id="servicioId">
+        <div>
+            <label class="block text-sm font-bold text-on-surface mb-1">Nombre</label>
+            <input type="text" name="nombre" required class="w-full rounded-xl border-outline-variant px-4 py-2 focus:ring-primary focus:border-primary">
+        </div>
+        <div>
+            <label class="block text-sm font-bold text-on-surface mb-1">Descripción</label>
+            <textarea name="descripcion" rows="2" class="w-full rounded-xl border-outline-variant px-4 py-2 focus:ring-primary focus:border-primary"></textarea>
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+            <div>
+                <label class="block text-sm font-bold text-on-surface mb-1">Duración (MIN)</label>
+                <input type="number" name="duracion" required min="15" step="5" class="w-full rounded-xl border-outline-variant px-4 py-2 focus:ring-primary focus:border-primary">
+            </div>
+            <div>
+                <label class="block text-sm font-bold text-on-surface mb-1">Precio (S/.)</label>
+                <input type="number" name="precio" required min="0" step="0.01" class="w-full rounded-xl border-outline-variant px-4 py-2 focus:ring-primary focus:border-primary">
+            </div>
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+            <div>
+                <label class="block text-sm font-bold text-on-surface mb-1">Estado</label>
+                <select name="estado" class="w-full rounded-xl border-outline-variant px-4 py-2 focus:ring-primary focus:border-primary">
+                    <option value="Activo">Activo</option>
+                    <option value="Inactivo">Inactivo</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-sm font-bold text-on-surface mb-1">Ícono (Material Symbol)</label>
+                <input type="text" name="icono" value="healing" required class="w-full rounded-xl border-outline-variant px-4 py-2 focus:ring-primary focus:border-primary">
+            </div>
+        </div>
+        <div class="pt-4 flex justify-between items-center w-full">
+            <button type="button" id="btnEliminarServicio" onclick="eliminarServicio()" class="hidden px-4 py-2 text-error font-bold hover:bg-error/10 rounded-xl transition-colors flex items-center gap-1">
+                <span class="material-symbols-outlined text-sm">delete</span> Eliminar
+            </button>
+            <div class="flex justify-end gap-3 ml-auto">
+                <button type="button" onclick="document.getElementById('modalNuevoServicio').close()" class="px-4 py-2 text-on-surface-variant font-bold hover:bg-surface-container-high rounded-xl transition-colors">Cancelar</button>
+                <button type="submit" id="btnSubmitServicio" class="bg-primary text-white px-6 py-2 rounded-xl font-bold hover:scale-105 transition-transform flex items-center gap-2">
+                    <span class="material-symbols-outlined text-sm hidden animate-spin" id="spinnerSubmitServicio">progress_activity</span>
+                    Guardar
+                </button>
+            </div>
+        </div>
+    </form>
+</dialog>
 <!-- Contextual Micro-interactions -->
 <script>
         // Simple toggle simulation for the notification switch
@@ -395,40 +394,188 @@
         });
     </script>
     <script>
-        // --- START RBAC LOGIC ---
-        function applyRBACRules() {
-            const urlParams = new URLSearchParams(window.location.search);
-            let role = urlParams.get('role');
-            if (!role) role = 'developer';
+        document.addEventListener('DOMContentLoaded', () => {
+            cargarServicios();
+        });
 
-            const finanzasLink = document.getElementById('nav-link-finanzas');
-            const ajustesLink = document.getElementById('nav-link-ajustes');
 
-            if (role === 'medico') {
-                if (finanzasLink) finanzasLink.style.display = 'none';
-            } else if (role === 'asistente') {
-                if (finanzasLink) finanzasLink.style.display = 'none';
-                if (ajustesLink) ajustesLink.style.display = 'none';
+        function abrirModalNuevo() {
+            document.getElementById('formNuevoServicio').reset();
+            document.getElementById('servicioId').value = '';
+            document.getElementById('modalTitle').textContent = 'Nuevo Servicio';
+            document.getElementById('btnEliminarServicio').classList.add('hidden');
+            document.getElementById('modalNuevoServicio').showModal();
+        }
+
+        function abrirModalEdicion(id, nombre, descripcion, duracion, precio, estado, icono) {
+            document.getElementById('formNuevoServicio').reset();
+            document.getElementById('servicioId').value = id;
+            document.getElementById('modalTitle').textContent = 'Editar Servicio';
+            document.getElementById('btnEliminarServicio').classList.remove('hidden');
+            
+            const form = document.getElementById('formNuevoServicio');
+            form.elements['nombre'].value = nombre;
+            form.elements['descripcion'].value = descripcion || '';
+            form.elements['duracion'].value = duracion;
+            form.elements['precio'].value = precio;
+            form.elements['estado'].value = estado;
+            form.elements['icono'].value = icono || 'healing';
+            
+            document.getElementById('modalNuevoServicio').showModal();
+        }
+
+        async function eliminarServicio() {
+            const id = document.getElementById('servicioId').value;
+            if (!id) return;
+            
+            if (!confirm('¿Estás seguro de que deseas eliminar este servicio? Esta acción no se puede deshacer.')) return;
+            
+            const btnSubmit = document.getElementById('btnSubmitServicio');
+            const spinner = document.getElementById('spinnerSubmitServicio');
+            const btnEliminar = document.getElementById('btnEliminarServicio');
+            
+            btnSubmit.disabled = true;
+            btnEliminar.disabled = true;
+            spinner.classList.remove('hidden');
+
+            try {
+                const { error } = await supabaseClient
+                    .from('servicios')
+                    .delete()
+                    .eq('id', id);
+
+                if (error) throw error;
+
+                document.getElementById('modalNuevoServicio').close();
+                await cargarServicios();
+            } catch (err) {
+                console.error("Error al eliminar servicio:", err);
+                alert("Hubo un error al eliminar el servicio.");
+            } finally {
+                btnSubmit.disabled = false;
+                btnEliminar.disabled = false;
+                spinner.classList.add('hidden');
             }
         }
 
-        document.addEventListener('DOMContentLoaded', () => {
-            applyRBACRules();
+        document.getElementById('formNuevoServicio').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const btnSubmit = document.getElementById('btnSubmitServicio');
+            const spinner = document.getElementById('spinnerSubmitServicio');
+            
+            btnSubmit.disabled = true;
+            spinner.classList.remove('hidden');
 
-            // Append role parameter to all relative links
-            const urlParams = new URLSearchParams(window.location.search);
-            const role = urlParams.get('role');
-            if (role) {
-                document.querySelectorAll('a').forEach(link => {
-                    const href = link.getAttribute('href');
-                    if (href && !href.startsWith('http') && !href.startsWith('#')) {
-                        const url = new URL(href, window.location.origin);
-                        url.searchParams.set('role', role);
-                        link.setAttribute('href', url.pathname + url.search + url.hash);
-                    }
-                });
+            const formData = new FormData(e.target);
+            const data = Object.fromEntries(formData.entries());
+
+            const payload = {
+                nombre: data.nombre,
+                descripcion: data.descripcion,
+                duracion: parseInt(data.duracion),
+                precio: parseFloat(data.precio),
+                estado: data.estado,
+                icono: data.icono
+            };
+
+            try {
+                let error;
+                if (data.id) {
+                    const res = await supabaseClient
+                        .from('servicios')
+                        .update(payload)
+                        .eq('id', data.id);
+                    error = res.error;
+                } else {
+                    const res = await supabaseClient
+                        .from('servicios')
+                        .insert([payload]);
+                    error = res.error;
+                }
+
+                if (error) throw error;
+
+                // Close modal, reset form and reload services
+                document.getElementById('modalNuevoServicio').close();
+                e.target.reset();
+                await cargarServicios();
+
+            } catch (err) {
+                console.error("Error al crear servicio:", err);
+                alert("Hubo un error al crear el servicio. Inténtelo de nuevo.");
+            } finally {
+                btnSubmit.disabled = false;
+                spinner.classList.add('hidden');
             }
         });
-        // --- END RBAC LOGIC ---
+
+        async function cargarServicios() {
+            try {
+                const grid = document.getElementById('serviciosGrid');
+                if (!grid) return;
+                
+                grid.innerHTML = '<div class="col-span-full text-center py-8"><div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div><p class="text-on-surface-variant mt-4 font-label-sm">Cargando servicios...</p></div>';
+
+                const { data: servicios, error } = await supabaseClient
+                    .from('servicios')
+                    .select('*')
+                    .order('created_at', { ascending: false });
+
+                if (error) throw error;
+                
+                grid.innerHTML = '';
+                
+                if (servicios.length === 0) {
+                    grid.innerHTML = `
+                        <div class="col-span-full text-center py-12 bg-surface-white rounded-2xl border border-dashed border-outline-variant">
+                            <span class="material-symbols-outlined text-4xl text-outline mb-3">medical_services</span>
+                            <p class="font-body-md text-on-surface">No hay servicios configurados</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                servicios.forEach((servicio) => {
+                    const iconName = servicio.icono || 'healing';
+                    
+                    const isActive = servicio.estado === 'Activo';
+                    const badgeClass = isActive ? 'bg-success/10 text-success uppercase' : 'bg-outline-variant/20 text-on-surface-variant uppercase';
+                    const badgeText = isActive ? 'Activo' : servicio.estado;
+                    
+                    const safeDesc = (servicio.descripcion || '').replace(/'/g, "&#39;").replace(/"/g, "&quot;");
+                    const safeNombre = servicio.nombre.replace(/'/g, "&#39;").replace(/"/g, "&quot;");
+                    const safeIcono = iconName.replace(/'/g, "&#39;").replace(/"/g, "&quot;");
+
+                    const cardHTML = `
+                        <div onclick="abrirModalEdicion('${servicio.id}', '${safeNombre}', '${safeDesc}', ${servicio.duracion}, ${servicio.precio}, '${servicio.estado}', '${safeIcono}')" class="cursor-pointer bg-surface-white p-6 rounded-2xl shadow-[0px_10px_30px_rgba(0,0,0,0.04)] border border-transparent hover:border-primary/20 transition-all group relative">
+                            <div class="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <span class="material-symbols-outlined text-outline-variant hover:text-primary">edit</span>
+                            </div>
+                            <div class="flex justify-between items-start mb-4">
+                                <div class="p-3 bg-primary/5 rounded-xl text-primary group-hover:bg-primary group-hover:text-white transition-colors">
+                                    <span class="material-symbols-outlined">${iconName}</span>
+                                </div>
+                                <span class="text-headline-md font-bold text-on-surface">S/. ${parseFloat(servicio.precio).toFixed(2)}</span>
+                            </div>
+                            <h4 class="font-bold text-lg mb-1">${servicio.nombre}</h4>
+                            <p class="text-sm text-on-surface-variant mb-4">${servicio.descripcion || ''}</p>
+                            <div class="flex items-center gap-2">
+                                <span class="px-2 py-1 bg-surface-container-high rounded text-[11px] font-bold text-on-surface-variant">${servicio.duracion} MIN</span>
+                                <span class="px-2 py-1 rounded text-[11px] font-bold ${badgeClass}">${badgeText}</span>
+                            </div>
+                        </div>
+                    `;
+                    grid.insertAdjacentHTML('beforeend', cardHTML);
+                });
+
+            } catch (err) {
+                console.error("Error cargando servicios:", err);
+                const grid = document.getElementById('serviciosGrid');
+                if (grid) {
+                    grid.innerHTML = '<div class="col-span-full text-center text-error">Error al cargar datos. Verifica la conexión.</div>';
+                }
+            }
+        }
     </script>
 </body></html>

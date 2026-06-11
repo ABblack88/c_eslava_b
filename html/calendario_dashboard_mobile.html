@@ -8,6 +8,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../js/supabase.js"></script>
 <script id="tailwind-config">
         tailwind.config = {
             darkMode: "class",
@@ -138,6 +140,7 @@
       min-height: max(884px, 100dvh);
     }
   </style>
+    <script src="../js/rbac.js"></script>
 </head>
 <body class="text-on-surface antialiased bg-surface selection:bg-primary-container selection:text-on-primary-container">
 <!-- TopAppBar (Mobile & Desktop) -->
@@ -224,28 +227,28 @@
 <span class="material-symbols-outlined text-[20px]">people</span>
 <span class="font-label-sm text-label-sm">Total Pacientes</span>
 </div>
-<p class="font-headline-md text-headline-md text-primary">12</p>
+<p id="stat-total-pacientes" class="font-headline-md text-headline-md text-primary">...</p>
 </div>
 <div class="bg-surface-white rounded-xl p-4 shadow-[0px_10px_30px_rgba(0,0,0,0.04)] border border-surface-container/50">
 <div class="flex items-center gap-2 text-outline mb-2">
 <span class="material-symbols-outlined text-[20px]">healing</span>
-<span class="font-label-sm text-label-sm">Tratamientos</span>
+<span class="font-label-sm text-label-sm">Tratamientos Hoy</span>
 </div>
-<p class="font-headline-md text-headline-md text-primary">8</p>
+<p id="stat-tratamientos-hoy" class="font-headline-md text-headline-md text-primary">...</p>
 </div>
 <div class="bg-surface-white rounded-xl p-4 shadow-[0px_10px_30px_rgba(0,0,0,0.04)] border border-surface-container/50">
 <div class="flex items-center gap-2 text-outline mb-2">
 <span class="material-symbols-outlined text-[20px]">bolt</span>
-<span class="font-label-sm text-label-sm">Ondas de Choque</span>
+<span class="font-label-sm text-label-sm">Pendientes Hoy</span>
 </div>
-<p class="font-headline-md text-headline-md text-primary">3</p>
+<p id="stat-pendientes-hoy" class="font-headline-md text-headline-md text-warning">...</p>
 </div>
 <div class="bg-surface-white rounded-xl p-4 shadow-[0px_10px_30px_rgba(0,0,0,0.04)] border border-surface-container/50">
 <div class="flex items-center gap-2 text-outline mb-2">
 <span class="material-symbols-outlined text-[20px]">fitness_center</span>
-<span class="font-label-sm text-label-sm">Descarga Muscular</span>
+<span class="font-label-sm text-label-sm">Completados Hoy</span>
 </div>
-<p class="font-headline-md text-headline-md text-primary">4</p>
+<p id="stat-completados-hoy" class="font-headline-md text-headline-md text-success">...</p>
 </div>
 </div>
 <!-- Calendar Board -->
@@ -285,73 +288,8 @@
 <div class="h-[60px] text-right pr-4 font-label-sm text-label-sm text-outline">16:00</div>
 </div>
 <!-- Appointments Grid -->
-<div class="flex-1 grid grid-cols-2 md:grid-cols-3 divide-x divide-surface-container relative">
-<!-- Column 1 -->
-<div class="relative">
-<!-- Appointment Card 1 (Descarga Muscular) -->
-<div class="absolute top-[60px] left-2 right-2 h-[56px] bg-primary-container/10 border border-primary-container/20 rounded-lg p-2 draggable-card flex flex-col justify-between overflow-hidden group">
-<div class="absolute top-0 right-0 p-1 opacity-0 group-hover:opacity-100 transition-opacity">
-<span class="material-symbols-outlined text-[16px] text-outline">drag_indicator</span>
-</div>
-<div class="flex justify-between items-start">
-<span class="font-label-sm text-[11px] text-primary font-bold">09:00 - 10:00</span>
-<span class="bg-primary/10 text-primary px-1.5 py-0.5 rounded text-[10px] font-bold">En Progreso</span>
-</div>
-<div>
-<h4 class="font-body-md text-[13px] font-semibold text-on-surface truncate">Maria Garcia</h4>
-<p class="font-label-sm text-[11px] text-outline truncate">Descarga Muscular</p>
-</div>
-</div>
-<!-- Appointment Card 2 -->
-<div class="absolute top-[180px] left-2 right-2 h-[86px] bg-surface-white border border-surface-container rounded-lg p-2 shadow-sm draggable-card flex flex-col justify-between overflow-hidden group">
-<div class="absolute top-0 right-0 p-1 opacity-0 group-hover:opacity-100 transition-opacity cursor-grab">
-<span class="material-symbols-outlined text-[16px] text-outline">drag_indicator</span>
-</div>
-<div class="flex justify-between items-start">
-<span class="font-label-sm text-[11px] text-on-surface-variant font-bold">11:00 - 12:30</span>
-</div>
-<div>
-<h4 class="font-body-md text-[13px] font-semibold text-on-surface truncate">Carlos Ruiz</h4>
-<p class="font-label-sm text-[11px] text-outline truncate">Evaluación Inicial</p>
-</div>
-</div>
-</div>
-<!-- Column 2 (Ondas de Choque) -->
-<div class="relative">
-<!-- Appointment Card 3 -->
-<div class="absolute top-[120px] left-2 right-2 h-[56px] bg-tertiary-container/10 border border-tertiary-container/20 rounded-lg p-2 draggable-card flex flex-col justify-between overflow-hidden group">
-<div class="absolute top-0 right-0 p-1 opacity-0 group-hover:opacity-100 transition-opacity">
-<span class="material-symbols-outlined text-[16px] text-outline">drag_indicator</span>
-</div>
-<div class="flex justify-between items-start">
-<span class="font-label-sm text-[11px] text-tertiary font-bold">10:00 - 11:00</span>
-</div>
-<div>
-<h4 class="font-body-md text-[13px] font-semibold text-on-surface truncate">Ana Martinez</h4>
-<p class="font-label-sm text-[11px] text-outline truncate">Ondas de Choque</p>
-</div>
-</div>
-<!-- Appointment Card 4 -->
-<div class="absolute top-[240px] left-2 right-2 h-[56px] bg-tertiary-container/10 border border-tertiary-container/20 rounded-lg p-2 draggable-card flex flex-col justify-between overflow-hidden group opacity-80">
-<div class="absolute top-0 right-0 p-1 opacity-0 group-hover:opacity-100 transition-opacity">
-<span class="material-symbols-outlined text-[16px] text-outline">drag_indicator</span>
-</div>
-<div class="flex justify-between items-start">
-<span class="font-label-sm text-[11px] text-tertiary font-bold">12:00 - 13:00</span>
-</div>
-<div>
-<h4 class="font-body-md text-[13px] font-semibold text-on-surface truncate">Roberto Fernandez</h4>
-<p class="font-label-sm text-[11px] text-outline truncate">Ondas de Choque</p>
-</div>
-</div>
-</div>
-<!-- Column 3 (Hidden on mobile) -->
-<div class="relative hidden md:block">
-<!-- Empty slot with drag target hint -->
-<div class="absolute top-[60px] left-2 right-2 h-[56px] border-2 border-dashed border-surface-container/50 rounded-lg p-2 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
-<span class="font-label-sm text-outline text-[11px]">Soltar cita aquí</span>
-</div>
-</div>
+<div class="flex-1 grid grid-cols-2 md:grid-cols-3 divide-x divide-surface-container relative" id="calendar-grid-content">
+    <!-- Dynamic content will be injected here -->
 </div>
 </div>
 </div>
@@ -468,68 +406,12 @@
 </div>
 
 <script>
-    const urlParams = new URLSearchParams(window.location.search);
-    const currentRole = urlParams.get('role') || 'developer';
+    
 
     // Set today's date as default in date input
     document.getElementById('appt-date').value = new Date().toISOString().split('T')[0];
 
     // Enforce role-based element locking/hiding inside the page
-    function applyRBACRules() {
-        const nameEl = document.getElementById("drawer-profile-name");
-        const roleEl = document.getElementById("drawer-profile-role");
-        const badgeEl = document.getElementById("drawer-profile-badge");
-
-        if (currentRole === 'developer') {
-            if (nameEl) nameEl.textContent = "Desarrollador";
-            if (roleEl) roleEl.textContent = "Soporte Técnico";
-            if (badgeEl) {
-                badgeEl.textContent = "Acceso Total";
-                badgeEl.className = "inline-block mt-1 px-2 py-0.5 bg-primary/20 text-primary rounded font-label-sm text-[10px]";
-            }
-        } else if (currentRole === 'admin') {
-            if (nameEl) nameEl.textContent = "Dr. Eslava";
-            if (roleEl) roleEl.textContent = "Director Clínico";
-            if (badgeEl) {
-                badgeEl.textContent = "Acceso Admin";
-                badgeEl.className = "inline-block mt-1 px-2 py-0.5 bg-secondary-container/30 text-on-secondary-container rounded font-label-sm text-[10px]";
-            }
-        } else if (currentRole === 'medico') {
-            if (nameEl) nameEl.textContent = "Dr. Pérez";
-            if (roleEl) roleEl.textContent = "Médico Terapeuta";
-            if (badgeEl) {
-                badgeEl.textContent = "Acceso Médico";
-                badgeEl.className = "inline-block mt-1 px-2 py-0.5 bg-tertiary-container/30 text-on-tertiary-container rounded font-label-sm text-[10px]";
-            }
-        } else if (currentRole === 'asistente') {
-            if (nameEl) nameEl.textContent = "Sra. Gómez";
-            if (roleEl) roleEl.textContent = "Asistente Clínico";
-            if (badgeEl) {
-                badgeEl.textContent = "Acceso Asistente";
-                badgeEl.className = "inline-block mt-1 px-2 py-0.5 bg-error-container/30 text-on-error-container rounded font-label-sm text-[10px]";
-            }
-        }
-
-        if (currentRole === 'medico' || currentRole === 'asistente') {
-            // Hide Finanzas links
-            const linkPagos = document.getElementById("drawer-link-pagos");
-            if (linkPagos) linkPagos.style.display = "none";
-            const linkFinanzas = document.getElementById("bottom-link-finanzas");
-            if (linkFinanzas) linkFinanzas.style.display = "none";
-        }
-
-        if (currentRole === 'asistente') {
-            // Hide Ajustes and Servicios links
-            const linkAjustes = document.getElementById("drawer-link-ajustes");
-            if (linkAjustes) linkAjustes.style.display = "none";
-            const linkServiciosDrawer = document.getElementById("drawer-link-servicios");
-            if (linkServiciosDrawer) linkServiciosDrawer.style.display = "none";
-            const linkServiciosNav = document.getElementById("nav-link-servicios");
-            if (linkServiciosNav) linkServiciosNav.style.display = "none";
-            const linkServiciosBottom = document.getElementById("bottom-link-servicios");
-            if (linkServiciosBottom) linkServiciosBottom.style.display = "none";
-        }
-    }
 
     // Modal Control Functions
     function openAppointmentModal() {
@@ -578,41 +460,299 @@
         return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${startDateTime}/${endDateTime}&details=${details}&location=${location}`;
     }
 
-    function saveAppointment(event) {
+    window.serviciosActivos = [];
+
+    async function cargarServicios() {
+        try {
+            const { data, error } = await supabaseClient
+                .from('servicios')
+                .select('*')
+                .eq('estado', 'Activo');
+            if (error) throw error;
+            window.serviciosActivos = data;
+            
+            const selectTratamiento = document.getElementById('appt-treatment');
+            if (selectTratamiento) {
+                selectTratamiento.innerHTML = '';
+                data.forEach(s => {
+                    const option = document.createElement('option');
+                    option.value = s.nombre;
+                    option.textContent = s.nombre;
+                    selectTratamiento.appendChild(option);
+                });
+            }
+        } catch (error) {
+            console.error('Error al cargar servicios:', error);
+        }
+    }
+
+    async function cargarEstadisticas() {
+        try {
+            const today = new Date().toISOString().split('T')[0];
+            
+            // Pacientes count
+            const { count: totalPacientes, error: errorPacientes } = await supabaseClient
+                .from('pacientes')
+                .select('*', { count: 'exact', head: true });
+            
+            // Citas for today
+            const { data: citasHoy, error: errorCitas } = await supabaseClient
+                .from('citas')
+                .select('estado')
+                .eq('fecha', today);
+
+            if (errorPacientes || errorCitas) throw new Error("Error fetching stats");
+
+            const elTotalPacientes = document.getElementById('stat-total-pacientes');
+            if (elTotalPacientes) elTotalPacientes.textContent = totalPacientes || 0;
+            
+            const tratamientosHoy = citasHoy ? citasHoy.length : 0;
+            const completadosHoy = citasHoy ? citasHoy.filter(c => c.estado === 'Completado').length : 0;
+            const pendientesHoy = citasHoy ? citasHoy.filter(c => c.estado === 'Pendiente').length : 0;
+
+            const elTratamientosHoy = document.getElementById('stat-tratamientos-hoy');
+            if (elTratamientosHoy) elTratamientosHoy.textContent = tratamientosHoy;
+            
+            const elCompletadosHoy = document.getElementById('stat-completados-hoy');
+            if (elCompletadosHoy) elCompletadosHoy.textContent = completadosHoy;
+            
+            const elPendientesHoy = document.getElementById('stat-pendientes-hoy');
+            if (elPendientesHoy) elPendientesHoy.textContent = pendientesHoy;
+
+        } catch (error) {
+            console.error('Error al cargar estadísticas:', error);
+        }
+    }
+
+    async function saveAppointment(event) {
         event.preventDefault();
         
-        const appt = {
-            name: document.getElementById("appt-patient-name").value,
-            email: document.getElementById("appt-patient-email").value,
-            treatment: document.getElementById("appt-treatment").value,
-            room: document.getElementById("appt-room").value,
-            date: document.getElementById("appt-date").value,
-            time: document.getElementById("appt-time").value,
-            notes: document.getElementById("appt-notes").value
-        };
+        const submitBtn = event.target.querySelector('button[type="submit"]');
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<span class="material-symbols-outlined animate-spin text-sm">sync</span> Guardando...';
 
-        // Generate sync link and set it on the success modal button
-        const gcalUrl = generateGoogleCalendarUrl(appt);
-        const gcalBtn = document.getElementById("sync-gcal-btn");
-        gcalBtn.setAttribute("href", gcalUrl);
+        const rawTime = document.getElementById("appt-time").value;
+        const apptDate = document.getElementById("appt-date").value;
+        const name = document.getElementById("appt-patient-name").value;
+        const email = document.getElementById("appt-patient-email").value;
+        const treatment = document.getElementById("appt-treatment").value;
+        const room = document.getElementById("appt-room").value;
+        const notes = document.getElementById("appt-notes").value;
 
-        // Hide form modal and open success modal
-        closeAppointmentModal();
-        document.getElementById("success-confirmation-modal").classList.remove("hidden");
+        // Convert rawTime (e.g. 08:00 AM) to 24h format for database
+        let time24 = rawTime;
+        if (rawTime.includes('AM') || rawTime.includes('PM')) {
+            const [timeStr, modifier] = rawTime.split(' ');
+            let [hours, minutes] = timeStr.split(':');
+            if (hours === '12') hours = '00';
+            if (modifier === 'PM') hours = (parseInt(hours, 10) + 12).toString();
+            time24 = `${hours.padStart(2, '0')}:${minutes}:00`;
+        }
+
+        const appt = { name, email, treatment, room, date: apptDate, time: rawTime, notes };
+
+        try {
+            // 1. Check if patient exists or create new
+            let pacienteId = null;
+            const { data: existingPacientes, error: searchError } = await supabaseClient
+                .from('pacientes')
+                .select('id')
+                .ilike('nombre', name)
+                .limit(1);
+
+            if (searchError) throw searchError;
+
+            if (existingPacientes && existingPacientes.length > 0) {
+                pacienteId = existingPacientes[0].id;
+            } else {
+                const { data: newPaciente, error: insertError } = await supabaseClient
+                    .from('pacientes')
+                    .insert([{ nombre: name, email: email, estado: 'Activo' }])
+                    .select();
+                if (insertError) throw insertError;
+                if (newPaciente && newPaciente.length > 0) {
+                    pacienteId = newPaciente[0].id;
+                }
+            }
+
+            if (!pacienteId) throw new Error("No se pudo obtener o crear el paciente.");
+
+            // 2. Insert appointment
+            const { data: newCita, error: apptError } = await supabaseClient
+                .from('citas')
+                .insert([{
+                    paciente_id: pacienteId,
+                    fecha: apptDate,
+                    hora: time24,
+                    motivo: notes || treatment,
+                    estado: 'Pendiente',
+                    tratamiento: treatment,
+                    consultorio: room
+                }])
+                .select('id');
+
+            if (apptError) throw apptError;
+            
+            const citaId = newCita && newCita.length > 0 ? newCita[0].id : null;
+
+            // 3. Crear pago pendiente
+            const servicioObj = window.serviciosActivos.find(s => s.nombre === treatment);
+            const montoPago = servicioObj ? servicioObj.precio : 0.00;
+
+            if (citaId) {
+                const { error: pagoError } = await supabaseClient
+                    .from('pagos')
+                    .insert([{
+                        paciente_id: pacienteId,
+                        cita_id: citaId,
+                        monto: montoPago,
+                        estado: 'Pendiente',
+                        metodo: 'Efectivo',
+                        fecha: apptDate
+                    }]);
+                if (pagoError) console.error("Error creating payment:", pagoError);
+            }
+
+            // Generate sync link and set it on the success modal button
+            const gcalUrl = generateGoogleCalendarUrl(appt);
+            const gcalBtn = document.getElementById("sync-gcal-btn");
+            gcalBtn.setAttribute("href", gcalUrl);
+
+            // Hide form modal and open success modal
+            closeAppointmentModal();
+            document.getElementById("success-confirmation-modal").classList.remove("hidden");
+            
+            // Recargar citas y estadísticas
+            cargarCitas();
+            cargarEstadisticas();
+
+        } catch (error) {
+            console.error("Error al guardar cita:", error);
+            alert("Ocurrió un error al guardar la cita.");
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Guardar Cita';
+        }
+    }
+
+    async function cargarCitas() {
+        try {
+            const today = new Date().toISOString().split('T')[0];
+            const { data, error } = await supabaseClient
+                .from('citas')
+                .select(`
+                    id,
+                    fecha,
+                    hora,
+                    estado,
+                    tratamiento,
+                    consultorio,
+                    pacientes ( nombre )
+                `)
+                .eq('fecha', today);
+                
+            if (error) throw error;
+            
+            renderCitas(data || []);
+        } catch (error) {
+            console.error("Error cargando citas:", error);
+            document.getElementById('calendar-grid-content').innerHTML = `
+                <div class="col-span-full flex items-center justify-center h-full text-error">
+                    <p>Error al cargar las citas de hoy.</p>
+                </div>
+            `;
+        }
+    }
+
+    function renderCitas(citas) {
+        const grid = document.getElementById('calendar-grid-content');
+        
+        // Structure for the 3 columns
+        let html = \`
+            <div class="relative" id="col-sala-1"></div>
+            <div class="relative" id="col-sala-2"></div>
+            <div class="relative hidden md:block" id="col-sala-3">
+                <div class="absolute top-[60px] left-2 right-2 h-[56px] border-2 border-dashed border-surface-container/50 rounded-lg p-2 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
+                    <span class="font-label-sm text-outline text-[11px]">Soltar cita aquí</span>
+                </div>
+            </div>
+        \`;
+        grid.innerHTML = html;
+
+        const col1 = document.getElementById('col-sala-1');
+        const col2 = document.getElementById('col-sala-2');
+        const col3 = document.getElementById('col-sala-3');
+
+        citas.forEach(cita => {
+            let hours = 8;
+            let minutes = 0;
+            if (cita.hora) {
+                const timeMatch = cita.hora.match(/(\\d+):(\\d+)\\s*(AM|PM)/i);
+                if (timeMatch) {
+                    let h = parseInt(timeMatch[1]);
+                    const m = parseInt(timeMatch[2]);
+                    const modifier = timeMatch[3].toUpperCase();
+                    if (h === 12) h = 0;
+                    if (modifier === 'PM') h += 12;
+                    hours = h;
+                    minutes = m;
+                }
+            }
+            
+            const topPx = ((hours - 8) * 60) + minutes;
+            if (topPx < 0 || topPx > (16-8)*60) return;
+
+            let bgClass = "bg-surface-white border-surface-container";
+            let textClass = "text-on-surface-variant";
+            if (cita.estado === 'En Progreso') {
+                bgClass = "bg-primary-container/10 border-primary-container/20";
+                textClass = "text-primary";
+            } else if (cita.estado === 'Completada') {
+                bgClass = "bg-tertiary-container/10 border-tertiary-container/20";
+                textClass = "text-tertiary";
+            }
+
+            const pacienteNombre = cita.pacientes ? cita.pacientes.nombre : 'Paciente Desconocido';
+            
+            // Format end time
+            let endH = hours + 1;
+            let endM = minutes;
+            let endAmPm = endH >= 12 ? 'PM' : 'AM';
+            let endH12 = endH > 12 ? endH - 12 : (endH === 0 ? 12 : endH);
+            const endHourStr = \`\${endH12.toString().padStart(2, '0')}:\${endM.toString().padStart(2, '0')} \${endAmPm}\`;
+
+            const cardHtml = \`
+                <div class="absolute left-2 right-2 h-[56px] \${bgClass} border rounded-lg p-2 draggable-card flex flex-col justify-between overflow-hidden group shadow-sm" style="top: \${topPx}px;">
+                    <div class="absolute top-0 right-0 p-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <span class="material-symbols-outlined text-[16px] text-outline">drag_indicator</span>
+                    </div>
+                    <div class="flex justify-between items-start">
+                        <span class="font-label-sm text-[11px] \${textClass} font-bold">\${cita.hora} - \${endHourStr}</span>
+                        \${cita.estado === 'En Progreso' ? \`<span class="bg-primary/10 text-primary px-1.5 py-0.5 rounded text-[10px] font-bold">En Progreso</span>\` : ''}
+                    </div>
+                    <div>
+                        <h4 class="font-body-md text-[13px] font-semibold text-on-surface truncate">\${pacienteNombre}</h4>
+                        <p class="font-label-sm text-[11px] text-outline truncate">\${cita.tratamiento || cita.motivo}</p>
+                    </div>
+                </div>
+            \`;
+
+            if (cita.consultorio === 'Consultorio 1') {
+                col1.innerHTML += cardHtml;
+            } else if (cita.consultorio === 'Consultorio 2') {
+                col2.innerHTML += cardHtml;
+            } else {
+                col3.innerHTML += cardHtml;
+            }
+        });
     }
 
     // Initialize logic
-    document.addEventListener("DOMContentLoaded", () => {
-        // Append role parameter to all links inside the page
-        document.querySelectorAll("a").forEach(link => {
-            let href = link.getAttribute("href");
-            if (href && href !== "#" && !href.startsWith("http")) {
-                const separator = href.includes("?") ? "&" : "?";
-                link.setAttribute("href", `${href}${separator}role=${currentRole}`);
-            }
-        });
-
-        applyRBACRules();
+    document.addEventListener("DOMContentLoaded", async () => {
+        
+        await cargarServicios();
+        cargarCitas();
+        cargarEstadisticas();
 
         // Simple drag-drop feedback and slot click interactions
         const draggables = document.querySelectorAll('.draggable-card');

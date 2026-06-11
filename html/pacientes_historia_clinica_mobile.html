@@ -12,6 +12,9 @@
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
 <!-- Tailwind Config -->
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <!-- Supabase SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../js/supabase.js"></script>
 <script id="tailwind-config">
         tailwind.config = {
             darkMode: "class",
@@ -116,6 +119,7 @@
       min-height: max(884px, 100dvh);
     }
   </style>
+    <script src="../js/rbac.js"></script>
 </head>
 <body class="bg-surface text-on-surface font-body-md min-h-screen flex antialiased">
 <!-- DESKTOP NAVIGATION DRAWER (Hidden on mobile) -->
@@ -206,100 +210,8 @@
 <button class="whitespace-nowrap px-4 py-2 rounded-full font-label-sm text-label-sm bg-surface-white text-on-surface hover:bg-surface-container-low transition-colors shadow-[0px_2px_10px_rgba(0,0,0,0.02)]">Alta</button>
 </div>
 <!-- Patient Grid (Bento/Card Layout) -->
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-gutter">
-<!-- Patient Card 1 -->
-<div class="bg-surface-white rounded-2xl p-6 shadow-[0px_10px_30px_rgba(0,0,0,0.04)] flex flex-col gap-5 hover:shadow-[0px_15px_40px_rgba(0,0,0,0.08)] hover:-translate-y-1 transition-all duration-300 group">
-<div class="flex justify-between items-start">
-<div class="flex gap-4 items-center">
-<div class="w-12 h-12 rounded-full bg-secondary-container flex items-center justify-center text-on-secondary-container font-headline-md text-headline-md">
-                                MR
-                            </div>
-<div>
-<h3 class="font-body-lg text-body-lg font-semibold text-on-surface">Mateo Rojas</h3>
-<p class="font-label-sm text-label-sm text-outline">ID: 849201 • 34 años</p>
-</div>
-</div>
-<span class="px-3 py-1 bg-success/10 text-success rounded-full font-label-sm text-label-sm flex items-center gap-1">
-<div class="w-1.5 h-1.5 rounded-full bg-success"></div> Activo
-                        </span>
-</div>
-<div class="bg-surface rounded-xl p-4 mt-2">
-<div class="flex items-center gap-2 mb-2 text-outline">
-<span class="material-symbols-outlined text-[18px]">healing</span>
-<span class="font-label-sm text-label-sm uppercase tracking-wider">Tratamiento Actual</span>
-</div>
-<p class="font-body-md text-body-md text-on-surface">Protocolo de reconstrucción de LCA posoperatorio. Ejercicios de movilidad de fase 2.</p>
-<p class="font-label-sm text-label-sm text-primary mt-2">Sesión 4 de 12</p>
-</div>
-<div class="mt-auto pt-2">
-<button class="w-full flex items-center justify-between text-primary font-label-sm text-label-sm px-4 py-3 rounded-xl hover:bg-surface-container-low transition-colors">
-                            Historia Clínica
-                            <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">arrow_forward</span>
-</button>
-</div>
-</div>
-<!-- Patient Card 2 -->
-<div class="bg-surface-white rounded-2xl p-6 shadow-[0px_10px_30px_rgba(0,0,0,0.04)] flex flex-col gap-5 hover:shadow-[0px_15px_40px_rgba(0,0,0,0.08)] hover:-translate-y-1 transition-all duration-300 group">
-<div class="flex justify-between items-start">
-<div class="flex gap-4 items-center">
-<div class="w-12 h-12 rounded-full bg-tertiary-fixed flex items-center justify-center text-on-tertiary-fixed font-headline-md text-headline-md">
-                                LC
-                            </div>
-<div>
-<h3 class="font-body-lg text-body-lg font-semibold text-on-surface">Lucía Castro</h3>
-<p class="font-label-sm text-label-sm text-outline">ID: 552190 • 42 años</p>
-</div>
-</div>
-<span class="px-3 py-1 bg-warning/10 text-warning rounded-full font-label-sm text-label-sm flex items-center gap-1">
-<div class="w-1.5 h-1.5 rounded-full bg-warning"></div> En Recuperación
-                        </span>
-</div>
-<div class="bg-surface rounded-xl p-4 mt-2">
-<div class="flex items-center gap-2 mb-2 text-outline">
-<span class="material-symbols-outlined text-[18px]">healing</span>
-<span class="font-label-sm text-label-sm uppercase tracking-wider">Tratamiento Actual</span>
-</div>
-<p class="font-body-md text-body-md text-on-surface">Manejo crónico del dolor lumbar. Terapia manual y punción seca.</p>
-<p class="font-label-sm text-label-sm text-outline mt-2">Última visita: hace 2 días</p>
-</div>
-<div class="mt-auto pt-2">
-<button class="w-full flex items-center justify-between text-primary font-label-sm text-label-sm px-4 py-3 rounded-xl hover:bg-surface-container-low transition-colors">
-                            Historia Clínica
-                            <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">arrow_forward</span>
-</button>
-</div>
-</div>
-<!-- Patient Card 3 -->
-<div class="bg-surface-white rounded-2xl p-6 shadow-[0px_10px_30px_rgba(0,0,0,0.04)] flex flex-col gap-5 hover:shadow-[0px_15px_40px_rgba(0,0,0,0.08)] hover:-translate-y-1 transition-all duration-300 group">
-<div class="flex justify-between items-start">
-<div class="flex gap-4 items-center">
-<div class="w-12 h-12 rounded-full bg-primary-container flex items-center justify-center text-on-primary-container font-headline-md text-headline-md">
-                                DV
-                            </div>
-<div>
-<h3 class="font-body-lg text-body-lg font-semibold text-on-surface">Diego Vargas</h3>
-<p class="font-label-sm text-label-sm text-outline">ID: 992014 • 28 años</p>
-</div>
-</div>
-<span class="px-3 py-1 bg-success/10 text-success rounded-full font-label-sm text-label-sm flex items-center gap-1">
-<div class="w-1.5 h-1.5 rounded-full bg-success"></div> Activo
-                        </span>
-</div>
-<div class="bg-surface rounded-xl p-4 mt-2">
-<div class="flex items-center gap-2 mb-2 text-outline">
-<span class="material-symbols-outlined text-[18px]">healing</span>
-<span class="font-label-sm text-label-sm uppercase tracking-wider">Tratamiento Actual</span>
-</div>
-<p class="font-body-md text-body-md text-on-surface">Tendinopatía del manguito rotador. Terapia de ondas de choque focalizadas.</p>
-<p class="font-label-sm text-label-sm text-primary mt-2">Sesión 1 de 6</p>
-</div>
-<div class="mt-auto pt-2">
-<button class="w-full flex items-center justify-between text-primary font-label-sm text-label-sm px-4 py-3 rounded-xl hover:bg-surface-container-low transition-colors">
-                            Historia Clínica
-                            <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">arrow_forward</span>
-</button>
-</div>
-</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-gutter" id="patientsGrid">
+<!-- Contenido dinámico cargado vía Supabase -->
 </div>
 </main>
 </div>
@@ -328,34 +240,286 @@
 <span class="font-label-sm text-[10px]">Finanzas</span>
 </a>
 </nav>
-<script>
-    const urlParams = new URLSearchParams(window.location.search);
-    const currentRole = urlParams.get('role') || 'developer';
 
-    function applyRBACRules() {
-        if (currentRole === 'medico' || currentRole === 'asistente') {
-            const linkFinanzas = document.getElementById("nav-link-finanzas");
-            if (linkFinanzas) linkFinanzas.style.display = "none";
-            const linkFinanzasDesktop = document.getElementById("nav-link-finanzas-desktop");
-            if (linkFinanzasDesktop) linkFinanzasDesktop.style.display = "none";
-        }
-        if (currentRole === 'asistente') {
-            const linkAjustesDesktop = document.getElementById("nav-link-ajustes-desktop");
-            if (linkAjustesDesktop) linkAjustesDesktop.style.display = "none";
+<!-- Floating Action Button for Mobile -->
+<button onclick="abrirModalNuevoPaciente()" class="fixed bottom-24 right-6 w-14 h-14 bg-primary text-on-primary rounded-full shadow-[0px_10px_20px_rgba(0,101,120,0.3)] flex items-center justify-center hover:scale-110 active:scale-95 transition-all z-40">
+    <span class="material-symbols-outlined text-2xl">person_add</span>
+</button>
+
+<!-- Modal for New/Edit Patient -->
+<dialog id="modalNuevoPaciente" class="backdrop:bg-black/50 p-6 rounded-3xl shadow-2xl border-none max-w-sm w-full bg-surface-white fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 m-0">
+    <div class="flex justify-between items-center mb-6">
+        <h3 id="modalTitlePaciente" class="text-xl font-extrabold text-on-surface">Registrar Paciente</h3>
+        <button onclick="document.getElementById('modalNuevoPaciente').close()" class="w-10 h-10 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container-high transition-colors">
+            <span class="material-symbols-outlined">close</span>
+        </button>
+    </div>
+    <form id="formNuevoPaciente" class="space-y-4">
+        <input type="hidden" name="id" id="pacienteId">
+        
+        <div>
+            <label class="block text-sm font-bold text-on-surface mb-1">Nombre Completo</label>
+            <input type="text" name="nombre" required class="w-full rounded-xl border border-outline-variant px-4 py-3 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all">
+        </div>
+        
+        <div>
+            <label class="block text-sm font-bold text-on-surface mb-1">Teléfono</label>
+            <input type="tel" name="telefono" class="w-full rounded-xl border border-outline-variant px-4 py-3 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all">
+        </div>
+        <div>
+            <label class="block text-sm font-bold text-on-surface mb-1">Fecha Nacimiento</label>
+            <input type="date" name="fecha_nacimiento" class="w-full rounded-xl border border-outline-variant px-4 py-3 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all">
+        </div>
+        
+        <div>
+            <label class="block text-sm font-bold text-on-surface mb-1">Email</label>
+            <input type="email" name="email" class="w-full rounded-xl border border-outline-variant px-4 py-3 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all">
+        </div>
+
+        <div>
+            <label class="block text-sm font-bold text-on-surface mb-1">Motivo de Consulta (Tratamiento Actual)</label>
+            <input type="text" name="motivo_consulta" class="w-full rounded-xl border border-outline-variant px-4 py-3 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all">
+        </div>
+
+        <div>
+            <label class="block text-sm font-bold text-on-surface mb-1">Notas Médicas (Evolución)</label>
+            <textarea name="notas_medicas" rows="4" class="w-full rounded-xl border border-outline-variant px-4 py-3 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all bg-surface-container-lowest" placeholder="Registra la evolución, diagnóstico y tratamiento aplicado..."></textarea>
+        </div>
+        
+        <div>
+            <label class="block text-sm font-bold text-on-surface mb-1">Estado</label>
+            <select name="estado" class="w-full rounded-xl border border-outline-variant px-4 py-3 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all bg-surface-white">
+                <option value="Activo">Activo</option>
+                <option value="En Recuperación">En Recuperación</option>
+                <option value="Inactivo">Inactivo</option>
+            </select>
+        </div>
+
+        <div class="pt-6 flex flex-col gap-3 w-full border-t border-surface-variant">
+            <button type="submit" id="btnSubmitPaciente" class="w-full bg-primary text-white px-8 py-3 rounded-xl font-bold hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-2 shadow-md">
+                <span class="material-symbols-outlined text-[20px] hidden animate-spin" id="spinnerSubmitPaciente">progress_activity</span>
+                Guardar
+            </button>
+            <button type="button" id="btnEliminarPaciente" onclick="eliminarPaciente()" class="hidden w-full px-5 py-3 text-error font-bold hover:bg-error/10 rounded-xl transition-colors flex items-center justify-center gap-2">
+                <span class="material-symbols-outlined text-[20px]">delete</span> Eliminar Paciente
+            </button>
+            <button type="button" onclick="document.getElementById('modalNuevoPaciente').close()" class="w-full px-5 py-3 text-on-surface-variant font-bold hover:bg-surface-container-high rounded-xl transition-colors">Cancelar</button>
+        </div>
+    </form>
+</dialog>
+
+<script>
+    
+
+
+    async function cargarPacientes() {
+        try {
+            const gridBody = document.getElementById('patientsGrid');
+            if (!gridBody) return;
+
+            gridBody.innerHTML = '<div class="col-span-full text-center py-8"><div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div><p class="text-outline mt-4 font-label-sm">Cargando pacientes...</p></div>';
+
+            const { data, error } = await supabaseClient
+                .from('pacientes')
+                .select('*')
+                .order('created_at', { ascending: false });
+
+            if (error) throw error;
+
+            gridBody.innerHTML = '';
+
+            if (data.length === 0) {
+                gridBody.innerHTML = `
+                    <div class="col-span-full text-center py-12 bg-surface-white rounded-2xl border border-dashed border-outline-variant">
+                        <span class="material-symbols-outlined text-4xl text-outline mb-3">group_off</span>
+                        <p class="font-body-md text-on-surface">No hay pacientes registrados</p>
+                    </div>
+                `;
+                return;
+            }
+
+            data.forEach(paciente => {
+                const initials = paciente.nombre.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+                const colors = ['bg-primary-container text-on-primary-container', 'bg-secondary-container text-on-secondary-container', 'bg-tertiary-fixed text-on-tertiary-fixed'];
+                const randomColor = colors[paciente.id % colors.length];
+                
+                // Determine UI state
+                const estado = paciente.estado === 'Activo' || !paciente.estado ? 
+                    { text: 'Activo', color: 'success' } : 
+                    { text: paciente.estado, color: 'warning' };
+
+                const safeName = paciente.nombre.replace(/'/g, "&#39;").replace(/"/g, "&quot;");
+                const safeEmail = (paciente.email || '').replace(/'/g, "&#39;").replace(/"/g, "&quot;");
+                const safeTelefono = (paciente.telefono || '').replace(/'/g, "&#39;").replace(/"/g, "&quot;");
+                const safeMotivo = (paciente.motivo_consulta || '').replace(/'/g, "&#39;").replace(/"/g, "&quot;");
+                const safeNotas = (paciente.notas_medicas || '').replace(/'/g, "&#39;").replace(/"/g, "&quot;");
+                const safeEstado = paciente.estado ? paciente.estado.replace(/'/g, "&#39;").replace(/"/g, "&quot;") : 'Activo';
+                const fnac = paciente.fecha_nacimiento || '';
+
+                const cardHTML = `
+                    <div class="bg-surface-white rounded-2xl p-6 shadow-[0px_10px_30px_rgba(0,0,0,0.04)] flex flex-col gap-5 hover:shadow-[0px_15px_40px_rgba(0,0,0,0.08)] hover:-translate-y-1 transition-all duration-300 group">
+                        <div class="flex justify-between items-start">
+                            <div class="flex gap-4 items-center">
+                                <div class="w-12 h-12 rounded-full ${randomColor} flex items-center justify-center font-headline-md text-headline-md">
+                                    ${initials}
+                                </div>
+                                <div>
+                                    <h3 class="font-body-lg text-body-lg font-semibold text-on-surface">${paciente.nombre}</h3>
+                                    <p class="font-label-sm text-label-sm text-outline">ID: ${paciente.id.toString().substring(0,6).padStart(6, '0')} • ${paciente.edad || '--'} años</p>
+                                </div>
+                            </div>
+                            <span class="px-3 py-1 bg-${estado.color}/10 text-${estado.color} rounded-full font-label-sm text-label-sm flex items-center gap-1">
+                                <div class="w-1.5 h-1.5 rounded-full bg-${estado.color}"></div> ${estado.text}
+                            </span>
+                        </div>
+                        <div class="bg-surface rounded-xl p-4 mt-2">
+                            <div class="flex items-center gap-2 mb-2 text-outline">
+                                <span class="material-symbols-outlined text-[18px]">healing</span>
+                                <span class="font-label-sm text-label-sm uppercase tracking-wider">Tratamiento Actual</span>
+                            </div>
+                            <p class="font-body-md text-body-md text-on-surface">${paciente.motivo_consulta || 'Evaluación inicial requerida.'}</p>
+                            <p class="font-label-sm text-label-sm text-primary mt-2">Contacto: ${paciente.telefono || '--'}</p>
+                        </div>
+                        <div class="mt-auto pt-2 grid grid-cols-2 gap-2">
+                            <button class="flex items-center justify-center text-on-surface-variant font-label-sm text-label-sm px-4 py-3 rounded-xl hover:bg-surface-container-low transition-colors border border-outline-variant" onclick="abrirModalEdicionPaciente('${paciente.id}', '${safeName}', '${safeEmail}', '${safeTelefono}', '${fnac}', '${safeMotivo}', '${safeNotas}', '${safeEstado}')">
+                                <span class="material-symbols-outlined mr-1">edit</span> Ver Perfil/Notas
+                            </button>
+                            <button class="flex items-center justify-center text-primary font-label-sm text-label-sm px-4 py-3 rounded-xl hover:bg-surface-container-low transition-colors border border-primary-fixed">
+                                Historia <span class="material-symbols-outlined ml-1">arrow_forward</span>
+                            </button>
+                        </div>
+                    </div>
+                `;
+                gridBody.insertAdjacentHTML('beforeend', cardHTML);
+            });
+
+        } catch (error) {
+            console.error('Error al cargar pacientes:', error);
+            const gridBody = document.getElementById('patientsGrid');
+            if (gridBody) {
+                gridBody.innerHTML = `
+                    <div class="col-span-full text-center py-8 text-error">
+                        <span class="material-symbols-outlined mb-2">error</span>
+                        <p>Error al cargar los datos de pacientes.</p>
+                    </div>`;
+            }
         }
     }
 
     document.addEventListener("DOMContentLoaded", () => {
-        // Append role parameter to all links inside the page
-        document.querySelectorAll("a").forEach(link => {
-            let href = link.getAttribute("href");
-            if (href && href !== "#" && !href.startsWith("http")) {
-                const separator = href.includes("?") ? "&" : "?";
-                link.setAttribute("href", `${href}${separator}role=${currentRole}`);
-            }
-        });
+        
+        cargarPacientes();
+    });
 
-        applyRBACRules();
+    function abrirModalNuevoPaciente() {
+        document.getElementById('formNuevoPaciente').reset();
+        document.getElementById('pacienteId').value = '';
+        document.getElementById('modalTitlePaciente').textContent = 'Registrar Paciente';
+        document.getElementById('btnEliminarPaciente').classList.add('hidden');
+        document.getElementById('modalNuevoPaciente').showModal();
+    }
+
+    function abrirModalEdicionPaciente(id, nombre, email, telefono, fecha_nacimiento, motivo_consulta, notas_medicas, estado) {
+        document.getElementById('formNuevoPaciente').reset();
+        document.getElementById('pacienteId').value = id;
+        document.getElementById('modalTitlePaciente').textContent = 'Editar Perfil y Notas';
+        document.getElementById('btnEliminarPaciente').classList.remove('hidden');
+        
+        const form = document.getElementById('formNuevoPaciente');
+        form.elements['nombre'].value = nombre;
+        form.elements['email'].value = email || '';
+        form.elements['telefono'].value = telefono || '';
+        form.elements['fecha_nacimiento'].value = fecha_nacimiento || '';
+        form.elements['motivo_consulta'].value = motivo_consulta || '';
+        form.elements['notas_medicas'].value = notas_medicas || '';
+        form.elements['estado'].value = estado || 'Activo';
+        
+        document.getElementById('modalNuevoPaciente').showModal();
+    }
+
+    async function eliminarPaciente() {
+        const id = document.getElementById('pacienteId').value;
+        if (!id) return;
+        
+        if (!confirm('¿Estás seguro de que deseas eliminar a este paciente?')) return;
+        
+        const btnSubmit = document.getElementById('btnSubmitPaciente');
+        const spinner = document.getElementById('spinnerSubmitPaciente');
+        const btnEliminar = document.getElementById('btnEliminarPaciente');
+        
+        btnSubmit.disabled = true;
+        btnEliminar.disabled = true;
+        spinner.classList.remove('hidden');
+
+        try {
+            const { error } = await supabaseClient
+                .from('pacientes')
+                .delete()
+                .eq('id', id);
+
+            if (error) throw error;
+
+            document.getElementById('modalNuevoPaciente').close();
+            await cargarPacientes();
+        } catch (err) {
+            console.error("Error al eliminar paciente:", err);
+            alert("Hubo un error al eliminar el paciente.");
+        } finally {
+            btnSubmit.disabled = false;
+            btnEliminar.disabled = false;
+            spinner.classList.add('hidden');
+        }
+    }
+
+    document.getElementById('formNuevoPaciente').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const btnSubmit = document.getElementById('btnSubmitPaciente');
+        const spinner = document.getElementById('spinnerSubmitPaciente');
+        
+        btnSubmit.disabled = true;
+        spinner.classList.remove('hidden');
+
+        const formData = new FormData(e.target);
+        const data = Object.fromEntries(formData.entries());
+
+        const payload = {
+            nombre: data.nombre,
+            email: data.email || null,
+            telefono: data.telefono || null,
+            fecha_nacimiento: data.fecha_nacimiento || null,
+            motivo_consulta: data.motivo_consulta || null,
+            notas_medicas: data.notas_medicas || null,
+            estado: data.estado
+        };
+
+        try {
+            let error;
+            if (data.id) {
+                const res = await supabaseClient
+                    .from('pacientes')
+                    .update(payload)
+                    .eq('id', data.id);
+                error = res.error;
+            } else {
+                const res = await supabaseClient
+                    .from('pacientes')
+                    .insert([payload]);
+                error = res.error;
+            }
+
+            if (error) throw error;
+
+            document.getElementById('modalNuevoPaciente').close();
+            e.target.reset();
+            await cargarPacientes();
+        } catch (err) {
+            console.error("Error al guardar paciente:", err);
+            alert("Hubo un error al guardar el paciente. Inténtelo de nuevo.");
+        } finally {
+            btnSubmit.disabled = false;
+            spinner.classList.add('hidden');
+        }
     });
 </script>
 </body></html>

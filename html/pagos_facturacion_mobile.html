@@ -5,9 +5,10 @@
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>Centro Eslava - Pagos y Facturación</title>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+<script src="../js/supabase.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;700&display=swap" rel="stylesheet"/>
 <script id="tailwind-config">
         tailwind.config = {
           darkMode: "class",
@@ -113,6 +114,7 @@
       min-height: max(884px, 100dvh);
     }
   </style>
+    <script src="../js/rbac.js"></script>
 </head>
 <body class="bg-surface text-on-surface min-h-screen flex flex-col md:flex-row">
 <!-- TopAppBar (Mobile Only) -->
@@ -191,7 +193,7 @@
 </div>
 </div>
 <div class="mb-8">
-<span class="font-display-lg-mobile md:font-display-lg text-display-lg-mobile md:text-display-lg text-primary font-bold">S/ 42,500</span>
+<span id="total-ingresos" class="font-display-lg-mobile md:font-display-lg text-display-lg-mobile md:text-display-lg text-primary font-bold">S/ 42,500</span>
 <span class="font-body-md text-body-md text-outline ml-2">/ S/ 50,000 Meta</span>
 </div>
 <!-- Simple Progress Bar for Revenue -->
@@ -211,16 +213,16 @@
 <span class="material-symbols-outlined text-warning bg-warning/10 p-2 rounded-lg">pending_actions</span>
 <h3 class="font-headline-md text-base text-on-surface">Reclamos Pendientes</h3>
 </div>
-<p class="font-display-lg-mobile text-2xl font-bold text-on-surface mt-2">S/ 8,240</p>
-<p class="font-label-sm text-label-sm text-outline mt-1">14 Esperando Aprobación</p>
+<p id="total-reclamos" class="font-display-lg-mobile text-2xl font-bold text-on-surface mt-2">S/ 8,240</p>
+<p id="count-reclamos" class="font-label-sm text-label-sm text-outline mt-1">14 Esperando Aprobación</p>
 </div>
 <div class="flex-1">
 <div class="flex items-center gap-2 mb-2">
 <span class="material-symbols-outlined text-error bg-error/10 p-2 rounded-lg">error</span>
 <h3 class="font-headline-md text-base text-on-surface">Saldos Vencidos</h3>
 </div>
-<p class="font-display-lg-mobile text-2xl font-bold text-error mt-2">S/ 1,450</p>
-<p class="font-label-sm text-label-sm text-outline mt-1">3 Pacientes Requieren Acción</p>
+<p id="total-vencidos" class="font-display-lg-mobile text-2xl font-bold text-error mt-2">S/ 1,450</p>
+<p id="count-vencidos" class="font-label-sm text-label-sm text-outline mt-1">3 Pacientes Requieren Acción</p>
 </div>
 </div>
 <!-- Pending Payments List -->
@@ -229,35 +231,8 @@
 <h2 class="font-headline-md text-headline-md text-on-surface">Acción Necesaria: Pagos Pendientes</h2>
 <button class="font-label-sm text-label-sm text-primary hover:text-primary-container transition-colors">Ver Todo</button>
 </div>
-<div class="flex flex-col gap-4">
-<!-- Item 1 -->
-<div class="flex items-center justify-between p-4 rounded-lg bg-surface-container-lowest border border-surface-container-low hover:border-primary-container transition-colors">
-<div class="flex items-center gap-4">
-<div class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-primary font-bold">SM</div>
-<div>
-<h4 class="font-body-md text-body-md text-on-surface font-semibold">Sarah Mitchell</h4>
-<p class="font-label-sm text-label-sm text-outline">Sesión de Rehabilitación Postoperatoria • 12 Oct</p>
-</div>
-</div>
-<div class="flex items-center gap-6">
-<span class="font-body-md text-body-md font-bold text-on-surface">S/ 150.00</span>
-<button class="bg-primary text-on-primary px-4 py-2 rounded-full font-label-sm text-label-sm hover:bg-primary-container transition-colors shadow-sm">Enviar Recordatorio</button>
-</div>
-</div>
-<!-- Item 2 -->
-<div class="flex items-center justify-between p-4 rounded-lg bg-surface-container-lowest border border-surface-container-low hover:border-primary-container transition-colors">
-<div class="flex items-center gap-4">
-<div class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-primary font-bold">JD</div>
-<div>
-<h4 class="font-body-md text-body-md text-on-surface font-semibold">James Davis</h4>
-<p class="font-label-sm text-label-sm text-outline">Consulta Inicial • 10 Oct</p>
-</div>
-</div>
-<div class="flex items-center gap-6">
-<span class="font-body-md text-body-md font-bold text-on-surface">S/ 200.00</span>
-<button class="bg-primary text-on-primary px-4 py-2 rounded-full font-label-sm text-label-sm hover:bg-primary-container transition-colors shadow-sm">Enviar Recordatorio</button>
-</div>
-</div>
+<div class="flex flex-col gap-4" id="pagos-pendientes-container">
+<!-- Dynamic content will be loaded here -->
 </div>
 </div>
 <!-- Recent Transactions Mini -->
@@ -265,40 +240,8 @@
 <div class="flex justify-between items-center mb-6">
 <h2 class="font-headline-md text-base text-on-surface">Actividad Reciente</h2>
 </div>
-<div class="flex flex-col gap-5">
-<!-- Tx 1 -->
-<div class="flex items-start gap-3">
-<div class="mt-1 w-8 h-8 rounded-full bg-success/10 flex items-center justify-center text-success">
-<span class="material-symbols-outlined text-sm">check</span>
-</div>
-<div class="flex-grow">
-<p class="font-label-sm text-label-sm text-on-surface">Pago Recibido</p>
-<p class="font-body-md text-xs text-outline">Elena Rodriguez • Terapia Manual</p>
-</div>
-<span class="font-label-sm text-label-sm text-success font-bold">+S/ 120</span>
-</div>
-<!-- Tx 2 -->
-<div class="flex items-start gap-3">
-<div class="mt-1 w-8 h-8 rounded-full bg-surface-container flex items-center justify-center text-on-surface-variant">
-<span class="material-symbols-outlined text-sm">receipt_long</span>
-</div>
-<div class="flex-grow">
-<p class="font-label-sm text-label-sm text-on-surface">Factura Enviada</p>
-<p class="font-body-md text-xs text-outline">Michael Chang • Masaje Deportivo</p>
-</div>
-<span class="font-label-sm text-label-sm text-outline">S/ 90</span>
-</div>
-<!-- Tx 3 -->
-<div class="flex items-start gap-3">
-<div class="mt-1 w-8 h-8 rounded-full bg-success/10 flex items-center justify-center text-success">
-<span class="material-symbols-outlined text-sm">check</span>
-</div>
-<div class="flex-grow">
-<p class="font-label-sm text-label-sm text-on-surface">Reclamo de Seguro Pagado</p>
-<p class="font-body-md text-xs text-outline">Aetna • Lote 4A</p>
-</div>
-<span class="font-label-sm text-label-sm text-success font-bold">+S/ 850</span>
-</div>
+<div class="flex flex-col gap-5" id="actividad-reciente-container">
+<!-- Dynamic content will be loaded here -->
 </div>
 <button class="w-full mt-6 py-2 border border-surface-container-highest rounded-full font-label-sm text-label-sm text-on-surface-variant hover:bg-surface-container-low transition-colors">Ver Libro de Transacciones</button>
 </div>
@@ -324,48 +267,194 @@
 </a>
 </nav>
 <script>
-    const urlParams = new URLSearchParams(window.location.search);
-    const currentRole = urlParams.get('role') || 'developer';
+    
 
-    function applyRBACRules() {
-        if (currentRole === 'medico' || currentRole === 'asistente') {
-            const linkFinanzas = document.getElementById("nav-link-finanzas");
-            if (linkFinanzas) linkFinanzas.style.display = "none";
-            const linkFinanzasMobile = document.getElementById("nav-mobile-finanzas");
-            if (linkFinanzasMobile) linkFinanzasMobile.style.display = "none";
-            
-            const mainContent = document.querySelector('main');
-            if (mainContent) {
-                mainContent.innerHTML = `
-                    <div class="flex flex-col items-center justify-center min-h-[60vh] text-center p-8 bg-surface-white dark:bg-surface-container rounded-2xl shadow-[0px_10px_30px_rgba(0,0,0,0.04)] max-w-2xl mx-auto my-12 border border-error-container/20">
-                        <span class="material-symbols-outlined text-error text-6xl mb-6 animate-pulse">lock</span>
-                        <h3 class="font-headline-md text-headline-md text-on-surface mb-2 font-bold">Acceso Restringido</h3>
-                        <p class="text-on-surface-variant font-body-md mb-6 max-w-md">Este módulo contiene información financiera confidencial. Se requieren permisos de Administrador o Desarrollador para visualizar este contenido.</p>
-                        <a href="calendario_dashboard_mobile.html?role=${currentRole}" class="bg-primary text-on-primary px-6 py-3 rounded-xl font-bold flex items-center gap-2 hover:opacity-90 transition-all">
-                            <span class="material-symbols-outlined">arrow_back</span>
-                            Volver al Panel Principal
-                        </a>
-                    </div>
-                `;
-            }
+
+    // Helper function to format currency
+    function formatCurrency(amount) {
+        return new Intl.NumberFormat('es-PE', { style: 'currency', currency: 'PEN' }).format(amount);
+    }
+
+    function getInitials(name) {
+        if (!name) return '??';
+        const parts = name.split(' ');
+        if (parts.length >= 2) {
+            return (parts[0][0] + parts[1][0]).toUpperCase();
         }
-        if (currentRole === 'asistente') {
-            const linkAjustes = document.getElementById("nav-link-ajustes");
-            if (linkAjustes) linkAjustes.style.display = "none";
+        return name.substring(0, 2).toUpperCase();
+    }
+
+    async function cargarDatosFinancieros() {
+        if (currentRole === 'medico' || currentRole === 'asistente') return; // Don't fetch if restricted
+        
+        try {
+            // Fetch pagos
+            const { data: pagos, error } = await supabaseClient
+                .from('pagos')
+                .select(`
+                    id,
+                    monto,
+                    metodo,
+                    estado,
+                    fecha,
+                    pacientes ( nombre ),
+                    citas ( tratamiento, motivo )
+                `)
+                .order('fecha', { ascending: false });
+
+            if (error) throw error;
+
+            // Calcular totales dinámicos
+            const safePagos = pagos || [];
+            const totalIngresos = safePagos.filter(p => p.estado === 'Completado').reduce((sum, p) => sum + Number(p.monto), 0);
+            const pendientes = safePagos.filter(p => p.estado === 'Pendiente');
+            const totalPendientes = pendientes.reduce((sum, p) => sum + Number(p.monto), 0);
+            const vencidos = safePagos.filter(p => p.estado === 'Vencido');
+            const totalVencidos = vencidos.reduce((sum, p) => sum + Number(p.monto), 0);
+
+            // Actualizar UI
+            const elIngresos = document.getElementById('total-ingresos');
+            const elReclamos = document.getElementById('total-reclamos');
+            const elReclamosCount = document.getElementById('count-reclamos');
+            const elVencidos = document.getElementById('total-vencidos');
+            const elVencidosCount = document.getElementById('count-vencidos');
+
+            if (elIngresos) elIngresos.textContent = formatCurrency(totalIngresos);
+            if (elReclamos) elReclamos.textContent = formatCurrency(totalPendientes);
+            if (elReclamosCount) elReclamosCount.textContent = `${pendientes.length} Esperando Aprobación`;
+            if (elVencidos) elVencidos.textContent = formatCurrency(totalVencidos);
+            if (elVencidosCount) elVencidosCount.textContent = `${vencidos.length} Pacientes Requieren Acción`;
+
+            renderPagosPendientes(safePagos);
+            renderActividadReciente(safePagos);
+        } catch (error) {
+            console.error("Error al cargar datos financieros:", error);
+            document.getElementById('pagos-pendientes-container').innerHTML = '<p class="text-error">Error al cargar pagos pendientes.</p>';
+            document.getElementById('actividad-reciente-container').innerHTML = '<p class="text-error">Error al cargar actividad.</p>';
+        }
+    }
+
+    function renderPagosPendientes(pagos) {
+        const container = document.getElementById('pagos-pendientes-container');
+        const pagosPendientes = pagos.filter(p => p.estado === 'Pendiente' || p.estado === 'Vencido');
+
+        if (pagosPendientes.length === 0) {
+            container.innerHTML = '<p class="text-outline text-center py-4">No hay pagos pendientes.</p>';
+            return;
+        }
+
+        let html = '';
+        pagosPendientes.forEach(pago => {
+            const pacienteNombre = pago.pacientes ? pago.pacientes.nombre : 'Paciente Desconocido';
+            const iniciales = getInitials(pacienteNombre);
+            const motivo = pago.citas ? (pago.citas.tratamiento || pago.citas.motivo || 'Consulta') : 'Consulta';
+            
+            // Color logic based on status
+            let stateClass = pago.estado === 'Vencido' ? 'text-error' : 'text-on-surface-variant';
+            
+            let avatarColor = 'bg-secondary-container text-on-secondary-container';
+            
+            // In mobile we format it slightly differently to match the existing UI
+            html += `
+            <div class="flex flex-col gap-3 p-4 rounded-lg bg-surface-container-lowest border border-surface-container-low hover:border-primary-container transition-colors">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full ${avatarColor} flex items-center justify-center font-bold text-sm">${iniciales}</div>
+                        <div>
+                            <h4 class="font-body-md text-body-md text-on-surface font-semibold">${pacienteNombre}</h4>
+                            <p class="font-label-sm text-label-sm text-outline">${motivo}</p>
+                        </div>
+                    </div>
+                    <span class="font-body-md text-body-md font-bold text-on-surface">${formatCurrency(pago.monto)}</span>
+                </div>
+                <div class="flex justify-between items-center mt-1 border-t border-surface-container-low pt-3">
+                    <span class="font-label-sm ${stateClass}">${pago.estado}</span>
+                    <div class="flex gap-2">
+                        <button class="recordatorio-btn bg-primary text-on-primary px-4 py-2 rounded-full font-label-sm text-label-sm hover:bg-primary-container transition-colors shadow-sm flex items-center gap-2">
+                            <span class="material-symbols-outlined text-[16px]">mail</span> Enviar
+                        </button>
+                        <button onclick="marcarComoPagado('${pago.id}')" class="bg-success text-white px-4 py-2 rounded-full font-label-sm text-label-sm hover:opacity-90 transition-colors shadow-sm flex items-center gap-2">
+                            <span class="material-symbols-outlined text-[16px]">check</span> Pagado
+                        </button>
+                    </div>
+                </div>
+            </div>
+            `;
+        });
+        container.innerHTML = html;
+        attachRecordatorioListeners();
+    }
+
+    function renderActividadReciente(pagos) {
+        const container = document.getElementById('actividad-reciente-container');
+        if (pagos.length === 0) {
+            container.innerHTML = '<p class="text-outline text-center py-4">No hay actividad reciente.</p>';
+            return;
+        }
+
+        let html = '';
+        pagos.slice(0, 10).forEach(pago => {
+            const pacienteNombre = pago.pacientes ? pago.pacientes.nombre : 'Desconocido';
+            const isCompletado = pago.estado === 'Completado';
+            
+            let badgeClass = isCompletado ? 'bg-success/10 text-success' : 'bg-surface-container text-on-surface-variant';
+            let iconName = isCompletado ? 'check' : 'receipt_long';
+            let statusText = isCompletado ? 'Pago Recibido' : 'Pago ' + pago.estado;
+            
+            let montoHtml = isCompletado 
+                ? `<span class="font-label-sm text-label-sm text-success font-bold">+${formatCurrency(pago.monto)}</span>`
+                : `<span class="font-label-sm text-label-sm text-outline">${formatCurrency(pago.monto)}</span>`;
+
+            html += `
+            <div class="flex items-start gap-3">
+                <div class="mt-1 w-8 h-8 rounded-full ${badgeClass} flex items-center justify-center">
+                    <span class="material-symbols-outlined text-sm">${iconName}</span>
+                </div>
+                <div class="flex-grow">
+                    <p class="font-label-sm text-label-sm text-on-surface">${statusText}</p>
+                    <p class="font-body-md text-xs text-outline">${pacienteNombre} • ${pago.metodo || 'No esp.'}</p>
+                </div>
+                ${montoHtml}
+            </div>
+            `;
+        });
+        container.innerHTML = html;
+    }
+
+    function attachRecordatorioListeners() {
+        document.querySelectorAll('.recordatorio-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const originalContent = this.innerHTML;
+                this.innerHTML = '<span class="material-symbols-outlined text-[16px]">done</span> Enviado';
+                this.classList.remove('bg-primary', 'text-on-primary');
+                this.classList.add('bg-success', 'text-white');
+                setTimeout(() => {
+                    this.innerHTML = originalContent;
+                    this.classList.remove('bg-success', 'text-white');
+                    this.classList.add('bg-primary', 'text-on-primary');
+                }, 2000);
+            });
+        });
+    }
+
+    async function marcarComoPagado(pagoId) {
+        try {
+            const { error } = await supabaseClient
+                .from('pagos')
+                .update({ estado: 'Completado', fecha: new Date().toISOString() })
+                .eq('id', pagoId);
+
+            if (error) throw error;
+            await cargarDatosFinancieros();
+        } catch (error) {
+            console.error("Error actualizando pago:", error);
+            alert("Hubo un error al marcar el pago como completado.");
         }
     }
 
     document.addEventListener("DOMContentLoaded", () => {
-        // Append role parameter to all links inside the page
-        document.querySelectorAll("a").forEach(link => {
-            let href = link.getAttribute("href");
-            if (href && href !== "#" && !href.startsWith("http")) {
-                const separator = href.includes("?") ? "&" : "?";
-                link.setAttribute("href", `${href}${separator}role=${currentRole}`);
-            }
-        });
-
-        applyRBACRules();
+        
+        cargarDatosFinancieros();
     });
 </script>
 </body></html>
