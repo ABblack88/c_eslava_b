@@ -11,12 +11,15 @@ function applyRBACRules() {
     // 1. Hide tabs/links based on role
     const linkFinanzas = document.getElementById("nav-link-finanzas");
     const linkAjustes = document.getElementById("nav-link-ajustes");
+    const resumenCuentaCard = document.getElementById("resumen-cuenta-card");
 
     if (role === 'medico') {
         if (linkFinanzas) linkFinanzas.style.display = 'none';
+        if (resumenCuentaCard) resumenCuentaCard.style.display = 'none';
     } else if (role === 'asistente') {
         if (linkFinanzas) linkFinanzas.style.display = 'none';
         if (linkAjustes) linkAjustes.style.display = 'none';
+        if (resumenCuentaCard) resumenCuentaCard.style.display = 'none';
     }
 
     // 2. Dashboard Specific Rules (calendario_dashboard)

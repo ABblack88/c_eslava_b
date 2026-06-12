@@ -5,6 +5,8 @@
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>Detalle de Historia Clínica | Centro Eslava</title>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+<script src="../js/supabase.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
@@ -153,7 +155,7 @@
 </a>
 </nav>
 <div class="px-4 py-6">
-<button class="w-full bg-primary text-on-primary py-3 px-4 rounded-xl font-bold flex items-center justify-center space-x-2 shadow-lg shadow-primary/20 hover:bg-primary-container transition-all active:scale-95">
+<button onclick="window.location.href='calendario_dashboard_desktop.html?action=new_appointment'" class="w-full bg-primary text-on-primary py-3 px-4 rounded-xl font-bold flex items-center justify-center space-x-2 shadow-lg shadow-primary/20 hover:bg-primary-container transition-all active:scale-95">
 <span class="material-symbols-outlined">add</span>
 <span>Nueva Cita</span>
 </button>
@@ -174,13 +176,7 @@
 <button class="text-on-surface-variant hover:text-primary transition-all">
 <span class="material-symbols-outlined">help</span>
 </button>
-<div class="flex items-center space-x-3 border-l border-outline-variant pl-6">
-<div class="text-right">
-<p class="font-label-sm text-label-sm font-bold text-on-surface">Dr. Alejandro Eslava</p>
-<p class="font-label-sm text-label-sm text-on-surface-variant">Traumatólogo</p>
-</div>
-<img alt="Foto de perfil del Dr. Alejandro Eslava" class="w-10 h-10 rounded-full object-cover border-2 border-primary/20" data-alt="A professional headshot of a mature male orthopedic surgeon with a kind expression, wearing a white clinical coat and a stethoscope. The background is a soft-focus modern medical office with clean white walls and clinical equipment, lit by bright, natural daylight to evoke trust and surgical precision." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDDvAtDFU7oKYVInDbrvwm45co_unu1MybD42rahuWCbEV3FXglGyn6boal3nnyIJlmCm3MfX9lg3cCaFh0qc3uQRjrFTb_Aehq3vBg9oSpYNDdFK7K-Rzsb3jJLCqWAs_HvHmzMYxsnQJV2a07frkOkoyBKU9qq6DKnWgX7nePX0H3LErZCixCSbYz1mjvej7w48pRMdwo4pVZc0-xumk8061e7CjPr5E3KEIKiAUqIRfX0FRmL2EugWa8yftYigMv8zpsiq7AcVU"/>
-</div>
+
 </div>
 </header>
 <main class="ml-64 p-margin-desktop min-h-[calc(100vh-4rem)]">
@@ -216,12 +212,12 @@
 <img alt="Mateo Rojas" class="w-24 h-24 rounded-full border-4 border-surface-white object-cover shadow-md mx-auto" data-alt="Close up portrait of a young athletic male patient in his late 20s, with a resilient and optimistic expression. He is wearing a simple casual grey t-shirt. The lighting is soft and professional, against a neutral light grey background that reflects a premium clinical setting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDZpy4zss0lPWLEuJezI7evBJRKmKtA3ZRmiG8fEMeoHnNj-mVn792fc1oeg0rruEeSwkYVnRtXUJzuU7dH5N65RVHKHjEqiVFeiaJwBIaSr9tqG8BCRE27rVJy6q7AcksDNxsECk8o-y75Tbn3Q_ZwUn9GfvEd8q_TYSEaaXN2EeU8gNIewFAmGlM1zbxe65HQa8-vk5pJoizVXm_Pmj_j6Bp6In346OqKv0Vm6uTJTPQbTQN9tOJxiN0m2EVZqoH0CmgZ4hQIbac"/>
 <span class="absolute bottom-1 right-1 w-5 h-5 bg-success border-2 border-surface-white rounded-full"></span>
 </div>
-<h3 class="font-headline-md text-headline-md text-on-surface">Mateo Rojas</h3>
-<p class="font-label-sm text-label-sm text-outline font-bold mb-6">ID: CR-8942-001</p>
+<h3 class="font-headline-md text-headline-md text-on-surface" id="patient-name-card">Mateo Rojas</h3>
+<p class="font-label-sm text-label-sm text-outline font-bold mb-6" id="patient-id-card">ID: CR-8942-001</p>
 <div class="grid grid-cols-2 gap-4 text-left">
 <div class="bg-surface-container-low p-3 rounded-lg">
 <p class="text-[10px] text-outline font-bold uppercase tracking-wider">Edad</p>
-<p class="font-body-md text-body-md font-bold">28 años</p>
+<p class="font-body-md text-body-md font-bold" id="patient-age-card">28 años</p>
 </div>
 <div class="bg-surface-container-low p-3 rounded-lg">
 <p class="text-[10px] text-outline font-bold uppercase tracking-wider">Tipo Sangre</p>
@@ -240,11 +236,11 @@
 <div class="border-t border-surface-container px-6 py-6 space-y-4">
 <div class="flex items-center space-x-3 text-on-surface-variant">
 <span class="material-symbols-outlined text-primary">call</span>
-<span class="font-body-md text-body-md">+51 987 654 321</span>
+<span class="font-body-md text-body-md" id="patient-phone-card">+51 987 654 321</span>
 </div>
 <div class="flex items-center space-x-3 text-on-surface-variant">
 <span class="material-symbols-outlined text-primary">mail</span>
-<span class="font-body-md text-body-md">m.rojas@email.com</span>
+<span class="font-body-md text-body-md" id="patient-email-card">m.rojas@email.com</span>
 </div>
 <div class="flex items-center space-x-3 text-on-surface-variant">
 <span class="material-symbols-outlined text-primary">location_on</span>
@@ -260,7 +256,7 @@
 <span class="bg-surface-container-highest text-on-surface-variant px-3 py-1 rounded-full font-label-sm text-label-sm font-bold">Ninguna otra</span>
 </div>
 </div>
-<div class="bg-surface-white rounded-xl p-6 shadow-[0px_10px_30px_rgba(0,0,0,0.04)]">
+<div class="bg-surface-white rounded-xl p-6 shadow-[0px_10px_30px_rgba(0,0,0,0.04)]" id="resumen-cuenta-card">
 <div class="flex justify-between items-center mb-4">
 <h4 class="font-label-sm text-label-sm font-bold text-on-surface uppercase tracking-widest">Resumen de Cuenta</h4>
 <span class="material-symbols-outlined text-primary">account_balance_wallet</span>
@@ -452,8 +448,37 @@
 </main>
 <!-- Micro-interaction script -->
 <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // Simple hover animation for timeline items
+        let currentPatientId = null;
+
+        function jalarAPagar() {
+            if (!currentPatientId) return;
+            const urlParams = new URLSearchParams(window.location.search);
+            const role = urlParams.get('role');
+            let dest = `pagos_facturacion_desktop.html?paciente_id=${currentPatientId}`;
+            if (role) dest += `&role=${role}`;
+            window.location.href = dest;
+        }
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            let id = urlParams.get('id');
+            
+            if (!id) {
+                // Try to get first patient as fallback
+                try {
+                    const { data: pacs } = await supabaseClient.from('pacientes').select('id').limit(1);
+                    if (pacs && pacs.length > 0) {
+                        id = pacs[0].id;
+                    }
+                } catch(e) { console.error(e); }
+            }
+
+            if (id) {
+                currentPatientId = id;
+                cargarDatosPaciente(id);
+            }
+
+            // Hover effects
             const timelineItems = document.querySelectorAll('.group');
             timelineItems.forEach(item => {
                 item.addEventListener('mouseenter', () => {
@@ -464,6 +489,89 @@
                 });
             });
         });
+
+        async function cargarDatosPaciente(pacId) {
+            try {
+                // Fetch patient info
+                const { data: pac, error } = await supabaseClient.from('pacientes').select('*').eq('id', pacId).single();
+                if (error) throw error;
+
+                if (pac) {
+                    document.getElementById('patient-name-card').textContent = pac.nombre;
+                    const breadcrumb = document.querySelector('nav.text-on-surface-variant span.text-primary');
+                    if (breadcrumb) breadcrumb.textContent = pac.nombre;
+                    
+                    document.getElementById('patient-id-card').textContent = `ID: ${pac.id.substring(0,8).toUpperCase()}`;
+                    
+                    // Age calculation
+                    if (pac.fecha_nacimiento) {
+                        const birthDate = new Date(pac.fecha_nacimiento);
+                        const age = new Date().getFullYear() - birthDate.getFullYear();
+                        document.getElementById('patient-age-card').textContent = `${age} años`;
+                    } else {
+                        document.getElementById('patient-age-card').textContent = 'N/A';
+                    }
+                    
+                    document.getElementById('patient-phone-card').textContent = pac.telefono || 'Sin teléfono';
+                    document.getElementById('patient-email-card').textContent = pac.email || 'Sin correo';
+                }
+
+                // Fetch total pending/overdue balance from 'pagos'
+                const { data: pagos } = await supabaseClient
+                    .from('pagos')
+                    .select('monto')
+                    .eq('paciente_id', pacId)
+                    .in('estado', ['Pendiente', 'Vencido']);
+
+                const totalPendiente = (pagos || []).reduce((sum, p) => sum + Number(p.monto), 0);
+                document.getElementById('patient-pending-balance').textContent = `S/. ${totalPendiente.toFixed(2)}`;
+
+                // Fetch patient's appointments/evolution notes
+                const { data: citas } = await supabaseClient
+                    .from('citas')
+                    .select('*')
+                    .eq('paciente_id', pacId)
+                    .order('fecha', { ascending: false });
+
+                // Update evolution timeline with real appointments
+                const timelineContainer = document.querySelector('.relative.space-y-8');
+                if (timelineContainer && citas && citas.length > 0) {
+                    let timelineHtml = '';
+                    citas.forEach((cita, idx) => {
+                        const dateStr = new Date(cita.fecha + 'T' + (cita.hora || '12:00:00')).toLocaleString('es-PE', {
+                            day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit'
+                        });
+                        
+                        timelineHtml += `
+                        <div class="relative flex items-start group">
+                            <div class="absolute left-0 mt-1.5 w-10 h-10 rounded-full bg-primary-container border-4 border-surface-white flex items-center justify-center text-on-primary z-10 transition-transform group-hover:scale-110">
+                                <span class="material-symbols-outlined text-[20px]">description</span>
+                            </div>
+                            <div class="ml-14 bg-surface-container-lowest p-5 rounded-xl border border-surface-container-high w-full">
+                                <div class="flex justify-between mb-2">
+                                    <h5 class="font-body-md text-body-md font-bold text-on-surface">${cita.tratamiento || 'Consulta Clínica'}</h5>
+                                    <span class="font-label-sm text-label-sm text-outline">${dateStr}</span>
+                                </div>
+                                <p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+                                    ${cita.observaciones || 'No se registraron observaciones adicionales para esta sesión.'}
+                                </p>
+                                <div class="mt-4 flex items-center space-x-2">
+                                    <span class="font-label-sm text-label-sm font-bold text-primary">${cita.doctor || 'Dr. Alejandro Eslava'}</span>
+                                    <span class="bg-surface-container px-2 py-0.5 rounded text-[10px] text-outline font-bold uppercase">${cita.estado}</span>
+                                </div>
+                            </div>
+                        </div>
+                        `;
+                    });
+                    timelineContainer.innerHTML = timelineHtml;
+                } else if (timelineContainer) {
+                    timelineContainer.innerHTML = '<p class="text-outline text-center py-6">No hay notas de evolución disponibles.</p>';
+                }
+
+            } catch(e) {
+                console.error("Error al cargar datos reales del paciente:", e);
+            }
+        }
     </script>
 
     <script src="../js/app.js"></script>

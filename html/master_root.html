@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html class="light" lang="es">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Master Root - Centro Eslava</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../js/supabase.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;700&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <style>
+        body { font-family: 'Hanken Grotesk', sans-serif; background-color: #050505; color: #fff; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .glass-panel {
+            background: rgba(20, 20, 20, 0.7);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+        .neon-border { border: 1px solid rgba(16, 185, 129, 0.3); }
+        .tab-btn.active { border-bottom: 2px solid #10b981; color: #10b981; }
+    </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { primary: "#10b981", secondary: "#06b6d4", error: "#ba1a1a" }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="flex min-h-screen">
+    <!-- Sidebar Root -->
+    <aside class="w-64 bg-black border-r border-white/10 flex flex-col p-6 sticky top-0 h-screen">
+        <div class="flex items-center gap-3 mb-10 text-error">
+            <span class="material-symbols-outlined text-4xl">admin_panel_settings</span>
+            <div>
+                <h1 class="text-xl font-bold tracking-tight text-white">MASTER</h1>
+                <p class="text-xs uppercase tracking-widest text-error font-bold">Acceso Raíz</p>
+            </div>
+        </div>
+        
+        <nav class="flex-1 space-y-2">
+            <a href="#" onclick="switchTab('usuarios')" id="nav-usuarios" class="flex items-center gap-3 text-sm font-bold text-primary bg-primary/10 px-4 py-3 rounded-lg border border-primary/20 transition-all">
+                <span class="material-symbols-outlined">manage_accounts</span> Usuarios y Roles
+            </a>
+            <a href="#" onclick="switchTab('db')" id="nav-db" class="flex items-center gap-3 text-sm font-bold text-gray-400 hover:text-white px-4 py-3 rounded-lg transition-all">
+                <span class="material-symbols-outlined">database</span> Corrección BD
+            </a>
+            <a href="#" onclick="switchTab('sistema')" id="nav-sistema" class="flex items-center gap-3 text-sm font-bold text-gray-400 hover:text-white px-4 py-3 rounded-lg transition-all">
+                <span class="material-symbols-outlined">settings_system_daydream</span> Config. Sistema
+            </a>
+            <a href="calendario_dashboard_desktop.html?role=root" class="flex items-center gap-3 text-sm font-bold text-gray-400 hover:text-white px-4 py-3 rounded-lg transition-all mt-4 border-t border-white/10 pt-6">
+                <span class="material-symbols-outlined">logout</span> Ir al Portal Normal
+            </a>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 p-10 bg-[#0a0a0a]">
+        <header class="mb-10 flex justify-between items-end">
+            <div>
+                <h2 class="text-3xl font-bold">Panel de Control Root</h2>
+                <p class="text-gray-400 mt-1">Gestión absoluta de plataforma, roles y base de datos.</p>
+            </div>
+            <div class="flex items-center gap-4 bg-white/5 px-4 py-2 rounded-full border border-white/10">
+                <div class="w-2 h-2 rounded-full bg-primary animate-pulse"></div>
+                <span class="text-xs font-bold text-primary">Conexión Segura (Supabase)</span>
+            </div>
+        </header>
+
+        <!-- Tab: Usuarios y Roles -->
+        <section id="tab-usuarios" class="block">
+            <div class="glass-panel p-8 rounded-2xl">
+                <div class="flex justify-between items-center mb-6 border-b border-white/10 pb-4">
+                    <h3 class="text-xl font-bold flex items-center gap-2">
+                        <span class="material-symbols-outlined text-primary">security</span> Gestión de Roles
+                    </h3>
+                    <button class="bg-primary text-black px-4 py-2 rounded-lg font-bold text-sm hover:bg-primary/80 transition-all flex items-center gap-2">
+                        <span class="material-symbols-outlined text-sm">person_add</span> Asignar Nuevo Rol
+                    </button>
+                </div>
+                
+                <p class="text-sm text-gray-400 mb-6">Administra los accesos de los médicos, asistentes y administradores. Los cambios de permisos se aplican en tiempo real.</p>
+                
+                <table class="w-full text-left text-sm">
+                    <thead>
+                        <tr class="text-gray-500 border-b border-white/10">
+                            <th class="pb-3 font-semibold">Usuario (Email)</th>
+                            <th class="pb-3 font-semibold">Rol Actual</th>
+                            <th class="pb-3 font-semibold">Último Acceso</th>
+                            <th class="pb-3 font-semibold text-right">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="usuarios-list" class="divide-y divide-white/5">
+                        <tr class="hover:bg-white/5 transition-colors">
+                            <td class="py-4 font-bold text-white">admin@centroeslava.com</td>
+                            <td class="py-4"><span class="bg-blue-500/20 text-blue-400 px-2 py-1 rounded text-xs font-bold">Administrador</span></td>
+                            <td class="py-4 text-gray-400">Hace 2 min</td>
+                            <td class="py-4 text-right">
+                                <button class="text-gray-400 hover:text-white px-2"><span class="material-symbols-outlined text-[18px]">edit</span></button>
+                                <button class="text-gray-400 hover:text-error px-2"><span class="material-symbols-outlined text-[18px]">block</span></button>
+                            </td>
+                        </tr>
+                        <tr class="hover:bg-white/5 transition-colors">
+                            <td class="py-4 font-bold text-white">dr.perez@centroeslava.com</td>
+                            <td class="py-4"><span class="bg-green-500/20 text-green-400 px-2 py-1 rounded text-xs font-bold">Médico</span></td>
+                            <td class="py-4 text-gray-400">Ayer</td>
+                            <td class="py-4 text-right">
+                                <button class="text-gray-400 hover:text-white px-2"><span class="material-symbols-outlined text-[18px]">edit</span></button>
+                                <button class="text-gray-400 hover:text-error px-2"><span class="material-symbols-outlined text-[18px]">block</span></button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Tab: DB -->
+        <section id="tab-db" class="hidden">
+            <div class="glass-panel p-8 rounded-2xl neon-border">
+                <h3 class="text-xl font-bold flex items-center gap-2 mb-4 text-error">
+                    <span class="material-symbols-outlined">warning</span> Corrección Forzada de Base de Datos
+                </h3>
+                <p class="text-sm text-gray-400 mb-6">Herramientas de bajo nivel para arreglar discrepancias de facturación, restaurar citas eliminadas por error y auditar el historial de cambios (Supabase RPC).</p>
+                
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="bg-white/5 border border-white/10 p-6 rounded-xl hover:bg-white/10 cursor-pointer transition-colors">
+                        <span class="material-symbols-outlined text-3xl text-primary mb-2">sync_problem</span>
+                        <h4 class="font-bold text-white mb-1">Recalcular Inventario</h4>
+                        <p class="text-xs text-gray-400">Fuerza una sincronización del stock basado en las facturas emitidas históricamente.</p>
+                    </div>
+                    <div class="bg-white/5 border border-white/10 p-6 rounded-xl hover:bg-white/10 cursor-pointer transition-colors">
+                        <span class="material-symbols-outlined text-3xl text-secondary mb-2">restore_page</span>
+                        <h4 class="font-bold text-white mb-1">Restaurar Historias Clínicas</h4>
+                        <p class="text-xs text-gray-400">Recupera anotaciones borradas accidentalmente en los últimos 30 días.</p>
+                    </div>
+                    <div class="bg-white/5 border border-white/10 p-6 rounded-xl hover:bg-error/10 cursor-pointer transition-colors border-error/20">
+                        <span class="material-symbols-outlined text-3xl text-error mb-2">delete_forever</span>
+                        <h4 class="font-bold text-white mb-1">Purga de Datos de Prueba</h4>
+                        <p class="text-xs text-error/80">Elimina todos los pacientes y pagos marcados como 'Test'. Acción irreversible.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        function switchTab(tabId) {
+            // Hide all
+            document.getElementById('tab-usuarios').classList.add('hidden');
+            document.getElementById('tab-db').classList.add('hidden');
+            // Remove active classes
+            document.getElementById('nav-usuarios').className = 'flex items-center gap-3 text-sm font-bold text-gray-400 hover:text-white px-4 py-3 rounded-lg transition-all';
+            document.getElementById('nav-db').className = 'flex items-center gap-3 text-sm font-bold text-gray-400 hover:text-white px-4 py-3 rounded-lg transition-all';
+            
+            // Show selected
+            document.getElementById('tab-' + tabId).classList.remove('hidden');
+            document.getElementById('nav-' + tabId).className = 'flex items-center gap-3 text-sm font-bold text-primary bg-primary/10 px-4 py-3 rounded-lg border border-primary/20 transition-all';
+        }
+    </script>
+</body>
+</html>

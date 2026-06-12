@@ -4,6 +4,8 @@
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <!-- FullCalendar SDK -->
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js'></script>
     <!-- Supabase SDK -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="../js/supabase.js"></script>
@@ -177,13 +179,7 @@
 <button class="text-on-surface-variant hover:text-primary transition-all">
 <span class="material-symbols-outlined" data-icon="help">help</span>
 </button>
-<div class="flex items-center gap-3 pl-4 border-l border-outline-variant">
-<div class="text-right">
-<p class="font-label-sm text-on-surface font-bold">Dr. Mateo Eslava</p>
-<p class="text-[11px] text-on-surface-variant">Fisioterapeuta</p>
-</div>
-<img alt="Foto de perfil del Dr. Mateo Eslava" class="w-10 h-10 rounded-full border-2 border-surface-container-highest" data-alt="Close-up professional portrait of a male doctor with a kind expression, wearing a white clinical coat. The background is a soft-focus medical office with clean, minimalist lines and warm, empathetic lighting. The visual style is premium and high-end, reflecting surgical precision and medical expertise in a light mode aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuByRnRnHtmkJpaaiD6R084SHMlLzBwBeK_D04GRD9F_eNIVrIo_AgcGAtuIUcCSn67e7_VFF9xC2f1Dg-DJqSAXz1xFRoYkp01wMiP-aVDK5tguDaraC1gO2-TFXmX4ktYsozOdXpvYhCjkZV8TRwgLl3AVuyEbTGnOWNdRscUuYymqg24P9T5XHPM0dzV-hC_BBlB8jpzcbqams7OOVvftvmkzXAKyGoCLtk9sxGlwjJknxV-ouEH9zHniCmpWOGhRnFYphB3yD7I"/>
-</div>
+
 </div>
 </header>
 <!-- Main Content Canvas -->
@@ -242,26 +238,8 @@
 </div>
 </div>
 <!-- Calendar Wide Grid -->
-<div class="bg-surface-white rounded-3xl shadow-[0px_10px_30px_rgba(0,0,0,0.04)] overflow-hidden border border-surface-container-low">
-<div class="grid grid-cols-[100px_1fr_1fr] border-b border-surface-container-high">
-<div class="p-4 border-r border-surface-container-high bg-surface-container-lowest"></div>
-<div class="p-4 text-center font-bold text-primary bg-surface-container-lowest border-r border-surface-container-high">
-<span class="flex items-center justify-center gap-2">
-<span class="material-symbols-outlined" data-icon="meeting_room">meeting_room</span>
-                            Consultorio 1
-                        </span>
-</div>
-<div class="p-4 text-center font-bold text-primary bg-surface-container-lowest">
-<span class="flex items-center justify-center gap-2">
-<span class="material-symbols-outlined" data-icon="meeting_room">meeting_room</span>
-                            Consultorio 2
-                        </span>
-</div>
-</div>
-<!-- Schedule Rows -->
-<div class="divide-y divide-surface-container-high" id="calendarGrid">
-<!-- Contenido dinámico cargado vía Supabase -->
-</div>
+<div class="bg-surface-white rounded-3xl shadow-[0px_10px_30px_rgba(0,0,0,0.04)] overflow-hidden border border-surface-container-low p-4">
+    <div id="calendar" style="min-height: 600px;"></div>
 </div>
 </section>
 <!-- Secondary Insights / Bento Elements -->
@@ -313,7 +291,9 @@
         <form id="new-appointment-form" onsubmit="saveAppointment(event)" class="space-y-4">
             <div>
                 <label class="block text-sm font-semibold text-on-surface-variant mb-1">Nombre del Paciente</label>
-                <input type="text" id="appt-patient-name" required class="w-full bg-surface-container-low border-none rounded-xl py-3 px-4 text-body-md focus:ring-2 focus:ring-primary" placeholder="ej. Juan Pérez">
+                <input type="text" id="appt-patient-name" list="pacientes-list" oninput="autofillPatientInfo()" required class="w-full bg-surface-container-low border-none rounded-xl py-3 px-4 text-body-md focus:ring-2 focus:ring-primary" placeholder="ej. Juan Pérez">
+                <datalist id="pacientes-list"></datalist>
+                <div id="patient-status" class="mt-2 text-xs hidden"></div>
             </div>
             <div>
                 <label class="block text-sm font-semibold text-on-surface-variant mb-1">Correo Electrónico (para Google Calendar)</label>
@@ -322,7 +302,7 @@
             <div class="grid grid-cols-2 gap-4">
                 <div>
                     <label class="block text-sm font-semibold text-on-surface-variant mb-1">Tratamiento</label>
-                    <select id="appt-treatment" required class="w-full bg-surface-container-low border-none rounded-xl py-3 px-4 text-body-md focus:ring-2 focus:ring-primary">
+                    <select id="appt-treatment" onchange="verificarSesionesPaciente()" required class="w-full bg-surface-container-low border-none rounded-xl py-3 px-4 text-body-md focus:ring-2 focus:ring-primary">
                         <option value="Ondas de Choque">Ondas de Choque</option>
                         <option value="Fisioterapia Deportiva">Fisioterapia Deportiva</option>
                         <option value="Descarga Muscular">Descarga Muscular</option>
@@ -336,6 +316,10 @@
                         <option value="Consultorio 2">Consultorio 2</option>
                     </select>
                 </div>
+            </div>
+            <div id="info-sesiones-alerta" class="hidden p-4 bg-primary/5 border border-primary/20 rounded-2xl text-xs text-primary flex items-start gap-2">
+                <span class="material-symbols-outlined text-[16px] mt-0.5">info</span>
+                <span id="info-sesiones-texto">Cargando info de sesiones...</span>
             </div>
             <div class="grid grid-cols-2 gap-4">
                 <div>
@@ -388,6 +372,85 @@
     </div>
 </div>
 
+<!-- Modal for Full Patient Registration (Called from Appointment) -->
+<dialog id="modalNuevoPaciente" class="backdrop:bg-black/50 p-6 rounded-3xl shadow-2xl border-none max-w-lg w-full bg-surface-white z-[60]">
+    <div class="flex justify-between items-center mb-6">
+        <h3 class="text-2xl font-extrabold text-on-surface">Registrar Paciente Completo</h3>
+        <button type="button" onclick="document.getElementById('modalNuevoPaciente').close()" class="w-10 h-10 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container-high transition-colors">
+            <span class="material-symbols-outlined">close</span>
+        </button>
+    </div>
+    <form id="formNuevoPaciente" onsubmit="saveFullPatient(event)" class="space-y-4">
+        <div>
+            <label class="block text-sm font-bold text-on-surface mb-1">Nombre Completo</label>
+            <input type="text" id="full-patient-name" required class="w-full rounded-xl border border-outline-variant px-4 py-3 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all">
+        </div>
+        
+        <div class="grid grid-cols-2 gap-4">
+            <div>
+                <label class="block text-sm font-bold text-on-surface mb-1">Teléfono</label>
+                <input type="tel" id="full-patient-phone" class="w-full rounded-xl border border-outline-variant px-4 py-3 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all">
+            </div>
+            <div>
+                <label class="block text-sm font-bold text-on-surface mb-1">Fecha Nacimiento</label>
+                <input type="date" id="full-patient-dob" class="w-full rounded-xl border border-outline-variant px-4 py-3 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all">
+            </div>
+        </div>
+        
+        <div>
+            <label class="block text-sm font-bold text-on-surface mb-1">Email</label>
+            <input type="email" id="full-patient-email" class="w-full rounded-xl border border-outline-variant px-4 py-3 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all">
+        </div>
+
+        <div class="pt-6 flex justify-end gap-3 w-full border-t border-surface-variant">
+            <button type="button" onclick="document.getElementById('modalNuevoPaciente').close()" class="px-5 py-2.5 text-on-surface-variant font-bold hover:bg-surface-container-high rounded-xl transition-colors">Cancelar</button>
+            <button type="submit" id="btnSubmitFullPaciente" class="bg-primary text-white px-8 py-2.5 rounded-xl font-bold hover:scale-[1.02] active:scale-95 transition-all flex items-center gap-2 shadow-md">
+                Guardar Paciente
+            </button>
+        </div>
+    </form>
+</dialog>
+
+<!-- Modal de Opciones de Cita -->
+<dialog id="modalOpcionesCita" class="backdrop:bg-black/50 p-6 rounded-3xl shadow-2xl border-none max-w-md w-full bg-surface-white z-[60]">
+    <div class="flex justify-between items-center mb-6">
+        <h3 class="text-xl font-extrabold text-on-surface">Detalle y Opciones de Cita</h3>
+        <button onclick="document.getElementById('modalOpcionesCita').close()" class="w-10 h-10 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container-high transition-colors">
+            <span class="material-symbols-outlined">close</span>
+        </button>
+    </div>
+    <div class="space-y-4">
+        <div class="p-4 bg-surface-container-low rounded-2xl">
+            <h4 id="opt-paciente-nombre" class="font-bold text-lg text-primary">Cargando...</h4>
+            <p id="opt-tratamiento" class="text-sm font-semibold text-on-surface-variant">--</p>
+            <div class="mt-2 text-xs text-outline space-y-1">
+                <p id="opt-fecha-hora">--</p>
+                <p id="opt-consultorio">--</p>
+                <p id="opt-estado">Estado: --</p>
+            </div>
+        </div>
+
+        <div class="flex flex-col gap-3">
+            <button id="btn-opt-atender" class="w-full bg-primary text-white py-3 rounded-xl font-bold flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-95 transition-all shadow-md">
+                <span class="material-symbols-outlined">clinical_notes</span>
+                Atender Cita (Tiempo Real)
+            </button>
+            <button id="btn-opt-facturar" class="w-full bg-success text-white py-3 rounded-xl font-bold flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-95 transition-all shadow-md">
+                <span class="material-symbols-outlined">receipt_long</span>
+                Facturar Servicio
+            </button>
+            <button id="btn-opt-historial" class="w-full bg-surface-container-high text-on-surface-variant py-3 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-surface-container-highest active:scale-95 transition-all">
+                <span class="material-symbols-outlined">medical_information</span>
+                Ver Historia Clínica
+            </button>
+            <button id="btn-opt-cancelar" class="w-full border border-error text-error py-3 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-error/5 active:scale-95 transition-all">
+                <span class="material-symbols-outlined">cancel</span>
+                Cancelar Cita
+            </button>
+        </div>
+    </div>
+</dialog>
+
 <script>
     
 
@@ -409,6 +472,62 @@
 
     function closeSuccessModal() {
         document.getElementById("success-confirmation-modal").classList.add("hidden");
+    }
+
+    async function abrirOpcionesCita(citaId) {
+        const dialog = document.getElementById('modalOpcionesCita');
+        dialog.showModal();
+        
+        try {
+            const { data: cita, error } = await supabaseClient
+                .from('citas')
+                .select('*, pacientes(*)')
+                .eq('id', citaId)
+                .single();
+                
+            if (error) throw error;
+            
+            document.getElementById('opt-paciente-nombre').textContent = cita.pacientes?.nombre || 'Desconocido';
+            document.getElementById('opt-tratamiento').textContent = cita.tratamiento || 'Procedimiento general';
+            document.getElementById('opt-fecha-hora').textContent = `Fecha: ${cita.fecha} • ${cita.hora}`;
+            document.getElementById('opt-consultorio').textContent = `Consultorio: ${cita.consultorio}`;
+            document.getElementById('opt-estado').textContent = `Estado: ${cita.estado}`;
+            
+            // Set up button actions
+            const role = new URLSearchParams(window.location.search).get('role') || 'admin';
+            
+            document.getElementById('btn-opt-atender').onclick = () => {
+                window.location.href = `atencion_tiempo_real_desktop.html?cita_id=${cita.id}&role=${role}`;
+            };
+            
+            document.getElementById('btn-opt-facturar').onclick = () => {
+                window.location.href = `pagos_facturacion_desktop.html?paciente_id=${cita.pacientes?.id}&cita_id=${cita.id}&role=${role}`;
+            };
+            
+            document.getElementById('btn-opt-historial').onclick = () => {
+                window.location.href = `detalle_historia_clinica_desktop.html?id=${cita.pacientes?.id}&role=${role}`;
+            };
+            
+            document.getElementById('btn-opt-cancelar').onclick = async () => {
+                if (confirm('¿Estás seguro de que deseas cancelar esta cita?')) {
+                    const { error: cancelError } = await supabaseClient
+                        .from('citas')
+                        .update({ estado: 'Cancelado' })
+                        .eq('id', cita.id);
+                        
+                    if (cancelError) {
+                        alert('Error al cancelar la cita.');
+                    } else {
+                        dialog.close();
+                        await cargarCitas();
+                    }
+                }
+            };
+            
+        } catch (err) {
+            console.error("Error al abrir opciones de cita:", err);
+            dialog.close();
+        }
     }
 
     function generateGoogleCalendarUrl(appointment) {
@@ -433,10 +552,169 @@
         const endMinutes = time24.split(':')[1];
         const endDateTime = `${dateStr}T${endHours}${endMinutes}00`;
         
-        return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${startDateTime}/${endDateTime}&details=${details}&location=${location}`;
+        let url = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${startDateTime}/${endDateTime}&details=${details}&location=${location}`;
+        if (appointment.email) {
+            url += `&add=${encodeURIComponent(appointment.email)}`;
+        }
+        return url;
     }
 
     window.serviciosActivos = [];
+    window.pacientesList = [];
+
+    async function cargarPacientesSelect() {
+        try {
+            const { data, error } = await supabaseClient.from('pacientes').select('*');
+            if (error) throw error;
+            window.pacientesList = data || [];
+            
+            const datalist = document.getElementById('pacientes-list');
+            if (datalist) {
+                datalist.innerHTML = data.map(p => `<option value="${p.nombre}">${p.email || ''}</option>`).join('');
+            }
+        } catch(error) {
+            console.error('Error al cargar pacientes para el select:', error);
+        }
+    }
+
+    function autofillPatientInfo() {
+        const nameInput = document.getElementById('appt-patient-name').value;
+        const emailInput = document.getElementById('appt-patient-email');
+        const statusEl = document.getElementById('patient-status');
+        
+        if (!nameInput.trim()) {
+            statusEl.classList.add('hidden');
+            return;
+        }
+
+        const matched = window.pacientesList.find(p => p.nombre.toLowerCase() === nameInput.trim().toLowerCase());
+        statusEl.classList.remove('hidden');
+
+        if (matched) {
+            if (matched.email) emailInput.value = matched.email;
+            statusEl.innerHTML = `<span class="text-success font-semibold flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">check_circle</span> Paciente Existente seleccionado</span>`;
+            verificarSesionesPaciente();
+        } else {
+            statusEl.innerHTML = `
+            <div class="flex items-center justify-between w-full">
+                <span class="text-warning font-semibold flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">person_add</span> Se registrará rápido</span>
+                <button type="button" onclick="abrirModalFichaPaciente()" class="text-xs bg-primary text-on-primary px-3 py-1.5 rounded-lg hover:opacity-90 transition-all font-bold shadow-sm">Abrir Ficha Completa</button>
+            </div>`;
+            // Clear email if it's a new patient and it was previously filled by another name
+            if(emailInput.value && !document.activeElement.isEqualNode(emailInput)) {
+                emailInput.value = '';
+            }
+            document.getElementById('info-sesiones-alerta').classList.add('hidden');
+        }
+    }
+
+    async function verificarSesionesPaciente() {
+        const nameInput = document.getElementById('appt-patient-name').value;
+        const treatment = document.getElementById('appt-treatment').value;
+        const alertEl = document.getElementById('info-sesiones-alerta');
+        const textEl = document.getElementById('info-sesiones-texto');
+
+        if (!nameInput.trim() || !treatment) {
+            alertEl.classList.add('hidden');
+            return;
+        }
+
+        const matched = window.pacientesList.find(p => p.nombre.toLowerCase() === nameInput.trim().toLowerCase());
+        if (!matched) {
+            alertEl.classList.add('hidden');
+            return;
+        }
+
+        const servicioObj = window.serviciosActivos ? window.serviciosActivos.find(s => s.nombre === treatment) : null;
+        if (!servicioObj || !servicioObj.duracion || servicioObj.duracion <= 1) {
+            alertEl.classList.add('hidden');
+            return;
+        }
+
+        const totalSesiones = servicioObj.duracion;
+
+        try {
+            const { data: citas, error } = await supabaseClient
+                .from('citas')
+                .select('id')
+                .eq('paciente_id', matched.id)
+                .eq('tratamiento', treatment)
+                .neq('estado', 'Cancelado');
+
+            if (error) throw error;
+
+            const totalConsumidas = citas ? citas.length : 0;
+            const resto = totalConsumidas % totalSesiones;
+
+            alertEl.classList.remove('hidden');
+            if (resto === 0) {
+                textEl.innerHTML = `<b>Nuevo Paquete:</b> Se iniciará un nuevo paquete de ${totalSesiones} sesiones. Se generará un cobro único de S/. ${parseFloat(servicioObj.precio).toFixed(2)}.`;
+            } else {
+                const sesionActual = resto + 1;
+                textEl.innerHTML = `<b>Sesión de Paquete:</b> El paciente consumirá la sesión ${sesionActual} de ${totalSesiones}. <b>No se generará cobro</b> (ya comprado).`;
+            }
+        } catch (err) {
+            console.error('Error al verificar sesiones:', err);
+            alertEl.classList.add('hidden');
+        }
+    }
+
+    function abrirModalFichaPaciente() {
+        const currentName = document.getElementById('appt-patient-name').value;
+        const currentEmail = document.getElementById('appt-patient-email').value;
+        
+        document.getElementById('full-patient-name').value = currentName;
+        document.getElementById('full-patient-email').value = currentEmail;
+        document.getElementById('full-patient-phone').value = '';
+        document.getElementById('full-patient-dob').value = '';
+        
+        document.getElementById('modalNuevoPaciente').showModal();
+    }
+
+    async function saveFullPatient(event) {
+        event.preventDefault();
+        
+        const btn = document.getElementById('btnSubmitFullPaciente');
+        const originalText = btn.innerHTML;
+        btn.innerHTML = '<span class="material-symbols-outlined animate-spin">progress_activity</span> Guardando...';
+        btn.disabled = true;
+
+        const nombre = document.getElementById('full-patient-name').value;
+        const telefono = document.getElementById('full-patient-phone').value;
+        const fecha_nacimiento = document.getElementById('full-patient-dob').value || null;
+        const email = document.getElementById('full-patient-email').value;
+        
+        try {
+            const { data, error } = await supabaseClient
+                .from('pacientes')
+                .insert([{ 
+                    nombre, 
+                    telefono, 
+                    fecha_nacimiento, 
+                    email, 
+                    estado: 'Activo' 
+                }])
+                .select();
+                
+            if (error) throw error;
+            
+            // Reload pacientes list
+            await cargarPacientesSelect();
+            
+            // Populate main form
+            document.getElementById('appt-patient-name').value = nombre;
+            document.getElementById('appt-patient-email').value = email;
+            autofillPatientInfo(); 
+            
+            document.getElementById('modalNuevoPaciente').close();
+        } catch (error) {
+            console.error('Error guardando paciente completo:', error);
+            alert('Hubo un error al guardar el paciente.');
+        } finally {
+            btn.innerHTML = originalText;
+            btn.disabled = false;
+        }
+    }
 
     async function cargarServicios() {
         try {
@@ -453,7 +731,13 @@
                 data.forEach(s => {
                     const option = document.createElement('option');
                     option.value = s.nombre;
-                    option.textContent = s.nombre;
+                    
+                    let label = s.nombre;
+                    if (s.duracion && s.duracion > 1) {
+                        label += ` (${s.duracion} Sesiones)`;
+                    }
+                    
+                    option.textContent = label;
                     selectTratamiento.appendChild(option);
                 });
             }
@@ -586,9 +870,27 @@
             
             const cita_id = newCita && newCita.length > 0 ? newCita[0].id : null;
 
-            // Encontrar el precio del tratamiento
-            const servicioObj = window.serviciosActivos.find(s => s.nombre === treatment);
-            const montoPago = servicioObj ? servicioObj.precio : 0.00;
+            // Encontrar el precio del tratamiento y si es por sesiones
+            const servicioObj = window.serviciosActivos ? window.serviciosActivos.find(s => s.nombre === treatment) : null;
+            let montoPago = servicioObj ? servicioObj.precio : 0.00;
+
+            if (servicioObj && servicioObj.duracion && servicioObj.duracion > 1 && paciente_id) {
+                const totalSesiones = servicioObj.duracion;
+                // Contamos las citas anteriores para ver si es una sesión gratuita (de consumo de paquete)
+                const { data: citasPrevias, error: countError } = await supabaseClient
+                    .from('citas')
+                    .select('id')
+                    .eq('paciente_id', paciente_id)
+                    .eq('tratamiento', treatment)
+                    .neq('estado', 'Cancelado');
+
+                if (!countError && citasPrevias) {
+                    const totalConsumidas = citasPrevias.length; // Incluye la recién creada
+                    if ((totalConsumidas - 1) % totalSesiones !== 0) {
+                        montoPago = 0.00;
+                    }
+                }
+            }
 
             if (cita_id) {
                 // Crear pago pendiente asociado
@@ -598,8 +900,8 @@
                         paciente_id: paciente_id,
                         cita_id: cita_id,
                         monto: montoPago,
-                        estado: 'Pendiente',
-                        metodo: 'Efectivo', // Default, assuming will be updated on payment
+                        estado: montoPago === 0 ? 'Completado' : 'Pendiente',
+                        metodo: montoPago === 0 ? 'Paquete' : 'Efectivo', // 'Paquete' para identificar que no requiere cobro
                         fecha: date
                     }]);
                 if (pagoError) console.error("Error creating payment:", pagoError);
@@ -626,83 +928,84 @@
         }
     }
 
+    let fullCalendarInstance = null;
+
     async function cargarCitas() {
         try {
-            const gridBody = document.getElementById('calendarGrid');
+            const calendarEl = document.getElementById('calendar');
             const proximosContainer = document.getElementById('proximos-pacientes-list');
-            if (!gridBody) return;
+            if (!calendarEl) return;
             
             const today = new Date().toISOString().split('T')[0];
 
             const { data, error } = await supabaseClient
                 .from('citas')
-                .select('*, pacientes(nombre)')
-                .eq('fecha', today)
-                .order('hora', { ascending: true });
+                .select('*, pacientes(nombre)');
                 
             if (error) throw error;
 
-            const timeSlots = [
-                { time: '08:00:00', label: '08:00 AM' },
-                { time: '09:00:00', label: '09:00 AM' },
-                { time: '10:00:00', label: '10:00 AM' },
-                { time: '11:00:00', label: '11:00 AM' },
-                { time: '12:00:00', label: '12:00 PM' },
-                { time: '13:00:00', label: '01:00 PM' },
-                { time: '14:00:00', label: '02:00 PM' },
-                { time: '15:00:00', label: '03:00 PM' },
-                { time: '16:00:00', label: '04:00 PM' },
-                { time: '17:00:00', label: '05:00 PM' }
-            ];
-
-            gridBody.innerHTML = '';
-
-            timeSlots.forEach(slot => {
-                const apptC1 = data.find(c => c.hora.startsWith(slot.time.substring(0,2)) && c.consultorio === 'Consultorio 1');
-                const apptC2 = data.find(c => c.hora.startsWith(slot.time.substring(0,2)) && c.consultorio === 'Consultorio 2');
-
-                const renderCard = (appt) => {
-                    if (!appt) return \`<div class="p-2 relative bg-surface-container-lowest/50"></div>\`;
-                    
-                    let color = 'primary';
-                    if (appt.tratamiento === 'Descarga Muscular') color = 'secondary';
-                    if (appt.tratamiento === 'Evaluación Inicial') color = 'tertiary';
-                    if (appt.tratamiento === 'Fisioterapia Deportiva') color = 'warning';
-
-                    const bgMap = {
-                        'primary': 'bg-primary-fixed/20 border-primary text-primary-container',
-                        'secondary': 'bg-secondary-container/20 border-secondary text-secondary-container',
-                        'tertiary': 'bg-tertiary-fixed/20 border-tertiary text-tertiary-container',
-                        'warning': 'bg-warning/20 border-warning text-warning'
-                    };
-
-                    const styleClasses = bgMap[color] || bgMap['primary'];
-                    const pacienteNombre = appt.pacientes ? appt.pacientes.nombre : 'Paciente Desconocido';
-
-                    return \`
-                    <div class="p-2 border-r border-surface-container-high relative">
-                        <div class="h-full w-full \${styleClasses.split(' ')[0]} rounded-xl p-3 border-l-4 \${styleClasses.split(' ')[1]} group hover:scale-[1.02] transition-transform cursor-pointer">
-                            <p class="text-xs font-bold \${styleClasses.split(' ')[2]} uppercase">\${appt.tratamiento || 'Cita Médica'}</p>
-                            <p class="font-bold text-on-surface">\${pacienteNombre}</p>
-                            <p class="text-xs text-on-surface-variant">\${appt.estado}</p>
-                        </div>
-                    </div>\`;
-                };
-
-                const rowHTML = \`
-                <div class="grid grid-cols-[100px_1fr_1fr] min-h-[120px]">
-                    <div class="p-4 border-r border-surface-container-high flex justify-center items-start text-on-surface-variant font-bold text-sm">\${slot.label}</div>
-                    \${renderCard(apptC1)}
-                    \${renderCard(apptC2)}
-                </div>
-                \`;
+            const events = data.map(c => {
+                let color = '#10b981'; // primary
+                if (c.tratamiento === 'Descarga Muscular') color = '#3b82f6'; // secondary
+                if (c.tratamiento === 'Evaluación Inicial') color = '#8b5cf6'; // tertiary
+                if (c.tratamiento === 'Fisioterapia Deportiva') color = '#f59e0b'; // warning
                 
-                gridBody.insertAdjacentHTML('beforeend', rowHTML);
+                return {
+                    id: c.id,
+                    title: `${c.pacientes?.nombre || 'Desconocido'} - ${c.consultorio}`,
+                    start: `${c.fecha}T${c.hora}`,
+                    backgroundColor: color,
+                    borderColor: color,
+                    extendedProps: {
+                        estado: c.estado,
+                        tratamiento: c.tratamiento
+                    }
+                };
             });
+
+            if (!fullCalendarInstance) {
+                fullCalendarInstance = new FullCalendar.Calendar(calendarEl, {
+                    initialView: 'timeGridDay',
+                    headerToolbar: {
+                        left: 'prev,next today',
+                        center: 'title',
+                        right: 'timeGridDay,timeGridWeek,dayGridMonth'
+                    },
+                    buttonText: {
+                        today: 'Hoy',
+                        month: 'Mes',
+                        week: 'Semana',
+                        day: 'Día',
+                        list: 'Agenda'
+                    },
+                    events: events,
+                    locale: 'es',
+                    slotMinTime: '08:00:00',
+                    slotMaxTime: '20:00:00',
+                    allDaySlot: false,
+                    height: '100%',
+                    eventClick: function(info) {
+                        abrirOpcionesCita(info.event.id);
+                    },
+                    eventContent: function(arg) {
+                        return {
+                            html: `<div class="p-1 overflow-hidden" style="color: white; height: 100%;">
+                                <div class="text-xs font-bold">${arg.timeText}</div>
+                                <div class="font-bold text-sm leading-tight">${arg.event.title}</div>
+                                <div class="text-xs opacity-90">${arg.event.extendedProps.tratamiento}</div>
+                            </div>`
+                        };
+                    }
+                });
+                fullCalendarInstance.render();
+            } else {
+                fullCalendarInstance.removeAllEvents();
+                fullCalendarInstance.addEventSource(events);
+            }
             
             // Render upcoming patients
             if (proximosContainer) {
-                const proximos = data.filter(c => c.estado === 'Pendiente').slice(0, 3);
+                const proximos = data.filter(c => c.estado === 'Pendiente' && c.fecha === today).sort((a,b) => a.hora.localeCompare(b.hora)).slice(0, 3);
                 if (proximos.length === 0) {
                     proximosContainer.innerHTML = '<p class="text-outline text-center py-4">No hay pacientes próximos para hoy.</p>';
                 } else {
@@ -717,18 +1020,18 @@
                             const hInt = parseInt(h);
                             const ampm = hInt >= 12 ? 'PM' : 'AM';
                             const h12 = hInt % 12 || 12;
-                            horaFormat = \`\${h12}:\${m} \${ampm}\`;
+                            horaFormat = `${h12}:${m} ${ampm}`;
                         }
 
-                        html += \`
+                        html += `
                         <div class="flex items-center gap-4">
-                            <div class="w-12 h-12 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center font-bold">\${iniciales}</div>
+                            <div class="w-12 h-12 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center font-bold">${iniciales}</div>
                             <div class="flex-1">
-                                <p class="font-bold text-on-surface">\${pacienteNombre}</p>
-                                <p class="text-xs text-on-surface-variant">\${horaFormat} • \${c.consultorio}</p>
+                                <p class="font-bold text-on-surface">${pacienteNombre}</p>
+                                <p class="text-xs text-on-surface-variant">${horaFormat} • ${c.consultorio}</p>
                             </div>
                             <span class="material-symbols-outlined text-outline-variant" data-icon="chevron_right">chevron_right</span>
-                        </div>\`;
+                        </div>`;
                     });
                     proximosContainer.innerHTML = html;
                 }
@@ -741,8 +1044,13 @@
 
     // Initialize logic
     document.addEventListener("DOMContentLoaded", async () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('action') === 'new_appointment') {
+            openAppointmentModal();
+        }
         
         await cargarServicios();
+        await cargarPacientesSelect();
         cargarCitas();
         cargarEstadisticas();
 

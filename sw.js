@@ -2,7 +2,6 @@ const CACHE_NAME = 'c-eslava-cache-v2';
 const urlsToCache = [
     './',
     './index.html',
-    './html/login.html',
     './html/calendario_dashboard_desktop.html',
     './html/calendario_dashboard_mobile.html',
     './html/detalle_historia_clinica_desktop.html',

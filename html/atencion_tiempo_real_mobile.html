@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Atención Activa | Centro Eslava</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+    <script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+              "surface-container": "#eceeee",
+              "primary-fixed-dim": "#66d5f1",
+              "outline": "#6d797d",
+              "on-surface": "#191c1d",
+              "outline-variant": "#bdc8cd",
+              "error": "#ba1a1a",
+              "on-surface-variant": "#3d494c",
+              "background": "#f8fafa",
+              "surface-white": "#FFFFFF",
+              "surface": "#f8fafa",
+              "primary": "#006578",
+              "success": "#34C759",
+              "on-primary": "#ffffff"
+            }
+          }
+        }
+      }
+    </script>
+    <style>
+        body {
+            font-family: 'Hanken Grotesk', sans-serif;
+            background-color: #f8fafa;
+            color: #191c1d;
+        }
+    </style>
+    <!-- Supabase SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../js/supabase.js"></script>
+    <script src="../js/app.js"></script>
+    <script src="../js/rbac.js"></script>
+</head>
+<body class="min-h-screen flex flex-col pb-20">
+    <!-- Top App Bar -->
+    <header class="bg-surface-white border-b border-surface-container flex justify-between items-center h-14 px-4 sticky top-0 z-40 shadow-sm">
+        <div class="flex items-center space-x-2">
+            <span class="material-symbols-outlined text-primary text-xl animate-pulse">radio_button_checked</span>
+            <span class="font-bold text-primary text-sm">Cita Activa</span>
+        </div>
+        <button onclick="window.history.back()" class="text-on-surface-variant font-bold text-xs px-3 py-1.5 border border-outline-variant rounded-xl hover:bg-surface-container-low transition-colors">
+            Volver
+        </button>
+    </header>
+
+    <main class="flex-1 p-4 space-y-6">
+        <!-- Patient Block -->
+        <div class="bg-surface-white rounded-2xl p-5 shadow-sm border border-outline-variant/30">
+            <div class="flex items-center space-x-3 mb-4">
+                <div id="patient-initials" class="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center font-bold">
+                    -
+                </div>
+                <div>
+                    <h4 id="patient-name" class="font-bold text-sm text-on-surface">Cargando...</h4>
+                    <p id="appt-treatment" class="text-xs text-primary font-bold">--</p>
+                </div>
+            </div>
+            <div class="text-xs text-outline space-y-1">
+                <p id="patient-id">ID: --</p>
+                <p id="patient-phone">Contacto: --</p>
+            </div>
+        </div>
+
+        <!-- Warning Alert -->
+        <div class="bg-red-50 border border-red-200 rounded-2xl p-4 flex gap-2">
+            <span class="material-symbols-outlined text-error text-[20px]">warning</span>
+            <div>
+                <h5 class="text-xs font-bold text-error uppercase tracking-wider mb-1">Alergias & Riesgos</h5>
+                <p id="patient-allergies" class="text-xs text-red-700 leading-relaxed font-medium">--</p>
+            </div>
+        </div>
+
+        <!-- Clinical observations entry -->
+        <div class="bg-surface-white rounded-2xl p-5 shadow-sm border border-outline-variant/30 space-y-4">
+            <div class="flex justify-between items-center">
+                <h3 class="font-bold text-sm text-on-surface">Evolución de la Sesión</h3>
+                <span id="save-status" class="text-[10px] text-outline">Autoguardado inactivo</span>
+            </div>
+
+            <form id="form-evolucion" class="space-y-4">
+                <textarea id="observaciones" required rows="6" class="w-full rounded-xl border border-outline-variant px-3 py-2 text-sm focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all bg-surface-container-lowest" placeholder="Registre la evolución, respuesta al ejercicio y dolor..."></textarea>
+                
+                <input type="text" id="recomendaciones" class="w-full rounded-xl border border-outline-variant px-3 py-2 text-sm focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all bg-surface-container-lowest" placeholder="Recomendaciones post-sesión (opcional)"/>
+                
+                <div class="flex gap-2 pt-2">
+                    <button type="button" id="btn-save-draft" onclick="guardarBorrador()" class="flex-1 py-3 border border-outline text-on-surface-variant font-bold text-xs rounded-xl hover:bg-surface-container-low transition-all">
+                        Borrador
+                    </button>
+                    <button type="button" id="btn-complete" onclick="culminarProcedimiento()" class="flex-1 bg-primary text-on-primary py-3 rounded-xl font-bold text-xs hover:opacity-90 active:scale-95 transition-all shadow-md flex items-center justify-center gap-1">
+                        <span class="material-symbols-outlined text-sm">check_circle</span>
+                        Finalizar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const citaId = urlParams.get('cita_id');
+        let currentCita = null;
+        let currentPaciente = null;
+
+        document.addEventListener("DOMContentLoaded", async () => {
+            if (!citaId) {
+                alert("ID de cita inválido.");
+                window.history.back();
+                return;
+            }
+            await cargarDatosCita();
+        });
+
+        async function cargarDatosCita() {
+            try {
+                const { data: cita, error } = await supabaseClient
+                    .from('citas')
+                    .select('*, pacientes(*)')
+                    .eq('id', citaId)
+                    .single();
+
+                if (error) throw error;
+                currentCita = cita;
+                currentPaciente = cita.pacientes;
+
+                if (currentPaciente) {
+                    document.getElementById('patient-name').textContent = currentPaciente.nombre;
+                    document.getElementById('patient-id').textContent = 'ID: #' + currentPaciente.id.substring(0,8).toUpperCase();
+                    document.getElementById('patient-phone').textContent = 'Contacto: ' + (currentPaciente.telefono || '--');
+                    document.getElementById('patient-initials').textContent = currentPaciente.nombre.charAt(0).toUpperCase();
+                    
+                    document.getElementById('patient-allergies').textContent = currentPaciente.notas_medicas || 'Sin alertas reportadas.';
+                }
+
+                document.getElementById('appt-treatment').textContent = cita.tratamiento || 'Procedimiento General';
+
+                if (cita.observaciones_medicas) {
+                    document.getElementById('observaciones').value = cita.observaciones_medicas;
+                }
+            } catch (err) {
+                console.error("Error cargando cita móvil:", err);
+                alert("Error al obtener información de la cita.");
+            }
+        }
+
+        async function guardarBorrador() {
+            const obs = document.getElementById('observaciones').value;
+            const rec = document.getElementById('recomendaciones').value;
+            const fullObs = rec ? `${obs}\n\nRecomendaciones: ${rec}` : obs;
+
+            const btn = document.getElementById('btn-save-draft');
+            btn.disabled = true;
+
+            try {
+                const { error } = await supabaseClient
+                    .from('citas')
+                    .update({ 
+                        observaciones_medicas: fullObs,
+                        estado: 'En Progreso'
+                    })
+                    .eq('id', citaId);
+
+                if (error) throw error;
+
+                document.getElementById('save-status').textContent = 'Borrador guardado';
+                showToast("Borrador guardado", "success");
+            } catch (err) {
+                console.error("Error al guardar borrador móvil:", err);
+                alert("Error al guardar observaciones.");
+            } finally {
+                btn.disabled = false;
+            }
+        }
+
+        async function culminarProcedimiento() {
+            const obs = document.getElementById('observaciones').value;
+            const rec = document.getElementById('recomendaciones').value;
+            const fullObs = rec ? `${obs}\n\nRecomendaciones: ${rec}` : obs;
+
+            if (!obs.trim()) {
+                alert("Ingrese observaciones antes de culminar.");
+                return;
+            }
+
+            const btn = document.getElementById('btn-complete');
+            btn.disabled = true;
+
+            try {
+                const { error } = await supabaseClient
+                    .from('citas')
+                    .update({
+                        observaciones_medicas: fullObs,
+                        estado: 'Completado'
+                    })
+                    .eq('id', citaId);
+
+                if (error) throw error;
+
+                showToast("Procedimiento culminado. Redirigiendo...", "success");
+                
+                setTimeout(() => {
+                    const role = new URLSearchParams(window.location.search).get('role') || 'admin';
+                    window.location.href = `pagos_facturacion_mobile.html?paciente_id=${currentPaciente.id}&cita_id=${citaId}&role=${role}`;
+                }, 1500);
+
+            } catch (err) {
+                console.error("Error al culminar procedimiento móvil:", err);
+                alert("Error al culminar el procedimiento.");
+                btn.disabled = false;
+            }
+        }
+    </script>
+</body>
+</html>

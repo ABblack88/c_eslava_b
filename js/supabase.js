@@ -10,9 +10,8 @@ window.supabaseClient = supabaseClient;
 
 // Auth Guard Integrado
 document.addEventListener("DOMContentLoaded", async () => {
-    const isPublicPage = window.location.pathname.includes('login.html') || 
-                         window.location.pathname.endsWith('/') || 
-                         window.location.pathname.endsWith('index.html');
+    const isPublicPage = window.location.pathname.includes('index.html') || 
+                         window.location.pathname.endsWith('/');
     
     try {
         const { data, error } = await supabaseClient.auth.getSession();
@@ -22,7 +21,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             // Validar si existe el parámetro de rol por URL para acceso rápido temporal del simulador
             const urlParams = new URLSearchParams(window.location.search);
             if (!urlParams.get('role')) {
-                window.location.href = 'login.html';
+                window.location.href = '../index.html';
             }
         } else if (data.session && !isPublicPage) {
             // Si hay sesión en página privada, asegurar que exista el rol en la URL

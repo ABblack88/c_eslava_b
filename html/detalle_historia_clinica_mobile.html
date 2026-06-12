@@ -5,6 +5,8 @@
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>Historial Médico - Mateo Rojas</title>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+<script src="../js/supabase.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
 <script id="tailwind-config">
@@ -177,12 +179,12 @@
 <div class="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-4">
 <div>
 <div class="flex items-center space-x-3 mb-2">
-<h1 class="font-display-lg-mobile md:font-display-lg text-display-lg-mobile md:text-display-lg text-on-background">Mateo Rojas</h1>
+<h1 class="font-display-lg-mobile md:font-display-lg text-display-lg-mobile md:text-display-lg text-on-background" id="patient-name-title">Mateo Rojas</h1>
 <span class="bg-success/10 text-success px-3 py-1 rounded-full text-sm font-semibold flex items-center">
 <span class="w-2 h-2 bg-success rounded-full mr-2"></span> Activo
                         </span>
 </div>
-<p class="text-outline font-body-lg text-body-lg">ID: CR-8942-001</p>
+<p class="text-outline font-body-lg text-body-lg" id="patient-id-title">ID: CR-8942-001</p>
 </div>
 <div class="flex space-x-3">
 <button class="bg-surface-white hover:bg-surface-container-low text-primary border border-surface-variant font-label-sm text-label-sm px-6 py-3 rounded-full shadow-[0px_4px_10px_rgba(0,0,0,0.02)] transition-colors flex items-center space-x-2">
@@ -208,7 +210,7 @@
 <div class="grid grid-cols-2 gap-4">
 <div class="bg-surface p-4 rounded-lg">
 <p class="text-text-muted text-sm mb-1">Edad</p>
-<p class="font-headline-md text-headline-md text-primary-container text-xl">34 años</p>
+<p class="font-headline-md text-headline-md text-primary-container text-xl" id="patient-age-title">34 años</p>
 </div>
 <div class="bg-surface p-4 rounded-lg">
 <p class="text-text-muted text-sm mb-1">Peso</p>
@@ -223,6 +225,16 @@
 <p class="font-headline-md text-headline-md text-primary-container text-xl">182 cm</p>
 </div>
 </div>
+</div>
+<!-- Resumen de Cuenta (Mobile) -->
+<div class="bg-surface-white rounded-xl p-6 shadow-[0px_10px_30px_rgba(0,0,0,0.04)]" id="resumen-cuenta-card">
+<div class="flex justify-between items-center mb-4">
+<h4 class="font-label-sm text-label-sm font-bold text-on-surface uppercase tracking-widest text-xs">Resumen de Cuenta</h4>
+<span class="material-symbols-outlined text-primary">account_balance_wallet</span>
+</div>
+<p class="text-[10px] text-outline font-bold uppercase mb-1">Saldo Pendiente</p>
+<p class="text-headline-md font-headline-md text-on-surface" id="patient-pending-balance">S/. 0.00</p>
+<button onclick="jalarAPagar()" class="w-full mt-4 py-2 text-primary font-bold border border-primary/20 rounded-lg hover:bg-primary/5 transition-all text-sm">Ver Facturación / Cobrar</button>
 </div>
 <!-- Clinical History -->
 <div class="bg-surface-white rounded-xl p-6 shadow-[0px_10px_30px_rgba(0,0,0,0.04)] flex-grow">
@@ -425,6 +437,108 @@
 
 
     <script>
+        let currentPatientId = null;
+
+        function jalarAPagar() {
+            if (!currentPatientId) return;
+            const urlParams = new URLSearchParams(window.location.search);
+            const role = urlParams.get('role');
+            let dest = `pagos_facturacion_mobile.html?paciente_id=${currentPatientId}`;
+            if (role) dest += `&role=${role}`;
+            window.location.href = dest;
+        }
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            let id = urlParams.get('id');
+            
+            if (!id) {
+                // Try to get first patient as fallback
+                try {
+                    const { data: pacs } = await supabaseClient.from('pacientes').select('id').limit(1);
+                    if (pacs && pacs.length > 0) {
+                        id = pacs[0].id;
+                    }
+                } catch(e) { console.error(e); }
+            }
+
+            if (id) {
+                currentPatientId = id;
+                await cargarDatosPaciente(id);
+            }
+        });
+
+        async function cargarDatosPaciente(pacId) {
+            try {
+                // Fetch patient info
+                const { data: pac, error } = await supabaseClient.from('pacientes').select('*').eq('id', pacId).single();
+                if (error) throw error;
+
+                if (pac) {
+                    document.getElementById('patient-name-title').textContent = pac.nombre;
+                    document.getElementById('patient-id-title').textContent = `ID: ${pac.id.substring(0,8).toUpperCase()}`;
+                    
+                    // Age calculation
+                    if (pac.fecha_nacimiento) {
+                        const birthDate = new Date(pac.fecha_nacimiento);
+                        const age = new Date().getFullYear() - birthDate.getFullYear();
+                        document.getElementById('patient-age-title').textContent = `${age} años`;
+                    } else {
+                        document.getElementById('patient-age-title').textContent = 'N/A';
+                    }
+                }
+
+                // Fetch total pending/overdue balance from 'pagos'
+                const { data: pagos } = await supabaseClient
+                    .from('pagos')
+                    .select('monto')
+                    .eq('paciente_id', pacId)
+                    .in('estado', ['Pendiente', 'Vencido']);
+
+                const totalPendiente = (pagos || []).reduce((sum, p) => sum + Number(p.monto), 0);
+                document.getElementById('patient-pending-balance').textContent = `S/. ${totalPendiente.toFixed(2)}`;
+
+                // Fetch patient's appointments/evolution notes
+                const { data: citas } = await supabaseClient
+                    .from('citas')
+                    .select('*')
+                    .eq('paciente_id', pacId)
+                    .order('fecha', { ascending: false });
+
+                // Update evolution timeline with real appointments
+                const timelineContainer = document.querySelector('.overflow-y-auto.pr-2.space-y-6');
+                if (timelineContainer && citas && citas.length > 0) {
+                    let timelineHtml = '';
+                    citas.forEach((cita, idx) => {
+                        const dateStr = new Date(cita.fecha + 'T' + (cita.hora || '12:00:00')).toLocaleString('es-PE', {
+                            day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit'
+                        });
+                        
+                        timelineHtml += `
+                        <div class="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active">
+                            <div class="flex items-center justify-center w-5 h-5 rounded-full border-2 border-surface-white bg-primary shadow shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 z-10 absolute left-0 md:left-1/2 -translate-x-1/2"></div>
+                            <div class="w-[calc(100%-2.5rem)] md:w-[calc(50%-1.5rem)] ml-10 md:ml-0 p-4 rounded-lg bg-surface hover:bg-surface-container-low transition-colors">
+                                <div class="flex items-center justify-between mb-1">
+                                    <span class="font-label-sm text-label-sm text-primary">${dateStr}</span>
+                                </div>
+                                <p class="font-body-md text-body-md text-on-surface-variant text-sm">
+                                    ${cita.observaciones || 'No se registraron observaciones adicionales para esta sesión.'}
+                                </p>
+                                <p class="text-xs text-text-muted mt-2">- ${cita.doctor || 'Dr. Alejandro Eslava'} (${cita.estado})</p>
+                            </div>
+                        </div>
+                        `;
+                    });
+                    timelineContainer.innerHTML = timelineHtml;
+                } else if (timelineContainer) {
+                    timelineContainer.innerHTML = '<p class="text-outline text-center py-6 text-sm">No hay notas de evolución disponibles.</p>';
+                }
+
+            } catch(e) {
+                console.error("Error al cargar datos reales del paciente:", e);
+            }
+        }
+
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('../sw.js').then(registration => {

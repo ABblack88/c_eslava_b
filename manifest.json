@@ -2,7 +2,7 @@
     "name": "Centro Eslava",
     "short_name": "Eslava",
     "description": "Simulador de Portal Clínico del Centro Eslava",
-    "start_url": "./html/login.html",
+    "start_url": "./index.html",
     "display": "standalone",
     "background_color": "#121212",
     "theme_color": "#4ADE80",

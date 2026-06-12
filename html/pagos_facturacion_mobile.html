@@ -177,9 +177,14 @@
 </nav>
 <!-- Main Content Canvas -->
 <main class="flex-grow md:ml-72 p-margin-mobile md:p-margin-desktop pb-24 md:pb-margin-desktop overflow-y-auto">
-<header class="mb-12">
+<header class="mb-12 flex justify-between items-start">
+<div>
 <h1 class="font-display-lg-mobile md:font-display-lg text-display-lg-mobile md:text-display-lg text-primary font-bold mb-2">Resumen Financiero</h1>
 <p class="font-body-lg text-body-lg text-outline">Administre la facturación, realice un seguimiento de los ingresos y procese pagos pendientes.</p>
+</div>
+<button onclick="abrirModalNuevaFactura()" class="bg-primary text-on-primary p-3.5 rounded-full flex items-center justify-center hover:opacity-90 active:scale-95 transition-all shadow-lg shrink-0 ml-4">
+    <span class="material-symbols-outlined text-white">receipt_long</span>
+</button>
 </header>
 <!-- Bento Grid Layout -->
 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -249,7 +254,123 @@
 <button class="w-full mt-6 py-2 border border-surface-container-highest rounded-full font-label-sm text-label-sm text-on-surface-variant hover:bg-surface-container-low transition-colors">Ver Libro de Transacciones</button>
 </div>
 </div>
+</div>
 </main>
+
+<!-- Modal Nueva Factura / Venta (Mobile) -->
+<dialog id="modalNuevaFactura" class="backdrop:bg-black/50 p-5 rounded-2xl shadow-xl border-none w-[92%] max-w-md bg-surface-white m-auto z-50">
+    <div class="flex justify-between items-center mb-4">
+        <h3 class="text-lg font-bold text-on-surface">Factura / Venta</h3>
+        <button onclick="document.getElementById('modalNuevaFactura').close()" class="w-8 h-8 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container-high transition-colors">
+            <span class="material-symbols-outlined text-[20px]">close</span>
+        </button>
+    </div>
+    <form id="formNuevaFactura" class="space-y-4 text-sm">
+        <div>
+            <label class="block text-xs font-bold text-on-surface-variant mb-1">Paciente</label>
+            <select id="invoice-paciente" required class="w-full bg-surface-container-low border-none rounded-xl py-2 px-3 focus:ring-2 focus:ring-primary text-sm">
+                <option value="">Seleccione Paciente</option>
+            </select>
+        </div>
+        <div>
+            <label class="block text-xs font-bold text-on-surface-variant mb-1">Convenio / Seguro</label>
+            <select id="invoice-convenio" onchange="calcularTotalesFactura()" class="w-full bg-surface-container-low border-none rounded-xl py-2 px-3 focus:ring-2 focus:ring-primary text-sm">
+                <option value="Particular" data-discount="0">Particular (Sin Convenio)</option>
+                <option value="Rimac" data-discount="20">Rimac (20% Desc.)</option>
+                <option value="Pacífico" data-discount="15">Pacífico (15% Desc.)</option>
+                <option value="Sanitas" data-discount="10">Sanitas (10% Desc.)</option>
+            </select>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+            <div>
+                <label class="block text-xs font-bold text-on-surface-variant mb-1">Servicio</label>
+                <select id="invoice-servicio" onchange="seleccionarServicioPrecio()" class="w-full bg-surface-container-low border-none rounded-xl py-2 px-3 focus:ring-2 focus:ring-primary text-xs">
+                    <option value="" data-precio="0">Ninguno (Venta)</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-xs font-bold text-on-surface-variant mb-1">Precio Servicio</label>
+                <input type="number" id="invoice-servicio-precio" value="0.00" step="0.01" min="0" oninput="calcularTotalesFactura()" class="w-full bg-surface-container-low border-none rounded-xl py-2 px-3 focus:ring-2 focus:ring-primary text-xs">
+            </div>
+        </div>
+
+        <!-- Venta de Productos -->
+        <div class="bg-surface-container-lowest p-3 rounded-xl border border-surface-container">
+            <h4 class="text-xs font-bold text-outline uppercase tracking-wider mb-2 flex items-center gap-1">
+                <span class="material-symbols-outlined text-sm">shopping_cart</span>
+                Venta de Productos
+            </h4>
+            <div class="flex gap-2">
+                <select id="invoice-producto-select" class="flex-1 bg-surface-container-low border-none rounded-xl py-1.5 px-2 text-xs focus:ring-2 focus:ring-primary">
+                    <option value="" data-precio="0">Seleccionar...</option>
+                </select>
+                <button type="button" onclick="agregarProductoAFactura()" class="bg-primary text-white px-3 py-1.5 rounded-lg text-[11px] font-bold hover:opacity-90">
+                    + Add
+                </button>
+            </div>
+            <div id="invoice-productos-list" class="space-y-1.5 max-h-[100px] overflow-y-auto pr-1 mt-2">
+                <p class="text-outline text-[11px] text-center py-1">Sin productos.</p>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3 items-center">
+            <div>
+                <label class="block text-xs font-bold text-on-surface-variant mb-1">Aplicar IGV (18%)</label>
+                <div class="flex items-center mt-1">
+                    <input type="checkbox" id="invoice-igv-toggle" onchange="calcularTotalesFactura()" class="rounded border-outline-variant text-primary focus:ring-primary h-4 w-4">
+                    <span class="ml-2 text-xs font-semibold text-on-surface-variant">Incluir IGV</span>
+                </div>
+            </div>
+            <div>
+                <label class="block text-xs font-bold text-on-surface-variant mb-1">Método</label>
+                <select id="invoice-metodo" required class="w-full bg-surface-container-low border-none rounded-xl py-2 px-3 focus:ring-2 focus:ring-primary text-xs">
+                    <option value="Yape/Plin">Yape / Plin</option>
+                    <option value="Efectivo">Efectivo</option>
+                    <option value="Tarjeta">Tarjeta</option>
+                    <option value="Transferencia">Transferencia</option>
+                </select>
+            </div>
+        </div>
+        <div>
+            <label class="block text-xs font-bold text-on-surface-variant mb-1">Estado de Pago</label>
+            <select id="invoice-estado" required class="w-full bg-surface-container-low border-none rounded-xl py-2 px-3 focus:ring-2 focus:ring-primary text-xs">
+                <option value="Completado">Pagado (Completado)</option>
+                <option value="Pendiente">Por Pagar (Pendiente)</option>
+            </select>
+        </div>
+
+        <!-- Desglose de Facturación -->
+        <div class="bg-surface-container-low p-3 rounded-xl space-y-1.5 text-xs">
+            <div class="flex justify-between">
+                <span class="text-on-surface-variant">Subtotal:</span>
+                <span id="invoice-subtotal" class="font-bold">S/. 0.00</span>
+            </div>
+            <div class="flex justify-between text-success font-semibold">
+                <span>Descuento:</span>
+                <span id="invoice-descuento" class="font-bold">- S/. 0.00</span>
+            </div>
+            <div class="flex justify-between">
+                <span class="text-on-surface-variant">IGV (18%):</span>
+                <span id="invoice-igv-monto" class="font-bold">S/. 0.00</span>
+            </div>
+            <div class="flex justify-between border-t border-surface-container-high pt-1.5 text-sm font-extrabold text-primary">
+                <span>TOTAL:</span>
+                <span id="invoice-total">S/. 0.00</span>
+            </div>
+        </div>
+
+        <div class="pt-3 flex flex-col gap-2 border-t border-surface-variant">
+            <button type="submit" class="w-full bg-primary text-white py-2.5 rounded-xl font-bold">Registrar y Cobrar</button>
+            <div class="flex gap-2">
+                <button type="button" onclick="imprimirReciboFactura()" class="flex-1 py-2 border border-outline text-on-surface-variant font-bold rounded-xl flex items-center justify-center gap-1.5 text-xs">
+                    <span class="material-symbols-outlined text-[18px]">print</span> Recibo
+                </button>
+                <button type="button" onclick="document.getElementById('modalNuevaFactura').close()" class="flex-1 py-2 text-on-surface-variant font-bold hover:bg-surface-container-high rounded-xl text-xs">Cancelar</button>
+            </div>
+        </div>
+    </form>
+</dialog>
+
 <!-- BottomNavBar (Mobile Only) -->
 <nav class="md:hidden fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 py-3 bg-surface-white/80 backdrop-blur-md shadow-[0px_-10px_30px_rgba(0,0,0,0.04)] rounded-t-xl border-t-0">
 <a class="flex flex-col items-center justify-center text-outline hover:bg-surface-container-high/50 active:scale-90 transition-all duration-150 p-2 rounded-lg" href="calendario_dashboard_mobile.html" id="nav-mobile-calendario">
@@ -455,9 +576,324 @@
         }
     }
 
-    document.addEventListener("DOMContentLoaded", () => {
+    function showToast(message, type = "success") {
+        const toast = document.createElement("div");
+        toast.className = `fixed bottom-6 right-6 px-6 py-3 rounded-xl shadow-lg font-bold text-white transition-all transform translate-y-10 opacity-0 z-[100] ${
+            type === "success" ? "bg-success" : type === "error" ? "bg-error" : "bg-primary"
+        }`;
+        toast.textContent = message;
+        document.body.appendChild(toast);
         
-        cargarDatosFinancieros();
+        setTimeout(() => {
+            toast.classList.remove("translate-y-10", "opacity-0");
+        }, 100);
+        
+        setTimeout(() => {
+            toast.classList.add("translate-y-10", "opacity-0");
+            setTimeout(() => toast.remove(), 500);
+        }, 3000);
+    }
+
+    let globalPacientes = [];
+    let globalServicios = [];
+    let globalProductos = [];
+    let selectedProductos = [];
+
+    async function abrirModalNuevaFactura() {
+        const dialog = document.getElementById('modalNuevaFactura');
+        dialog.showModal();
+
+        // Load patients if not loaded
+        if (globalPacientes.length === 0) {
+            try {
+                const { data: pacs } = await supabaseClient.from('pacientes').select('*').order('nombre');
+                globalPacientes = pacs || [];
+                const selectPac = document.getElementById('invoice-paciente');
+                selectPac.innerHTML = '<option value="">Seleccione Paciente</option>';
+                globalPacientes.forEach(p => {
+                    selectPac.innerHTML += `<option value="${p.id}">${p.nombre}</option>`;
+                });
+            } catch(e) { console.error(e); }
+        }
+
+        // Load services if not loaded
+        if (globalServicios.length === 0) {
+            try {
+                const { data: servs } = await supabaseClient.from('servicios').select('*').order('nombre');
+                globalServicios = servs || [];
+                const selectServ = document.getElementById('invoice-servicio');
+                selectServ.innerHTML = '<option value="" data-precio="0">Ninguno (Venta)</option>';
+                globalServicios.forEach(s => {
+                    selectServ.innerHTML += `<option value="${s.nombre}" data-precio="${s.precio}">${s.nombre} (S/. ${parseFloat(s.precio).toFixed(2)})</option>`;
+                });
+            } catch(e) { console.error(e); }
+        }
+
+        // Load products if not loaded
+        if (globalProductos.length === 0) {
+            try {
+                const { data: prods } = await supabaseClient.from('productos').select('*').order('nombre');
+                globalProductos = prods || [];
+                const selectProd = document.getElementById('invoice-producto-select');
+                selectProd.innerHTML = '<option value="" data-precio="0">Seleccionar...</option>';
+                globalProductos.forEach(p => {
+                    selectProd.innerHTML += `<option value="${p.id}" data-precio="${p.precio}">${p.nombre} (S/. ${parseFloat(p.precio).toFixed(2)})</option>`;
+                });
+            } catch(e) { console.error(e); }
+        }
+
+        // Reset selected products
+        selectedProductos = [];
+        renderSelectedProductos();
+        
+        // Check for URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const pacId = urlParams.get('paciente_id');
+        const citaId = urlParams.get('cita_id');
+
+        if (pacId) {
+            setTimeout(() => {
+                document.getElementById('invoice-paciente').value = pacId;
+            }, 300);
+        }
+
+        if (citaId) {
+            try {
+                const { data: cita } = await supabaseClient.from('citas').select('*').eq('id', citaId).single();
+                if (cita) {
+                    setTimeout(() => {
+                        document.getElementById('invoice-servicio').value = cita.tratamiento || '';
+                        document.getElementById('invoice-servicio-precio').value = parseFloat(cita.costo || 150.00).toFixed(2);
+                        calcularTotalesFactura();
+                    }, 400);
+                }
+            } catch(e) { console.error(e); }
+        }
+
+        calcularTotalesFactura();
+    }
+
+    function seleccionarServicioPrecio() {
+        const select = document.getElementById('invoice-servicio');
+        const selectedOption = select.options[select.selectedIndex];
+        const precio = selectedOption.getAttribute('data-precio') || '0';
+        document.getElementById('invoice-servicio-precio').value = parseFloat(precio).toFixed(2);
+        calcularTotalesFactura();
+    }
+
+    function agregarProductoAFactura() {
+        const select = document.getElementById('invoice-producto-select');
+        const productId = select.value;
+        if (!productId) return;
+
+        const prod = globalProductos.find(p => p.id === productId);
+        if (!prod) return;
+
+        const existing = selectedProductos.find(p => p.id === productId);
+        if (existing) {
+            existing.cantidad += 1;
+        } else {
+            selectedProductos.push({ ...prod, cantidad: 1 });
+        }
+
+        renderSelectedProductos();
+        calcularTotalesFactura();
+    }
+
+    function eliminarProductoDeFactura(productId) {
+        selectedProductos = selectedProductos.filter(p => p.id !== productId);
+        renderSelectedProductos();
+        calcularTotalesFactura();
+    }
+
+    function renderSelectedProductos() {
+        const container = document.getElementById('invoice-productos-list');
+        if (selectedProductos.length === 0) {
+            container.innerHTML = '<p class="text-outline text-[11px] text-center py-1">Sin productos.</p>';
+            return;
+        }
+
+        let html = '';
+        selectedProductos.forEach(p => {
+            html += `
+            <div class="flex items-center justify-between p-2 bg-surface-container-low rounded-xl text-xs">
+                <div>
+                    <span class="font-bold text-on-surface">${p.nombre}</span>
+                    <span class="text-outline ml-2">x${p.cantidad}</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="font-bold text-primary font-bold">S/. ${(p.precio * p.cantidad).toFixed(2)}</span>
+                    <button type="button" onclick="eliminarProductoDeFactura('${p.id}')" class="text-error p-1 hover:bg-error/10 rounded-full">
+                        <span class="material-symbols-outlined text-sm">delete</span>
+                    </button>
+                </div>
+            </div>
+            `;
+        });
+        container.innerHTML = html;
+    }
+
+    function calcularTotalesFactura() {
+        const servicePrice = parseFloat(document.getElementById('invoice-servicio-precio').value) || 0;
+        const productsPrice = selectedProductos.reduce((sum, p) => sum + (p.precio * p.cantidad), 0);
+        
+        const subtotal = servicePrice + productsPrice;
+
+        const selectConvenio = document.getElementById('invoice-convenio');
+        const discountPct = parseFloat(selectConvenio.options[selectConvenio.selectedIndex]?.getAttribute('data-discount')) || 0;
+        const discount = subtotal * (discountPct / 100);
+
+        const igvToggle = document.getElementById('invoice-igv-toggle').checked;
+        const baseForIgv = subtotal - discount;
+        const igv = igvToggle ? (baseForIgv * 0.18) : 0;
+
+        const total = baseForIgv + igv;
+
+        document.getElementById('invoice-subtotal').textContent = `S/. ${subtotal.toFixed(2)}`;
+        document.getElementById('invoice-descuento').textContent = `- S/. ${discount.toFixed(2)}`;
+        document.getElementById('invoice-igv-monto').textContent = `S/. ${igv.toFixed(2)}`;
+        document.getElementById('invoice-total').textContent = `S/. ${total.toFixed(2)}`;
+    }
+
+    document.getElementById('formNuevaFactura').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const pacId = document.getElementById('invoice-paciente').value;
+        const convenio = document.getElementById('invoice-convenio').value;
+        const servicio = document.getElementById('invoice-servicio').value;
+        const total = parseFloat(document.getElementById('invoice-total').textContent.replace('S/. ', ''));
+        const metodo = document.getElementById('invoice-metodo').value;
+        const estado = document.getElementById('invoice-estado').value;
+
+        if (!pacId) {
+            alert("Seleccione un paciente.");
+            return;
+        }
+
+        try {
+            const urlParams = new URLSearchParams(window.location.search);
+            const citaId = urlParams.get('cita_id');
+
+            let desc = servicio ? `Servicio: ${servicio}` : 'Venta de Productos';
+            if (selectedProductos.length > 0) {
+                desc += ` + Prod: ${selectedProductos.map(p => `${p.nombre} (x${p.cantidad})`).join(', ')}`;
+            }
+            if (convenio && convenio !== 'Particular') {
+                desc += ` [Convenio ${convenio}]`;
+            }
+
+            const payload = {
+                paciente_id: pacId,
+                cita_id: citaId || null,
+                monto: total,
+                metodo: metodo,
+                estado: estado,
+                fecha: new Date().toISOString(),
+                descripcion: desc
+            };
+
+            const { error } = await supabaseClient.from('pagos').insert([payload]);
+            if (error) throw error;
+
+            for (const p of selectedProductos) {
+                const newStock = Math.max(0, p.stock - p.cantidad);
+                await supabaseClient.from('productos').update({ stock: newStock }).eq('id', p.id);
+            }
+
+            if (citaId && estado === 'Completado') {
+                await supabaseClient.from('citas').update({ estado: 'Completado' }).eq('id', citaId);
+            }
+
+            document.getElementById('modalNuevaFactura').close();
+            showToast("Factura registrada exitosamente", "success");
+            
+            window.history.replaceState({}, document.title, window.location.pathname);
+            await cargarDatosFinancieros();
+        } catch (err) {
+            console.error("Error al registrar factura móvil:", err);
+            alert("Error al procesar la factura.");
+        }
+    });
+
+    function imprimirReciboFactura() {
+        const selectPaciente = document.getElementById('invoice-paciente');
+        const pacienteNombre = selectPaciente.options[selectPaciente.selectedIndex]?.text || 'Paciente General';
+        
+        const selectConvenio = document.getElementById('invoice-convenio').value;
+        const servicio = document.getElementById('invoice-servicio').value || 'Venta de Productos';
+        const subtotal = document.getElementById('invoice-subtotal').textContent;
+        const descuento = document.getElementById('invoice-descuento').textContent;
+        const igv = document.getElementById('invoice-igv-monto').textContent;
+        const total = document.getElementById('invoice-total').textContent;
+        const metodo = document.getElementById('invoice-metodo').value;
+
+        const prtContent = `
+            <html>
+            <head>
+                <title>Recibo Centro Eslava</title>
+                <style>
+                    body { font-family: sans-serif; padding: 20px; color: #333; }
+                    .header { text-align: center; border-bottom: 2px solid #006578; padding-bottom: 10px; margin-bottom: 20px; }
+                    .header h1 { margin: 0; color: #006578; font-size: 24px; }
+                    .details { margin-bottom: 20px; line-height: 1.5; font-size: 14px; }
+                    table { width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 14px; }
+                    th, td { padding: 10px; text-align: left; border-bottom: 1px solid #ddd; }
+                    th { background-color: #f2f8f9; }
+                    .totals { float: right; width: 100%; max-width: 250px; line-height: 1.8; font-weight: bold; font-size: 14px; }
+                    .footer { margin-top: 50px; text-align: center; font-size: 11px; color: #777; border-top: 1px dashed #ccc; padding-top: 15px; }
+                </style>
+            </head>
+            <body>
+                <div class="header">
+                    <h1>CENTRO ESLAVA</h1>
+                    <p>Clínica de Fisioterapia y Terapia Física</p>
+                </div>
+                <div class="details">
+                    <p><strong>Paciente:</strong> ${pacienteNombre}</p>
+                    <p><strong>Fecha:</strong> ${new Date().toLocaleDateString('es-PE')}</p>
+                    <p><strong>Convenio:</strong> ${selectConvenio}</p>
+                    <p><strong>Método de Pago:</strong> ${metodo}</p>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Concepto</th>
+                            <th style="text-align: right;">Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>${servicio}</td>
+                            <td style="text-align: right;">${subtotal}</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="totals">
+                    <div style="display:flex; justify-content:space-between"><span>Subtotal:</span> <span>${subtotal}</span></div>
+                    <div style="display:flex; justify-content:space-between; color:green"><span>Descuento:</span> <span>${descuento}</span></div>
+                    <div style="display:flex; justify-content:space-between"><span>IGV:</span> <span>${igv}</span></div>
+                    <div style="display:flex; justify-content:space-between; font-size:1.1em; color:#006578; border-top:1px solid #333; padding-top:3px;"><span>TOTAL:</span> <span>${total}</span></div>
+                </div>
+                <div style="clear:both"></div>
+                <div class="footer">
+                    <p>Gracias por confiar en el Centro Eslava.</p>
+                </div>
+                <script>window.print();<\/script>
+            </body>
+            </html>
+        `;
+        const WinPrint = window.open('', '', 'width=600,height=600');
+        WinPrint.document.write(prtContent);
+        WinPrint.document.close();
+        WinPrint.focus();
+    }
+
+    document.addEventListener("DOMContentLoaded", async () => {
+        await cargarDatosFinancieros();
+        
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('paciente_id') || urlParams.get('cita_id')) {
+            abrirModalNuevaFactura();
+        }
     });
 </script>
 

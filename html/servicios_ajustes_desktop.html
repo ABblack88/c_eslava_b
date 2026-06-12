@@ -168,7 +168,7 @@
 </div>
 <p class="text-[11px] text-on-surface-variant mt-2 leading-tight">Optimización alta. Considerar apertura de agenda Sábados.</p>
 </div>
-<button class="w-full py-3 px-4 bg-primary text-on-primary rounded-xl font-bold flex items-center justify-center gap-2 hover:opacity-90 transition-opacity active:scale-95">
+<button onclick="window.location.href='calendario_dashboard_desktop.html?action=new_appointment'" class="w-full py-3 px-4 bg-primary text-on-primary rounded-xl font-bold flex items-center justify-center gap-2 hover:opacity-90 transition-opacity active:scale-95">
 <span class="material-symbols-outlined">add</span>
 <span>Nueva Cita</span>
 </button>
@@ -188,13 +188,7 @@
 <button class="text-on-surface-variant hover:text-primary transition-all">
 <span class="material-symbols-outlined">help</span>
 </button>
-<div class="flex items-center gap-3 pl-6 border-l border-outline-variant">
-<div class="text-right">
-<p class="font-bold text-sm">Dr. Alejandro Eslava</p>
-<p class="text-xs text-on-surface-variant">Director Clínico</p>
-</div>
-<img alt="Foto de perfil del Dr. Alejandro Eslava" class="w-10 h-10 rounded-full object-cover border-2 border-primary/20" src="https://lh3.googleusercontent.com/aida-public/AB6AXuClJOjk0zUF50vcZxYHJWWOgRUz8LaZn1aZ8jVY4lqogMj9dF9via5uQEYIWWiHdcooY6pxmSPpwPCvgPjdH93-N-KJNYQ9uvd_vYmVh6GS-Kjr4i0dvLZHbX6RDrgidlsJws_NjkALm-hJD7DelDNns8L1cx8zEBQYsnIhr6YSxst_otIK_2RPmqBmFtcuNy--vED7dpkb-Ou6BuUTjfgWXOZLH8_qTB0AiB5SB3CdGDr6p_-85Qs2lX9qQIMm8tvzG6Zh0gT4P8s"/>
-</div>
+
 </div>
 </header>
 <!-- Main Content Canvas -->
@@ -227,7 +221,7 @@
 <div class="relative z-10">
 <h4 class="text-2xl font-bold mb-2">Paquetes de Recuperación</h4>
 <p class="opacity-80 max-w-md mb-6">Ofrece descuentos por sesiones múltiples (5, 10 o 20 sesiones) para mejorar la adherencia al tratamiento.</p>
-<button class="bg-surface-white text-primary px-6 py-2 rounded-full font-bold hover:scale-105 transition-transform">Configurar Packs</button>
+<button onclick="abrirModalNuevoPack()" class="bg-surface-white text-primary px-6 py-2 rounded-full font-bold hover:scale-105 transition-transform">Configurar Packs</button>
 </div>
 <div class="absolute right-[-20px] bottom-[-20px] opacity-10 scale-150 rotate-12">
 <span class="material-symbols-outlined text-[200px]">card_membership</span>
@@ -279,6 +273,21 @@
 <button class="w-full py-2 bg-surface-container-low text-primary rounded-xl text-sm font-bold hover:bg-primary/5 transition-colors">Administrar Roles</button>
 </div>
 </div>
+<!-- Productos Terapéuticos Card -->
+<div class="bg-surface-white p-8 rounded-3xl shadow-[0px_10px_30px_rgba(0,0,0,0.04)] flex flex-col gap-6">
+    <div class="flex items-center justify-between">
+        <h3 class="font-headline-md text-headline-md flex items-center gap-2">
+            <span class="material-symbols-outlined text-primary">shopping_bag</span>
+            Productos
+        </h3>
+        <button onclick="abrirModalNuevoProducto()" class="text-primary text-sm font-bold flex items-center gap-1 hover:underline">
+            <span class="material-symbols-outlined text-sm">add_circle</span> Nuevo
+        </button>
+    </div>
+    <div id="productos-list" class="space-y-4 max-h-[300px] overflow-y-auto pr-2">
+        <!-- Cargado dinámicamente -->
+        <p class="text-outline text-xs text-center py-4">Cargando productos...</p>
+    </div>
 </div>
 <!-- System Health Card -->
 <div class="p-6 bg-surface-container-low rounded-2xl">
@@ -335,15 +344,15 @@
         </div>
         <div class="grid grid-cols-2 gap-4">
             <div>
-                <label class="block text-sm font-bold text-on-surface mb-1">Duración (MIN)</label>
-                <input type="number" name="duracion" required min="15" step="5" class="w-full rounded-xl border-outline-variant px-4 py-2 focus:ring-primary focus:border-primary">
-            </div>
-            <div>
                 <label class="block text-sm font-bold text-on-surface mb-1">Precio (S/.)</label>
                 <input type="number" name="precio" required min="0" step="0.01" class="w-full rounded-xl border-outline-variant px-4 py-2 focus:ring-primary focus:border-primary">
             </div>
+            <div>
+                <label class="block text-sm font-bold text-on-surface mb-1">Número de Sesiones</label>
+                <input type="number" name="duracion" required min="1" value="1" class="w-full rounded-xl border-outline-variant px-4 py-2 focus:ring-primary focus:border-primary">
+            </div>
         </div>
-        <div class="grid grid-cols-2 gap-4">
+        <div class="grid grid-cols-2 gap-4 pt-2">
             <div>
                 <label class="block text-sm font-bold text-on-surface mb-1">Estado</label>
                 <select name="estado" class="w-full rounded-xl border-outline-variant px-4 py-2 focus:ring-primary focus:border-primary">
@@ -356,6 +365,7 @@
                 <input type="text" name="icono" value="healing" required class="w-full rounded-xl border-outline-variant px-4 py-2 focus:ring-primary focus:border-primary">
             </div>
         </div>
+
         <div class="pt-4 flex justify-between items-center w-full">
             <button type="button" id="btnEliminarServicio" onclick="eliminarServicio()" class="hidden px-4 py-2 text-error font-bold hover:bg-error/10 rounded-xl transition-colors flex items-center gap-1">
                 <span class="material-symbols-outlined text-sm">delete</span> Eliminar
@@ -370,6 +380,47 @@
         </div>
     </form>
 </dialog>
+
+<!-- Modal for New/Edit Product -->
+<dialog id="modalNuevoProducto" class="backdrop:bg-black/50 p-6 rounded-2xl shadow-xl border-none max-w-md w-full bg-surface-white">
+    <div class="flex justify-between items-center mb-6">
+        <h3 id="modalProductTitle" class="text-xl font-bold text-on-surface">Nuevo Producto</h3>
+        <button onclick="document.getElementById('modalNuevoProducto').close()" class="text-on-surface-variant hover:text-error transition-colors">
+            <span class="material-symbols-outlined">close</span>
+        </button>
+    </div>
+    <form id="formNuevoProducto" class="space-y-4">
+        <input type="hidden" name="id" id="productoId">
+        <div>
+            <label class="block text-sm font-bold text-on-surface mb-1">Nombre del Producto</label>
+            <input type="text" name="nombre" required class="w-full rounded-xl border-outline-variant px-4 py-2 focus:ring-primary focus:border-primary">
+        </div>
+        <div>
+            <label class="block text-sm font-bold text-on-surface mb-1">Descripción</label>
+            <textarea name="descripcion" rows="2" class="w-full rounded-xl border-outline-variant px-4 py-2 focus:ring-primary focus:border-primary"></textarea>
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+            <div>
+                <label class="block text-sm font-bold text-on-surface mb-1">Precio (S/.)</label>
+                <input type="number" name="precio" required min="0" step="0.01" class="w-full rounded-xl border-outline-variant px-4 py-2 focus:ring-primary focus:border-primary">
+            </div>
+            <div>
+                <label class="block text-sm font-bold text-on-surface mb-1">Stock Inicial</label>
+                <input type="number" name="stock" required min="0" class="w-full rounded-xl border-outline-variant px-4 py-2 focus:ring-primary focus:border-primary">
+            </div>
+        </div>
+        <div class="pt-6 flex justify-between items-center w-full border-t border-surface-variant">
+            <button type="button" id="btnEliminarProducto" onclick="eliminarProducto()" class="hidden px-5 py-2 text-error font-bold hover:bg-error/10 rounded-xl transition-colors flex items-center gap-2">
+                <span class="material-symbols-outlined text-[20px]">delete</span> Eliminar
+            </button>
+            <div class="flex justify-end gap-3 ml-auto">
+                <button type="button" onclick="document.getElementById('modalNuevoProducto').close()" class="px-5 py-2 text-on-surface-variant font-bold hover:bg-surface-container-high rounded-xl transition-colors">Cancelar</button>
+                <button type="submit" class="bg-primary text-white px-8 py-2 rounded-xl font-bold hover:scale-[1.02] active:scale-95 transition-all shadow-md">Guardar</button>
+            </div>
+        </div>
+    </form>
+</dialog>
+
 <!-- Contextual Micro-interactions -->
 <script>
         // Simple toggle simulation for the notification switch
@@ -399,7 +450,123 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             cargarServicios();
+            cargarProductos();
         });
+
+        // ==========================================
+        // GESTIÓN DE PRODUCTOS
+        // ==========================================
+        let listaProductosGlobal = [];
+
+        async function cargarProductos() {
+            try {
+                const { data, error } = await supabaseClient
+                    .from('productos')
+                    .select('*')
+                    .order('nombre', { ascending: true });
+
+                if (error) throw error;
+                listaProductosGlobal = data || [];
+                renderProductos(listaProductosGlobal);
+            } catch (err) {
+                console.error("Error al cargar productos:", err);
+                document.getElementById('productos-list').innerHTML = 
+                    '<p class="text-error text-xs text-center">Error al cargar productos.</p>';
+            }
+        }
+
+        function renderProductos(productos) {
+            const container = document.getElementById('productos-list');
+            if (productos.length === 0) {
+                container.innerHTML = '<p class="text-outline text-xs text-center py-4">No hay productos registrados.</p>';
+                return;
+            }
+
+            let html = '';
+            productos.forEach(p => {
+                html += `
+                <div onclick="abrirModalEdicionProducto('${p.id}')" class="flex items-center justify-between p-3 bg-surface-container-low rounded-2xl cursor-pointer hover:bg-surface-container transition-colors group">
+                    <div class="flex-1 min-w-0">
+                        <p class="font-bold text-sm text-on-surface truncate">${p.nombre}</p>
+                        <p class="text-[11px] text-outline truncate">${p.descripcion || 'Sin descripción'}</p>
+                    </div>
+                    <div class="text-right ml-4">
+                        <p class="font-bold text-sm text-primary">S/. ${parseFloat(p.precio).toFixed(2)}</p>
+                        <p class="text-[10px] text-outline">Stock: ${p.stock}</p>
+                    </div>
+                </div>
+                `;
+            });
+            container.innerHTML = html;
+        }
+
+        function abrirModalNuevoProducto() {
+            document.getElementById('formNuevoProducto').reset();
+            document.getElementById('productoId').value = '';
+            document.getElementById('modalProductTitle').textContent = 'Nuevo Producto';
+            document.getElementById('btnEliminarProducto').classList.add('hidden');
+            document.getElementById('modalNuevoProducto').showModal();
+        }
+
+        function abrirModalEdicionProducto(id) {
+            const p = listaProductosGlobal.find(item => item.id === id);
+            if (!p) return;
+
+            document.getElementById('productoId').value = p.id;
+            const form = document.getElementById('formNuevoProducto');
+            form.elements['nombre'].value = p.nombre;
+            form.elements['descripcion'].value = p.descripcion || '';
+            form.elements['precio'].value = p.precio;
+            form.elements['stock'].value = p.stock;
+
+            document.getElementById('modalProductTitle').textContent = 'Editar Producto';
+            document.getElementById('btnEliminarProducto').classList.remove('hidden');
+            document.getElementById('modalNuevoProducto').showModal();
+        }
+
+        document.getElementById('formNuevoProducto').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const form = e.target;
+            const id = document.getElementById('productoId').value;
+            const nombre = form.elements['nombre'].value;
+            const descripcion = form.elements['descripcion'].value;
+            const precio = parseFloat(form.elements['precio'].value);
+            const stock = parseInt(form.elements['stock'].value);
+
+            const payload = { nombre, descripcion, precio, stock };
+
+            try {
+                if (id) {
+                    const { error } = await supabaseClient.from('productos').update(payload).eq('id', id);
+                    if (error) throw error;
+                } else {
+                    const { error } = await supabaseClient.from('productos').insert([payload]);
+                    if (error) throw error;
+                }
+                document.getElementById('modalNuevoProducto').close();
+                await cargarProductos();
+            } catch (err) {
+                console.error("Error al guardar producto:", err);
+                alert("Error al guardar el producto.");
+            }
+        });
+
+        async function eliminarProducto() {
+            const id = document.getElementById('productoId').value;
+            if (!id) return;
+
+            if (confirm("¿Estás seguro de que deseas eliminar este producto?")) {
+                try {
+                    const { error } = await supabaseClient.from('productos').delete().eq('id', id);
+                    if (error) throw error;
+                    document.getElementById('modalNuevoProducto').close();
+                    await cargarProductos();
+                } catch (err) {
+                    console.error("Error al eliminar producto:", err);
+                    alert("Error al eliminar el producto.");
+                }
+            }
+        }
 
 
         function abrirModalNuevo() {
@@ -407,7 +574,31 @@
             document.getElementById('servicioId').value = '';
             document.getElementById('modalTitle').textContent = 'Nuevo Servicio';
             document.getElementById('btnEliminarServicio').classList.add('hidden');
+            
+            const form = document.getElementById('formNuevoServicio');
+            form.elements['duracion'].value = '1';
+
             document.getElementById('modalNuevoServicio').showModal();
+        }
+
+        function abrirModalNuevoPack() {
+            abrirModalNuevo();
+            document.getElementById('modalTitle').textContent = 'Nuevo Paquete (Sesiones)';
+            const form = document.getElementById('formNuevoServicio');
+            form.elements['duracion'].value = '10'; // Predefinimos 10 sesiones
+            form.elements['nombre'].placeholder = 'ej. Pack 10 Sesiones de Fisioterapia';
+        }
+
+        function abrirModalEdicionDesdeElemento(el) {
+            const id = el.getAttribute('data-id');
+            const nombre = el.getAttribute('data-nombre');
+            const descripcion = el.getAttribute('data-descripcion');
+            const duracion = parseInt(el.getAttribute('data-duracion'));
+            const precio = parseFloat(el.getAttribute('data-precio'));
+            const estado = el.getAttribute('data-estado');
+            const icono = el.getAttribute('data-icono');
+            
+            abrirModalEdicion(id, nombre, descripcion, duracion, precio, estado, icono);
         }
 
         function abrirModalEdicion(id, nombre, descripcion, duracion, precio, estado, icono) {
@@ -551,7 +742,15 @@
                     const safeIcono = iconName.replace(/'/g, "&#39;").replace(/"/g, "&quot;");
 
                     const cardHTML = `
-                        <div onclick="abrirModalEdicion('${servicio.id}', '${safeNombre}', '${safeDesc}', ${servicio.duracion}, ${servicio.precio}, '${servicio.estado}', '${safeIcono}')" class="cursor-pointer bg-surface-white p-6 rounded-2xl shadow-[0px_10px_30px_rgba(0,0,0,0.04)] border border-transparent hover:border-primary/20 transition-all group relative">
+                        <div data-id="${servicio.id}" 
+                             data-nombre="${safeNombre}" 
+                             data-descripcion="${(servicio.descripcion || '').replace(/"/g, '&quot;')}" 
+                             data-duracion="${servicio.duracion}" 
+                             data-precio="${servicio.precio}" 
+                             data-estado="${servicio.estado}" 
+                             data-icono="${safeIcono}"
+                             onclick="abrirModalEdicionDesdeElemento(this)"
+                             class="cursor-pointer bg-surface-white p-6 rounded-2xl shadow-[0px_10px_30px_rgba(0,0,0,0.04)] border border-transparent hover:border-primary/20 transition-all group relative">
                             <div class="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity">
                                 <span class="material-symbols-outlined text-outline-variant hover:text-primary">edit</span>
                             </div>
@@ -562,9 +761,9 @@
                                 <span class="text-headline-md font-bold text-on-surface">S/. ${parseFloat(servicio.precio).toFixed(2)}</span>
                             </div>
                             <h4 class="font-bold text-lg mb-1">${servicio.nombre}</h4>
-                            <p class="text-sm text-on-surface-variant mb-4">${servicio.descripcion || ''}</p>
+                            <p class="text-sm text-on-surface-variant mb-4">${safeDesc}</p>
                             <div class="flex items-center gap-2">
-                                <span class="px-2 py-1 bg-surface-container-high rounded text-[11px] font-bold text-on-surface-variant">${servicio.duracion} MIN</span>
+                                <span class="px-2 py-1 bg-surface-container-high rounded text-[11px] font-bold text-on-surface-variant">${servicio.duracion} ${servicio.duracion === 1 ? 'Sesión' : 'Sesiones'}</span>
                                 <span class="px-2 py-1 rounded text-[11px] font-bold ${badgeClass}">${badgeText}</span>
                             </div>
                         </div>

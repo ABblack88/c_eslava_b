@@ -149,7 +149,7 @@
 </a>
 </nav>
 <div class="px-4 pb-6">
-<button class="w-full py-4 bg-primary text-on-primary rounded-xl font-bold flex items-center justify-center gap-2 hover:opacity-90 active:scale-95 transition-all">
+<button onclick="window.location.href='calendario_dashboard_desktop.html?action=new_appointment'" class="w-full py-4 bg-primary text-on-primary rounded-xl font-bold flex items-center justify-center gap-2 hover:opacity-90 active:scale-95 transition-all">
 <span class="material-symbols-outlined">add</span>
                 Nueva Cita
             </button>
@@ -171,13 +171,7 @@
 <button class="text-on-surface-variant hover:text-primary transition-all">
 <span class="material-symbols-outlined">help</span>
 </button>
-<div class="flex items-center gap-3 pl-4 border-l border-outline-variant">
-<div class="text-right">
-<p class="text-body-md font-bold text-on-surface">Dr. Ricardo Eslava</p>
-<p class="text-label-sm text-on-surface-variant">Administrador</p>
-</div>
-<img alt="Foto de perfil del Dr. Alejandro Eslava" class="w-10 h-10 rounded-full border-2 border-primary object-cover" data-alt="A professional headshot of a mature male doctor in a clean white medical coat, smiling warmly. He is in a brightly lit, high-end medical clinic with minimalist decor and soft teal accents. The photograph is captured with a shallow depth of field, highlighting his empathetic expression against a clean, modern clinic background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC1rta0eU6xdLoHATSqbFvpZ0KNg_9pbile3r5Ynjn9hiShaaNfzFbh10orQ42wvLJ52aqQGCM3-xHin5BbwpoHh_nU5si2ya3fCfaF3VheoWQk_NWNdIC53IkbxWNgeAyRbyPD9hCsmFGF7rVZL6lYxEaQMDiLJOkzdlBtii-QCyqS5YqBwy1OuUa-oHe-pzENuFQkzZXABM5cTqnOUqcS90IbOH5QK4aCX9rLzBE_yyXeJLeKWHDWcvXM5FaS-G5h-xAabMV5xx4"/>
-</div>
+
 </div>
 </header>
 <!-- Main Content Canvas -->
@@ -192,8 +186,8 @@
 <button class="bg-surface-white border border-outline-variant px-6 py-2 rounded-full font-bold flex items-center gap-2 hover:bg-surface-container transition-all">
 <span class="material-symbols-outlined">download</span> Exportar PDF
                 </button>
-<button class="bg-primary text-on-primary px-6 py-2 rounded-xl font-bold flex items-center gap-2 hover:opacity-90 transition-all">
-<span class="material-symbols-outlined">sync</span> Sincronizar Datos
+<button onclick="abrirModalNuevaFactura()" class="bg-primary text-on-primary px-6 py-2.5 rounded-xl font-bold flex items-center gap-2 hover:opacity-90 transition-all shadow-md">
+                    <span class="material-symbols-outlined">receipt_long</span> Nueva Factura / Venta
                 </button>
 </div>
 </section>
@@ -277,13 +271,15 @@
 <!-- Recent Activity Ledger -->
 <div class="col-span-12 bg-surface-white p-8 rounded-xl shadow-[0px_10px_30px_rgba(0,0,0,0.04)] mb-section-gap">
 <div class="flex justify-between items-center mb-8">
-<h4 class="font-headline-md text-headline-md text-on-surface">Actividad Reciente</h4>
+<h4 class="font-headline-md text-headline-md text-on-surface">Libro de Transacciones</h4>
 <div class="flex items-center gap-4">
-<select class="bg-surface-container-low border-none rounded-lg text-label-sm px-4">
-<option>Todos los tipos</option>
-<option>Pagos</option>
-<option>Facturas</option>
-<option>Reembolsos</option>
+<button onclick="exportarLibroTransacciones()" class="bg-surface-container-high text-on-surface px-4 py-2 rounded-lg font-bold flex items-center gap-2 hover:bg-surface-container-highest transition-all text-sm">
+    <span class="material-symbols-outlined text-sm">download</span> CSV
+</button>
+<select id="filtro-tipo-transaccion" class="bg-surface-container-low border-none rounded-lg text-label-sm px-4">
+<option value="all">Todos los tipos</option>
+<option value="Pagos">Pagos</option>
+<option value="Facturas">Facturas</option>
 </select>
 </div>
 </div>
@@ -306,6 +302,125 @@
 </div>
 </div>
 </main>
+
+<!-- Modal Nueva Factura / Venta -->
+<dialog id="modalNuevaFactura" class="backdrop:bg-black/50 p-6 rounded-3xl shadow-2xl border-none max-w-2xl w-full bg-surface-white z-[60]">
+    <div class="flex justify-between items-center mb-6">
+        <h3 class="text-xl font-extrabold text-on-surface">Generar Factura y Venta</h3>
+        <button onclick="document.getElementById('modalNuevaFactura').close()" class="w-10 h-10 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container-high transition-colors">
+            <span class="material-symbols-outlined">close</span>
+        </button>
+    </div>
+    <form id="formNuevaFactura" class="space-y-6">
+        <div class="grid grid-cols-2 gap-4">
+            <div>
+                <label class="block text-xs font-bold text-on-surface-variant mb-1">Paciente</label>
+                <select id="invoice-paciente" required class="w-full bg-surface-container-low border-none rounded-xl py-2.5 px-3 text-body-md focus:ring-2 focus:ring-primary">
+                    <option value="">Seleccione Paciente</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-xs font-bold text-on-surface-variant mb-1">Convenio / Seguro</label>
+                <select id="invoice-convenio" onchange="calcularTotalesFactura()" class="w-full bg-surface-container-low border-none rounded-xl py-2.5 px-3 text-body-md focus:ring-2 focus:ring-primary">
+                    <option value="Particular" data-discount="0">Particular (Sin Convenio)</option>
+                    <option value="Rimac" data-discount="20">Rimac (20% Desc.)</option>
+                    <option value="Pacífico" data-discount="15">Pacífico (15% Desc.)</option>
+                    <option value="Sanitas" data-discount="10">Sanitas (10% Desc.)</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+            <div>
+                <label class="block text-xs font-bold text-on-surface-variant mb-1">Servicio / Tratamiento Realizado</label>
+                <select id="invoice-servicio" onchange="seleccionarServicioPrecio()" class="w-full bg-surface-container-low border-none rounded-xl py-2.5 px-3 text-body-md focus:ring-2 focus:ring-primary">
+                    <option value="" data-precio="0">Ninguno (Solo Venta)</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-xs font-bold text-on-surface-variant mb-1">Costo Servicio (S/.)</label>
+                <input type="number" id="invoice-servicio-precio" value="0.00" step="0.01" min="0" oninput="calcularTotalesFactura()" class="w-full bg-surface-container-low border-none rounded-xl py-2.5 px-3 text-body-md focus:ring-2 focus:ring-primary">
+            </div>
+        </div>
+
+        <!-- Venta de Productos -->
+        <div class="bg-surface-container-lowest p-4 rounded-2xl border border-surface-container">
+            <h4 class="text-xs font-bold text-outline uppercase tracking-wider mb-3 flex items-center gap-1">
+                <span class="material-symbols-outlined text-sm">shopping_cart</span>
+                Venta de Productos Terapéuticos
+            </h4>
+            <div class="flex gap-2 mb-3">
+                <select id="invoice-producto-select" class="flex-1 bg-surface-container-low border-none rounded-xl py-2 px-3 text-sm focus:ring-2 focus:ring-primary">
+                    <option value="" data-precio="0">Seleccionar Producto...</option>
+                </select>
+                <button type="button" onclick="agregarProductoAFactura()" class="bg-primary text-white px-4 py-2 rounded-xl text-xs font-bold hover:opacity-90 transition-all flex items-center gap-1">
+                    <span class="material-symbols-outlined text-sm">add</span> Agregar
+                </button>
+            </div>
+            <div id="invoice-productos-list" class="space-y-2 max-h-[120px] overflow-y-auto pr-1">
+                <!-- List of added products dynamically -->
+                <p class="text-outline text-xs text-center py-2">Ningún producto agregado.</p>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-3 gap-4 items-center">
+            <div>
+                <label class="block text-xs font-bold text-on-surface-variant mb-1">Aplicar IGV (18%)</label>
+                <div class="flex items-center mt-2">
+                    <input type="checkbox" id="invoice-igv-toggle" onchange="calcularTotalesFactura()" class="rounded border-outline-variant text-primary focus:ring-primary h-5 w-5">
+                    <span class="ml-2 text-xs font-semibold text-on-surface-variant">Sí, incluir IGV</span>
+                </div>
+            </div>
+            <div>
+                <label class="block text-xs font-bold text-on-surface-variant mb-1">Método de Pago</label>
+                <select id="invoice-metodo" required class="w-full bg-surface-container-low border-none rounded-xl py-2.5 px-3 text-body-md focus:ring-2 focus:ring-primary">
+                    <option value="Yape/Plin">Yape / Plin</option>
+                    <option value="Efectivo">Efectivo</option>
+                    <option value="Tarjeta">Tarjeta de Crédito/Débito</option>
+                    <option value="Transferencia">Transferencia Bancaria</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-xs font-bold text-on-surface-variant mb-1">Estado de Pago</label>
+                <select id="invoice-estado" required class="w-full bg-surface-container-low border-none rounded-xl py-2.5 px-3 text-body-md focus:ring-2 focus:ring-primary">
+                    <option value="Completado">Pagado (Completado)</option>
+                    <option value="Pendiente">Por Pagar (Pendiente)</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Desglose de Facturación -->
+        <div class="bg-surface-container-low p-4 rounded-2xl space-y-2 text-sm">
+            <div class="flex justify-between">
+                <span class="text-on-surface-variant">Subtotal Servicios & Productos:</span>
+                <span id="invoice-subtotal" class="font-bold">S/. 0.00</span>
+            </div>
+            <div class="flex justify-between text-success">
+                <span class="font-semibold">Descuento Convenio:</span>
+                <span id="invoice-descuento" class="font-bold">- S/. 0.00</span>
+            </div>
+            <div class="flex justify-between">
+                <span class="text-on-surface-variant">IGV (18%):</span>
+                <span id="invoice-igv-monto" class="font-bold">S/. 0.00</span>
+            </div>
+            <div class="flex justify-between border-t border-surface-container-high pt-2 text-base font-extrabold text-primary">
+                <span>TOTAL NETO A PAGAR:</span>
+                <span id="invoice-total">S/. 0.00</span>
+            </div>
+        </div>
+
+        <div class="pt-6 flex justify-between items-center w-full border-t border-surface-variant">
+            <button type="button" onclick="imprimirReciboFactura()" class="px-5 py-2.5 border border-outline text-on-surface-variant font-bold rounded-xl hover:bg-surface-container-low transition-all flex items-center gap-2">
+                <span class="material-symbols-outlined text-[20px]">print</span> Imprimir Recibo
+            </button>
+            <div class="flex justify-end gap-3 ml-auto">
+                <button type="button" onclick="document.getElementById('modalNuevaFactura').close()" class="px-5 py-2.5 text-on-surface-variant font-bold hover:bg-surface-container-high rounded-xl transition-colors">Cancelar</button>
+                <button type="submit" class="bg-primary text-white px-8 py-2.5 rounded-xl font-bold hover:scale-[1.02] active:scale-95 transition-all shadow-md">Registrar y Procesar</button>
+            </div>
+        </div>
+    </form>
+</dialog>
+
 <!-- Micro-interaction Scripts -->
 <script>
         
@@ -376,6 +491,8 @@
                 if (elVencidos) elVencidos.textContent = formatCurrency(totalVencidos);
                 if (elVencidosCount) elVencidosCount.textContent = vencidos.length.toString();
 
+                window.todosLosPagos = safePagos;
+
                 renderPagosPendientes(safePagos);
                 renderActividadReciente(safePagos);
             } catch (error) {
@@ -420,7 +537,7 @@
                             <p class="text-body-md font-bold text-on-surface">\${formatCurrency(pago.monto)}</p>
                             <p class="text-label-sm \${stateClass}">\${stateText}</p>
                         </div>
-                        <button class="recordatorio-btn bg-surface-container px-4 py-2 rounded-full text-label-sm font-bold text-on-surface hover:bg-primary hover:text-on-primary transition-all flex items-center gap-2">
+                        <button onclick="window.open('https://wa.me/?text=Hola%20\${encodeURIComponent(pacienteNombre)},%20tienes%20un%20pago%20pendiente%20por%20\${encodeURIComponent(motivo)}%20con%20monto%20de%20\${formatCurrency(pago.monto)}%20en%20el%20Centro%20Eslava.', '_blank')" class="recordatorio-btn bg-surface-container px-4 py-2 rounded-full text-label-sm font-bold text-on-surface hover:bg-primary hover:text-on-primary transition-all flex items-center gap-2">
                             <span class="material-symbols-outlined text-sm">mail</span>
                             Enviar Recordatorio
                         </button>
@@ -444,7 +561,7 @@
             }
 
             let html = '';
-            pagos.slice(0, 10).forEach(pago => {
+            pagos.slice(0, 50).forEach(pago => {
                 const pacienteNombre = pago.pacientes ? pago.pacientes.nombre : 'Desconocido';
                 const fecha = new Date(pago.fecha).toLocaleString('es-PE', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
                 const isCompletado = pago.estado === 'Completado';
@@ -512,9 +629,408 @@
             }
         }
 
-        document.addEventListener("DOMContentLoaded", () => {
+        function showToast(message, type = "success") {
+            const toast = document.createElement("div");
+            toast.className = `fixed bottom-6 right-6 px-6 py-3 rounded-xl shadow-lg font-bold text-white transition-all transform translate-y-10 opacity-0 z-[100] ${
+                type === "success" ? "bg-success" : type === "error" ? "bg-error" : "bg-primary"
+            }`;
+            toast.textContent = message;
+            document.body.appendChild(toast);
             
-            cargarDatosFinancieros();
+            // Trigger transition
+            setTimeout(() => {
+                toast.classList.remove("translate-y-10", "opacity-0");
+            }, 100);
+            
+            // Remove after 3 seconds
+            setTimeout(() => {
+                toast.classList.add("translate-y-10", "opacity-0");
+                setTimeout(() => toast.remove(), 500);
+            }, 3000);
+        }
+
+        let globalPacientes = [];
+        let globalServicios = [];
+        let globalProductos = [];
+        let selectedProductos = [];
+
+        async function abrirModalNuevaFactura() {
+            const dialog = document.getElementById('modalNuevaFactura');
+            dialog.showModal();
+
+            // Load patients if not loaded
+            if (globalPacientes.length === 0) {
+                try {
+                    const { data: pacs } = await supabaseClient.from('pacientes').select('*').order('nombre');
+                    globalPacientes = pacs || [];
+                    const selectPac = document.getElementById('invoice-paciente');
+                    selectPac.innerHTML = '<option value="">Seleccione Paciente</option>';
+                    globalPacientes.forEach(p => {
+                        selectPac.innerHTML += `<option value="${p.id}">${p.nombre}</option>`;
+                    });
+                } catch(e) { console.error(e); }
+            }
+
+            // Load services if not loaded
+            if (globalServicios.length === 0) {
+                try {
+                    const { data: servs } = await supabaseClient.from('servicios').select('*').order('nombre');
+                    globalServicios = servs || [];
+                    const selectServ = document.getElementById('invoice-servicio');
+                    selectServ.innerHTML = '<option value="" data-precio="0">Ninguno (Solo Venta)</option>';
+                    globalServicios.forEach(s => {
+                        selectServ.innerHTML += `<option value="${s.nombre}" data-precio="${s.precio}">${s.nombre} (S/. ${parseFloat(s.precio).toFixed(2)})</option>`;
+                    });
+                } catch(e) { console.error(e); }
+            }
+
+            // Load products if not loaded
+            if (globalProductos.length === 0) {
+                try {
+                    const { data: prods } = await supabaseClient.from('productos').select('*').order('nombre');
+                    globalProductos = prods || [];
+                    const selectProd = document.getElementById('invoice-producto-select');
+                    selectProd.innerHTML = '<option value="" data-precio="0">Seleccionar Producto...</option>';
+                    globalProductos.forEach(p => {
+                        selectProd.innerHTML += `<option value="${p.id}" data-precio="${p.precio}">${p.nombre} (S/. ${parseFloat(p.precio).toFixed(2)})</option>`;
+                    });
+                } catch(e) { console.error(e); }
+            }
+
+            // Reset selected products
+            selectedProductos = [];
+            renderSelectedProductos();
+            
+            // Check for URL parameters
+            const urlParams = new URLSearchParams(window.location.search);
+            const pacId = urlParams.get('paciente_id');
+            const citaId = urlParams.get('cita_id');
+
+            if (pacId) {
+                setTimeout(() => {
+                    document.getElementById('invoice-paciente').value = pacId;
+                }, 300);
+            }
+
+            if (citaId) {
+                try {
+                    const { data: cita } = await supabaseClient.from('citas').select('*').eq('id', citaId).single();
+                    if (cita) {
+                        // Pre-fill service and cost
+                        setTimeout(() => {
+                            document.getElementById('invoice-servicio').value = cita.tratamiento || '';
+                            document.getElementById('invoice-servicio-precio').value = parseFloat(cita.costo || 150.00).toFixed(2);
+                            calcularTotalesFactura();
+                        }, 400);
+                    }
+                } catch(e) { console.error(e); }
+            }
+
+            calcularTotalesFactura();
+        }
+
+        function seleccionarServicioPrecio() {
+            const select = document.getElementById('invoice-servicio');
+            const selectedOption = select.options[select.selectedIndex];
+            const precio = selectedOption.getAttribute('data-precio') || '0';
+            document.getElementById('invoice-servicio-precio').value = parseFloat(precio).toFixed(2);
+            calcularTotalesFactura();
+        }
+
+        function agregarProductoAFactura() {
+            const select = document.getElementById('invoice-producto-select');
+            const productId = select.value;
+            if (!productId) return;
+
+            const prod = globalProductos.find(p => p.id === productId);
+            if (!prod) return;
+
+            // Check if already added
+            const existing = selectedProductos.find(p => p.id === productId);
+            if (existing) {
+                existing.cantidad += 1;
+            } else {
+                selectedProductos.push({ ...prod, cantidad: 1 });
+            }
+
+            renderSelectedProductos();
+            calcularTotalesFactura();
+        }
+
+        function eliminarProductoDeFactura(productId) {
+            selectedProductos = selectedProductos.filter(p => p.id !== productId);
+            renderSelectedProductos();
+            calcularTotalesFactura();
+        }
+
+        function renderSelectedProductos() {
+            const container = document.getElementById('invoice-productos-list');
+            if (selectedProductos.length === 0) {
+                container.innerHTML = '<p class="text-outline text-xs text-center py-2">Ningún producto agregado.</p>';
+                return;
+            }
+
+            let html = '';
+            selectedProductos.forEach(p => {
+                html += `
+                <div class="flex items-center justify-between p-2 bg-surface-container-low rounded-xl text-xs">
+                    <div>
+                        <span class="font-bold text-on-surface">${p.nombre}</span>
+                        <span class="text-outline ml-2">x${p.cantidad}</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="font-bold text-primary">S/. ${(p.precio * p.cantidad).toFixed(2)}</span>
+                        <button type="button" onclick="eliminarProductoDeFactura('${p.id}')" class="text-error hover:bg-error/10 p-1 rounded-full">
+                            <span class="material-symbols-outlined text-sm">delete</span>
+                        </button>
+                    </div>
+                </div>
+                `;
+            });
+            container.innerHTML = html;
+        }
+
+        function calcularTotalesFactura() {
+            const servicePrice = parseFloat(document.getElementById('invoice-servicio-precio').value) || 0;
+            const productsPrice = selectedProductos.reduce((sum, p) => sum + (p.precio * p.cantidad), 0);
+            
+            const subtotal = servicePrice + productsPrice;
+
+            // Convenio Discount
+            const selectConvenio = document.getElementById('invoice-convenio');
+            const discountPct = parseFloat(selectConvenio.options[selectConvenio.selectedIndex]?.getAttribute('data-discount')) || 0;
+            const discount = subtotal * (discountPct / 100);
+
+            // IGV (18%)
+            const igvToggle = document.getElementById('invoice-igv-toggle').checked;
+            const baseForIgv = subtotal - discount;
+            const igv = igvToggle ? (baseForIgv * 0.18) : 0;
+
+            const total = baseForIgv + igv;
+
+            document.getElementById('invoice-subtotal').textContent = `S/. ${subtotal.toFixed(2)}`;
+            document.getElementById('invoice-descuento').textContent = `- S/. ${discount.toFixed(2)}`;
+            document.getElementById('invoice-igv-monto').textContent = `S/. ${igv.toFixed(2)}`;
+            document.getElementById('invoice-total').textContent = `S/. ${total.toFixed(2)}`;
+        }
+
+        // Form Submission
+        document.getElementById('formNuevaFactura').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const pacId = document.getElementById('invoice-paciente').value;
+            const convenio = document.getElementById('invoice-convenio').value;
+            const servicio = document.getElementById('invoice-servicio').value;
+            const servicePrice = parseFloat(document.getElementById('invoice-servicio-precio').value) || 0;
+            const total = parseFloat(document.getElementById('invoice-total').textContent.replace('S/. ', ''));
+            const metodo = document.getElementById('invoice-metodo').value;
+            const estado = document.getElementById('invoice-estado').value;
+
+            if (!pacId) {
+                alert("Seleccione un paciente.");
+                return;
+            }
+
+            try {
+                // If there is an active appointment (from URL), update its status
+                const urlParams = new URLSearchParams(window.location.search);
+                const citaId = urlParams.get('cita_id');
+
+                // Generate description
+                let desc = servicio ? `Servicio: ${servicio}` : 'Venta de Productos';
+                if (selectedProductos.length > 0) {
+                    desc += ` + Productos: ${selectedProductos.map(p => `${p.nombre} (x${p.cantidad})`).join(', ')}`;
+                }
+                if (convenio && convenio !== 'Particular') {
+                    desc += ` [Convenio ${convenio}]`;
+                }
+
+                const payload = {
+                    paciente_id: pacId,
+                    cita_id: citaId || null,
+                    monto: total,
+                    metodo: metodo,
+                    estado: estado,
+                    fecha: new Date().toISOString(),
+                    // Add details in description column
+                    descripcion: desc
+                };
+
+                const { error } = await supabaseClient.from('pagos').insert([payload]);
+                if (error) throw error;
+
+                // Deduct stock for sold products
+                for (const p of selectedProductos) {
+                    const newStock = Math.max(0, p.stock - p.cantidad);
+                    await supabaseClient.from('productos').update({ stock: newStock }).eq('id', p.id);
+                }
+
+                // If paid and appointment exists, ensure appointment is marked completed
+                if (citaId && estado === 'Completado') {
+                    await supabaseClient.from('citas').update({ estado: 'Completado' }).eq('id', citaId);
+                }
+
+                document.getElementById('modalNuevaFactura').close();
+                showToast("Pago / Factura registrada exitosamente", "success");
+                
+                // Clear URL params to avoid loops
+                window.history.replaceState({}, document.title, window.location.pathname);
+                
+                await cargarDatosFinancieros();
+            } catch (err) {
+                console.error("Error al registrar factura:", err);
+                alert("Error al procesar la factura.");
+            }
+        });
+
+        function imprimirReciboFactura() {
+            const selectPaciente = document.getElementById('invoice-paciente');
+            const pacienteNombre = selectPaciente.options[selectPaciente.selectedIndex]?.text || 'Paciente General';
+            
+            const selectConvenio = document.getElementById('invoice-convenio').value;
+            const servicio = document.getElementById('invoice-servicio').value || 'Venta de Productos';
+            const subtotal = document.getElementById('invoice-subtotal').textContent;
+            const descuento = document.getElementById('invoice-descuento').textContent;
+            const igv = document.getElementById('invoice-igv-monto').textContent;
+            const total = document.getElementById('invoice-total').textContent;
+            const metodo = document.getElementById('invoice-metodo').value;
+
+            const prtContent = `
+                <html>
+                <head>
+                    <title>Recibo Centro Eslava</title>
+                    <style>
+                        body { font-family: sans-serif; padding: 40px; color: #333; }
+                        .header { text-align: center; border-bottom: 2px solid #006578; padding-bottom: 20px; margin-bottom: 30px; }
+                        .header h1 { margin: 0; color: #006578; }
+                        .details { margin-bottom: 30px; line-height: 1.6; }
+                        table { width: 100%; border-collapse: collapse; margin-bottom: 30px; }
+                        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
+                        th { background-color: #f2f8f9; }
+                        .totals { float: right; width: 300px; line-height: 2; font-weight: bold; }
+                        .footer { margin-top: 100px; text-align: center; font-size: 12px; color: #777; border-top: 1px dashed #ccc; padding-top: 20px; }
+                    </style>
+                </head>
+                <body>
+                    <div class="header">
+                        <h1>CENTRO ESLAVA</h1>
+                        <p>Clínica de Fisioterapia y Terapia Física</p>
+                    </div>
+                    <div class="details">
+                        <p><strong>Paciente:</strong> ${pacienteNombre}</p>
+                        <p><strong>Fecha:</strong> ${new Date().toLocaleDateString('es-PE')}</p>
+                        <p><strong>Convenio:</strong> ${selectConvenio}</p>
+                        <p><strong>Método de Pago:</strong> ${metodo}</p>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Concepto</th>
+                                <th style="text-align: right;">Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>${servicio}</td>
+                                <td style="text-align: right;">${subtotal}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="totals">
+                        <div style="display:flex; justify-content:space-between"><span>Subtotal:</span> <span>${subtotal}</span></div>
+                        <div style="display:flex; justify-content:space-between; color:green"><span>Descuento:</span> <span>${descuento}</span></div>
+                        <div style="display:flex; justify-content:space-between"><span>IGV:</span> <span>${igv}</span></div>
+                        <div style="display:flex; justify-content:space-between; font-size:1.2em; color:#006578; border-top:1px solid #333; padding-top:5px;"><span>TOTAL:</span> <span>${total}</span></div>
+                    </div>
+                    <div style="clear:both"></div>
+                    <div class="footer">
+                        <p>Gracias por confiar en el Centro Eslava.</p>
+                        <p>Este documento es un comprobante de atención clínica simplificado.</p>
+                    </div>
+                    <script>window.print();<\/script>
+                </body>
+                </html>
+            `;
+            const WinPrint = window.open('', '', 'width=900,height=650');
+            WinPrint.document.write(prtContent);
+            WinPrint.document.close();
+            WinPrint.focus();
+        }
+
+        async function exportarLibroTransacciones() {
+            if (!window.supabaseClient) {
+                alert("Error de conexión. Intente recargar la página.");
+                return;
+            }
+            try {
+                // Obtener todos los pagos, ordenados por fecha
+                const { data, error } = await window.supabaseClient
+                    .from('pagos')
+                    .select('*, pacientes(nombre)')
+                    .order('fecha_emision', { ascending: false });
+
+                if (error) throw error;
+                if (!data || data.length === 0) {
+                    alert("No hay transacciones para exportar.");
+                    return;
+                }
+
+                let csvContent = "data:text/csv;charset=utf-8,";
+                // Añadir cabeceras
+                csvContent += "ID Transaccion,Fecha,Paciente,Servicio,Estado,Monto Subtotal,Descuento,IGV,Total\n";
+
+                // Formatear filas
+                data.forEach(pago => {
+                    const row = [
+                        pago.id,
+                        new Date(pago.fecha_emision).toLocaleString(),
+                        `"${pago.pacientes?.nombre || 'Paciente Desconocido'}"`,
+                        `"${pago.servicio_realizado || '-'}"`,
+                        pago.estado_pago,
+                        pago.monto_subtotal || '0.00',
+                        pago.descuento_aplicado || '0.00',
+                        pago.monto_igv || '0.00',
+                        pago.monto_total || '0.00'
+                    ].join(",");
+                    csvContent += row + "\n";
+                });
+
+                // Crear enlace invisible para forzar descarga
+                const encodedUri = encodeURI(csvContent);
+                const link = document.createElement("a");
+                link.setAttribute("href", encodedUri);
+                link.setAttribute("download", `Libro_Transacciones_Eslava_${new Date().toISOString().split('T')[0]}.csv`);
+                document.body.appendChild(link); // Requerido en Firefox
+                link.click();
+                document.body.removeChild(link);
+            } catch (err) {
+                console.error("Error al exportar libro:", err);
+                alert("Ocurrió un error al intentar exportar el reporte.");
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", async () => {
+            await cargarDatosFinancieros();
+            
+            // Check if there are active parameters to open modal automatically
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('paciente_id') || urlParams.get('cita_id')) {
+                abrirModalNuevaFactura();
+            }
+
+            // Filtrado del Libro de Transacciones
+            const filtroSelect = document.getElementById('filtro-tipo-transaccion');
+            if (filtroSelect) {
+                filtroSelect.addEventListener('change', (e) => {
+                    const tipo = e.target.value;
+                    let pagosFiltrados = window.todosLosPagos || [];
+                    if (tipo === 'Pagos') {
+                        pagosFiltrados = pagosFiltrados.filter(p => p.estado === 'Completado');
+                    } else if (tipo === 'Facturas') {
+                        pagosFiltrados = pagosFiltrados.filter(p => p.estado === 'Pendiente' || p.estado === 'Vencido');
+                    }
+                    renderActividadReciente(pagosFiltrados);
+                });
+            }
         });
     </script>
 

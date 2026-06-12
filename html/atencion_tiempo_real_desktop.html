@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Atención en Tiempo Real | Centro Eslava</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+    <script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+              "surface-container": "#eceeee",
+              "primary-fixed-dim": "#66d5f1",
+              "outline": "#6d797d",
+              "on-surface": "#191c1d",
+              "outline-variant": "#bdc8cd",
+              "error": "#ba1a1a",
+              "on-surface-variant": "#3d494c",
+              "background": "#f8fafa",
+              "surface-white": "#FFFFFF",
+              "surface": "#f8fafa",
+              "primary": "#006578",
+              "success": "#34C759",
+              "on-primary": "#ffffff"
+            }
+          }
+        }
+      }
+    </script>
+    <style>
+        body {
+            font-family: 'Hanken Grotesk', sans-serif;
+            background-color: #f8fafa;
+            color: #191c1d;
+        }
+    </style>
+    <!-- Supabase SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../js/supabase.js"></script>
+    <script src="../js/app.js"></script>
+    <script src="../js/rbac.js"></script>
+</head>
+<body class="min-h-screen flex flex-col">
+    <!-- Header -->
+    <header class="bg-surface-white border-b border-surface-container flex justify-between items-center h-16 px-8 sticky top-0 z-40 shadow-sm">
+        <div class="flex items-center space-x-4">
+            <span class="material-symbols-outlined text-primary text-2xl animate-pulse">radio_button_checked</span>
+            <h1 class="font-headline-md text-xl font-bold text-primary">Procedimiento Activo en Tiempo Real</h1>
+        </div>
+        <div class="flex items-center space-x-4">
+            <button onclick="window.history.back()" class="bg-surface-white border border-outline-variant text-on-surface-variant px-4 py-2 rounded-xl font-bold hover:bg-surface-container-low transition-all">
+                Volver
+            </button>
+        </div>
+    </header>
+
+    <main class="flex-1 p-8 grid grid-cols-12 gap-8 max-w-7xl mx-auto w-full">
+        <!-- Left Column: Patient & Appointment Info -->
+        <aside class="col-span-4 space-y-6">
+            <!-- Patient card -->
+            <div class="bg-surface-white rounded-2xl p-6 shadow-sm border border-outline-variant/30">
+                <h3 class="text-xs font-bold text-outline uppercase tracking-wider mb-4">Información del Paciente</h3>
+                <div class="flex items-center space-x-4 mb-6">
+                    <div id="patient-initials" class="w-14 h-14 rounded-full bg-primary text-white flex items-center justify-center font-bold text-xl">
+                        -
+                    </div>
+                    <div>
+                        <h4 id="patient-name" class="font-bold text-lg text-on-surface">Cargando...</h4>
+                        <p id="patient-id" class="text-xs text-outline">ID: --</p>
+                    </div>
+                </div>
+                <div class="space-y-3 text-sm">
+                    <div class="flex justify-between border-b border-surface-container-low pb-2">
+                        <span class="text-on-surface-variant">Teléfono:</span>
+                        <span id="patient-phone" class="font-semibold">--</span>
+                    </div>
+                    <div class="flex justify-between border-b border-surface-container-low pb-2">
+                        <span class="text-on-surface-variant">Email:</span>
+                        <span id="patient-email" class="font-semibold truncate max-w-[150px]">--</span>
+                    </div>
+                    <div class="flex justify-between pb-2">
+                        <span class="text-on-surface-variant">Estado Clínico:</span>
+                        <span id="patient-status" class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-success/10 text-success">--</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Appointment Detail -->
+            <div class="bg-surface-white rounded-2xl p-6 shadow-sm border border-outline-variant/30">
+                <h3 class="text-xs font-bold text-outline uppercase tracking-wider mb-4">Detalle de la Sesión</h3>
+                <div class="space-y-4">
+                    <div>
+                        <p class="text-[11px] text-outline font-bold uppercase">Procedimiento agendado</p>
+                        <p id="appt-treatment" class="font-bold text-on-surface text-base">Cargando...</p>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <p class="text-[11px] text-outline font-bold uppercase">Consultorio</p>
+                            <p id="appt-room" class="font-semibold text-on-surface">--</p>
+                        </div>
+                        <div>
+                            <p class="text-[11px] text-outline font-bold uppercase">Hora</p>
+                            <p id="appt-time" class="font-semibold text-on-surface">--</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Medical Alerts -->
+            <div class="bg-red-50 border border-red-200 rounded-2xl p-6">
+                <div class="flex items-center space-x-2 text-error mb-3">
+                    <span class="material-symbols-outlined">warning</span>
+                    <h4 class="font-bold text-sm uppercase tracking-wider">Alergias & Riesgos</h4>
+                </div>
+                <p id="patient-allergies" class="text-sm text-red-700 leading-relaxed font-semibold">
+                    Cargando observaciones o alertas médicas...
+                </p>
+            </div>
+        </aside>
+
+        <!-- Right Column: Observaciones & Clinical Record Entry -->
+        <section class="col-span-8 space-y-6">
+            <div class="bg-surface-white rounded-2xl p-8 shadow-sm border border-outline-variant/30 flex flex-col h-full">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="font-headline-md text-xl font-bold text-on-surface">Registro de Observaciones Clínicas</h3>
+                    <span id="save-status" class="text-xs text-outline flex items-center gap-1">
+                        <span class="material-symbols-outlined text-sm">cloud_done</span> Autoguardado inactivo
+                    </span>
+                </div>
+
+                <form id="form-evolucion" class="space-y-6 flex-1 flex flex-col">
+                    <div class="space-y-2">
+                        <label class="block text-sm font-bold text-on-surface">Observaciones y Notas de Evolución (Tiempo Real)</label>
+                        <textarea id="observaciones" required rows="10" class="w-full rounded-xl border border-outline-variant px-4 py-3 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all bg-surface-container-lowest text-base leading-relaxed" placeholder="Describa el estado actual del paciente, tolerancia al tratamiento, ejercicios realizados, dolor referido (EVA), etc..."></textarea>
+                    </div>
+
+                    <div class="space-y-2">
+                        <label class="block text-sm font-bold text-on-surface">Plan / Recomendaciones post-sesión</label>
+                        <input type="text" id="recomendaciones" class="w-full rounded-xl border border-outline-variant px-4 py-3 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all bg-surface-container-lowest" placeholder="ej. Reposo 24 horas, colocar compresa fría 15 min..."/>
+                    </div>
+
+                    <div class="pt-6 border-t border-surface-container flex justify-end items-center gap-4">
+                        <button type="button" id="btn-save-draft" onclick="guardarBorrador()" class="px-6 py-3 border border-outline text-on-surface-variant font-bold rounded-xl hover:bg-surface-container-low transition-all">
+                            Guardar Borrador
+                        </button>
+                        <button type="button" id="btn-complete" onclick="culminarProcedimiento()" class="bg-primary text-on-primary px-8 py-3 rounded-xl font-bold hover:opacity-90 active:scale-95 transition-all shadow-md flex items-center gap-2">
+                            <span class="material-symbols-outlined">check_circle</span>
+                            Culminar Procedimiento
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const citaId = urlParams.get('cita_id');
+        let currentCita = null;
+        let currentPaciente = null;
+
+        document.addEventListener("DOMContentLoaded", async () => {
+            if (!citaId) {
+                alert("ID de cita inválido.");
+                window.history.back();
+                return;
+            }
+            await cargarDatosCita();
+        });
+
+        async function cargarDatosCita() {
+            try {
+                // Fetch cita details with patient
+                const { data: cita, error } = await supabaseClient
+                    .from('citas')
+                    .select('*, pacientes(*)')
+                    .eq('id', citaId)
+                    .single();
+
+                if (error) throw error;
+                currentCita = cita;
+                currentPaciente = cita.pacientes;
+
+                if (currentPaciente) {
+                    document.getElementById('patient-name').textContent = currentPaciente.nombre;
+                    document.getElementById('patient-id').textContent = 'ID: #' + currentPaciente.id.substring(0,8).toUpperCase();
+                    document.getElementById('patient-phone').textContent = currentPaciente.telefono || '--';
+                    document.getElementById('patient-email').textContent = currentPaciente.email || '--';
+                    document.getElementById('patient-status').textContent = currentPaciente.estado || 'Activo';
+                    document.getElementById('patient-initials').textContent = currentPaciente.nombre.charAt(0).toUpperCase();
+                    
+                    document.getElementById('patient-allergies').textContent = currentPaciente.notas_medicas || 'Sin alergias o riesgos reportados.';
+                }
+
+                document.getElementById('appt-treatment').textContent = cita.tratamiento || 'Procedimiento general';
+                document.getElementById('appt-room').textContent = cita.consultorio || '--';
+                document.getElementById('appt-time').textContent = `${cita.fecha} • ${cita.hora}`;
+
+                if (cita.observaciones_medicas) {
+                    document.getElementById('observaciones').value = cita.observaciones_medicas;
+                }
+            } catch (err) {
+                console.error("Error cargando cita:", err);
+                alert("Error al obtener la información de la cita de Supabase.");
+            }
+        }
+
+        async function guardarBorrador() {
+            const obs = document.getElementById('observaciones').value;
+            const rec = document.getElementById('recomendaciones').value;
+            const fullObs = rec ? `${obs}\n\nRecomendaciones: ${rec}` : obs;
+
+            const btn = document.getElementById('btn-save-draft');
+            btn.disabled = true;
+            btn.textContent = 'Guardando...';
+
+            try {
+                const { error } = await supabaseClient
+                    .from('citas')
+                    .update({ 
+                        observaciones_medicas: fullObs,
+                        estado: 'En Progreso' // Update state to En Progreso if saving draft
+                    })
+                    .eq('id', citaId);
+
+                if (error) throw error;
+
+                document.getElementById('save-status').innerHTML = '<span class="material-symbols-outlined text-sm text-success">cloud_done</span> Borrador guardado exitosamente';
+                showToast("Borrador guardado exitosamente", "success");
+            } catch (err) {
+                console.error("Error al guardar borrador:", err);
+                alert("Hubo un error al guardar las observaciones.");
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Guardar Borrador';
+            }
+        }
+
+        async function culminarProcedimiento() {
+            const obs = document.getElementById('observaciones').value;
+            const rec = document.getElementById('recomendaciones').value;
+            const fullObs = rec ? `${obs}\n\nRecomendaciones: ${rec}` : obs;
+
+            if (!obs.trim()) {
+                alert("Por favor ingrese las observaciones antes de culminar el procedimiento.");
+                return;
+            }
+
+            const btn = document.getElementById('btn-complete');
+            btn.disabled = true;
+            btn.textContent = 'Procesando...';
+
+            try {
+                // Update appointment state to Completado and save final notes
+                const { error } = await supabaseClient
+                    .from('citas')
+                    .update({
+                        observaciones_medicas: fullObs,
+                        estado: 'Completado'
+                    })
+                    .eq('id', citaId);
+
+                if (error) throw error;
+
+                // Enviar a facturación redireccionando
+                showToast("Procedimiento culminado. Redirigiendo a facturación...", "success");
+                
+                setTimeout(() => {
+                    const role = new URLSearchParams(window.location.search).get('role') || 'admin';
+                    window.location.href = `pagos_facturacion_desktop.html?paciente_id=${currentPaciente.id}&cita_id=${citaId}&role=${role}`;
+                }, 1500);
+
+            } catch (err) {
+                console.error("Error al culminar procedimiento:", err);
+                alert("Hubo un error al culminar el procedimiento.");
+                btn.disabled = false;
+                btn.textContent = 'Culminar Procedimiento';
+            }
+        }
+    </script>
+</body>
+</html>

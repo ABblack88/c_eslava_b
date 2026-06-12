@@ -158,7 +158,7 @@
 </a>
 </nav>
 <div class="px-4 mt-auto mb-8">
-<button class="w-full bg-primary-container text-on-primary-container py-4 rounded-xl font-bold flex items-center justify-center gap-2 hover:opacity-90 transition-all active:scale-95">
+<button onclick="window.location.href='calendario_dashboard_desktop.html?action=new_appointment'" class="w-full bg-primary-container text-on-primary-container py-4 rounded-xl font-bold flex items-center justify-center gap-2 hover:opacity-90 transition-all active:scale-95">
 <span class="material-symbols-outlined">add</span>
 <span>Nueva Cita</span>
 </button>
@@ -180,13 +180,7 @@
 <button class="text-on-surface-variant hover:text-primary transition-all">
 <span class="material-symbols-outlined">help</span>
 </button>
-<div class="flex items-center gap-3 pl-4 border-l border-outline-variant">
-<div class="text-right">
-<p class="font-label-sm text-label-sm text-on-surface font-bold leading-none">Dr. Alejandro Eslava</p>
-<p class="font-label-sm text-label-sm text-on-surface-variant">Director Médico</p>
-</div>
-<img alt="Foto de perfil del Dr. Alejandro Eslava" class="w-10 h-10 rounded-full border-2 border-primary-fixed" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCsW0kpmCct3smxipcNmtpMME2ZEEtdaYedHAcYf5a5sf3g84RHQV_IKWAG5jtFhJ84VLdAInSlVG7yuDahcld5HlsdO2EfzUNOGkQCYe0NemNH_8aRqtXOy3lGCCzavyAkP7tjPQ5qOglLsDQMlkVLgZuwNzT8_yNa8ThgZxUpaxnF0ALrORRTpEpps1uov7p16MWdeBHfulI7PjaqXLQHpmV2BXGYrIqZqdrMxmd6nfuhSMUv3kMK-q1ErKIAASI_qniSNhZFLRw"/>
-</div>
+
 </div>
 </header>
 <!-- Main Content -->
@@ -524,7 +518,10 @@
 
                 const tr = document.createElement('tr');
                 tr.className = 'hover:bg-surface-bright transition-colors cursor-pointer group';
-                tr.onclick = () => abrirModalEdicionPaciente(paciente.id, safeName, safeEmail, safeTelefono, fnac, safeMotivo, safeNotas, safeEstado);
+                tr.onclick = () => {
+                    const role = new URLSearchParams(window.location.search).get('role') || 'admin';
+                    window.location.href = `detalle_historia_clinica_desktop.html?id=${paciente.id}&role=${role}`;
+                };
                 tr.innerHTML = `
                     <td class="px-8 py-4">
                         <div class="flex items-center gap-3">
@@ -541,7 +538,7 @@
                     <td class="px-8 py-4 text-sm text-on-surface-variant font-medium">${paciente.motivo_consulta || 'N/A'}</td>
                     <td class="px-8 py-4 text-sm text-on-surface-variant">Reciente</td>
                     <td class="px-8 py-4 text-right">
-                        <button class="p-2 text-outline hover:text-primary transition-colors">
+                        <button onclick="event.stopPropagation(); abrirModalEdicionPaciente('${paciente.id}', '${safeName}', '${safeEmail}', '${safeTelefono}', '${fnac}', '${safeMotivo}', '${safeNotas}', '${safeEstado}')" class="p-2 text-outline hover:text-primary transition-colors">
                             <span class="material-symbols-outlined">edit</span>
                         </button>
                     </td>
@@ -552,6 +549,10 @@
                 const randomProgress = Math.floor(Math.random() * 60) + 20; // Simulando progreso entre 20% y 80%
                 const card = document.createElement('div');
                 card.className = 'bg-surface-white p-6 rounded-3xl shadow-[0px_10px_30px_rgba(0,0,0,0.04)] hover:shadow-[0px_15px_40px_rgba(0,0,0,0.08)] transition-all group cursor-pointer border border-transparent hover:border-primary-fixed-dim/30';
+                card.onclick = () => {
+                    const role = new URLSearchParams(window.location.search).get('role') || 'admin';
+                    window.location.href = `detalle_historia_clinica_desktop.html?id=${paciente.id}&role=${role}`;
+                };
                 card.innerHTML = `
                 <div class="flex justify-between items-start mb-6">
                     <div class="flex gap-4">
@@ -587,14 +588,12 @@
                     </div>
                 </div>
                 <div class="mt-6 flex justify-between items-center">
-                    <div class="flex -space-x-2">
-                        <div class="w-8 h-8 rounded-full border-2 border-surface-white bg-primary-fixed flex items-center justify-center">
-                            <span class="material-symbols-outlined text-xs text-on-primary-fixed">physical_therapy</span>
-                        </div>
-                    </div>
-                    <button onclick="abrirModalEdicionPaciente('${paciente.id}', '${safeName}', '${safeEmail}', '${safeTelefono}', '${fnac}', '${safeMotivo}', '${safeNotas}', '${safeEstado}')" class="text-primary font-bold text-sm flex items-center gap-1 group-hover:gap-2 transition-all z-10 relative">
-                        Ver Perfil / Notas <span class="material-symbols-outlined text-[18px]">edit_note</span>
+                    <button onclick="event.stopPropagation(); abrirModalEdicionPaciente('${paciente.id}', '${safeName}', '${safeEmail}', '${safeTelefono}', '${fnac}', '${safeMotivo}', '${safeNotas}', '${safeEstado}')" class="text-on-surface-variant font-bold text-sm flex items-center gap-1 hover:text-primary transition-all">
+                        Editar Perfil <span class="material-symbols-outlined text-[18px]">edit</span>
                     </button>
+                    <span class="text-primary font-bold text-sm flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+                        Ver Historia <span class="material-symbols-outlined text-[18px]">medical_information</span>
+                    </span>
                 </div>`;
                 gridContainer.appendChild(card);
             });

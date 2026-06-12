@@ -318,6 +318,22 @@
 </div>
 <p class="font-body-md text-body-md text-sm opacity-80">La capacidad de la sala se acerca a los límites óptimos.</p>
 </div>
+
+<!-- Productos Terapéuticos Card -->
+<div class="bg-surface-white rounded-xl p-6 shadow-[0px_10px_30px_rgba(0,0,0,0.04)] flex flex-col gap-4">
+    <div class="flex items-center justify-between border-b border-surface-variant pb-4">
+        <h2 class="font-headline-md text-headline-md text-on-background flex items-center gap-2">
+            <span class="material-symbols-outlined text-primary">shopping_bag</span>
+            Productos
+        </h2>
+        <button onclick="abrirModalNuevoProductoMobile()" class="text-primary text-xs font-bold flex items-center gap-0.5 hover:underline">
+            <span class="material-symbols-outlined text-sm">add_circle</span> Nuevo
+        </button>
+    </div>
+    <div id="productos-list" class="space-y-3 max-h-[250px] overflow-y-auto pr-1">
+        <p class="text-outline text-xs text-center py-4">Cargando productos...</p>
+    </div>
+</div>
 </aside>
 </div>
 </main>
@@ -342,12 +358,12 @@
         </div>
         <div class="grid grid-cols-2 gap-4">
             <div>
-                <label class="block text-sm font-bold text-on-surface mb-1">Duración (MIN)</label>
-                <input type="number" name="duracion" required min="15" step="5" class="w-full rounded-xl border-outline-variant px-4 py-2 focus:ring-primary focus:border-primary">
-            </div>
-            <div>
                 <label class="block text-sm font-bold text-on-surface mb-1">Precio (S/.)</label>
                 <input type="number" name="precio" required min="0" step="0.01" class="w-full rounded-xl border-outline-variant px-4 py-2 focus:ring-primary focus:border-primary">
+            </div>
+            <div>
+                <label class="block text-sm font-bold text-on-surface mb-1">Número de Sesiones</label>
+                <input type="number" name="duracion" required min="1" value="1" class="w-full rounded-xl border-outline-variant px-4 py-2 focus:ring-primary focus:border-primary">
             </div>
         </div>
         <div class="grid grid-cols-2 gap-4">
@@ -376,6 +392,46 @@
     </form>
 </dialog>
 
+<!-- Modal for New/Edit Product (Mobile) -->
+<dialog id="modalNuevoProductoMobile" class="backdrop:bg-black/50 p-6 rounded-2xl shadow-xl border-none w-[90%] max-w-sm bg-surface-white m-auto">
+    <div class="flex justify-between items-center mb-6">
+        <h3 id="modalProductTitleMobile" class="text-xl font-bold text-on-surface">Nuevo Producto</h3>
+        <button onclick="document.getElementById('modalNuevoProductoMobile').close()" class="text-on-surface-variant hover:text-error transition-colors">
+            <span class="material-symbols-outlined">close</span>
+        </button>
+    </div>
+    <form id="formNuevoProductoMobile" class="space-y-4">
+        <input type="hidden" name="id" id="productoIdMobile">
+        <div>
+            <label class="block text-sm font-bold text-on-surface mb-1">Nombre del Producto</label>
+            <input type="text" name="nombre" required class="w-full rounded-xl border-outline-variant px-4 py-2 focus:ring-primary focus:border-primary">
+        </div>
+        <div>
+            <label class="block text-sm font-bold text-on-surface mb-1">Descripción</label>
+            <textarea name="descripcion" rows="2" class="w-full rounded-xl border-outline-variant px-4 py-2 focus:ring-primary focus:border-primary"></textarea>
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+            <div>
+                <label class="block text-sm font-bold text-on-surface mb-1">Precio (S/.)</label>
+                <input type="number" name="precio" required min="0" step="0.01" class="w-full rounded-xl border-outline-variant px-4 py-2 focus:ring-primary focus:border-primary">
+            </div>
+            <div>
+                <label class="block text-sm font-bold text-on-surface mb-1">Stock Inicial</label>
+                <input type="number" name="stock" required min="0" class="w-full rounded-xl border-outline-variant px-4 py-2 focus:ring-primary focus:border-primary">
+            </div>
+        </div>
+        <div class="pt-4 flex flex-col gap-3">
+            <button type="submit" class="w-full bg-primary text-white px-6 py-3 rounded-xl font-bold hover:scale-[1.02] transition-transform">
+                Guardar
+            </button>
+            <button type="button" id="btnEliminarProductoMobile" onclick="eliminarProductoMobile()" class="hidden w-full px-4 py-3 text-error font-bold hover:bg-error/10 rounded-xl transition-colors flex items-center justify-center gap-2 border border-error/20">
+                <span class="material-symbols-outlined text-sm">delete</span> Eliminar
+            </button>
+            <button type="button" onclick="document.getElementById('modalNuevoProductoMobile').close()" class="w-full px-4 py-3 text-on-surface-variant font-bold hover:bg-surface-container-high rounded-xl transition-colors border border-surface-variant">Cancelar</button>
+        </div>
+    </form>
+</dialog>
+
 <!-- BottomNavBar (Mobile Only) -->
 <nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 py-3 md:hidden bg-surface-white/80 dark:bg-surface-container/80 backdrop-blur-md shadow-[0px_-10px_30px_rgba(0,0,0,0.04)] rounded-t-xl border-t border-surface-container-highest">
 <a class="flex flex-col items-center justify-center text-outline dark:text-outline-variant hover:bg-surface-container-high/50 active:scale-90 transition-all duration-150 p-2 rounded-lg" href="calendario_dashboard_mobile.html">
@@ -398,13 +454,133 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             cargarServicios();
+            cargarProductos();
         });
+
+        // ==========================================
+        // GESTIÓN DE PRODUCTOS (MÓVIL)
+        // ==========================================
+        let listaProductosGlobal = [];
+
+        async function cargarProductos() {
+            try {
+                const { data, error } = await supabaseClient
+                    .from('productos')
+                    .select('*')
+                    .order('nombre', { ascending: true });
+
+                if (error) throw error;
+                listaProductosGlobal = data || [];
+                renderProductos(listaProductosGlobal);
+            } catch (err) {
+                console.error("Error al cargar productos móvil:", err);
+                document.getElementById('productos-list').innerHTML = 
+                    '<p class="text-error text-[11px] text-center">Error al cargar productos.</p>';
+            }
+        }
+
+        function renderProductos(productos) {
+            const container = document.getElementById('productos-list');
+            if (productos.length === 0) {
+                container.innerHTML = '<p class="text-outline text-xs text-center py-4">No hay productos registrados.</p>';
+                return;
+            }
+
+            let html = '';
+            productos.forEach(p => {
+                html += `
+                <div onclick="abrirModalEdicionProductoMobile('${p.id}')" class="flex items-center justify-between p-3 bg-surface-container-low rounded-2xl cursor-pointer hover:bg-surface-container transition-colors">
+                    <div class="flex-1 min-w-0">
+                        <p class="font-bold text-sm text-on-surface truncate">${p.nombre}</p>
+                        <p class="text-[10px] text-outline truncate">${p.descripcion || 'Sin descripción'}</p>
+                    </div>
+                    <div class="text-right ml-4">
+                        <p class="font-bold text-sm text-primary">S/. ${parseFloat(p.precio).toFixed(2)}</p>
+                        <p class="text-[10px] text-outline">Stock: ${p.stock}</p>
+                    </div>
+                </div>
+                `;
+            });
+            container.innerHTML = html;
+        }
+
+        function abrirModalNuevoProductoMobile() {
+            document.getElementById('formNuevoProductoMobile').reset();
+            document.getElementById('productoIdMobile').value = '';
+            document.getElementById('modalProductTitleMobile').textContent = 'Nuevo Producto';
+            document.getElementById('btnEliminarProductoMobile').classList.add('hidden');
+            document.getElementById('modalNuevoProductoMobile').showModal();
+        }
+
+        function abrirModalEdicionProductoMobile(id) {
+            const p = listaProductosGlobal.find(item => item.id === id);
+            if (!p) return;
+
+            document.getElementById('productoIdMobile').value = p.id;
+            const form = document.getElementById('formNuevoProductoMobile');
+            form.elements['nombre'].value = p.nombre;
+            form.elements['descripcion'].value = p.descripcion || '';
+            form.elements['precio'].value = p.precio;
+            form.elements['stock'].value = p.stock;
+
+            document.getElementById('modalProductTitleMobile').textContent = 'Editar Producto';
+            document.getElementById('btnEliminarProductoMobile').classList.remove('hidden');
+            document.getElementById('modalNuevoProductoMobile').showModal();
+        }
+
+        document.getElementById('formNuevoProductoMobile').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const form = e.target;
+            const id = document.getElementById('productoIdMobile').value;
+            const nombre = form.elements['nombre'].value;
+            const descripcion = form.elements['descripcion'].value;
+            const precio = parseFloat(form.elements['precio'].value);
+            const stock = parseInt(form.elements['stock'].value);
+
+            const payload = { nombre, descripcion, precio, stock };
+
+            try {
+                if (id) {
+                    const { error } = await supabaseClient.from('productos').update(payload).eq('id', id);
+                    if (error) throw error;
+                } else {
+                    const { error } = await supabaseClient.from('productos').insert([payload]);
+                    if (error) throw error;
+                }
+                document.getElementById('modalNuevoProductoMobile').close();
+                await cargarProductos();
+            } catch (err) {
+                console.error("Error al guardar producto móvil:", err);
+                alert("Error al guardar el producto.");
+            }
+        });
+
+        async function eliminarProductoMobile() {
+            const id = document.getElementById('productoIdMobile').value;
+            if (!id) return;
+
+            if (confirm("¿Estás seguro de que deseas eliminar este producto?")) {
+                try {
+                    const { error } = await supabaseClient.from('productos').delete().eq('id', id);
+                    if (error) throw error;
+                    document.getElementById('modalNuevoProductoMobile').close();
+                    await cargarProductos();
+                } catch (err) {
+                    console.error("Error al eliminar producto móvil:", err);
+                    alert("Error al eliminar el producto.");
+                }
+            }
+        }
 
         function abrirModalNuevoMobile() {
             document.getElementById('formNuevoServicioMobile').reset();
             document.getElementById('servicioIdMobile').value = '';
             document.getElementById('modalTitleMobile').textContent = 'Nuevo Servicio';
             document.getElementById('btnEliminarServicioMobile').classList.add('hidden');
+            
+            const form = document.getElementById('formNuevoServicioMobile');
+            form.elements['duracion'].value = '1';
+
             document.getElementById('modalNuevoServicioMobile').showModal();
         }
 
@@ -579,7 +755,7 @@
                             <h3 class="font-body-lg text-body-lg font-bold text-on-surface mb-1">${servicio.nombre}</h3>
                             <p class="font-body-md text-body-md text-on-surface-variant text-sm mb-4 line-clamp-2">${servicio.descripcion || ''}</p>
                             <div class="flex items-center justify-between mt-auto">
-                                <span class="font-label-sm text-label-sm text-on-surface font-semibold">${servicio.duracion} min</span>
+                                <span class="font-label-sm text-label-sm text-on-surface font-semibold">${servicio.duracion} ${servicio.duracion === 1 ? 'Sesión' : 'Sesiones'}</span>
                                 <span class="font-label-sm text-label-sm text-primary font-bold">S/ ${parseFloat(servicio.precio).toFixed(0)}</span>
                             </div>
                         </div>

@@ -387,7 +387,7 @@
                             <button class="flex items-center justify-center text-on-surface-variant font-label-sm text-label-sm px-4 py-3 rounded-xl hover:bg-surface-container-low transition-colors border border-outline-variant" onclick="abrirModalEdicionPaciente('${paciente.id}', '${safeName}', '${safeEmail}', '${safeTelefono}', '${fnac}', '${safeMotivo}', '${safeNotas}', '${safeEstado}')">
                                 <span class="material-symbols-outlined mr-1">edit</span> Ver Perfil/Notas
                             </button>
-                            <button class="flex items-center justify-center text-primary font-label-sm text-label-sm px-4 py-3 rounded-xl hover:bg-surface-container-low transition-colors border border-primary-fixed">
+                            <button class="flex items-center justify-center text-primary font-label-sm text-label-sm px-4 py-3 rounded-xl hover:bg-surface-container-low transition-colors border border-primary-fixed" onclick="const role = new URLSearchParams(window.location.search).get('role') || 'admin'; window.location.href='detalle_historia_clinica_mobile.html?id=${paciente.id}&role=' + role">
                                 Historia <span class="material-symbols-outlined ml-1">arrow_forward</span>
                             </button>
                         </div>
