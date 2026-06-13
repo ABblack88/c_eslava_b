@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Centro Eslava - Resumen Financiero</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../js/supabase.js"></script>
+<!-- Design System Tokens & Configuration -->
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-container": "#eceeee",
+                    "primary-fixed-dim": "#66d5f1",
+                    "tertiary": "#8a4d00",
+                    "outline": "#6d797d",
+                    "on-tertiary-fixed": "#2e1600",
+                    "on-primary-container": "#f9fdff",
+                    "surface-container-low": "#f2f4f4",
+                    "error-container": "#ffdad6",
+                    "surface-bright": "#f8fafa",
+                    "secondary-fixed-dim": "#78d3eb",
+                    "on-primary-fixed": "#001f26",
+                    "text-muted": "#636366",
+                    "tertiary-fixed-dim": "#ffb877",
+                    "on-surface": "#191c1d",
+                    "inverse-on-surface": "#eff1f1",
+                    "outline-variant": "#bdc8cd",
+                    "error": "#ba1a1a",
+                    "tertiary-container": "#a96418",
+                    "on-surface-variant": "#3d494c",
+                    "on-tertiary": "#ffffff",
+                    "on-background": "#191c1d",
+                    "surface-container-lowest": "#ffffff",
+                    "on-secondary-fixed": "#001f26",
+                    "surface-dim": "#d8dada",
+                    "surface-white": "#FFFFFF",
+                    "surface": "#f8fafa",
+                    "inverse-surface": "#2e3131",
+                    "primary-container": "#008097",
+                    "warning": "#FF9500",
+                    "secondary-container": "#89e4fd",
+                    "on-primary-fixed-variant": "#004e5d",
+                    "background": "#f8fafa",
+                    "text-main": "#1C1C1E",
+                    "on-primary": "#ffffff",
+                    "on-error-container": "#93000a",
+                    "success": "#34C759",
+                    "on-secondary": "#ffffff",
+                    "inverse-primary": "#66d5f1",
+                    "primary-fixed": "#aeecff",
+                    "on-error": "#ffffff",
+                    "tertiary-fixed": "#ffdcc0",
+                    "secondary": "#00687a",
+                    "on-tertiary-fixed-variant": "#6b3b00",
+                    "surface-container-highest": "#e1e3e3",
+                    "secondary-fixed": "#adecff",
+                    "primary": "#006578",
+                    "on-secondary-fixed-variant": "#004e5c",
+                    "on-secondary-container": "#006779",
+                    "surface-container-high": "#e6e8e8",
+                    "surface-variant": "#e1e3e3",
+                    "surface-tint": "#00687b",
+                    "on-tertiary-container": "#fffbff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "margin-desktop": "80px",
+                    "margin-mobile": "20px",
+                    "section-gap": "120px",
+                    "base": "8px",
+                    "gutter": "24px"
+            },
+            "fontFamily": {
+                    "headline-md": ["Hanken Grotesk"],
+                    "display-lg-mobile": ["Hanken Grotesk"],
+                    "display-lg": ["Hanken Grotesk"],
+                    "body-lg": ["Hanken Grotesk"],
+                    "label-sm": ["Hanken Grotesk"],
+                    "body-md": ["Hanken Grotesk"]
+            },
+            "fontSize": {
+                    "headline-md": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "display-lg-mobile": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                    "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                    "label-sm": ["13px", {"lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "600"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Hanken Grotesk', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            vertical-align: middle;
+        }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+
+    <script src="../js/app.js"></script>
+    <script src="../js/rbac.js"></script>
+    <link rel="manifest" href="../manifest.json">
+</head>
+<body class="bg-surface text-on-surface min-h-screen">
+<!-- SideNavBar (Authority: JSON) -->
+<aside class="h-screen w-64 fixed left-0 top-0 bg-surface-white dark:bg-surface-container shadow-[0px_10px_30px_rgba(0,0,0,0.04)] dark:shadow-none flex flex-col py-base z-50">
+<div class="px-6 py-8">
+<h1 class="font-headline-md text-headline-md font-bold text-primary dark:text-primary-fixed-dim">Centro Eslava</h1>
+<p class="text-on-surface-variant font-label-sm text-label-sm mt-1">Gestión Clínica</p>
+</div>
+<nav class="flex-1 px-2 space-y-1">
+<a class="flex items-center px-4 py-3 font-body-md text-body-md text-on-surface-variant dark:text-outline-variant hover:bg-surface-container-low dark:hover:bg-surface-container-high transition-colors duration-200 group" href="calendario_dashboard_desktop.html">
+<span class="material-symbols-outlined mr-3">calendar_today</span>
+<span>Calendario</span>
+</a>
+<a class="flex items-center px-4 py-3 font-body-md text-body-md text-on-surface-variant dark:text-outline-variant hover:bg-surface-container-low dark:hover:bg-surface-container-high transition-colors duration-200 group" href="pacientes_historia_clinica_desktop.html">
+<span class="material-symbols-outlined mr-3">groups</span>
+<span>Pacientes</span>
+</a>
+<a class="flex items-center px-4 py-3 font-body-md text-body-md text-on-surface-variant dark:text-outline-variant hover:bg-surface-container-low dark:hover:bg-surface-container-high transition-colors duration-200 group" href="servicios_ajustes_desktop.html">
+<span class="material-symbols-outlined mr-3">medical_services</span>
+<span>Tratamientos</span>
+</a>
+<a id="nav-link-finanzas" class="flex items-center px-4 py-3 font-body-md text-body-md text-on-surface-variant dark:text-outline-variant hover:bg-surface-container-low dark:hover:bg-surface-container-high transition-colors duration-200 group" href="pagos_facturacion_desktop.html">
+<span class="material-symbols-outlined mr-3">payments</span>
+<span>Finanzas</span>
+</a>
+<!-- Active Tab: Pedidos / POS -->
+<a id="nav-link-pedidos" class="flex items-center px-4 py-3 font-body-md text-body-md text-primary dark:text-primary-fixed-dim border-r-4 border-primary dark:border-primary-fixed-dim font-bold bg-surface-container-low dark:bg-surface-container-high" href="pedidos_desktop.html">
+<span class="material-symbols-outlined mr-3">point_of_sale</span>
+<span>Punto de Venta</span>
+</a>
+<a id="nav-link-ajustes" class="flex items-center px-4 py-3 font-body-md text-body-md text-on-surface-variant dark:text-outline-variant hover:bg-surface-container-low dark:hover:bg-surface-container-high transition-colors duration-200 group" href="servicios_ajustes_desktop.html">
+<span class="material-symbols-outlined mr-3">settings</span>
+<span>Ajustes</span>
+</a>
+</nav>
+<div class="px-4 pb-6">
+<button onclick="window.location.href='calendario_dashboard_desktop.html?action=new_appointment'" class="w-full py-4 bg-primary text-on-primary rounded-xl font-bold flex items-center justify-center gap-2 hover:opacity-90 active:scale-95 transition-all">
+<span class="material-symbols-outlined">add</span>
+                Nueva Cita
+            </button>
+</div>
+</aside>
+<!-- TopNavBar (Authority: JSON) -->
+<header class="flex justify-between items-center h-16 ml-64 px-margin-desktop w-[calc(100%-16rem)] bg-surface-bright dark:bg-surface-dim shadow-sm dark:shadow-none sticky top-0 z-40">
+<div class="flex items-center flex-1 max-w-xl">
+<div class="relative w-full focus-within:ring-2 focus-within:ring-primary rounded-lg transition-all">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+<input class="w-full bg-surface-container-low dark:bg-surface-container border-none rounded-lg py-2 pl-10 pr-4 focus:ring-0 text-body-md font-body-md" placeholder="Buscar pacientes, facturas o seguros..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-6 ml-auto">
+<button class="text-on-surface-variant hover:text-primary transition-all relative">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-0 right-0 w-2 h-2 bg-error rounded-full border-2 border-surface-bright"></span>
+</button>
+<button class="text-on-surface-variant hover:text-primary transition-all">
+<span class="material-symbols-outlined">help</span>
+</button>
+
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="ml-64 p-margin-desktop min-h-[calc(100vh-4rem)]">
+<!-- Header Section -->
+<section class="mb-10 flex justify-between items-end">
+<div>
+<h2 class="font-display-lg text-display-lg text-on-surface mb-2">Punto de Venta / Pedidos</h2>
+<p class="text-body-lg font-body-lg text-on-surface-variant">Gestión rápida de ventas de mostrador y pedidos de clínica.</p>
+</div>
+<div class="flex gap-4">
+<button class="bg-surface-white border border-outline-variant px-6 py-2 rounded-full font-bold flex items-center gap-2 hover:bg-surface-container transition-all">
+<span class="material-symbols-outlined">inventory</span> Inventario
+</button>
+</div>
+</section>
+
+<!-- POS Grid -->
+<div class="grid grid-cols-12 gap-gutter h-[calc(100vh-14rem)]">
+    <!-- Catálogo de Productos -->
+    <div class="col-span-8 bg-surface-white rounded-xl shadow-[0px_10px_30px_rgba(0,0,0,0.04)] flex flex-col overflow-hidden">
+        <div class="p-6 border-b border-surface-container">
+            <div class="relative w-full">
+                <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+                <input id="search-product" onkeyup="filtrarProductos()" class="w-full bg-surface-container-low border-none rounded-lg py-3 pl-10 pr-4 text-body-md focus:ring-2 focus:ring-primary" placeholder="Buscar productos, medicamentos o servicios en el catálogo..." type="text"/>
+            </div>
+        </div>
+        <div class="p-6 flex-1 overflow-y-auto">
+            <div id="productos-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div class="text-center col-span-full py-10"><span class="material-symbols-outlined animate-spin text-4xl text-primary">sync</span></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Carrito de Compras -->
+    <div class="col-span-4 bg-surface-white rounded-xl shadow-[0px_10px_30px_rgba(0,0,0,0.04)] flex flex-col overflow-hidden">
+        <div class="p-6 border-b border-surface-container">
+            <h3 class="font-headline-md text-on-surface mb-4">Detalle del Pedido</h3>
+            <div class="relative">
+                <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">person</span>
+                <select id="pos-paciente" class="w-full bg-surface-container-low border-none rounded-lg py-3 pl-10 pr-4 text-body-md appearance-none focus:ring-2 focus:ring-primary">
+                    <option value="">Consumidor Final (Venta Rápida)</option>
+                </select>
+            </div>
+        </div>
+        
+        <div class="flex-1 overflow-y-auto p-4 space-y-3 bg-surface" id="cart-items">
+            <!-- Items de carrito se renderizan aquí -->
+            <div class="text-center text-outline mt-10">
+                <span class="material-symbols-outlined text-4xl mb-2 opacity-50">shopping_basket</span>
+                <p class="text-sm">El carrito está vacío</p>
+            </div>
+        </div>
+
+        <div class="p-6 border-t border-surface-container bg-surface-white">
+            <div class="flex justify-between items-center mb-2">
+                <span class="text-on-surface-variant text-sm">Subtotal</span>
+                <span id="pos-subtotal" class="font-bold text-on-surface">S/ 0.00</span>
+            </div>
+            <div class="flex justify-between items-center mb-6">
+                <span class="text-on-surface-variant font-bold text-lg">Total</span>
+                <span id="pos-total" class="font-display-lg text-primary">S/ 0.00</span>
+            </div>
+            <button onclick="procesarVenta()" class="w-full bg-primary text-on-primary py-4 rounded-xl font-bold flex items-center justify-center gap-2 hover:opacity-90 transition-all shadow-md active:scale-95">
+                <span class="material-symbols-outlined">payments</span> Cobrar Pedido
+            </button>
+        </div>
+    </div>
+</div>
+</main>
+<script>
+        let catalogoProductos = [];
+        let carrito = [];
+
+        async function cargarCatalogo() {
+            try {
+                const { data: productos, error } = await supabaseClient.from('productos').select('*').order('nombre');
+                if (error) throw error;
+                catalogoProductos = productos || [];
+                renderProductos(catalogoProductos);
+                
+                // Cargar Pacientes
+                const { data: pacientes } = await supabaseClient.from('pacientes').select('id, nombre').order('nombre');
+                const selectPac = document.getElementById('pos-paciente');
+                if (pacientes) {
+                    pacientes.forEach(p => {
+                        selectPac.innerHTML += `<option value="${p.id}">${p.nombre}</option>`;
+                    });
+                }
+            } catch (error) {
+                console.error("Error cargando catálogo", error);
+            }
+        }
+
+        function renderProductos(productos) {
+            const grid = document.getElementById('productos-grid');
+            if (productos.length === 0) {
+                grid.innerHTML = '<p class="text-outline col-span-3 text-center py-10">No se encontraron productos o no coinciden con la búsqueda.</p>';
+                return;
+            }
+
+            grid.innerHTML = productos.map(p => `
+                <div class="bg-surface-container-lowest border border-surface-container p-4 rounded-xl flex flex-col hover:border-primary transition-colors cursor-pointer group" onclick="agregarAlCarrito('${p.id}')">
+                    <div class="h-24 bg-surface-container-low rounded-lg mb-3 flex items-center justify-center">
+                        <span class="material-symbols-outlined text-4xl text-outline-variant group-hover:text-primary transition-colors">medication</span>
+                    </div>
+                    <h4 class="font-bold text-on-surface text-sm line-clamp-2 flex-1">${p.nombre}</h4>
+                    <div class="flex justify-between items-center mt-2">
+                        <span class="text-primary font-bold">S/ ${parseFloat(p.precio).toFixed(2)}</span>
+                        <span class="text-xs text-outline bg-surface-container px-2 py-1 rounded-md border border-surface-container-high">Stock: ${p.stock}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function filtrarProductos() {
+            const term = document.getElementById('search-product').value.toLowerCase();
+            const filtrados = catalogoProductos.filter(p => p.nombre.toLowerCase().includes(term));
+            renderProductos(filtrados);
+        }
+
+        function agregarAlCarrito(id) {
+            const prod = catalogoProductos.find(p => p.id === id);
+            if (!prod) return;
+
+            const existing = carrito.find(item => item.id === id);
+            if (existing) {
+                if (existing.cantidad < prod.stock) {
+                    existing.cantidad++;
+                } else {
+                    showToast("No hay más stock disponible", "error");
+                }
+            } else {
+                if (prod.stock > 0) {
+                    carrito.push({ ...prod, cantidad: 1 });
+                } else {
+                    showToast("Producto sin stock", "error");
+                    return;
+                }
+            }
+            renderCarrito();
+        }
+
+        function cambiarCantidad(id, delta) {
+            const item = carrito.find(i => i.id === id);
+            if (!item) return;
+
+            item.cantidad += delta;
+            if (item.cantidad <= 0) {
+                carrito = carrito.filter(i => i.id !== id);
+            } else if (item.cantidad > item.stock) {
+                item.cantidad = item.stock;
+                showToast("Stock máximo alcanzado", "error");
+            }
+            renderCarrito();
+        }
+
+        function renderCarrito() {
+            const container = document.getElementById('cart-items');
+            if (carrito.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center text-outline mt-10">
+                        <span class="material-symbols-outlined text-4xl mb-2 opacity-50">shopping_basket</span>
+                        <p class="text-sm">El carrito está vacío</p>
+                    </div>`;
+                actualizarTotales();
+                return;
+            }
+
+            container.innerHTML = carrito.map(item => `
+                <div class="flex items-center justify-between p-3 bg-surface-container-lowest rounded-xl border border-surface-container">
+                    <div class="flex-1">
+                        <p class="text-sm font-bold text-on-surface line-clamp-1">${item.nombre}</p>
+                        <p class="text-xs text-primary font-bold">S/ ${(item.precio * item.cantidad).toFixed(2)}</p>
+                    </div>
+                    <div class="flex items-center gap-3 bg-surface-container px-2 py-1 rounded-lg">
+                        <button onclick="cambiarCantidad('${item.id}', -1)" class="w-6 h-6 flex items-center justify-center rounded-md hover:bg-surface-white text-on-surface-variant font-bold">-</button>
+                        <span class="text-sm font-bold w-4 text-center">${item.cantidad}</span>
+                        <button onclick="cambiarCantidad('${item.id}', 1)" class="w-6 h-6 flex items-center justify-center rounded-md hover:bg-surface-white text-on-surface-variant font-bold">+</button>
+                    </div>
+                </div>
+            `).join('');
+
+            actualizarTotales();
+        }
+
+        function actualizarTotales() {
+            const subtotal = carrito.reduce((sum, item) => sum + (item.precio * item.cantidad), 0);
+            document.getElementById('pos-subtotal').textContent = `S/ ${subtotal.toFixed(2)}`;
+            document.getElementById('pos-total').textContent = `S/ ${subtotal.toFixed(2)}`;
+        }
+
+        async function procesarVenta() {
+            if (carrito.length === 0) {
+                showToast("El carrito está vacío", "error");
+                return;
+            }
+
+            const pacienteId = document.getElementById('pos-paciente').value;
+            const total = carrito.reduce((sum, item) => sum + (item.precio * item.cantidad), 0);
+            
+            const btn = document.querySelector('button[onclick="procesarVenta()"]');
+            btn.disabled = true;
+            btn.innerHTML = '<span class="material-symbols-outlined animate-spin">sync</span> Procesando...';
+
+            try {
+                // Registrar pago
+                const descripcion = "Venta Mostrador: " + carrito.map(c => `${c.nombre} (x${c.cantidad})`).join(", ");
+                const { error: pagoErr } = await supabaseClient.from('pagos').insert([{
+                    paciente_id: pacienteId || null,
+                    monto: total,
+                    estado: 'Completado',
+                    metodo: 'Efectivo',
+                    fecha: new Date().toISOString(),
+                    descripcion: descripcion
+                }]);
+                
+                if (pagoErr) throw pagoErr;
+
+                // Descontar inventario
+                for (const item of carrito) {
+                    await supabaseClient.from('productos').update({
+                        stock: item.stock - item.cantidad
+                    }).eq('id', item.id);
+                }
+
+                showToast("¡Venta completada con éxito!", "success");
+                carrito = [];
+                renderCarrito();
+                await cargarCatalogo(); // Recargar stock real
+            } catch (error) {
+                console.error(error);
+                showToast("Error procesando la venta", "error");
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<span class="material-symbols-outlined">payments</span> Cobrar Pedido';
+            }
+        }
+
+        function showToast(message, type = "success") {
+            const toast = document.createElement("div");
+            toast.className = `fixed bottom-6 right-6 px-6 py-3 rounded-xl shadow-lg font-bold text-white transition-all transform translate-y-10 opacity-0 z-[100] ${
+                type === "success" ? "bg-success" : type === "error" ? "bg-error" : "bg-primary"
+            }`;
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.classList.remove("translate-y-10", "opacity-0"), 100);
+            setTimeout(() => {
+                toast.classList.add("translate-y-10", "opacity-0");
+                setTimeout(() => toast.remove(), 500);
+            }, 3000);
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            cargarCatalogo();
+        });
+</script> }
+        });
+    </script>
+
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('../sw.js').then(registration => {
+                    console.log('SW registered: ', registration);
+                }).catch(registrationError => {
+                    console.log('SW registration failed: ', registrationError);
+                });
+            });
+        }
+    </script>
+</body></html>
