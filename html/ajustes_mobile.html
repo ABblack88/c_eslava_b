@@ -342,6 +342,29 @@
 </div>
 </section>
 </div>
+
+<!-- Zona de Cuenta: Cerrar Sesión -->
+<div class="bg-surface-white rounded-xl p-6 shadow-[0px_10px_30px_rgba(0,0,0,0.04)] flex flex-col gap-4">
+    <div class="flex items-center gap-3 border-b border-surface-variant pb-4">
+        <span class="material-symbols-outlined text-on-surface-variant">manage_accounts</span>
+        <h2 class="font-headline-md text-headline-md text-on-background">Cuenta</h2>
+    </div>
+    <div class="flex items-center gap-4 py-2">
+        <div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+            <span class="material-symbols-outlined text-primary">account_circle</span>
+        </div>
+        <div>
+            <p class="font-bold text-on-surface">Dr. Eslava</p>
+            <p class="text-sm text-on-surface-variant">Director Clínico &bull; Admin</p>
+        </div>
+    </div>
+    <button onclick="cerrarSesion()" class="w-full flex items-center justify-center gap-3 px-4 py-4 rounded-xl bg-error/10 hover:bg-error/20 text-error font-bold transition-all active:scale-95 border border-error/20 group">
+        <span class="material-symbols-outlined group-hover:scale-110 transition-transform">logout</span>
+        <span class="font-body-md text-body-md">Cerrar Sesión</span>
+    </button>
+</div>
+
+</div>
 </main>
 
 <!-- Modal for New Service (Mobile) -->
@@ -466,6 +489,15 @@
 </a>
 </nav>
     <script>
+        // --- CERRAR SESIÓN ---
+        async function cerrarSesion() {
+            if (!confirm('¿Deseas cerrar sesión?')) return;
+            try { await supabaseClient.auth.signOut(); } catch(e) {}
+            localStorage.clear();
+            sessionStorage.clear();
+            window.location.replace('../index.html');
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
             cargarServicios();
             cargarProductos();

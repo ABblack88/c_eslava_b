@@ -176,9 +176,10 @@
 </div>
 <p class="text-[11px] text-on-surface-variant mt-2 leading-tight">Optimización alta. Considerar apertura de agenda Sábados.</p>
 </div>
-<button onclick="window.location.href='calendario_dashboard_desktop.html?action=new_appointment'" class="w-full py-3 px-4 bg-primary text-on-primary rounded-xl font-bold flex items-center justify-center gap-2 hover:opacity-90 transition-opacity active:scale-95">
-<span class="material-symbols-outlined">add</span>
-<span>Nueva Cita</span>
+<!-- Logout button en sidebar desktop -->
+<button onclick="cerrarSesion()" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-error hover:bg-error/10 transition-all font-bold group border border-error/20">
+    <span class="material-symbols-outlined group-hover:scale-110 transition-transform">logout</span>
+    <span class="font-body-md text-body-md">Cerrar Sesión</span>
 </button>
 </div>
 </aside>
@@ -434,6 +435,15 @@
 
 <!-- Contextual Micro-interactions -->
 <script>
+        // --- CERRAR SESIÓN ---
+        async function cerrarSesion() {
+            if (!confirm('¿Deseas cerrar sesión?')) return;
+            try { await supabaseClient.auth.signOut(); } catch(e) {}
+            localStorage.clear();
+            sessionStorage.clear();
+            window.location.replace('../index.html');
+        }
+
         // Simple toggle simulation for the notification switch
         const toggle = document.querySelector('.relative.inline-flex');
         const knob = toggle.querySelector('span');

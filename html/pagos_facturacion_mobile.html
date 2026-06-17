@@ -137,13 +137,8 @@
                 data-icon="menu">menu</span>
             <span class="font-headline-md text-headline-md font-bold text-primary">Centro Eslava</span>
         </div>
-        <div class="flex items-center gap-2">
-            <!-- Logout button en TopBar Móvil -->
-            <button onclick="cerrarSesion()" title="Cerrar Sesión"
-                class="flex items-center gap-1.5 bg-error/10 hover:bg-error/20 text-error px-3 py-2 rounded-full font-bold text-xs transition-all active:scale-95">
-                <span class="material-symbols-outlined text-[18px]">logout</span>
-                <span class="text-[11px] font-bold">Salir</span>
-            </button>
+        <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+            <span class="material-symbols-outlined text-primary text-[20px]">account_circle</span>
         </div>
     </header>
     <!-- NavigationDrawer (Desktop Only) -->
@@ -212,13 +207,6 @@
                 </a>
             </li>
         </ul>
-        <!-- Logout en Sidebar Móvil -->
-        <div class="pt-4 mt-2 border-t border-surface-container-high">
-            <button onclick="cerrarSesion()" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-error hover:bg-error/10 transition-all font-bold group">
-                <span class="material-symbols-outlined group-hover:scale-110 transition-transform">logout</span>
-                <span class="font-body-md text-body-md">Cerrar Sesión</span>
-            </button>
-        </div>
     </nav>
     <!-- Main Content Canvas -->
     <main class="flex-grow md:ml-72 p-margin-mobile md:p-margin-desktop pb-24 md:pb-margin-desktop overflow-y-auto">
