@@ -158,7 +158,7 @@
 <nav class="hidden md:flex gap-8 items-center">
 <a class="text-primary dark:text-primary-fixed font-semibold hover:bg-surface-container-low dark:hover:bg-surface-container-high transition-colors px-4 py-2 rounded-lg active:scale-95 transition-transform duration-200" href="calendario_dashboard_mobile.html">Agenda</a>
 <a class="text-on-surface-variant dark:text-outline hover:bg-surface-container-low dark:hover:bg-surface-container-high transition-colors px-4 py-2 rounded-lg active:scale-95 transition-transform duration-200" href="pacientes_historia_clinica_mobile.html">Pacientes</a>
-<a id="nav-link-servicios" class="text-on-surface-variant dark:text-outline hover:bg-surface-container-low dark:hover:bg-surface-container-high transition-colors px-4 py-2 rounded-lg active:scale-95 transition-transform duration-200" href="servicios_ajustes_mobile.html">Servicios</a>
+<a id="nav-link-servicios" class="text-on-surface-variant dark:text-outline hover:bg-surface-container-low dark:hover:bg-surface-container-high transition-colors px-4 py-2 rounded-lg active:scale-95 transition-transform duration-200" href="tratamientos_mobile.html">Servicios</a>
 </nav>
 <div class="flex items-center gap-4">
 <button onclick="openAppointmentModal()" class="bg-primary text-on-primary font-label-sm text-label-sm px-4 py-2 rounded-full hover:bg-secondary transition-colors shadow-sm hidden md:flex items-center gap-2">
@@ -193,17 +193,25 @@
 <span class="material-symbols-outlined" data-icon="groups">groups</span>
                 Pacientes
             </a>
-<a id="drawer-link-servicios" class="flex items-center gap-3 px-4 py-3 text-on-surface-variant dark:text-outline hover:bg-surface-container-low transition-all active:scale-[0.98] transition-transform rounded-xl font-body-md text-body-md" href="servicios_ajustes_mobile.html">
+<a id="drawer-link-servicios" class="flex items-center gap-3 px-4 py-3 text-on-surface-variant dark:text-outline hover:bg-surface-container-low transition-all active:scale-[0.98] transition-transform rounded-xl font-body-md text-body-md" href="tratamientos_mobile.html">
 <span class="material-symbols-outlined" data-icon="medical_services">medical_services</span>
                 Servicios
             </a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant dark:text-outline hover:bg-surface-container-low transition-all active:scale-[0.98] transition-transform rounded-xl font-body-md text-body-md" href="productos_mobile.html">
+<span class="material-symbols-outlined mb-1" data-icon="inventory_2">inventory_2</span>
+                Productos
+            </a>
+<a class="flex flex-col items-center justify-center text-outline dark:text-outline-variant min-w-0 flex-1 py-1 px-1 rounded-lg hover:bg-[#f2f4f4] active:scale-90 transition-all duration-150" href="cobrar_mobile.html">
+<span class="material-symbols-outlined mb-1 text-[22px]">point_of_sale</span>
+<span class="text-[10px] font-semibold leading-tight truncate">Caja</span>
+</a>
 <a id="drawer-link-pagos" class="flex items-center gap-3 px-4 py-3 text-on-surface-variant dark:text-outline hover:bg-surface-container-low transition-all active:scale-[0.98] transition-transform rounded-xl font-body-md text-body-md" href="pagos_facturacion_mobile.html">
 <span class="material-symbols-outlined" data-icon="payments">payments</span>
                 Pagos
             </a>
 </nav>
 <div class="mt-auto pt-6 border-t border-surface-container">
-<a id="drawer-link-ajustes" class="flex items-center gap-3 px-4 py-3 text-on-surface-variant dark:text-outline hover:bg-surface-container-low transition-all active:scale-[0.98] transition-transform rounded-xl font-body-md text-body-md" href="servicios_ajustes_mobile.html">
+<a id="drawer-link-ajustes" class="flex items-center gap-3 px-4 py-3 text-on-surface-variant dark:text-outline hover:bg-surface-container-low transition-all active:scale-[0.98] transition-transform rounded-xl font-body-md text-body-md" href="ajustes_mobile.html">
 <span class="material-symbols-outlined" data-icon="settings">settings</span>
                 Ajustes
             </a>
@@ -224,34 +232,38 @@
 </div>
 </div>
 <!-- Quick Stats / Bento Top -->
-<div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+<div class="grid grid-cols-2 md:grid-cols-3 gap-4 mb-8">
 <div class="bg-surface-white rounded-xl p-4 shadow-[0px_10px_30px_rgba(0,0,0,0.04)] border border-surface-container/50">
 <div class="flex items-center gap-2 text-outline mb-2">
-<span class="material-symbols-outlined text-[20px]">people</span>
-<span class="font-label-sm text-label-sm">Total Pacientes</span>
+<span class="material-symbols-outlined text-[20px] text-primary">event</span>
+<span class="font-label-sm text-label-sm">Hoy</span>
 </div>
-<p id="stat-total-pacientes" class="font-headline-md text-headline-md text-primary">...</p>
-</div>
-<div class="bg-surface-white rounded-xl p-4 shadow-[0px_10px_30px_rgba(0,0,0,0.04)] border border-surface-container/50">
-<div class="flex items-center gap-2 text-outline mb-2">
-<span class="material-symbols-outlined text-[20px]">healing</span>
-<span class="font-label-sm text-label-sm">Tratamientos Hoy</span>
-</div>
-<p id="stat-tratamientos-hoy" class="font-headline-md text-headline-md text-primary">...</p>
+<p class="font-label-sm text-xs text-on-surface-variant mb-1">Citas para Hoy</p>
+<p id="stat-citas-hoy" class="font-headline-md text-headline-md text-primary">...</p>
 </div>
 <div class="bg-surface-white rounded-xl p-4 shadow-[0px_10px_30px_rgba(0,0,0,0.04)] border border-surface-container/50">
 <div class="flex items-center gap-2 text-outline mb-2">
-<span class="material-symbols-outlined text-[20px]">bolt</span>
-<span class="font-label-sm text-label-sm">Pendientes Hoy</span>
+<span class="material-symbols-outlined text-[20px] text-warning">pending_actions</span>
+<span class="font-label-sm text-label-sm">Atención</span>
 </div>
-<p id="stat-pendientes-hoy" class="font-headline-md text-headline-md text-warning">...</p>
+<p class="font-label-sm text-xs text-on-surface-variant mb-1">Por Confirmar</p>
+<p id="stat-citas-confirmar" class="font-headline-md text-headline-md text-warning">...</p>
 </div>
-<div class="bg-surface-white rounded-xl p-4 shadow-[0px_10px_30px_rgba(0,0,0,0.04)] border border-surface-container/50">
+<div class="bg-surface-white rounded-xl p-4 shadow-[0px_10px_30px_rgba(0,0,0,0.04)] border border-surface-container/50 col-span-2 md:col-span-1">
 <div class="flex items-center gap-2 text-outline mb-2">
-<span class="material-symbols-outlined text-[20px]">fitness_center</span>
-<span class="font-label-sm text-label-sm">Completados Hoy</span>
+<span class="material-symbols-outlined text-[20px] text-secondary">event_upcoming</span>
+<span class="font-label-sm text-label-sm">Mañana</span>
 </div>
-<p id="stat-completados-hoy" class="font-headline-md text-headline-md text-success">...</p>
+<p class="font-label-sm text-xs text-on-surface-variant mb-1">Citas para Mañana</p>
+<p id="stat-citas-manana" class="font-headline-md text-headline-md text-secondary">...</p>
+</div>
+</div>
+<!-- Tareas Pendientes Mobile -->
+<div class="bg-surface-white rounded-2xl p-5 shadow-[0px_10px_30px_rgba(0,0,0,0.04)] border border-surface-container mb-8">
+<h3 class="font-headline-md text-lg text-on-surface mb-1">Tareas Pendientes</h3>
+<p class="text-xs text-on-surface-variant mb-4">Pacientes por agendar/confirmar.</p>
+<div class="space-y-3" id="tareas-pendientes-list">
+    <p class="text-outline text-center py-4 text-sm">Cargando tareas...</p>
 </div>
 </div>
 <!-- Calendar Board -->
@@ -279,19 +291,11 @@
 <div class="w-2 h-2 rounded-full bg-warning -ml-1"></div>
 </div>
 <!-- Time Column -->
-<div class="w-20 flex-shrink-0 border-r border-surface-container flex flex-col pt-3 bg-surface-white/80 backdrop-blur z-10 sticky left-0">
-<div class="h-[60px] text-right pr-4 font-label-sm text-label-sm text-outline">08:00</div>
-<div class="h-[60px] text-right pr-4 font-label-sm text-label-sm text-outline">09:00</div>
-<div class="h-[60px] text-right pr-4 font-label-sm text-label-sm text-outline">10:00</div>
-<div class="h-[60px] text-right pr-4 font-label-sm text-label-sm text-outline">11:00</div>
-<div class="h-[60px] text-right pr-4 font-label-sm text-label-sm text-outline">12:00</div>
-<div class="h-[60px] text-right pr-4 font-label-sm text-label-sm text-outline">13:00</div>
-<div class="h-[60px] text-right pr-4 font-label-sm text-label-sm text-outline">14:00</div>
-<div class="h-[60px] text-right pr-4 font-label-sm text-label-sm text-outline">15:00</div>
-<div class="h-[60px] text-right pr-4 font-label-sm text-label-sm text-outline">16:00</div>
+<div id="calendar-time-column" class="w-20 flex-shrink-0 border-r border-surface-container flex flex-col pt-3 bg-surface-white/80 backdrop-blur z-10 sticky left-0">
+<!-- Dynamic content injected via JS -->
 </div>
 <!-- Appointments Grid -->
-<div class="flex-1 grid grid-cols-2 md:grid-cols-3 divide-x divide-surface-container relative" id="calendar-grid-content">
+<div class="flex-1 grid grid-cols-2 md:grid-cols-3 divide-x divide-surface-container relative" id="calendar-grid-content" onclick="handleGridClick(event)">
     <!-- Dynamic content will be injected here -->
 </div>
 </div>
@@ -311,9 +315,17 @@
 <span class="material-symbols-outlined" data-icon="person_search">person_search</span>
 <span class="font-label-sm text-label-sm mt-1">Pacientes</span>
 </a>
-<a id="bottom-link-servicios" class="flex flex-col items-center justify-center text-outline dark:text-outline-variant hover:bg-surface-container-high/50 active:scale-90 transition-all duration-150 p-2 rounded-lg" href="servicios_ajustes_mobile.html">
+<a id="bottom-link-servicios" class="flex flex-col items-center justify-center text-outline dark:text-outline-variant hover:bg-surface-container-high/50 active:scale-90 transition-all duration-150 p-2 rounded-lg" href="tratamientos_mobile.html">
 <span class="material-symbols-outlined" data-icon="healing">healing</span>
 <span class="font-label-sm text-label-sm mt-1">Tratamientos</span>
+</a>
+<a class="flex flex-col items-center justify-center text-outline dark:text-outline-variant hover:bg-surface-container-high/50 active:scale-90 transition-all duration-150 p-2 rounded-lg" href="productos_mobile.html">
+<span class="material-symbols-outlined" data-icon="inventory_2">inventory_2</span>
+<span class="font-label-sm text-label-sm mt-1">Productos</span>
+</a>
+<a class="flex flex-col items-center justify-center text-outline dark:text-outline-variant min-w-0 flex-1 py-1 px-1 rounded-lg hover:bg-[#f2f4f4] active:scale-90 transition-all duration-150" href="cobrar_mobile.html">
+<span class="material-symbols-outlined mb-1 text-[22px]">point_of_sale</span>
+<span class="text-[10px] font-semibold leading-tight truncate">Caja</span>
 </a>
 <a id="bottom-link-finanzas" class="flex flex-col items-center justify-center text-outline dark:text-outline-variant hover:bg-surface-container-high/50 active:scale-90 transition-all duration-150 p-2 rounded-lg" href="pagos_facturacion_mobile.html">
 <span class="material-symbols-outlined" data-icon="account_balance_wallet">account_balance_wallet</span>
@@ -337,9 +349,15 @@
                 <datalist id="pacientes-list-mobile"></datalist>
                 <div id="patient-status" class="mt-2 text-xs hidden"></div>
             </div>
-            <div>
-                <label class="block text-xs font-semibold text-on-surface-variant mb-1">Correo Electrónico</label>
-                <input type="email" id="appt-patient-email" class="w-full bg-surface-container-low border-none rounded-xl py-2.5 px-4 text-body-md focus:ring-2 focus:ring-primary" placeholder="ej. juan@gmail.com">
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="block text-xs font-semibold text-on-surface-variant mb-1">Correo Electrónico</label>
+                    <input type="email" id="appt-patient-email" class="w-full bg-surface-container-low border-none rounded-xl py-2.5 px-3 text-body-md focus:ring-2 focus:ring-primary" placeholder="ej. juan@gmail.com">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-on-surface-variant mb-1">Número de Teléfono</label>
+                    <input type="tel" id="appt-patient-phone" class="w-full bg-surface-container-low border-none rounded-xl py-2.5 px-3 text-body-md focus:ring-2 focus:ring-primary" placeholder="ej. 987654321">
+                </div>
             </div>
             <div class="grid grid-cols-2 gap-3">
                 <div>
@@ -352,10 +370,11 @@
                     </select>
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-on-surface-variant mb-1">Consultorio</label>
-                    <select id="appt-room" required class="w-full bg-surface-container-low border-none rounded-xl py-2.5 px-3 text-body-md focus:ring-2 focus:ring-primary">
-                        <option value="Consultorio 1">Consultorio 1</option>
-                        <option value="Consultorio 2">Consultorio 2</option>
+                    <label class="block text-xs font-semibold text-on-surface-variant mb-1">Tratante</label>
+                    <select id="appt-doctor" required class="w-full bg-surface-container-low border-none rounded-xl py-2.5 px-3 text-body-md focus:ring-2 focus:ring-primary">
+                        <option value="Dr. Eslava">Dr. Eslava</option>
+                        <option value="Dra. Principal">Dra. Principal</option>
+                        <option value="Lic. Fisioterapia">Lic. Fisioterapia</option>
                     </select>
                 </div>
             </div>
@@ -371,14 +390,7 @@
                 <div>
                     <label class="block text-xs font-semibold text-on-surface-variant mb-1">Hora</label>
                     <select id="appt-time" required class="w-full bg-surface-container-low border-none rounded-xl py-2.5 px-3 text-body-md focus:ring-2 focus:ring-primary">
-                        <option value="08:00 AM">08:00 AM</option>
-                        <option value="09:00 AM">09:00 AM</option>
-                        <option value="10:00 AM">10:00 AM</option>
-                        <option value="11:00 AM">11:00 AM</option>
-                        <option value="12:00 PM">12:00 PM</option>
-                        <option value="01:00 PM">01:00 PM</option>
-                        <option value="02:00 PM">02:00 PM</option>
-                        <option value="03:00 PM">03:00 PM</option>
+                        <!-- Dynamic via JS -->
                     </select>
                 </div>
             </div>
@@ -501,16 +513,79 @@
 
     // Enforce role-based element locking/hiding inside the page
 
+    function populateTimeOptions() {
+        const selectTime = document.getElementById('appt-time');
+        if (!selectTime) return;
+        
+        const opening = localStorage.getItem('horaApertura') || '08:00';
+        const closing = localStorage.getItem('horaCierre') || '20:00';
+        
+        const openHour = parseInt(opening.split(':')[0]);
+        const closeHour = parseInt(closing.split(':')[0]);
+        
+        selectTime.innerHTML = '';
+        for (let i = openHour; i <= closeHour; i++) {
+            let h12 = i % 12 || 12;
+            let ampm = i >= 12 ? 'PM' : 'AM';
+            let formattedH = h12.toString().padStart(2, '0');
+            selectTime.innerHTML += `<option value="${formattedH}:00 ${ampm}">${formattedH}:00 ${ampm}</option>`;
+            if (i !== closeHour) {
+                selectTime.innerHTML += `<option value="${formattedH}:30 ${ampm}">${formattedH}:30 ${ampm}</option>`;
+            }
+        }
+
+        const timeColumn = document.getElementById('calendar-time-column');
+        if (timeColumn) {
+            timeColumn.innerHTML = '';
+            for (let i = openHour; i <= closeHour; i++) {
+                timeColumn.innerHTML += `<div class="h-[60px] text-right pr-4 font-label-sm text-label-sm text-outline">${i.toString().padStart(2, '0')}:00</div>`;
+            }
+        }
+    }
+
     // Modal Control Functions
-    function openAppointmentModal() {
+    function openAppointmentModal(fecha = null, hora = null, room = null) {
         document.getElementById("new-appointment-modal").classList.remove("hidden");
+        if (fecha) document.getElementById('appt-date').value = fecha;
+        if (hora) document.getElementById('appt-time').value = hora;
+        if (room) document.getElementById('appt-room').value = room;
     }
 
     // Direct click in slot scheduling helper
     window.openSlotSchedule = function(time, room) {
-        document.getElementById("appt-time").value = time;
-        document.getElementById("appt-room").value = room;
-        openAppointmentModal();
+        openAppointmentModal(null, time, room);
+    }
+    
+    window.handleGridClick = function(event) {
+        const column = event.target.closest('[id^="col-sala-"]');
+        if (!column) return;
+        
+        // Only trigger if clicking directly on the column background, not on an existing event
+        if (event.target !== column && !event.target.classList.contains('border-dashed')) return;
+
+        let room = 'Consultorio 1';
+        if (column.id === 'col-sala-2') room = 'Consultorio 2';
+        if (column.id === 'col-sala-3') room = 'Consultorio 3';
+
+        const rect = column.getBoundingClientRect();
+        const clickY = event.clientY - rect.top;
+        
+        const opening = localStorage.getItem('horaApertura') || '08:00';
+        const openHour = parseInt(opening.split(':')[0]);
+        
+        // 60px per hour
+        const totalMinutes = Math.floor(clickY); // 1px = 1 min
+        const slotMinutes = Math.floor(totalMinutes / 30) * 30; // Snap to 30 min slots
+        
+        let hours = openHour + Math.floor(slotMinutes / 60);
+        let mins = slotMinutes % 60;
+        
+        let ampm = hours >= 12 ? 'PM' : 'AM';
+        let h12 = hours % 12 || 12;
+        let horaSelect = `${String(h12).padStart(2, '0')}:${String(mins).padStart(2, '0')} ${ampm}`;
+        
+        let fechaStr = window.currentDate ? window.currentDate.toISOString().split('T')[0] : new Date().toISOString().split('T')[0];
+        openAppointmentModal(fechaStr, horaSelect, room);
     }
 
     function closeAppointmentModal() {
@@ -535,13 +610,19 @@
             document.getElementById('opt-paciente-nombre').textContent = cita.pacientes?.nombre || 'Desconocido';
             document.getElementById('opt-tratamiento').textContent = cita.tratamiento || 'Procedimiento general';
             document.getElementById('opt-fecha-hora').textContent = `Fecha: ${cita.fecha} • ${cita.hora}`;
-            document.getElementById('opt-consultorio').textContent = `Consultorio: ${cita.consultorio}`;
+            document.getElementById('opt-consultorio').textContent = `Tratante: ${cita.consultorio}`;
             document.getElementById('opt-estado').textContent = `Estado: ${cita.estado}`;
             
             // Set up button actions
             const role = new URLSearchParams(window.location.search).get('role') || 'admin';
             
-            document.getElementById('btn-opt-atender').onclick = () => {
+            const btnAtender = document.getElementById('btn-opt-atender');
+            if (cita.estado === 'Completado') {
+                btnAtender.innerHTML = `<span class="material-symbols-outlined text-lg">clinical_notes</span> Ver Atención`;
+            } else {
+                btnAtender.innerHTML = `<span class="material-symbols-outlined text-lg">clinical_notes</span> Atender Cita`;
+            }
+            btnAtender.onclick = () => {
                 window.location.href = `atencion_tiempo_real_mobile.html?cita_id=${cita.id}&role=${role}`;
             };
             
@@ -581,7 +662,7 @@
 
     function generateGoogleCalendarUrl(appointment) {
         const title = encodeURIComponent(`Cita Centro Eslava: ${appointment.treatment} - ${appointment.name}`);
-        const details = encodeURIComponent(`Cita médica programada en Centro Eslava.\nPaciente: ${appointment.name}\nTratamiento: ${appointment.treatment}\nSala/Consultorio: ${appointment.room}\nNotas: ${appointment.notes || 'Ninguna'}`);
+        const details = encodeURIComponent(`Cita médica programada en Centro Eslava.\nPaciente: ${appointment.name}\nTratamiento: ${appointment.treatment}\nTratante: ${appointment.doctor}\nNotas: ${appointment.notes || 'Ninguna'}`);
         const location = encodeURIComponent("Centro Eslava, Lima, Perú");
         
         let time24 = appointment.time;
@@ -795,38 +876,92 @@
     async function cargarEstadisticas() {
         try {
             const today = new Date().toISOString().split('T')[0];
-            
-            // Pacientes count
-            const { count: totalPacientes, error: errorPacientes } = await supabaseClient
-                .from('pacientes')
-                .select('*', { count: 'exact', head: true });
+            const tomorrowDate = new Date();
+            tomorrowDate.setDate(tomorrowDate.getDate() + 1);
+            const tomorrow = tomorrowDate.toISOString().split('T')[0];
             
             // Citas for today
             const { data: citasHoy, error: errorCitas } = await supabaseClient
                 .from('citas')
                 .select('estado')
-                .eq('fecha', today);
+                .eq('fecha', today)
+                .neq('estado', 'Cancelado');
+                
+            // Citas for tomorrow
+            const { data: citasManana, error: errorCitasM } = await supabaseClient
+                .from('citas')
+                .select('id')
+                .eq('fecha', tomorrow)
+                .neq('estado', 'Cancelado');
 
-            if (errorPacientes || errorCitas) throw new Error("Error fetching stats");
+            if (errorCitas || errorCitasM) throw new Error("Error fetching stats");
 
-            const elTotalPacientes = document.getElementById('stat-total-pacientes');
-            if (elTotalPacientes) elTotalPacientes.textContent = totalPacientes || 0;
-            
-            const tratamientosHoy = citasHoy ? citasHoy.length : 0;
-            const completadosHoy = citasHoy ? citasHoy.filter(c => c.estado === 'Completado').length : 0;
-            const pendientesHoy = citasHoy ? citasHoy.filter(c => c.estado === 'Pendiente').length : 0;
+            const countCitasHoy = citasHoy ? citasHoy.length : 0;
+            const countPorConfirmar = citasHoy ? citasHoy.filter(c => c.estado === 'Pendiente').length : 0; 
+            const countCitasManana = citasManana ? citasManana.length : 0;
 
-            const elTratamientosHoy = document.getElementById('stat-tratamientos-hoy');
-            if (elTratamientosHoy) elTratamientosHoy.textContent = tratamientosHoy;
+            const elCitasHoy = document.getElementById('stat-citas-hoy');
+            if (elCitasHoy) elCitasHoy.textContent = countCitasHoy;
             
-            const elCompletadosHoy = document.getElementById('stat-completados-hoy');
-            if (elCompletadosHoy) elCompletadosHoy.textContent = completadosHoy;
+            const elCitasConfirmar = document.getElementById('stat-citas-confirmar');
+            if (elCitasConfirmar) elCitasConfirmar.textContent = countPorConfirmar;
             
-            const elPendientesHoy = document.getElementById('stat-pendientes-hoy');
-            if (elPendientesHoy) elPendientesHoy.textContent = pendientesHoy;
+            const elCitasManana = document.getElementById('stat-citas-manana');
+            if (elCitasManana) elCitasManana.textContent = countCitasManana;
 
         } catch (error) {
             console.error('Error al cargar estadísticas:', error);
+        }
+    }
+
+    async function cargarTareasPendientes() {
+        try {
+            const today = new Date().toISOString().split('T')[0];
+            const tomorrowDate = new Date();
+            tomorrowDate.setDate(tomorrowDate.getDate() + 1);
+            const tomorrow = tomorrowDate.toISOString().split('T')[0];
+
+            const { data, error } = await supabaseClient
+                .from('citas')
+                .select('id, fecha, hora, estado, pacientes(nombre)')
+                .in('fecha', [today, tomorrow])
+                .eq('estado', 'Pendiente');
+
+            if (error) throw error;
+
+            const tareasContainer = document.getElementById('tareas-pendientes-list');
+            if (tareasContainer) {
+                const tareas = data.sort((a, b) => a.fecha.localeCompare(b.fecha) || a.hora.localeCompare(b.hora));
+                
+                if (tareas.length === 0) {
+                    tareasContainer.innerHTML = '<p class="text-outline text-center py-4 text-sm">No hay tareas pendientes para agendar o confirmar.</p>';
+                } else {
+                    let html = '';
+                    tareas.slice(0, 5).forEach(c => {
+                        const pacienteNombre = c.pacientes ? c.pacientes.nombre : 'Desconocido';
+                        const iniciales = getInitials(pacienteNombre);
+                        const isTomorrow = c.fecha === tomorrow;
+                        const actionText = isTomorrow ? "Pendiente confirmar asistencia para mañana" : "Pendiente confirmar asistencia u ordenar";
+                        
+                        html += `
+                        <div class="flex justify-between items-center p-3 bg-surface-container-lowest border border-outline-variant rounded-xl group">
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center font-bold text-xs">${iniciales}</div>
+                                <div>
+                                    <p class="font-bold text-sm text-on-surface">${pacienteNombre}</p>
+                                    <p class="text-[10px] text-on-surface-variant">${actionText}</p>
+                                </div>
+                            </div>
+                            <button onclick="abrirOpcionesCita('${c.id}')" class="px-3 py-1.5 border border-outline-variant text-on-surface font-bold rounded-lg text-xs hover:bg-surface-container-low transition-all">Gestionar</button>
+                        </div>`;
+                    });
+                    tareasContainer.innerHTML = html;
+                }
+            }
+        } catch (error) {
+            console.error('Error al cargar tareas pendientes:', error);
+            const tareasContainer = document.getElementById('tareas-pendientes-list');
+            if (tareasContainer) tareasContainer.innerHTML = '<p class="text-error text-center py-4 text-sm">Error al cargar tareas.</p>';
         }
     }
 
@@ -841,8 +976,9 @@
         const apptDate = document.getElementById("appt-date").value;
         const name = document.getElementById("appt-patient-name").value;
         const email = document.getElementById("appt-patient-email").value;
+        const phone = document.getElementById("appt-patient-phone").value;
         const treatment = document.getElementById("appt-treatment").value;
-        const room = document.getElementById("appt-room").value;
+        const doctor = document.getElementById("appt-doctor").value;
         const notes = document.getElementById("appt-notes").value;
 
         // Convert rawTime (e.g. 08:00 AM) to 24h format for database
@@ -855,7 +991,7 @@
             time24 = `${hours.padStart(2, '0')}:${minutes}:00`;
         }
 
-        const appt = { name, email, treatment, room, date: apptDate, time: rawTime, notes };
+        const appt = { name, email, phone, treatment, doctor, date: apptDate, time: rawTime, notes };
 
         try {
             // 1. Check if patient exists or create new
@@ -873,7 +1009,7 @@
             } else {
                 const { data: newPaciente, error: insertError } = await supabaseClient
                     .from('pacientes')
-                    .insert([{ nombre: name, email: email, estado: 'Activo' }])
+                    .insert([{ nombre: name, email: email, telefono: phone, estado: 'Activo' }])
                     .select();
                 if (insertError) throw insertError;
                 if (newPaciente && newPaciente.length > 0) {
@@ -893,7 +1029,7 @@
                     motivo: notes || treatment,
                     estado: 'Pendiente',
                     tratamiento: treatment,
-                    consultorio: room
+                    consultorio: doctor
                 }])
                 .select('id');
 
@@ -932,12 +1068,14 @@
                         monto: montoPago,
                         estado: montoPago === 0 ? 'Completado' : 'Pendiente',
                         metodo: montoPago === 0 ? 'Paquete' : 'Efectivo', // 'Paquete' para identificar que no requiere cobro
-                        fecha: apptDate
+                        fecha: apptDate,
+                        descripcion: treatment
                     }]);
                 if (pagoError) console.error("Error creating payment:", pagoError);
             }
 
             // Generate sync link and set it on the success modal button
+            const appt = { name, email, treatment, doctor, date: apptDate, time, notes };
             const gcalUrl = generateGoogleCalendarUrl(appt);
             const gcalBtn = document.getElementById("sync-gcal-btn");
             gcalBtn.setAttribute("href", gcalUrl);
@@ -1000,7 +1138,7 @@
                     <span class="font-label-sm text-outline text-[11px]">Soltar cita aquí</span>
                 </div>
             </div>
-        \`;
+        `;
         grid.innerHTML = html;
 
         const col1 = document.getElementById('col-sala-1');
@@ -1008,10 +1146,13 @@
         const col3 = document.getElementById('col-sala-3');
 
         citas.forEach(cita => {
+            const estadoLower = (cita.estado || '').toLowerCase();
+            if (estadoLower.includes('cancelad')) return;
+
             let hours = 8;
             let minutes = 0;
             if (cita.hora) {
-                const timeMatch = cita.hora.match(/(\\d+):(\\d+)\\s*(AM|PM)/i);
+                const timeMatch = cita.hora.match(/(\d+):(\d+)\s*(AM|PM)/i);
                 if (timeMatch) {
                     let h = parseInt(timeMatch[1]);
                     const m = parseInt(timeMatch[2]);
@@ -1020,20 +1161,37 @@
                     if (modifier === 'PM') h += 12;
                     hours = h;
                     minutes = m;
+                } else {
+                    const timeMatch24 = cita.hora.match(/(\d+):(\d+)/);
+                    if (timeMatch24) {
+                        hours = parseInt(timeMatch24[1]);
+                        minutes = parseInt(timeMatch24[2]);
+                    }
                 }
             }
             
-            const topPx = ((hours - 8) * 60) + minutes;
-            if (topPx < 0 || topPx > (16-8)*60) return;
+            const opening = localStorage.getItem('horaApertura') || '08:00';
+            const closing = localStorage.getItem('horaCierre') || '20:00';
+            const openHour = parseInt(opening.split(':')[0]);
+            const closeHour = parseInt(closing.split(':')[0]);
+            
+            const topPx = ((hours - openHour) * 60) + minutes;
+            if (topPx < 0 || topPx > (closeHour - openHour) * 60) return;
 
-            let bgClass = "bg-surface-white border-surface-container";
-            let textClass = "text-on-surface-variant";
-            if (cita.estado === 'En Progreso') {
-                bgClass = "bg-primary-container/10 border-primary-container/20";
-                textClass = "text-primary";
-            } else if (cita.estado === 'Completada') {
-                bgClass = "bg-tertiary-container/10 border-tertiary-container/20";
-                textClass = "text-tertiary";
+            let bgClass = "bg-primary/10 border-primary/20";
+            let textClass = "text-primary";
+            let extraClass = "";
+
+            if (estadoLower.includes('pendiente') || estadoLower.includes('sin confirmar')) {
+                bgClass = "bg-warning/10 border-warning/20";
+                textClass = "text-warning-dark";
+            } else if (estadoLower.includes('confirmad')) {
+                bgClass = "bg-success/10 border-success/20";
+                textClass = "text-success";
+            } else if (estadoLower.includes('completad') || estadoLower.includes('atendid') || estadoLower.includes('progreso')) {
+                bgClass = "bg-surface-variant border-outline/20";
+                textClass = "text-on-surface-variant";
+                extraClass = "opacity-50 grayscale";
             }
 
             const pacienteNombre = cita.pacientes ? cita.pacientes.nombre : 'Paciente Desconocido';
@@ -1043,23 +1201,22 @@
             let endM = minutes;
             let endAmPm = endH >= 12 ? 'PM' : 'AM';
             let endH12 = endH > 12 ? endH - 12 : (endH === 0 ? 12 : endH);
-            const endHourStr = \`\${endH12.toString().padStart(2, '0')}:\${endM.toString().padStart(2, '0')} \${endAmPm}\`;
+            const endHourStr = `${endH12.toString().padStart(2, '0')}:${endM.toString().padStart(2, '0')} ${endAmPm}`;
 
-            const cardHtml = \`
-                <div onclick="abrirOpcionesCita('\${cita.id}')" class="absolute left-2 right-2 h-[56px] \${bgClass} border rounded-lg p-2 draggable-card flex flex-col justify-between overflow-hidden group shadow-sm cursor-pointer" style="top: \${topPx}px;">
+            const cardHtml = `
+                <div onclick="abrirOpcionesCita('${cita.id}')" class="absolute left-2 right-2 min-h-[56px] h-auto ${bgClass} ${extraClass} border rounded-lg p-2 draggable-card flex flex-col justify-between group shadow-sm cursor-pointer z-10 hover:z-20" style="top: ${topPx}px;">
                     <div class="absolute top-0 right-0 p-1 opacity-0 group-hover:opacity-100 transition-opacity">
                         <span class="material-symbols-outlined text-[16px] text-outline">drag_indicator</span>
                     </div>
-                    <div class="flex justify-between items-start">
-                        <span class="font-label-sm text-[11px] \${textClass} font-bold">\${cita.hora} - \${endHourStr}</span>
-                        \${cita.estado === 'En Progreso' ? \`<span class="bg-primary/10 text-primary px-1.5 py-0.5 rounded text-[10px] font-bold">En Progreso</span>\` : ''}
+                    <div class="flex justify-between items-start mb-1">
+                        <span class="font-label-sm text-[11px] ${textClass} font-bold">${cita.hora} - ${endHourStr}</span>
                     </div>
                     <div>
-                        <h4 class="font-body-md text-[13px] font-semibold text-on-surface truncate">\${pacienteNombre}</h4>
-                        <p class="font-label-sm text-[11px] text-outline truncate">\${cita.tratamiento || cita.motivo}</p>
+                        <h4 class="font-body-md text-[13px] font-semibold text-on-surface leading-tight">${pacienteNombre}</h4>
+                        <p class="font-label-sm text-[11px] text-outline leading-tight mt-0.5">${cita.tratamiento || cita.motivo}</p>
                     </div>
                 </div>
-            \`;
+            `;
 
             if (cita.consultorio === 'Consultorio 1') {
                 col1.innerHTML += cardHtml;
@@ -1069,15 +1226,64 @@
                 col3.innerHTML += cardHtml;
             }
         });
+        
+        updateNowIndicator();
+    }
+
+    function updateNowIndicator() {
+        const grid = document.getElementById('calendar-grid-content');
+        if (!grid) return;
+
+        const inputDate = document.getElementById('appt-date').value;
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const day = String(now.getDate()).padStart(2, '0');
+        const todayStr = `${year}-${month}-${day}`;
+        
+        let existingIndicator = document.getElementById('now-indicator');
+        if (inputDate !== todayStr) {
+            if (existingIndicator) existingIndicator.remove();
+            return;
+        }
+
+        const hours = now.getHours();
+        const minutes = now.getMinutes();
+
+        const opening = localStorage.getItem('horaApertura') || '08:00';
+        const closing = localStorage.getItem('horaCierre') || '20:00';
+        const openHour = parseInt(opening.split(':')[0]);
+        const closeHour = parseInt(closing.split(':')[0]);
+
+        if (hours < openHour || hours > closeHour) {
+            if (existingIndicator) existingIndicator.remove();
+            return;
+        }
+
+        const topPx = ((hours - openHour) * 60) + minutes;
+
+        if (!existingIndicator) {
+            existingIndicator = document.createElement('div');
+            existingIndicator.id = 'now-indicator';
+            existingIndicator.className = 'absolute left-0 right-0 z-[100] pointer-events-none flex items-center';
+            existingIndicator.innerHTML = `
+                <div class="w-3 h-3 rounded-full bg-error -ml-1.5 shadow-sm"></div>
+                <div class="flex-1 border-t-2 border-error shadow-sm shadow-error/20"></div>
+            `;
+            grid.appendChild(existingIndicator);
+        }
+
+        existingIndicator.style.top = topPx + 'px';
     }
 
     // Initialize logic
     document.addEventListener("DOMContentLoaded", async () => {
-        
+        populateTimeOptions();
         await cargarServicios();
         await cargarPacientesSelect();
         cargarCitas();
         cargarEstadisticas();
+        cargarTareasPendientes();
 
         // Simple drag-drop feedback and slot click interactions
         const draggables = document.querySelectorAll('.draggable-card');
@@ -1089,6 +1295,9 @@
                 card.style.opacity = '1';
             });
         });
+
+        // Update the time indicator every minute
+        setInterval(updateNowIndicator, 60000);
     });
 </script>
 

@@ -1,2 +1,8 @@
 server.log
 server.pid
+node_modules/
+*.py
+*.sqlite
+test_*
+run_*
+*trace*

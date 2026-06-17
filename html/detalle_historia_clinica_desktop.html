@@ -141,15 +141,23 @@
 <span class="material-symbols-outlined">groups</span>
 <span class="font-body-md text-body-md">Pacientes</span>
 </a>
-<a class="flex items-center px-4 py-3 space-x-3 text-on-surface-variant dark:text-outline-variant hover:text-primary dark:hover:text-primary-fixed-dim hover:bg-surface-container-low transition-colors duration-200" href="servicios_ajustes_desktop.html" id="nav-link-servicios">
+<a class="flex items-center px-4 py-3 space-x-3 text-on-surface-variant dark:text-outline-variant hover:text-primary dark:hover:text-primary-fixed-dim hover:bg-surface-container-low transition-colors duration-200" href="tratamientos_desktop.html" id="nav-link-servicios">
 <span class="material-symbols-outlined">medical_services</span>
 <span class="font-body-md text-body-md">Tratamientos</span>
+</a>
+<a class="flex items-center px-4 py-3 space-x-3 text-on-surface-variant dark:text-outline-variant hover:text-primary dark:hover:text-primary-fixed-dim hover:bg-surface-container-low transition-colors duration-200" href="productos_desktop.html" id="nav-link-productos">
+<span class="material-symbols-outlined">inventory_2</span>
+<span class="font-body-md text-body-md">Productos</span>
+</a>
+<a class="flex items-center px-4 py-3 space-x-3 text-on-surface-variant dark:text-outline-variant hover:text-primary dark:hover:text-primary-fixed-dim hover:bg-surface-container-low transition-colors duration-200" href="cobrar_desktop.html" id="nav-link-cobrar">
+<span class="material-symbols-outlined">point_of_sale</span>
+<span class="font-body-md text-body-md">Cobrar / Caja</span>
 </a>
 <a class="flex items-center px-4 py-3 space-x-3 text-on-surface-variant dark:text-outline-variant hover:text-primary dark:hover:text-primary-fixed-dim hover:bg-surface-container-low transition-colors duration-200" href="pagos_facturacion_desktop.html" id="nav-link-finanzas">
 <span class="material-symbols-outlined">payments</span>
 <span class="font-body-md text-body-md">Finanzas</span>
 </a>
-<a class="flex items-center px-4 py-3 space-x-3 text-on-surface-variant dark:text-outline-variant hover:text-primary dark:hover:text-primary-fixed-dim hover:bg-surface-container-low transition-colors duration-200" href="servicios_ajustes_desktop.html" id="nav-link-ajustes">
+<a class="flex items-center px-4 py-3 space-x-3 text-on-surface-variant dark:text-outline-variant hover:text-primary dark:hover:text-primary-fixed-dim hover:bg-surface-container-low transition-colors duration-200" href="ajustes_desktop.html" id="nav-link-ajustes">
 <span class="material-symbols-outlined">settings</span>
 <span class="font-body-md text-body-md">Ajustes</span>
 </a>
@@ -191,11 +199,7 @@
 <h2 class="font-display-lg text-display-lg text-on-surface tracking-tight">Detalle de Historia Clínica</h2>
 </div>
 <div class="flex space-x-3">
-<button class="bg-surface-white border border-outline-variant text-on-surface-variant px-6 py-2 rounded-xl font-bold hover:bg-surface-container-low transition-all flex items-center space-x-2">
-<span class="material-symbols-outlined">print</span>
-<span>Imprimir</span>
-</button>
-<button class="bg-primary text-on-primary px-6 py-2 rounded-xl font-bold hover:bg-primary-container transition-all flex items-center space-x-2 shadow-md">
+<button onclick="document.getElementById('modalEditarRegistro').showModal()" class="bg-primary text-on-primary px-6 py-2 rounded-xl font-bold hover:bg-primary-container transition-all flex items-center space-x-2 shadow-md">
 <span class="material-symbols-outlined">edit</span>
 <span>Editar Registro</span>
 </button>
@@ -219,17 +223,14 @@
 <p class="text-[10px] text-outline font-bold uppercase tracking-wider">Edad</p>
 <p class="font-body-md text-body-md font-bold" id="patient-age-card">28 años</p>
 </div>
-<div class="bg-surface-container-low p-3 rounded-lg">
-<p class="text-[10px] text-outline font-bold uppercase tracking-wider">Tipo Sangre</p>
-<p class="font-body-md text-body-md font-bold text-error">O+</p>
-</div>
+
 <div class="bg-surface-container-low p-3 rounded-lg">
 <p class="text-[10px] text-outline font-bold uppercase tracking-wider">Altura</p>
-<p class="font-body-md text-body-md font-bold">1.82 m</p>
+<p class="font-body-md text-body-md font-bold" id="patient-height-card">--</p>
 </div>
 <div class="bg-surface-container-low p-3 rounded-lg">
 <p class="text-[10px] text-outline font-bold uppercase tracking-wider">Peso</p>
-<p class="font-body-md text-body-md font-bold">78 kg</p>
+<p class="font-body-md text-body-md font-bold" id="patient-weight-card">--</p>
 </div>
 </div>
 </div>
@@ -249,8 +250,8 @@
 </div>
 </div>
 <div class="bg-surface-white rounded-xl p-6 shadow-[0px_10px_30px_rgba(0,0,0,0.04)]">
-<h4 class="font-label-sm text-label-sm font-bold text-on-surface mb-4 uppercase tracking-widest">Alergias &amp; Riesgos</h4>
-<div class="flex flex-wrap gap-2">
+<h4 class="font-label-sm text-label-sm font-bold text-on-surface mb-4 uppercase tracking-widest">Alergias & Riesgos</h4>
+<div class="flex flex-wrap gap-2" id="patient-alergias-container">
 <span class="bg-error-container text-on-error-container px-3 py-1 rounded-full font-label-sm text-label-sm font-bold">Ibuprofeno</span>
 <span class="bg-warning/10 text-warning px-3 py-1 rounded-full font-label-sm text-label-sm font-bold">Asma leve</span>
 <span class="bg-surface-container-highest text-on-surface-variant px-3 py-1 rounded-full font-label-sm text-label-sm font-bold">Ninguna otra</span>
@@ -258,28 +259,43 @@
 </div>
 <div class="bg-surface-white rounded-xl p-6 shadow-[0px_10px_30px_rgba(0,0,0,0.04)]" id="resumen-cuenta-card">
 <div class="flex justify-between items-center mb-4">
-<h4 class="font-label-sm text-label-sm font-bold text-on-surface uppercase tracking-widest">Resumen de Cuenta</h4>
+<h4 class="font-label-sm text-label-sm font-bold text-on-surface uppercase tracking-widest">Resumen Financiero</h4>
 <span class="material-symbols-outlined text-primary">account_balance_wallet</span>
 </div>
-<p class="text-[10px] text-outline font-bold uppercase mb-1">Saldo Pendiente</p>
-<p class="text-headline-md font-headline-md text-on-surface">S/. 1,250.00</p>
-<button class="w-full mt-4 py-2 text-primary font-bold border border-primary/20 rounded-lg hover:bg-primary/5 transition-all">Ver Facturación</button>
+<div class="grid grid-cols-2 gap-4 mb-4">
+    <div>
+        <p class="text-[10px] text-outline font-bold uppercase mb-1">Total Pagado</p>
+        <p class="text-lg font-bold text-success" id="patient-paid-balance">S/. 0.00</p>
+    </div>
+    <div>
+        <p class="text-[10px] text-outline font-bold uppercase mb-1">Saldo Pendiente</p>
+        <p class="text-lg font-bold text-error" id="patient-pending-balance">S/. 0.00</p>
+    </div>
+</div>
+<div class="mt-4 pt-4 border-t border-outline-variant/30">
+    <p class="text-[10px] text-outline font-bold uppercase mb-2">Últimos Conceptos (Servicios/Productos)</p>
+    <ul id="patient-recent-transactions" class="text-xs text-on-surface-variant space-y-2">
+        <li class="italic text-outline">Cargando...</li>
+    </ul>
+</div>
+<button onclick="const p = new URLSearchParams(window.location.search); p.set('paciente_id', currentPatientId); window.location.href='pagos_facturacion_desktop.html?' + p.toString();" class="w-full mt-4 py-2 text-primary font-bold border border-primary/20 rounded-lg hover:bg-primary/5 transition-all">Ver Facturación</button>
 </div>
 </aside>
 <!-- Center Column: Protocol & Evolution -->
 <div class="col-span-6 space-y-gutter">
 <!-- Treatment Protocol Card -->
 <div class="bg-surface-white rounded-xl p-8 shadow-[0px_10px_30px_rgba(0,0,0,0.04)] relative overflow-hidden">
-<div class="absolute top-0 right-0 p-4">
-<span class="bg-success/10 text-success px-4 py-1 rounded-full font-label-sm text-label-sm font-bold">En curso</span>
+<div class="absolute top-0 right-0 p-4 flex gap-2">
+<button onclick="document.getElementById('modalEditarTratamiento').showModal()" class="bg-surface-container text-primary px-3 py-1 rounded-full font-label-sm text-label-sm font-bold hover:bg-primary/20 transition-all flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">edit</span> Editar</button>
+<span class="bg-success/10 text-success px-4 py-1 rounded-full font-label-sm text-label-sm font-bold" id="tratamiento-status-badge">Sin Asignar</span>
 </div>
 <div class="flex items-start space-x-4 mb-8">
 <div class="p-3 bg-primary/10 rounded-xl">
 <span class="material-symbols-outlined text-primary text-4xl">rebase_edit</span>
 </div>
 <div>
-<h3 class="font-headline-md text-headline-md text-on-surface">Protocolo de Reconstrucción LCA</h3>
-<p class="text-on-surface-variant font-body-md text-body-md">Ligamento Cruzado Anterior - Rodilla Derecha</p>
+<h3 class="font-headline-md text-headline-md text-on-surface" id="tratamiento-nombre">Sin Tratamiento Activo</h3>
+<p class="text-on-surface-variant font-body-md text-body-md" id="tratamiento-desc">Por favor, asigne un tratamiento.</p>
 </div>
 </div>
 <div class="grid grid-cols-3 gap-6 mb-8">
@@ -289,44 +305,44 @@
 </div>
 <div>
 <p class="text-[11px] text-outline font-bold uppercase mb-1">Fase Actual</p>
-<p class="font-body-md text-body-md font-bold">Fase 3: Fortalecimiento</p>
+<p class="font-body-md text-body-md font-bold" id="tratamiento-fase">--</p>
 </div>
 <div>
 <p class="text-[11px] text-outline font-bold uppercase mb-1">Progreso</p>
-<p class="font-body-md text-body-md font-bold">65%</p>
+<p class="font-body-md text-body-md font-bold" id="tratamiento-progreso-texto">0%</p>
 </div>
 </div>
 <div class="w-full bg-surface-container-low h-2 rounded-full mb-8 overflow-hidden">
-<div class="bg-primary h-full rounded-full" style="width: 65%"></div>
+<div class="bg-primary h-full rounded-full transition-all duration-500" id="tratamiento-progreso-barra" style="width: 0%"></div>
 </div>
 <div class="space-y-4">
-<h4 class="font-label-sm text-label-sm font-bold text-on-surface uppercase tracking-widest">Objetivos de la Semana</h4>
-<ul class="space-y-3">
-<li class="flex items-center space-x-3 text-on-surface-variant">
-<span class="material-symbols-outlined text-success">check_circle</span>
-<span class="font-body-md text-body-md">Extensión completa de rodilla (0°)</span>
-</li>
-<li class="flex items-center space-x-3 text-on-surface-variant">
-<span class="material-symbols-outlined text-success">check_circle</span>
-<span class="font-body-md text-body-md">Flexión activa hasta 110°</span>
-</li>
-<li class="flex items-center space-x-3 text-on-surface-variant">
-<span class="material-symbols-outlined text-outline-variant">radio_button_unchecked</span>
-<span class="font-body-md text-body-md">Propiocepción en apoyo unipodal (15s)</span>
-</li>
-</ul>
+<h4 class="font-label-sm text-label-sm font-bold text-on-surface uppercase tracking-widest">Estado del Procedimiento</h4>
+<div class="grid grid-cols-1 gap-4" id="tratamiento-dashboard-lista">
+    <div class="bg-surface-container-low p-4 rounded-xl border-l-4 border-outline">
+        <p class="text-xs text-outline font-bold uppercase mb-1">Sesión Anterior</p>
+        <p class="font-body-md text-sm text-on-surface-variant">--</p>
+    </div>
+    <div class="bg-surface-container-low p-4 rounded-xl border-l-4 border-primary">
+        <p class="text-xs text-primary font-bold uppercase mb-1">Sesión Actual</p>
+        <p class="font-body-md text-sm text-on-surface-variant">--</p>
+    </div>
+    <div class="bg-surface-container-low p-4 rounded-xl border-l-4 border-secondary">
+        <p class="text-xs text-secondary font-bold uppercase mb-1">Siguiente Sesión</p>
+        <p class="font-body-md text-sm text-on-surface-variant">--</p>
+    </div>
+</div>
 </div>
 </div>
 <!-- Evolution Timeline -->
 <div class="bg-surface-white rounded-xl p-8 shadow-[0px_10px_30px_rgba(0,0,0,0.04)]">
 <div class="flex justify-between items-center mb-8">
-<h3 class="font-headline-md text-headline-md text-on-surface">Notas de Evolución</h3>
-<button class="text-primary font-bold flex items-center space-x-1 hover:underline">
+<h3 class="font-headline-md text-headline-md text-on-surface">Procedimientos / Notas de Evolución</h3>
+<button onclick="document.getElementById('modalNuevaEvolucion').showModal()" class="text-primary font-bold flex items-center space-x-1 hover:bg-primary/10 px-3 py-2 rounded-full transition-colors">
 <span class="material-symbols-outlined text-[18px]">add</span>
-<span class="font-label-sm text-label-sm">Nueva Nota</span>
+<span class="font-label-sm text-label-sm">Registrar Procedimiento</span>
 </button>
 </div>
-<div class="relative space-y-8 before:absolute before:inset-0 before:ml-5 before:-translate-x-px before:h-full before:w-0.5 before:bg-gradient-to-b before:from-primary before:to-surface-container">
+<div class="relative space-y-8 before:absolute before:inset-0 before:ml-5 before:-translate-x-px before:h-full before:w-0.5 before:bg-gradient-to-b before:from-primary before:to-surface-container" id="timeline-container">
 <!-- Timeline Item 1 -->
 <div class="relative flex items-start group">
 <div class="absolute left-0 mt-1.5 w-10 h-10 rounded-full bg-primary-container border-4 border-surface-white flex items-center justify-center text-on-primary z-10 transition-transform group-hover:scale-110">
@@ -377,7 +393,7 @@
 </div>
 <div class="space-y-4">
 <!-- File 1: Imaging -->
-<div class="group cursor-pointer">
+<div class="group cursor-pointer" onclick="abrirPreviewImagen('https://lh3.googleusercontent.com/aida-public/AB6AXuDQMytbQE7oL4ZVAVNzdmYWOj4Vob2optKypGi0Nm5AP727Rxi2yJ6nICqra0EU5l0Tq5Z0J5cF7N4jEXz8DUgqOS966S7-gZ-FdksVid3GN25j8KDaQSK0LDj_nBpzlGTYLOP4ja-7kmFugBh0QAB_aglFd8UnEtsskwkPAaitAZ2LBrB4jeZ7QixraF-8QvNXH8qtkaOUo-q2K4YOt84_LpKUlsnlkWTpB8bx363GOB1lNr8wpC8Ldnq8lDTZ0XA2W32SEM5c3H0')">
 <div class="relative h-32 w-full rounded-lg overflow-hidden mb-2">
 <img alt="Resonancia de rodilla" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="A high-resolution black and white MRI scan of a human knee joint, showing the detailed internal structure including bone, cartilage, and ligaments. The image is displayed on a high-contrast clinical monitor in a dark room, highlighting the surgical focus and medical precision required for diagnosis." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDQMytbQE7oL4ZVAVNzdmYWOj4Vob2optKypGi0Nm5AP727Rxi2yJ6nICqra0EU5l0Tq5Z0J5cF7N4jEXz8DUgqOS966S7-gZ-FdksVid3GN25j8KDaQSK0LDj_nBpzlGTYLOP4ja-7kmFugBh0QAB_aglFd8UnEtsskwkPAaitAZ2LBrB4jeZ7QixraF-8QvNXH8qtkaOUo-q2K4YOt84_LpKUlsnlkWTpB8bx363GOB1lNr8wpC8Ldnq8lDTZ0XA2W32SEM5c3H0"/>
 <div class="absolute inset-0 bg-black/20 group-hover:bg-black/0 transition-all flex items-center justify-center opacity-0 group-hover:opacity-100">
@@ -446,6 +462,169 @@
 </aside>
 </div>
 </main>
+<!-- Modal Editar Registro -->
+<dialog id="modalEditarRegistro" class="backdrop:bg-black/50 p-6 rounded-2xl shadow-xl border-none max-w-lg w-full bg-surface-white">
+    <div class="flex justify-between items-center mb-6">
+        <h3 class="text-xl font-bold text-on-surface">Editar Ficha Médica</h3>
+        <button onclick="document.getElementById('modalEditarRegistro').close()" class="text-on-surface-variant hover:text-error transition-colors">
+            <span class="material-symbols-outlined">close</span>
+        </button>
+    </div>
+    <form id="formEditarRegistro" class="space-y-4">
+        <div class="grid grid-cols-2 gap-4">
+            <div class="col-span-2">
+                <label class="block text-sm font-bold text-on-surface mb-1">Alergias & Riesgos</label>
+                <input type="text" id="inputAlergias" placeholder="Ej. Ibuprofeno, Asma (separados por coma)" class="w-full rounded-xl border border-outline-variant px-4 py-3 focus:ring-2 focus:ring-primary outline-none transition-all">
+            </div>
+            <div class="col-span-2">
+                <label class="block text-sm font-bold text-on-surface mb-1">Fecha de Nac.</label>
+                <input type="date" id="inputFechaNac" class="w-full rounded-xl border border-outline-variant px-4 py-3 focus:ring-2 focus:ring-primary outline-none transition-all">
+            </div>
+            <div>
+                <label class="block text-sm font-bold text-on-surface mb-1">Altura (m)</label>
+                <input type="number" step="0.01" id="inputAltura" placeholder="Ej. 1.82" class="w-full rounded-xl border border-outline-variant px-4 py-3 focus:ring-2 focus:ring-primary outline-none transition-all">
+            </div>
+            <div>
+                <label class="block text-sm font-bold text-on-surface mb-1">Peso (kg)</label>
+                <input type="number" step="0.1" id="inputPeso" placeholder="Ej. 78.5" class="w-full rounded-xl border border-outline-variant px-4 py-3 focus:ring-2 focus:ring-primary outline-none transition-all">
+            </div>
+        </div>
+        <div class="pt-4 flex justify-end gap-3">
+            <button type="button" onclick="document.getElementById('modalEditarRegistro').close()" class="px-4 py-2 text-on-surface-variant font-bold hover:bg-surface-container-high rounded-xl transition-colors">Cancelar</button>
+            <button type="submit" class="bg-primary text-white px-6 py-2 rounded-xl font-bold hover:scale-105 transition-transform">Guardar Cambios</button>
+        </div>
+    </form>
+</dialog>
+
+<!-- Modal Editar Tratamiento -->
+<dialog id="modalEditarTratamiento" class="backdrop:bg-black/50 p-6 rounded-2xl shadow-xl border-none max-w-lg w-full bg-surface-white">
+    <div class="flex justify-between items-center mb-6">
+        <h3 class="text-xl font-bold text-on-surface">Actualizar Tratamiento</h3>
+        <button onclick="document.getElementById('modalEditarTratamiento').close()" class="text-on-surface-variant hover:text-error transition-colors">
+            <span class="material-symbols-outlined">close</span>
+        </button>
+    </div>
+    <form id="formEditarTratamiento" class="space-y-4">
+        <div>
+            <label class="block text-sm font-bold text-on-surface mb-1">Nombre del Protocolo</label>
+            <input type="text" id="inputNombreProtocolo" placeholder="Ej. Protocolo de Reconstrucción LCA" class="w-full rounded-xl border border-outline-variant px-4 py-3 focus:ring-2 focus:ring-primary outline-none">
+        </div>
+        <div>
+            <label class="block text-sm font-bold text-on-surface mb-1">Descripción / Zona</label>
+            <input type="text" id="inputDescProtocolo" placeholder="Ej. Ligamento Cruzado Anterior - Rodilla Derecha" class="w-full rounded-xl border border-outline-variant px-4 py-3 focus:ring-2 focus:ring-primary outline-none">
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+            <div>
+                <label class="block text-sm font-bold text-on-surface mb-1">Total de Fases</label>
+                <input type="number" id="inputTotalFases" min="1" value="1" class="w-full rounded-xl border border-outline-variant px-4 py-3 focus:ring-2 focus:ring-primary outline-none">
+            </div>
+            <div>
+                <label class="block text-sm font-bold text-on-surface mb-1">Fase Actual</label>
+                <select id="inputFaseProtocolo" class="w-full rounded-xl border border-outline-variant px-4 py-3 focus:ring-2 focus:ring-primary outline-none bg-white">
+                    <option value="Fase Única">Fase Única</option>
+                    <option value="1">Fase 1</option>
+                    <option value="2">Fase 2</option>
+                    <option value="3">Fase 3</option>
+                    <option value="4">Fase 4</option>
+                    <option value="5">Fase 5</option>
+                    <option value="6">Fase 6</option>
+                    <option value="7">Fase 7</option>
+                    <option value="8">Fase 8</option>
+                    <option value="9">Fase 9</option>
+                    <option value="10">Fase 10</option>
+                    <option value="Mantenimiento">Mantenimiento</option>
+                </select>
+            </div>
+        </div>
+        <div class="grid grid-cols-1 gap-4">
+            <div>
+                <label class="block text-sm font-bold text-on-surface mb-1">Estado</label>
+                <select id="inputEstadoProtocolo" class="w-full rounded-xl border border-outline-variant px-4 py-3 focus:ring-2 focus:ring-primary outline-none bg-white">
+                    <option value="En curso">En curso</option>
+                    <option value="Completado">Completado</option>
+                    <option value="Suspendido">Suspendido</option>
+                </select>
+            </div>
+        </div>
+        <div class="space-y-4">
+            <h4 class="font-label-sm text-label-sm font-bold text-on-surface uppercase tracking-widest border-b border-surface-container pb-2">Dashboard Informativo</h4>
+            <div>
+                <label class="block text-sm font-bold text-on-surface mb-1">Sesión Anterior (Qué se realizó)</label>
+                <textarea id="inputAnteriorProtocolo" rows="2" class="w-full rounded-xl border border-outline-variant px-4 py-3 focus:ring-2 focus:ring-primary outline-none resize-none"></textarea>
+            </div>
+            <div>
+                <label class="block text-sm font-bold text-on-surface mb-1">Sesión Actual (Qué se está realizando)</label>
+                <textarea id="inputActualProtocolo" rows="2" class="w-full rounded-xl border border-outline-variant px-4 py-3 focus:ring-2 focus:ring-primary outline-none resize-none"></textarea>
+            </div>
+            <div>
+                <label class="block text-sm font-bold text-on-surface mb-1">Próxima Sesión (Qué se realizará después)</label>
+                <textarea id="inputSiguienteProtocolo" rows="2" class="w-full rounded-xl border border-outline-variant px-4 py-3 focus:ring-2 focus:ring-primary outline-none resize-none"></textarea>
+            </div>
+        </div>
+        <div class="pt-4 flex justify-end gap-3">
+            <button type="button" onclick="document.getElementById('modalEditarTratamiento').close()" class="px-4 py-2 text-on-surface-variant font-bold hover:bg-surface-container-high rounded-xl transition-colors">Cancelar</button>
+            <button type="submit" class="bg-primary text-white px-6 py-2 rounded-xl font-bold hover:scale-105 transition-transform">Guardar Cambios</button>
+        </div>
+    </form>
+</dialog>
+
+<!-- Modal Nueva Evolucion / Procedimiento -->
+<dialog id="modalNuevaEvolucion" class="backdrop:bg-black/50 p-6 rounded-2xl shadow-xl border-none max-w-2xl w-full bg-surface-white">
+    <div class="flex justify-between items-center mb-6">
+        <h3 class="text-xl font-bold text-on-surface">Registrar Procedimiento Activo</h3>
+        <button onclick="document.getElementById('modalNuevaEvolucion').close()" class="text-on-surface-variant hover:text-error transition-colors">
+            <span class="material-symbols-outlined">close</span>
+        </button>
+    </div>
+    <form id="formNuevaEvolucion" class="space-y-4">
+        <div class="grid grid-cols-2 gap-4">
+            <div>
+                <label class="block text-sm font-bold text-on-surface mb-1">Tipo de Procedimiento</label>
+                <select id="inputTipoEvo" class="w-full rounded-xl border border-outline-variant px-4 py-3 focus:ring-2 focus:ring-primary outline-none bg-white" onchange="document.getElementById('divNumSesion').classList.toggle('hidden', this.value==='Único')">
+                    <option value="Sesión">Sesión de Tratamiento</option>
+                    <option value="Único">Procedimiento Único</option>
+                </select>
+            </div>
+            <div id="divNumSesion">
+                <label class="block text-sm font-bold text-on-surface mb-1">N° de Sesión</label>
+                <input type="number" id="inputNumSesionEvo" min="1" value="1" class="w-full rounded-xl border border-outline-variant px-4 py-3 focus:ring-2 focus:ring-primary outline-none">
+            </div>
+        </div>
+        <div>
+            <label class="block text-sm font-bold text-on-surface mb-1">Título / Motivo</label>
+            <input type="text" id="inputTituloEvo" placeholder="Ej. Terapia Manual y Ultrasonido" class="w-full rounded-xl border border-outline-variant px-4 py-3 focus:ring-2 focus:ring-primary outline-none" required>
+        </div>
+        <div>
+            <label class="block text-sm font-bold text-on-surface mb-1">Detalles Clínicos</label>
+            <textarea id="inputNotasEvo" rows="3" placeholder="Evolución del paciente, hallazgos, dolor (VAS)..." class="w-full rounded-xl border border-outline-variant px-4 py-3 focus:ring-2 focus:ring-primary outline-none resize-none" required></textarea>
+        </div>
+        <div>
+            <label class="block text-sm font-bold text-on-surface mb-1">Acciones Realizadas (Bullets)</label>
+            <textarea id="inputAccionesEvo" rows="2" placeholder="Ej. Magneto&#10;Masajes" class="w-full rounded-xl border border-outline-variant px-4 py-3 focus:ring-2 focus:ring-primary outline-none resize-none"></textarea>
+            <div class="mt-2 flex flex-wrap gap-2">
+                <button type="button" onclick="agregarAccionEvo('Magneto')" class="px-3 py-1 bg-surface-container text-on-surface-variant text-xs font-bold rounded-full hover:bg-primary/10 hover:text-primary transition-colors">+ Magneto</button>
+                <button type="button" onclick="agregarAccionEvo('Masajes')" class="px-3 py-1 bg-surface-container text-on-surface-variant text-xs font-bold rounded-full hover:bg-primary/10 hover:text-primary transition-colors">+ Masajes</button>
+                <button type="button" onclick="agregarAccionEvo('C. Calientes')" class="px-3 py-1 bg-surface-container text-on-surface-variant text-xs font-bold rounded-full hover:bg-primary/10 hover:text-primary transition-colors">+ C. Calientes</button>
+                <button type="button" onclick="agregarAccionEvo('C. Frías')" class="px-3 py-1 bg-surface-container text-on-surface-variant text-xs font-bold rounded-full hover:bg-primary/10 hover:text-primary transition-colors">+ C. Frías</button>
+                <button type="button" onclick="agregarAccionEvo('Electricidad')" class="px-3 py-1 bg-surface-container text-on-surface-variant text-xs font-bold rounded-full hover:bg-primary/10 hover:text-primary transition-colors">+ Electricidad</button>
+            </div>
+        </div>
+        <div>
+            <label class="block text-sm font-bold text-on-surface mb-1">Evidencia / Anexos</label>
+            <div class="border-2 border-dashed border-outline-variant rounded-xl p-4 text-center hover:bg-surface-container-lowest transition-colors cursor-pointer" onclick="document.getElementById('inputImagenEvo').click()">
+                <span class="material-symbols-outlined text-outline text-3xl mb-1">add_a_photo</span>
+                <p class="font-body-md text-sm text-on-surface-variant">Subir foto o Capturar</p>
+                <input type="file" id="inputImagenEvo" accept="image/*" capture="environment" class="hidden" onchange="document.getElementById('evoImgName').textContent = this.files[0]?.name || ''">
+                <p id="evoImgName" class="text-xs text-primary font-bold mt-2"></p>
+            </div>
+        </div>
+        <div class="pt-4 flex justify-end gap-3">
+            <button type="button" onclick="document.getElementById('modalNuevaEvolucion').close()" class="px-4 py-2 text-on-surface-variant font-bold hover:bg-surface-container-high rounded-xl transition-colors">Cancelar</button>
+            <button type="submit" class="bg-primary text-white px-6 py-2 rounded-xl font-bold hover:scale-105 transition-transform">Guardar Procedimiento</button>
+        </div>
+    </form>
+</dialog>
+
 <!-- Micro-interaction script -->
 <script>
         let currentPatientId = null;
@@ -476,7 +655,24 @@
             if (id) {
                 currentPatientId = id;
                 cargarDatosPaciente(id);
+                cargarDatosLocales(id);
             }
+
+            // Forms setup
+            document.getElementById('formEditarRegistro').addEventListener('submit', (e) => {
+                e.preventDefault();
+                guardarDatosRegistro(currentPatientId);
+            });
+
+            document.getElementById('formEditarTratamiento').addEventListener('submit', (e) => {
+                e.preventDefault();
+                guardarDatosTratamiento(currentPatientId);
+            });
+
+            document.getElementById('formNuevaEvolucion').addEventListener('submit', (e) => {
+                e.preventDefault();
+                guardarNuevaEvolucion(currentPatientId);
+            });
 
             // Hover effects
             const timelineItems = document.querySelectorAll('.group');
@@ -489,6 +685,8 @@
                 });
             });
         });
+
+
 
         async function cargarDatosPaciente(pacId) {
             try {
@@ -508,6 +706,7 @@
                         const birthDate = new Date(pac.fecha_nacimiento);
                         const age = new Date().getFullYear() - birthDate.getFullYear();
                         document.getElementById('patient-age-card').textContent = `${age} años`;
+                        document.getElementById('inputFechaNac').value = pac.fecha_nacimiento;
                     } else {
                         document.getElementById('patient-age-card').textContent = 'N/A';
                     }
@@ -516,15 +715,34 @@
                     document.getElementById('patient-email-card').textContent = pac.email || 'Sin correo';
                 }
 
-                // Fetch total pending/overdue balance from 'pagos'
+                // Fetch total pending/overdue and paid balances from 'pagos'
                 const { data: pagos } = await supabaseClient
                     .from('pagos')
-                    .select('monto')
+                    .select('monto, estado, descripcion, fecha')
                     .eq('paciente_id', pacId)
-                    .in('estado', ['Pendiente', 'Vencido']);
+                    .order('fecha', { ascending: false });
 
-                const totalPendiente = (pagos || []).reduce((sum, p) => sum + Number(p.monto), 0);
-                document.getElementById('patient-pending-balance').textContent = `S/. ${totalPendiente.toFixed(2)}`;
+                const totalPendiente = (pagos || []).filter(p => p.estado === 'Pendiente' || p.estado === 'Vencido').reduce((sum, p) => sum + Number(p.monto), 0);
+                const totalPagado = (pagos || []).filter(p => p.estado === 'Completado').reduce((sum, p) => sum + Number(p.monto), 0);
+                
+                const pendingEl = document.getElementById('patient-pending-balance');
+                if(pendingEl) pendingEl.textContent = `S/. ${totalPendiente.toFixed(2)}`;
+                const paidEl = document.getElementById('patient-paid-balance');
+                if(paidEl) paidEl.textContent = `S/. ${totalPagado.toFixed(2)}`;
+
+                const transList = document.getElementById('patient-recent-transactions');
+                if (transList) {
+                    if (pagos && pagos.length > 0) {
+                        transList.innerHTML = pagos.slice(0, 3).map(p => `
+                            <li class="flex justify-between border-b border-outline-variant/10 pb-1">
+                                <span class="truncate pr-2">${p.descripcion || 'Sin descripción'}</span>
+                                <span class="font-bold ${p.estado === 'Completado' ? 'text-success' : 'text-error'}">S/. ${Number(p.monto).toFixed(2)}</span>
+                            </li>
+                        `).join('');
+                    } else {
+                        transList.innerHTML = '<li class="italic text-outline">Sin transacciones</li>';
+                    }
+                }
 
                 // Fetch patient's appointments/evolution notes
                 const { data: citas } = await supabaseClient
@@ -572,13 +790,264 @@
                 console.error("Error al cargar datos reales del paciente:", e);
             }
         }
+
+        // Logic to store specific medical info in local storage (since the db schema is unknown)
+        function cargarDatosLocales(pacId) {
+            const storedRegistro = localStorage.getItem(`paciente_registro_${pacId}`);
+            if (storedRegistro) {
+                const data = JSON.parse(storedRegistro);
+
+                if (data.altura) { document.getElementById('patient-height-card').textContent = data.altura + ' m'; document.getElementById('inputAltura').value = data.altura; }
+                if (data.peso) { document.getElementById('patient-weight-card').textContent = data.peso + ' kg'; document.getElementById('inputPeso').value = data.peso; }
+                if (data.alergias) {
+                    document.getElementById('inputAlergias').value = data.alergias;
+                    const container = document.getElementById('patient-alergias-container');
+                    container.innerHTML = '';
+                    data.alergias.split(',').forEach(alergia => {
+                        const trimmed = alergia.trim();
+                        if(trimmed) {
+                            container.innerHTML += `<span class="bg-error-container text-on-error-container px-3 py-1 rounded-full font-label-sm text-label-sm font-bold">${trimmed}</span>`;
+                        }
+                    });
+                }
+            }
+
+            const storedTrat = localStorage.getItem(`paciente_tratamiento_${pacId}`);
+            if (storedTrat) {
+                const data = JSON.parse(storedTrat);
+                if (data.nombre) { document.getElementById('tratamiento-nombre').textContent = data.nombre; document.getElementById('inputNombreProtocolo').value = data.nombre; }
+                if (data.desc) { document.getElementById('tratamiento-desc').textContent = data.desc; document.getElementById('inputDescProtocolo').value = data.desc; }
+                if (data.fase) { 
+                    document.getElementById('tratamiento-fase').textContent = data.fase; 
+                }
+                if (data.fase_num) {
+                    document.getElementById('inputFaseProtocolo').value = data.fase_num;
+                }
+                if (data.fase_total) {
+                    document.getElementById('inputTotalFases').value = data.fase_total;
+                }
+                if (data.progreso !== undefined) { 
+                    document.getElementById('tratamiento-progreso-texto').textContent = data.progreso + '%'; 
+                    document.getElementById('tratamiento-progreso-barra').style.width = data.progreso + '%';
+                }
+                if (data.estado) {
+                    const badge = document.getElementById('tratamiento-status-badge');
+                    badge.textContent = data.estado;
+                    badge.className = data.estado === 'En curso' ? 'bg-success/10 text-success px-4 py-1 rounded-full font-label-sm text-label-sm font-bold' :
+                                      data.estado === 'Completado' ? 'bg-primary/10 text-primary px-4 py-1 rounded-full font-label-sm text-label-sm font-bold' :
+                                      'bg-error/10 text-error px-4 py-1 rounded-full font-label-sm text-label-sm font-bold';
+                    document.getElementById('inputEstadoProtocolo').value = data.estado;
+                }
+                
+                document.getElementById('inputAnteriorProtocolo').value = data.anterior || '';
+                document.getElementById('inputActualProtocolo').value = data.actual || '';
+                document.getElementById('inputSiguienteProtocolo').value = data.siguiente || '';
+
+                const dashboard = document.getElementById('tratamiento-dashboard-lista');
+                dashboard.innerHTML = `
+                    <div class="bg-surface-container-low p-4 rounded-xl border-l-4 border-outline">
+                        <p class="text-xs text-outline font-bold uppercase mb-1">Sesión Anterior</p>
+                        <p class="font-body-md text-sm text-on-surface-variant">${data.anterior || '<span class="text-xs italic">Sin definir - Clic en Editar</span>'}</p>
+                    </div>
+                    <div class="bg-surface-container-low p-4 rounded-xl border-l-4 border-primary">
+                        <p class="text-xs text-primary font-bold uppercase mb-1">Sesión Actual</p>
+                        <p class="font-body-md text-sm text-on-surface-variant">${data.actual || '<span class="text-xs italic">Sin definir - Clic en Editar</span>'}</p>
+                    </div>
+                    <div class="bg-surface-container-low p-4 rounded-xl border-l-4 border-secondary">
+                        <p class="text-xs text-secondary font-bold uppercase mb-1">Siguiente Sesión</p>
+                        <p class="font-body-md text-sm text-on-surface-variant">${data.siguiente || '<span class="text-xs italic">Sin definir - Clic en Editar</span>'}</p>
+                    </div>
+                `;
+            }
+            
+            const storedEvos = localStorage.getItem(`paciente_evoluciones_${pacId}`);
+            if (storedEvos) {
+                const evos = JSON.parse(storedEvos);
+                if (evos.length > 0) {
+                    const timeline = document.getElementById('timeline-container');
+                    timeline.innerHTML = evos.map(evo => `
+                    <div class="relative flex items-start group">
+                        <div class="absolute left-0 mt-1.5 w-10 h-10 rounded-full bg-success/20 border-4 border-surface-white flex items-center justify-center text-success z-10 transition-transform group-hover:scale-110">
+                            <span class="material-symbols-outlined text-[20px]">task_alt</span>
+                        </div>
+                        <div class="ml-14 bg-surface-container-lowest p-5 rounded-xl border border-surface-container-high w-full">
+                            <div class="flex justify-between mb-2">
+                                <h5 class="font-body-md text-body-md font-bold text-on-surface">${evo.headerText}</h5>
+                                <span class="font-label-sm text-label-sm text-outline">Hoy, ${evo.timeStr}</span>
+                            </div>
+                            <p class="font-body-md text-body-md text-on-surface-variant">${evo.notas}</p>
+                            ${evo.bulletsHtml}
+                            ${evo.imgHtml}
+                        </div>
+                    </div>`).join('');
+                }
+            } else if (pacId === '1' || pacId === currentPatientId) {
+                // Fallback for demo
+                const demoTrat = {
+                    nombre: 'Protocolo de Reconstrucción LCA', 
+                    desc: 'Ligamento Cruzado Anterior - Rodilla Derecha', 
+                    fase: 'Fase 3 de 5',
+                    fase_num: '3',
+                    fase_total: '5',
+                    progreso: 65, 
+                    estado: 'En curso',
+                    anterior: 'Evaluación inicial y reducción de inflamación',
+                    actual: 'Lograr flexión de rodilla 90°',
+                    siguiente: 'Inicio de propiocepción'
+                };
+                localStorage.setItem(`paciente_tratamiento_${pacId}`, JSON.stringify(demoTrat));
+                cargarDatosLocales(pacId);
+            }
+        }
+
+        async function guardarDatosRegistro(pacId) {
+            const btn = document.querySelector('#formEditarRegistro button[type="submit"]');
+            btn.disabled = true;
+            btn.innerHTML = '<span class="material-symbols-outlined animate-spin text-sm">progress_activity</span> Guardando...';
+
+            const fechaNac = document.getElementById('inputFechaNac').value;
+            const data = {
+                altura: document.getElementById('inputAltura').value,
+                peso: document.getElementById('inputPeso').value,
+                alergias: document.getElementById('inputAlergias').value
+            };
+
+            try {
+                if (fechaNac) {
+                    await supabaseClient.from('pacientes').update({ fecha_nacimiento: fechaNac }).eq('id', pacId);
+                    // update age immediately
+                    const birthDate = new Date(fechaNac);
+                    const age = new Date().getFullYear() - birthDate.getFullYear();
+                    document.getElementById('patient-age-card').textContent = `${age} años`;
+                }
+            } catch(e) {
+                console.error('Error saving fecha de nacimiento:', e);
+            }
+
+            localStorage.setItem(`paciente_registro_${pacId}`, JSON.stringify(data));
+            cargarDatosLocales(pacId);
+            document.getElementById('modalEditarRegistro').close();
+            btn.disabled = false;
+            btn.textContent = 'Guardar Cambios';
+        }
+
+        function guardarDatosTratamiento(pacId) {
+            const faseVal = document.getElementById('inputFaseProtocolo').value;
+            const faseTotal = document.getElementById('inputTotalFases').value;
+            let faseText = faseVal;
+            if (faseVal !== 'Fase Única' && faseVal !== 'Mantenimiento') {
+                faseText = `Fase ${faseVal} de ${faseTotal}`;
+            }
+
+            const estadoVal = document.getElementById('inputEstadoProtocolo').value;
+            
+            let progresoCalc = 0;
+            if (estadoVal === 'Completado') {
+                progresoCalc = 100;
+            } else if (faseVal === 'Fase Única' || faseVal === 'Mantenimiento') {
+                progresoCalc = estadoVal === 'En curso' ? 50 : 0;
+            } else {
+                const fN = parseInt(faseVal) || 0;
+                const fT = parseInt(faseTotal) || 1;
+                progresoCalc = Math.min(100, Math.round((fN / fT) * 100));
+            }
+
+            const data = {
+                nombre: document.getElementById('inputNombreProtocolo').value,
+                desc: document.getElementById('inputDescProtocolo').value,
+                fase: faseText,
+                fase_num: faseVal,
+                fase_total: faseTotal,
+                progreso: progresoCalc,
+                estado: estadoVal,
+                anterior: document.getElementById('inputAnteriorProtocolo').value,
+                actual: document.getElementById('inputActualProtocolo').value,
+                siguiente: document.getElementById('inputSiguienteProtocolo').value
+            };
+            localStorage.setItem(`paciente_tratamiento_${pacId}`, JSON.stringify(data));
+            cargarDatosLocales(pacId);
+            document.getElementById('modalEditarTratamiento').close();
+        }
+
+        function agregarAccionEvo(accion) {
+            const textarea = document.getElementById('inputAccionesEvo');
+            const current = textarea.value.trim();
+            textarea.value = current ? current + '\n' + accion : accion;
+            textarea.focus();
+        }
+
+        function guardarNuevaEvolucion(pacId) {
+            const tipo = document.getElementById('inputTipoEvo').value;
+            const sesion = document.getElementById('inputNumSesionEvo').value;
+            const titulo = document.getElementById('inputTituloEvo').value;
+            const notas = document.getElementById('inputNotasEvo').value;
+            const rawAcc = document.getElementById('inputAccionesEvo').value;
+            const accList = rawAcc.split('\n').map(x=>x.trim()).filter(x=>x);
+
+            let headerText = '';
+            if (tipo === 'Sesión') {
+                headerText = `Sesión ${sesion}: ${titulo}`;
+                // Auto-increment session input for next time
+                document.getElementById('inputNumSesionEvo').value = parseInt(sesion) + 1;
+            } else {
+                headerText = `Procedimiento: ${titulo}`;
+            }
+
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+
+            let bulletsHtml = '';
+            if (accList.length > 0) {
+                bulletsHtml = `<div class="mt-4"><p class="text-xs font-bold text-outline uppercase mb-2">Acciones:</p><ul class="space-y-1">` + 
+                    accList.map(a => `<li class="text-sm text-on-surface-variant flex items-center gap-2"><span class="material-symbols-outlined text-[14px] text-success">check</span> ${a}</li>`).join('') +
+                `</ul></div>`;
+            }
+
+            let imgHtml = '';
+            const imgInput = document.getElementById('inputImagenEvo');
+            if (imgInput.files && imgInput.files[0]) {
+                const imgUrl = URL.createObjectURL(imgInput.files[0]);
+                imgHtml = `<div class="mt-4 flex gap-2"><img src="${imgUrl}" class="w-24 h-24 object-cover rounded-lg border border-outline-variant cursor-pointer hover:opacity-80 transition-opacity"></div>`;
+            }
+
+            const newEvo = {
+                headerText,
+                timeStr,
+                notas,
+                bulletsHtml,
+                imgHtml
+            };
+
+            let evos = JSON.parse(localStorage.getItem(`paciente_evoluciones_${pacId}`) || '[]');
+            evos.unshift(newEvo);
+            localStorage.setItem(`paciente_evoluciones_${pacId}`, JSON.stringify(evos));
+
+            cargarDatosLocales(pacId);
+
+            document.getElementById('formNuevaEvolucion').reset();
+            document.getElementById('evoImgName').textContent = '';
+            document.getElementById('modalNuevaEvolucion').close();
+        }
     </script>
+
+    <!-- Modal Image Preview -->
+    <dialog id="modalImagePreview" class="backdrop:bg-black/80 p-0 rounded-2xl shadow-2xl border-none max-w-4xl w-[90vw] md:w-full bg-transparent" onclick="if(event.target === this) this.close()">
+        <div class="relative w-full max-w-4xl mx-auto flex items-center justify-center p-4">
+            <button onclick="document.getElementById('modalImagePreview').close()" class="absolute top-0 right-0 md:-top-4 md:-right-4 w-10 h-10 bg-surface-white text-on-surface rounded-full shadow-lg flex items-center justify-center hover:bg-surface-container transition-colors z-50">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+            <img id="previewImageSrc" src="" alt="Vista Previa" class="w-full h-auto max-h-[85vh] object-contain rounded-xl bg-black">
+        </div>
+    </dialog>
 
     <script src="../js/app.js"></script>
     <script src="../js/rbac.js"></script>
 
-
     <script>
+        function abrirPreviewImagen(url) {
+            document.getElementById('previewImageSrc').src = url;
+            document.getElementById('modalImagePreview').showModal();
+        }
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('../sw.js').then(registration => {

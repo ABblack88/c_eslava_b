@@ -204,40 +204,13 @@
 <div class="flex flex-col gap-8">
 <!-- Page Header -->
 <div class="flex flex-col gap-1">
-<h2 class="font-display-lg text-display-lg text-primary">Servicios y Gestión</h2>
-<p class="text-body-lg text-on-surface-variant max-w-2xl">Administra la oferta clínica del centro y ajusta los parámetros operativos de la clínica en tiempo real.</p>
+<h2 class="font-display-lg text-display-lg text-primary">Ajustes</h2>
+<p class="text-body-lg text-on-surface-variant max-w-2xl">Ajusta los parámetros operativos de la clínica en tiempo real.</p>
 </div>
 <!-- Split View Layout -->
-<div class="grid grid-cols-12 gap-8 items-start">
-<!-- Left Side: Clinical Offerings (Services) -->
-<section class="col-span-7 space-y-6">
-<div class="flex items-center justify-between">
-<h3 class="font-headline-md text-headline-md flex items-center gap-2">
-<span class="material-symbols-outlined text-primary">medical_services</span>
-                            Oferta Clínica
-                        </h3>
-<button onclick="abrirModalNuevo()" class="flex items-center gap-1 text-primary font-bold hover:underline">
-<span class="material-symbols-outlined text-sm">add_circle</span>
-                            Nuevo Servicio
-                        </button>
-</div>
-<div class="grid grid-cols-2 gap-4" id="serviciosGrid">
-<!-- Dynamic content will be injected here via Supabase -->
-</div>
-<!-- Additional Promo Card -->
-<div class="relative overflow-hidden bg-primary rounded-3xl p-8 text-on-primary">
-<div class="relative z-10">
-<h4 class="text-2xl font-bold mb-2">Paquetes de Recuperación</h4>
-<p class="opacity-80 max-w-md mb-6">Ofrece descuentos por sesiones múltiples (5, 10 o 20 sesiones) para mejorar la adherencia al tratamiento.</p>
-<button onclick="abrirModalNuevoPack()" class="bg-surface-white text-primary px-6 py-2 rounded-full font-bold hover:scale-105 transition-transform">Configurar Packs</button>
-</div>
-<div class="absolute right-[-20px] bottom-[-20px] opacity-10 scale-150 rotate-12">
-<span class="material-symbols-outlined text-[200px]">card_membership</span>
-</div>
-</div>
-</section>
-<!-- Right Side: Settings (Management) -->
-<aside class="col-span-5 space-y-8">
+<div class="flex flex-col gap-8 items-start">
+<!-- Left Side: Clinical Offerings (Services) removed -->
+<section class="w-full space-y-8">
 <div class="bg-surface-white p-8 rounded-3xl shadow-[0px_10px_30px_rgba(0,0,0,0.04)] flex flex-col gap-8">
 <div>
 <h3 class="font-headline-md text-headline-md flex items-center gap-2 mb-6">
@@ -247,14 +220,22 @@
 <!-- Operating Hours -->
 <div class="space-y-4">
 <div class="flex items-center justify-between pb-4 border-b border-outline-variant/30">
-<div class="flex items-center gap-3">
+<div class="flex items-center gap-3 w-full">
 <span class="material-symbols-outlined text-on-surface-variant">schedule</span>
-<div>
-<p class="font-bold text-sm">Horario de Apertura</p>
-<p class="text-xs text-on-surface-variant">Lun - Vie, 08:00 - 20:00</p>
+<div class="flex-1">
+<p class="font-bold text-sm">Horario de Atención</p>
+<div class="grid grid-cols-2 gap-4 mt-2">
+    <div>
+        <label class="block text-xs font-bold text-on-surface-variant mb-1">Hora de Apertura</label>
+        <input type="time" id="setting-hora-apertura" onchange="guardarAjuste('horaApertura', this.value)" class="w-full rounded-xl border-outline-variant px-3 py-2 focus:ring-primary focus:border-primary text-sm" value="08:00">
+    </div>
+    <div>
+        <label class="block text-xs font-bold text-on-surface-variant mb-1">Hora de Cierre</label>
+        <input type="time" id="setting-hora-cierre" onchange="guardarAjuste('horaCierre', this.value)" class="w-full rounded-xl border-outline-variant px-3 py-2 focus:ring-primary focus:border-primary text-sm" value="20:00">
+    </div>
 </div>
 </div>
-<button class="text-primary text-sm font-bold">Editar</button>
+</div>
 </div>
 <!-- Notifications -->
 <div class="flex items-center justify-between pb-4 border-b border-outline-variant/30">
@@ -268,6 +249,28 @@
 <div class="relative inline-flex h-6 w-11 items-center rounded-full bg-primary cursor-pointer">
 <span class="inline-block h-4 w-4 translate-x-6 transform rounded-full bg-white transition"></span>
 </div>
+</div>
+<!-- Finanzas Settings -->
+<div class="flex flex-col gap-3 pb-4 border-b border-outline-variant/30">
+    <p class="font-bold text-sm">Ajustes Financieros</p>
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div>
+            <label class="block text-xs font-bold text-on-surface-variant mb-1">Meta Mensual (S/.)</label>
+            <input type="number" id="setting-meta-mensual" onchange="guardarAjuste('metaMensual', this.value)" class="w-full rounded-xl border-outline-variant px-3 py-2 focus:ring-primary focus:border-primary text-sm" placeholder="Ej: 50000">
+        </div>
+        <div>
+            <label class="block text-xs font-bold text-on-surface-variant mb-1">Comisión POS Nac. (%)</label>
+            <input type="number" id="setting-comision-pos-nacional" onchange="guardarAjuste('comisionPOSNacional', this.value)" step="0.01" class="w-full rounded-xl border-outline-variant px-3 py-2 focus:ring-primary focus:border-primary text-sm" placeholder="Ej: 4.5">
+        </div>
+        <div>
+            <label class="block text-xs font-bold text-on-surface-variant mb-1">Comisión POS Int. (%)</label>
+            <input type="number" id="setting-comision-pos-internacional" onchange="guardarAjuste('comisionPOSInternacional', this.value)" step="0.01" class="w-full rounded-xl border-outline-variant px-3 py-2 focus:ring-primary focus:border-primary text-sm" placeholder="Ej: 5.5">
+        </div>
+        <div>
+            <label class="block text-xs font-bold text-on-surface-variant mb-1">Impuesto IGV (%)</label>
+            <input type="number" id="setting-igv" onchange="guardarAjuste('igvPorcentaje', this.value)" step="0.01" class="w-full rounded-xl border-outline-variant px-3 py-2 focus:ring-primary focus:border-primary text-sm" placeholder="Ej: 18">
+        </div>
+    </div>
 </div>
 <!-- Staff Management -->
 <div class="flex flex-col gap-4">
@@ -327,7 +330,7 @@
 </div>
 </div>
 </div>
-</aside>
+</section>
 </div>
 </div>
 </main>
@@ -459,7 +462,35 @@
         document.addEventListener('DOMContentLoaded', () => {
             cargarServicios();
             cargarProductos();
+            cargarAjustes();
         });
+
+        function cargarAjustes() {
+            const meta = localStorage.getItem('metaMensual') || 50000;
+            const comisionNacional = localStorage.getItem('comisionPOSNacional') || 4.5;
+            const comisionInternacional = localStorage.getItem('comisionPOSInternacional') || 5.5;
+            const igv = localStorage.getItem('igvPorcentaje') || 18;
+            const horaApertura = localStorage.getItem('horaApertura') || '08:00';
+            const horaCierre = localStorage.getItem('horaCierre') || '20:00';
+            
+            const inputMeta = document.getElementById('setting-meta-mensual');
+            const inputComNacional = document.getElementById('setting-comision-pos-nacional');
+            const inputComInternacional = document.getElementById('setting-comision-pos-internacional');
+            const inputIgv = document.getElementById('setting-igv');
+            const inputApertura = document.getElementById('setting-hora-apertura');
+            const inputCierre = document.getElementById('setting-hora-cierre');
+            
+            if (inputMeta) inputMeta.value = meta;
+            if (inputComNacional) inputComNacional.value = comisionNacional;
+            if (inputComInternacional) inputComInternacional.value = comisionInternacional;
+            if (inputIgv) inputIgv.value = igv;
+            if (inputApertura) inputApertura.value = horaApertura;
+            if (inputCierre) inputCierre.value = horaCierre;
+        }
+
+        function guardarAjuste(key, value) {
+            localStorage.setItem(key, value);
+        }
 
         // ==========================================
         // GESTIÓN DE PRODUCTOS

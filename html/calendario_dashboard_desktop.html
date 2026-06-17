@@ -32,6 +32,17 @@
             -ms-overflow-style: none;
             scrollbar-width: none;
         }
+        .fc-event-main {
+            white-space: normal !important;
+            overflow: visible !important;
+        }
+        .fc-event {
+            overflow: visible !important;
+            height: auto !important;
+        }
+        .fc-timegrid-event-short .fc-event-main-frame {
+            flex-direction: column !important;
+        }
     </style>
 <script id="tailwind-config">
         tailwind.config = {
@@ -143,19 +154,23 @@
             <span class="material-symbols-outlined mr-3" data-icon="groups">groups</span>
             <span class="font-body-md text-body-md">Pacientes</span>
         </a>
-        <a class="flex items-center px-4 py-3 text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-colors duration-200" href="servicios_ajustes_desktop.html">
+        <a class="flex items-center px-4 py-3 text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-colors duration-200" href="tratamientos_desktop.html">
             <span class="material-symbols-outlined mr-3" data-icon="medical_services">medical_services</span>
             <span class="font-body-md text-body-md">Tratamientos</span>
         </a>
-        <a class="flex items-center px-4 py-3 text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-colors duration-200" href="pedidos_desktop.html">
-            <span class="material-symbols-outlined mr-3" data-icon="shopping_cart">shopping_cart</span>
-            <span class="font-body-md text-body-md">Pedidos</span>
+        <a class="flex items-center px-4 py-3 text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-colors duration-200" href="productos_desktop.html" id="nav-link-productos">
+            <span class="material-symbols-outlined mr-3" data-icon="inventory_2">inventory_2</span>
+            <span class="font-body-md text-body-md">Productos</span>
         </a>
-        <a id="nav-link-finanzas" class="flex items-center px-4 py-3 text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-colors duration-200" href="pagos_facturacion_desktop.html">
+        <a class="flex items-center px-4 py-3 space-x-3 text-on-surface-variant dark:text-outline-variant hover:text-primary dark:hover:text-primary-fixed-dim hover:bg-surface-container-low transition-colors duration-200" href="cobrar_desktop.html" id="nav-link-cobrar">
+<span class="material-symbols-outlined">point_of_sale</span>
+<span class="font-body-md text-body-md">Cobrar / Caja</span>
+</a>
+<a id="nav-link-finanzas" class="flex items-center px-4 py-3 text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-colors duration-200" href="pagos_facturacion_desktop.html">
             <span class="material-symbols-outlined mr-3" data-icon="payments">payments</span>
             <span class="font-body-md text-body-md">Finanzas</span>
         </a>
-        <a id="nav-link-ajustes" class="flex items-center px-4 py-3 text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-colors duration-200" href="servicios_ajustes_desktop.html">
+        <a id="nav-link-ajustes" class="flex items-center px-4 py-3 text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-colors duration-200" href="ajustes_desktop.html">
             <span class="material-symbols-outlined mr-3" data-icon="settings">settings</span>
             <span class="font-body-md text-body-md">Ajustes</span>
         </a>
@@ -170,75 +185,60 @@
 <!-- Top Navigation Bar -->
 <header class="flex justify-between items-center h-16 ml-64 px-margin-desktop w-[calc(100%-16rem)] sticky top-0 bg-surface-bright/80 backdrop-blur-md z-40">
 <div class="flex items-center flex-1 max-w-xl">
-<div class="relative w-full group">
-<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline" data-icon="search">search</span>
-<input class="w-full bg-surface-container-low border-none rounded-full py-2 pl-10 pr-4 focus:ring-2 focus:ring-primary text-body-md font-body-md transition-all" placeholder="Buscar paciente o tratamiento..." type="text"/>
-</div>
+    <!-- Buscador removido por solicitud -->
 </div>
 <div class="flex items-center gap-6 ml-6">
-<button class="text-on-surface-variant hover:text-primary transition-all relative">
+<button onclick="verProximaCita()" class="text-on-surface-variant hover:text-primary transition-all relative">
 <span class="material-symbols-outlined" data-icon="notifications">notifications</span>
 <span class="absolute top-0 right-0 w-2 h-2 bg-error rounded-full"></span>
 </button>
-<button class="text-on-surface-variant hover:text-primary transition-all">
-<span class="material-symbols-outlined" data-icon="help">help</span>
-</button>
-
 </div>
 </header>
 <!-- Main Content Canvas -->
 <main class="ml-64 p-margin-desktop pt-8 min-h-screen">
 <!-- Dashboard Summary Grid -->
-<section class="grid grid-cols-1 md:grid-cols-4 gap-gutter mb-section-gap">
+<section class="grid grid-cols-1 md:grid-cols-3 gap-gutter mb-section-gap">
 <div class="bg-surface-white p-6 rounded-xl shadow-[0px_10px_30px_rgba(0,0,0,0.04)] border border-surface-container-low">
 <div class="flex justify-between items-start mb-4">
 <div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
-<span class="material-symbols-outlined text-primary" data-icon="person">person</span>
-</div>
-<span class="text-success text-label-sm">+12%</span>
-</div>
-<p class="text-on-surface-variant font-label-sm">Total Pacientes</p>
-<h3 id="stat-total-pacientes" class="font-headline-md text-headline-md mt-1">...</h3>
-</div>
-<div class="bg-surface-white p-6 rounded-xl shadow-[0px_10px_30px_rgba(0,0,0,0.04)] border border-surface-container-low">
-<div class="flex justify-between items-start mb-4">
-<div class="w-12 h-12 rounded-full bg-secondary-container/30 flex items-center justify-center">
-<span class="material-symbols-outlined text-secondary" data-icon="healing">healing</span>
+<span class="material-symbols-outlined text-primary" data-icon="event">event</span>
 </div>
 <span class="text-on-surface-variant text-label-sm">Hoy</span>
 </div>
-<p class="text-on-surface-variant font-label-sm">Tratamientos Hoy</p>
-<h3 id="stat-tratamientos-hoy" class="font-headline-md text-headline-md mt-1">...</h3>
+<p class="text-on-surface-variant font-label-sm">Citas para Hoy</p>
+<h3 id="stat-citas-hoy" class="font-headline-md text-headline-md mt-1">...</h3>
 </div>
 <div class="bg-surface-white p-6 rounded-xl shadow-[0px_10px_30px_rgba(0,0,0,0.04)] border border-surface-container-low">
 <div class="flex justify-between items-start mb-4">
 <div class="w-12 h-12 rounded-full bg-warning/10 flex items-center justify-center">
-<span class="material-symbols-outlined text-warning" data-icon="electric_bolt">electric_bolt</span>
+<span class="material-symbols-outlined text-warning" data-icon="pending_actions">pending_actions</span>
 </div>
+<span class="text-on-surface-variant text-label-sm">Atención requerida</span>
 </div>
-<p class="text-on-surface-variant font-label-sm">Pendientes Hoy</p>
-<h3 id="stat-pendientes-hoy" class="font-headline-md text-headline-md mt-1">...</h3>
+<p class="text-on-surface-variant font-label-sm">Citas por Confirmar</p>
+<h3 id="stat-citas-confirmar" class="font-headline-md text-headline-md mt-1">...</h3>
 </div>
 <div class="bg-surface-white p-6 rounded-xl shadow-[0px_10px_30px_rgba(0,0,0,0.04)] border border-surface-container-low">
 <div class="flex justify-between items-start mb-4">
-<div class="w-12 h-12 rounded-full bg-tertiary-fixed/30 flex items-center justify-center">
-<span class="material-symbols-outlined text-tertiary" data-icon="massage">massage</span>
+<div class="w-12 h-12 rounded-full bg-secondary-container/30 flex items-center justify-center">
+<span class="material-symbols-outlined text-secondary" data-icon="event_upcoming">event_upcoming</span>
 </div>
+<span class="text-on-surface-variant text-label-sm">Mañana</span>
 </div>
-<p class="text-on-surface-variant font-label-sm">Completados Hoy</p>
-<h3 id="stat-completados-hoy" class="font-headline-md text-headline-md mt-1">...</h3>
+<p class="text-on-surface-variant font-label-sm">Citas para Mañana</p>
+<h3 id="stat-citas-manana" class="font-headline-md text-headline-md mt-1">...</h3>
 </div>
 </section>
 <!-- Agenda Section -->
 <section class="mb-section-gap">
 <div class="flex justify-between items-end mb-8">
 <div>
-<h2 class="font-display-lg text-[32px] text-on-surface">Agenda de Hoy</h2>
+<h2 class="font-display-lg text-[32px] text-on-surface">Calendario</h2>
 <p class="text-on-surface-variant font-body-md mt-1">Lunes, 24 de Julio</p>
 </div>
 <div class="flex gap-2 p-1 bg-surface-container-low rounded-xl">
-<button class="px-6 py-2 bg-surface-white rounded-lg shadow-sm font-bold text-primary">Diario</button>
-<button class="px-6 py-2 text-on-surface-variant hover:text-on-surface transition-colors">Semanal</button>
+<button onclick="if(fullCalendarInstance) { document.querySelector('#btn-view-day').className='px-6 py-2 bg-surface-white rounded-lg shadow-sm font-bold text-primary hover:bg-surface-container-low transition-colors'; document.querySelector('#btn-view-week').className='px-6 py-2 text-on-surface-variant hover:text-on-surface transition-colors hover:bg-surface-white hover:rounded-lg hover:shadow-sm hover:font-bold hover:text-primary'; fullCalendarInstance.changeView('timeGridDay'); }" id="btn-view-day" class="px-6 py-2 text-on-surface-variant hover:text-on-surface transition-colors hover:bg-surface-white hover:rounded-lg hover:shadow-sm hover:font-bold hover:text-primary">Diario</button>
+<button onclick="if(fullCalendarInstance) { document.querySelector('#btn-view-week').className='px-6 py-2 bg-surface-white rounded-lg shadow-sm font-bold text-primary hover:bg-surface-container-low transition-colors'; document.querySelector('#btn-view-day').className='px-6 py-2 text-on-surface-variant hover:text-on-surface transition-colors hover:bg-surface-white hover:rounded-lg hover:shadow-sm hover:font-bold hover:text-primary'; fullCalendarInstance.changeView('timeGridWeek'); }" id="btn-view-week" class="px-6 py-2 bg-surface-white rounded-lg shadow-sm font-bold text-primary hover:bg-surface-container-low transition-colors">Semanal</button>
 </div>
 </div>
 <!-- Calendar Wide Grid -->
@@ -247,33 +247,21 @@
 </div>
 </section>
 <!-- Secondary Insights / Bento Elements -->
-<div class="grid grid-cols-1 lg:grid-cols-3 gap-gutter">
-<div id="financial-insight-card" class="lg:col-span-2 bg-surface-white rounded-3xl p-8 shadow-[0px_10px_30px_rgba(0,0,0,0.04)] border border-surface-container-low relative overflow-hidden h-[300px]">
-<div class="relative z-10">
-<h3 class="font-headline-md text-headline-md text-on-surface mb-2">Resumen de Ingresos</h3>
-<p class="text-on-surface-variant font-body-md mb-6">Total proyectado para hoy: <span id="stat-ingresos-hoy" class="font-bold text-primary">S/. ...</span></p>
-<div class="flex items-end gap-4 h-32 mt-4">
-<div class="flex-1 bg-primary/20 rounded-t-lg h-[40%] transition-all hover:bg-primary/40"></div>
-<div class="flex-1 bg-primary/20 rounded-t-lg h-[60%] transition-all hover:bg-primary/40"></div>
-<div class="flex-1 bg-primary/20 rounded-t-lg h-[30%] transition-all hover:bg-primary/40"></div>
-<div class="flex-1 bg-primary/60 rounded-t-lg h-[90%] transition-all hover:bg-primary/80"></div>
-<div class="flex-1 bg-primary/20 rounded-t-lg h-[50%] transition-all hover:bg-primary/40"></div>
-<div class="flex-1 bg-primary/20 rounded-t-lg h-[75%] transition-all hover:bg-primary/40"></div>
-<div class="flex-1 bg-primary/20 rounded-t-lg h-[45%] transition-all hover:bg-primary/40"></div>
-</div>
-<div class="flex justify-between text-[10px] text-on-surface-variant font-bold mt-2 uppercase tracking-widest">
-<span>Lun</span><span>Mar</span><span>Mie</span><span>Jue</span><span>Vie</span><span>Sab</span><span>Dom</span>
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-gutter mb-section-gap">
+<div class="lg:col-span-2 bg-surface-white rounded-3xl p-8 shadow-[0px_10px_30px_rgba(0,0,0,0.04)] border border-surface-container-low flex flex-col h-[400px]">
+<h3 class="font-headline-md text-headline-md text-on-surface mb-2">Tareas Pendientes (Por Agendar/Confirmar)</h3>
+<p class="text-on-surface-variant font-body-md mb-6">Pacientes que requieren seguimiento para agendar citas o confirmar asistencia.</p>
+<div id="tareas-pendientes-list" class="space-y-4 overflow-y-auto custom-scrollbar flex-1 pr-2">
+    <!-- Se poblará dinámicamente con JS -->
+    <p class="text-outline text-center py-4">Cargando tareas...</p>
 </div>
 </div>
-<!-- Subtle graphic element -->
-<div class="absolute -bottom-10 -right-10 w-48 h-48 bg-primary/5 rounded-full blur-3xl"></div>
-</div>
-<div class="bg-surface-white rounded-3xl p-8 shadow-[0px_10px_30px_rgba(0,0,0,0.04)] border border-surface-container-low flex flex-col">
-<h3 class="font-headline-md text-headline-md text-on-surface mb-6">Próximos Pacientes</h3>
-<div id="proximos-pacientes-list" class="space-y-6">
+<div class="bg-surface-white rounded-3xl p-8 shadow-[0px_10px_30px_rgba(0,0,0,0.04)] border border-surface-container-low flex flex-col h-[400px]">
+<h3 class="font-headline-md text-headline-md text-on-surface mb-6">Próximos Hoy</h3>
+<div id="proximos-pacientes-list" class="space-y-6 overflow-y-auto custom-scrollbar flex-1 pr-2">
     <!-- Próximos pacientes renderizados aquí -->
 </div>
-<button class="mt-auto w-full py-3 text-primary font-bold hover:bg-primary/5 rounded-xl transition-all">Ver todos</button>
+<button onclick="if(fullCalendarInstance) { document.querySelector('#calendar').scrollIntoView({behavior: 'smooth'}); fullCalendarInstance.changeView('listWeek'); }" class="mt-4 w-full py-3 text-primary font-bold hover:bg-primary/5 rounded-xl transition-all border border-transparent hover:border-primary/20">Ver Agenda Semanal</button>
 </div>
 </div>
 </main>
@@ -299,9 +287,15 @@
                 <datalist id="pacientes-list"></datalist>
                 <div id="patient-status" class="mt-2 text-xs hidden"></div>
             </div>
-            <div>
-                <label class="block text-sm font-semibold text-on-surface-variant mb-1">Correo Electrónico (para Google Calendar)</label>
-                <input type="email" id="appt-patient-email" class="w-full bg-surface-container-low border-none rounded-xl py-3 px-4 text-body-md focus:ring-2 focus:ring-primary" placeholder="ej. juan@gmail.com">
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-semibold text-on-surface-variant mb-1">Correo Electrónico</label>
+                    <input type="email" id="appt-patient-email" class="w-full bg-surface-container-low border-none rounded-xl py-3 px-4 text-body-md focus:ring-2 focus:ring-primary" placeholder="ej. juan@gmail.com">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-on-surface-variant mb-1">Número de Teléfono</label>
+                    <input type="tel" id="appt-patient-phone" class="w-full bg-surface-container-low border-none rounded-xl py-3 px-4 text-body-md focus:ring-2 focus:ring-primary" placeholder="ej. 987654321">
+                </div>
             </div>
             <div class="grid grid-cols-2 gap-4">
                 <div>
@@ -314,10 +308,11 @@
                     </select>
                 </div>
                 <div>
-                    <label class="block text-sm font-semibold text-on-surface-variant mb-1">Consultorio</label>
-                    <select id="appt-room" required class="w-full bg-surface-container-low border-none rounded-xl py-3 px-4 text-body-md focus:ring-2 focus:ring-primary">
-                        <option value="Consultorio 1">Consultorio 1</option>
-                        <option value="Consultorio 2">Consultorio 2</option>
+                    <label class="block text-sm font-semibold text-on-surface-variant mb-1">Tratante</label>
+                    <select id="appt-doctor" required class="w-full bg-surface-container-low border-none rounded-xl py-3 px-4 text-body-md focus:ring-2 focus:ring-primary">
+                        <option value="Dr. Eslava">Dr. Eslava</option>
+                        <option value="Dra. Principal">Dra. Principal</option>
+                        <option value="Lic. Fisioterapia">Lic. Fisioterapia</option>
                     </select>
                 </div>
             </div>
@@ -333,14 +328,7 @@
                 <div>
                     <label class="block text-sm font-semibold text-on-surface-variant mb-1">Hora</label>
                     <select id="appt-time" required class="w-full bg-surface-container-low border-none rounded-xl py-3 px-4 text-body-md focus:ring-2 focus:ring-primary">
-                        <option value="08:00 AM">08:00 AM</option>
-                        <option value="09:00 AM">09:00 AM</option>
-                        <option value="10:00 AM">10:00 AM</option>
-                        <option value="11:00 AM">11:00 AM</option>
-                        <option value="12:00 PM">12:00 PM</option>
-                        <option value="01:00 PM">01:00 PM</option>
-                        <option value="02:00 PM">02:00 PM</option>
-                        <option value="03:00 PM">03:00 PM</option>
+                        <!-- Dynamic via JS -->
                     </select>
                 </div>
             </div>
@@ -456,16 +444,55 @@
 </dialog>
 
 <script>
-    
+    function verProximaCita() {
+        if (!window.proximasCitas || window.proximasCitas.length === 0) {
+            alert('No tienes citas pendientes para el resto del día.');
+            return;
+        }
+        const proxima = window.proximasCitas[0];
+        let horaFormat = proxima.hora;
+        if (proxima.hora) {
+            const [h, m] = proxima.hora.split(':');
+            const hInt = parseInt(h);
+            const ampm = hInt >= 12 ? 'PM' : 'AM';
+            const h12 = hInt % 12 || 12;
+            horaFormat = `${h12}:${m} ${ampm}`;
+        }
+        alert(`Tu próxima cita es hoy a las ${horaFormat} con ${proxima.pacientes?.nombre || 'Paciente'}\nTratamiento: ${proxima.tratamiento}\nTratante: ${proxima.consultorio}`);
+    }
 
     // Set today's date as default in date input
     document.getElementById('appt-date').value = new Date().toISOString().split('T')[0];
 
     // Enforce role-based element locking/hiding inside the page
 
+    function populateTimeOptions() {
+        const selectTime = document.getElementById('appt-time');
+        if (!selectTime) return;
+        
+        const opening = localStorage.getItem('horaApertura') || '08:00';
+        const closing = localStorage.getItem('horaCierre') || '20:00';
+        
+        const openHour = parseInt(opening.split(':')[0]);
+        const closeHour = parseInt(closing.split(':')[0]);
+        
+        selectTime.innerHTML = '';
+        for (let i = openHour; i <= closeHour; i++) {
+            let h12 = i % 12 || 12;
+            let ampm = i >= 12 ? 'PM' : 'AM';
+            let formattedH = h12.toString().padStart(2, '0');
+            selectTime.innerHTML += `<option value="${formattedH}:00 ${ampm}">${formattedH}:00 ${ampm}</option>`;
+            if (i !== closeHour) {
+                selectTime.innerHTML += `<option value="${formattedH}:30 ${ampm}">${formattedH}:30 ${ampm}</option>`;
+            }
+        }
+    }
+
     // Modal Control Functions
-    function openAppointmentModal() {
+    function openAppointmentModal(fecha = null, hora = null) {
         document.getElementById("new-appointment-modal").classList.remove("hidden");
+        if (fecha) document.getElementById('appt-date').value = fecha;
+        if (hora) document.getElementById('appt-time').value = hora;
     }
 
     function closeAppointmentModal() {
@@ -494,13 +521,20 @@
             document.getElementById('opt-paciente-nombre').textContent = cita.pacientes?.nombre || 'Desconocido';
             document.getElementById('opt-tratamiento').textContent = cita.tratamiento || 'Procedimiento general';
             document.getElementById('opt-fecha-hora').textContent = `Fecha: ${cita.fecha} • ${cita.hora}`;
-            document.getElementById('opt-consultorio').textContent = `Consultorio: ${cita.consultorio}`;
+            document.getElementById('opt-consultorio').textContent = `Tratante: ${cita.consultorio}`;
             document.getElementById('opt-estado').textContent = `Estado: ${cita.estado}`;
             
             // Set up button actions
             const role = new URLSearchParams(window.location.search).get('role') || 'admin';
             
-            document.getElementById('btn-opt-atender').onclick = () => {
+            const btnAtender = document.getElementById('btn-opt-atender');
+            if (cita.estado === 'Completado') {
+                btnAtender.innerHTML = `<span class="material-symbols-outlined">clinical_notes</span> Ver Atención`;
+            } else {
+                btnAtender.innerHTML = `<span class="material-symbols-outlined">clinical_notes</span> Atender Cita`;
+            }
+
+            btnAtender.onclick = () => {
                 window.location.href = `atencion_tiempo_real_desktop.html?cita_id=${cita.id}&role=${role}`;
             };
             
@@ -536,7 +570,7 @@
 
     function generateGoogleCalendarUrl(appointment) {
         const title = encodeURIComponent(`Cita Centro Eslava: ${appointment.treatment} - ${appointment.name}`);
-        const details = encodeURIComponent(`Cita médica programada en Centro Eslava.\nPaciente: ${appointment.name}\nTratamiento: ${appointment.treatment}\nSala/Consultorio: ${appointment.room}\nNotas: ${appointment.notes || 'Ninguna'}`);
+        const details = encodeURIComponent(`Cita médica programada en Centro Eslava.\nPaciente: ${appointment.name}\nTratamiento: ${appointment.treatment}\nTratante: ${appointment.doctor}\nNotas: ${appointment.notes || 'Ninguna'}`);
         const location = encodeURIComponent("Centro Eslava, Lima, Perú");
         
         let time24 = appointment.time;
@@ -753,48 +787,38 @@
     async function cargarEstadisticas() {
         try {
             const today = new Date().toISOString().split('T')[0];
-            
-            // Pacientes count
-            const { count: totalPacientes, error: errorPacientes } = await supabaseClient
-                .from('pacientes')
-                .select('*', { count: 'exact', head: true });
+            const tomorrowDate = new Date();
+            tomorrowDate.setDate(tomorrowDate.getDate() + 1);
+            const tomorrow = tomorrowDate.toISOString().split('T')[0];
             
             // Citas for today
             const { data: citasHoy, error: errorCitas } = await supabaseClient
                 .from('citas')
                 .select('estado')
-                .eq('fecha', today);
+                .eq('fecha', today)
+                .neq('estado', 'Cancelado');
                 
-            // Pagos for today
-            const { data: pagosHoy, error: errorPagos } = await supabaseClient
-                .from('pagos')
-                .select('monto, estado')
-                .eq('fecha', today);
+            // Citas for tomorrow
+            const { data: citasManana, error: errorCitasM } = await supabaseClient
+                .from('citas')
+                .select('id')
+                .eq('fecha', tomorrow)
+                .neq('estado', 'Cancelado');
 
-            if (errorPacientes || errorCitas || errorPagos) throw new Error("Error fetching stats");
+            if (errorCitas || errorCitasM) throw new Error("Error fetching stats");
 
-            const elTotalPacientes = document.getElementById('stat-total-pacientes');
-            if (elTotalPacientes) elTotalPacientes.textContent = totalPacientes || 0;
+            const countCitasHoy = citasHoy ? citasHoy.length : 0;
+            const countPorConfirmar = citasHoy ? citasHoy.filter(c => c.estado === 'Pendiente').length : 0; 
+            const countCitasManana = citasManana ? citasManana.length : 0;
+
+            const elCitasHoy = document.getElementById('stat-citas-hoy');
+            if (elCitasHoy) elCitasHoy.textContent = countCitasHoy;
             
-            const tratamientosHoy = citasHoy ? citasHoy.length : 0;
-            const completadosHoy = citasHoy ? citasHoy.filter(c => c.estado === 'Completado').length : 0;
-            const pendientesHoy = citasHoy ? citasHoy.filter(c => c.estado === 'Pendiente').length : 0;
-
-            const elTratamientosHoy = document.getElementById('stat-tratamientos-hoy');
-            if (elTratamientosHoy) elTratamientosHoy.textContent = tratamientosHoy;
+            const elCitasConfirmar = document.getElementById('stat-citas-confirmar');
+            if (elCitasConfirmar) elCitasConfirmar.textContent = countPorConfirmar;
             
-            const elCompletadosHoy = document.getElementById('stat-completados-hoy');
-            if (elCompletadosHoy) elCompletadosHoy.textContent = completadosHoy;
-            
-            const elPendientesHoy = document.getElementById('stat-pendientes-hoy');
-            if (elPendientesHoy) elPendientesHoy.textContent = pendientesHoy;
-
-            // Calculate ingresos
-            const ingresos = pagosHoy ? pagosHoy.reduce((sum, p) => sum + Number(p.monto || 0), 0) : 0;
-            const elIngresos = document.getElementById('stat-ingresos-hoy');
-            if (elIngresos) {
-                elIngresos.textContent = new Intl.NumberFormat('es-PE', { style: 'currency', currency: 'PEN' }).format(ingresos);
-            }
+            const elCitasManana = document.getElementById('stat-citas-manana');
+            if (elCitasManana) elCitasManana.textContent = countCitasManana;
 
         } catch (error) {
             console.error('Error al cargar estadísticas:', error);
@@ -815,8 +839,9 @@
         
         const name = document.getElementById("appt-patient-name").value;
         const email = document.getElementById("appt-patient-email").value;
+        const phone = document.getElementById("appt-patient-phone").value;
         const treatment = document.getElementById("appt-treatment").value;
-        const room = document.getElementById("appt-room").value;
+        const doctor = document.getElementById("appt-doctor").value;
         const date = document.getElementById("appt-date").value;
         
         let time = document.getElementById("appt-time").value;
@@ -847,7 +872,7 @@
             } else {
                 const { data: newPaciente, error: insertError } = await supabaseClient
                     .from('pacientes')
-                    .insert([{ nombre: name, email: email, estado: 'Activo' }])
+                    .insert([{ nombre: name, email: email, telefono: phone, estado: 'Activo' }])
                     .select('id');
                 
                 if (insertError) throw insertError;
@@ -866,7 +891,7 @@
                     estado: 'Pendiente',
                     notas: notes,
                     tratamiento: treatment,
-                    consultorio: room
+                    consultorio: doctor
                 }])
                 .select('id');
             
@@ -906,12 +931,13 @@
                         monto: montoPago,
                         estado: montoPago === 0 ? 'Completado' : 'Pendiente',
                         metodo: montoPago === 0 ? 'Paquete' : 'Efectivo', // 'Paquete' para identificar que no requiere cobro
-                        fecha: date
+                        fecha: date,
+                        descripcion: treatment
                     }]);
                 if (pagoError) console.error("Error creating payment:", pagoError);
             }
 
-            const appt = { name, email, treatment, room, date, time, notes };
+            const appt = { name, email, treatment, doctor, date, time, notes };
 
             // Generate sync link and set it on the success modal button
             const gcalUrl = generateGoogleCalendarUrl(appt);
@@ -948,28 +974,40 @@
                 
             if (error) throw error;
 
-            const events = data.map(c => {
-                let color = '#10b981'; // primary
-                if (c.tratamiento === 'Descarga Muscular') color = '#3b82f6'; // secondary
-                if (c.tratamiento === 'Evaluación Inicial') color = '#8b5cf6'; // tertiary
-                if (c.tratamiento === 'Fisioterapia Deportiva') color = '#f59e0b'; // warning
-                
-                return {
-                    id: c.id,
-                    title: `${c.pacientes?.nombre || 'Desconocido'} - ${c.consultorio}`,
-                    start: `${c.fecha}T${c.hora}`,
-                    backgroundColor: color,
-                    borderColor: color,
-                    extendedProps: {
-                        estado: c.estado,
-                        tratamiento: c.tratamiento
+            const events = data
+                .filter(c => c.estado !== 'Cancelada' && c.estado !== 'Cancelado')
+                .map(c => {
+                    let color = '#3b82f6'; // default blue (Confirmado)
+                    let classNames = [];
+                    
+                    const estadoLower = (c.estado || '').toLowerCase();
+                    if (estadoLower.includes('pendiente') || estadoLower.includes('sin confirmar')) {
+                        color = '#f59e0b'; // yellow/orange
+                    } else if (estadoLower.includes('completado') || estadoLower.includes('atendida') || estadoLower.includes('progreso')) {
+                        color = '#9ca3af'; // gray
+                        classNames.push('opacity-50');
+                    } else if (estadoLower.includes('confirmad')) {
+                        color = '#10b981'; // green
                     }
-                };
-            });
+                    
+                    return {
+                        id: c.id,
+                        title: `${c.pacientes?.nombre || 'Desconocido'} - ${c.consultorio}`,
+                        start: `${c.fecha}T${c.hora}`,
+                        backgroundColor: color,
+                        borderColor: color,
+                        classNames: classNames,
+                        extendedProps: {
+                            estado: c.estado,
+                            tratamiento: c.tratamiento
+                        }
+                    };
+                });
 
             if (!fullCalendarInstance) {
                 fullCalendarInstance = new FullCalendar.Calendar(calendarEl, {
-                    initialView: 'timeGridDay',
+                    nowIndicator: true,
+                    initialView: 'timeGridWeek',
                     headerToolbar: {
                         left: 'prev,next today',
                         center: 'title',
@@ -984,8 +1022,26 @@
                     },
                     events: events,
                     locale: 'es',
-                    slotMinTime: '08:00:00',
-                    slotMaxTime: '20:00:00',
+                    firstDay: 1,
+                    selectable: true,
+                    select: function(info) {
+                        const d = info.start;
+                        const year = d.getFullYear();
+                        const month = String(d.getMonth() + 1).padStart(2, '0');
+                        const day = String(d.getDate()).padStart(2, '0');
+                        const fecha = `${year}-${month}-${day}`;
+                        
+                        let h24 = d.getHours();
+                        let mins = String(d.getMinutes()).padStart(2, '0');
+                        let ampm = h24 >= 12 ? 'PM' : 'AM';
+                        let h12 = h24 % 12 || 12;
+                        let horaSelect = `${String(h12).padStart(2, '0')}:${mins} ${ampm}`;
+                        
+                        openAppointmentModal(fecha, horaSelect);
+                    },
+                    slotMinTime: (localStorage.getItem('horaApertura') || '08:00') + ':00',
+                    slotMaxTime: (localStorage.getItem('horaCierre') || '20:00') + ':00',
+                    slotEventOverlap: false,
                     allDaySlot: false,
                     height: '100%',
                     eventClick: function(info) {
@@ -993,9 +1049,9 @@
                     },
                     eventContent: function(arg) {
                         return {
-                            html: `<div class="p-1 overflow-hidden" style="color: white; height: 100%;">
+                            html: `<div class="p-1 overflow-y-auto no-scrollbar" style="color: white; height: 100%; white-space: normal;">
                                 <div class="text-xs font-bold">${arg.timeText}</div>
-                                <div class="font-bold text-sm leading-tight">${arg.event.title}</div>
+                                <div class="font-bold text-sm leading-tight mb-1">${arg.event.title}</div>
                                 <div class="text-xs opacity-90">${arg.event.extendedProps.tratamiento}</div>
                             </div>`
                         };
@@ -1009,12 +1065,16 @@
             
             // Render upcoming patients
             if (proximosContainer) {
-                const proximos = data.filter(c => c.estado === 'Pendiente' && c.fecha === today).sort((a,b) => a.hora.localeCompare(b.hora)).slice(0, 3);
-                if (proximos.length === 0) {
+                const nowTime = new Date().toTimeString().substring(0,8);
+                const proximos = data.filter(c => c.estado === 'Pendiente' && c.fecha === today && c.hora >= nowTime).sort((a,b) => a.hora.localeCompare(b.hora));
+                window.proximasCitas = proximos;
+                
+                const top3 = proximos.slice(0, 3);
+                if (top3.length === 0) {
                     proximosContainer.innerHTML = '<p class="text-outline text-center py-4">No hay pacientes próximos para hoy.</p>';
                 } else {
                     let html = '';
-                    proximos.forEach(c => {
+                    top3.forEach(c => {
                         const pacienteNombre = c.pacientes ? c.pacientes.nombre : 'Desconocido';
                         const iniciales = getInitials(pacienteNombre);
                         
@@ -1041,6 +1101,42 @@
                 }
             }
 
+            // Render Tareas Pendientes
+            const tareasContainer = document.getElementById('tareas-pendientes-list');
+            if (tareasContainer) {
+                const tomorrowDate = new Date();
+                tomorrowDate.setDate(tomorrowDate.getDate() + 1);
+                const tomorrow = tomorrowDate.toISOString().split('T')[0];
+
+                // Filtrar citas pendientes de hoy y mañana
+                const tareas = data.filter(c => c.estado === 'Pendiente' && (c.fecha === today || c.fecha === tomorrow)).sort((a, b) => a.fecha.localeCompare(b.fecha) || a.hora.localeCompare(b.hora));
+                
+                if (tareas.length === 0) {
+                    tareasContainer.innerHTML = '<p class="text-outline text-center py-4">No hay tareas pendientes para agendar o confirmar.</p>';
+                } else {
+                    let html = '';
+                    tareas.slice(0, 6).forEach(c => {
+                        const pacienteNombre = c.pacientes ? c.pacientes.nombre : 'Desconocido';
+                        const iniciales = getInitials(pacienteNombre);
+                        const isTomorrow = c.fecha === tomorrow;
+                        const actionText = isTomorrow ? "Pendiente confirmar asistencia para mañana" : "Pendiente confirmar asistencia u ordenar";
+                        
+                        html += `
+                        <div class="flex items-center justify-between p-4 bg-surface-container-lowest border border-outline-variant rounded-2xl group hover:border-primary transition-colors">
+                            <div class="flex items-center gap-4">
+                                <div class="w-10 h-10 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center font-bold">${iniciales}</div>
+                                <div>
+                                    <p class="font-bold text-on-surface">${pacienteNombre}</p>
+                                    <p class="text-xs text-on-surface-variant">${actionText}</p>
+                                </div>
+                            </div>
+                            <button onclick="abrirOpcionesCita('${c.id}')" class="px-4 py-2 border border-outline-variant text-on-surface font-bold rounded-xl hover:bg-surface-container-low transition-all text-sm whitespace-nowrap">Gestionar</button>
+                        </div>`;
+                    });
+                    tareasContainer.innerHTML = html;
+                }
+            }
+
         } catch (error) {
             console.error('Error al cargar citas:', error);
         }
@@ -1053,6 +1149,7 @@
             openAppointmentModal();
         }
         
+        populateTimeOptions();
         await cargarServicios();
         await cargarPacientesSelect();
         cargarCitas();

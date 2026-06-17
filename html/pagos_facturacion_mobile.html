@@ -1,485 +1,448 @@
 <!DOCTYPE html>
 
-<html class="light" lang="es"><head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Centro Eslava - Pagos y Facturación</title>
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
-<script src="../js/supabase.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;700&display=swap" rel="stylesheet"/>
-<script id="tailwind-config">
+<html class="light" lang="es">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Centro Eslava - Pagos y Facturación</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script src="../js/supabase.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;700&display=swap"
+        rel="stylesheet" />
+    <script id="tailwind-config">
         tailwind.config = {
-          darkMode: "class",
-          theme: {
-            extend: {
-              "colors": {
-                      "on-primary": "#ffffff",
-                      "primary-fixed": "#aeecff",
-                      "on-secondary-fixed": "#001f26",
-                      "surface": "#f8fafa",
-                      "tertiary-container": "#a96418",
-                      "surface-white": "#FFFFFF",
-                      "error": "#ba1a1a",
-                      "on-primary-fixed-variant": "#004e5d",
-                      "warning": "#FF9500",
-                      "secondary-container": "#89e4fd",
-                      "secondary-fixed-dim": "#78d3eb",
-                      "surface-tint": "#00687b",
-                      "on-tertiary-fixed": "#2e1600",
-                      "secondary-fixed": "#adecff",
-                      "success": "#34C759",
-                      "surface-container-lowest": "#ffffff",
-                      "text-main": "#1C1C1E",
-                      "on-secondary": "#ffffff",
-                      "outline-variant": "#bdc8cd",
-                      "on-secondary-fixed-variant": "#004e5c",
-                      "surface-container-high": "#e6e8e8",
-                      "surface-container-low": "#f2f4f4",
-                      "outline": "#6d797d",
-                      "on-primary-container": "#f9fdff",
-                      "primary": "#006578",
-                      "on-surface-variant": "#3d494c",
-                      "secondary": "#00687a",
-                      "background": "#f8fafa",
-                      "on-tertiary-container": "#fffbff",
-                      "on-error": "#ffffff",
-                      "tertiary-fixed": "#ffdcc0",
-                      "on-secondary-container": "#006779",
-                      "on-primary-fixed": "#001f26",
-                      "error-container": "#ffdad6",
-                      "inverse-primary": "#66d5f1",
-                      "on-tertiary": "#ffffff",
-                      "on-error-container": "#93000a",
-                      "primary-container": "#008097",
-                      "text-muted": "#636366",
-                      "surface-bright": "#f8fafa",
-                      "primary-fixed-dim": "#66d5f1",
-                      "surface-dim": "#d8dada",
-                      "surface-container": "#eceeee",
-                      "surface-variant": "#e1e3e3",
-                      "surface-container-highest": "#e1e3e3",
-                      "tertiary-fixed-dim": "#ffb877",
-                      "inverse-surface": "#2e3131",
-                      "on-background": "#191c1d",
-                      "inverse-on-surface": "#eff1f1",
-                      "on-tertiary-fixed-variant": "#6b3b00",
-                      "on-surface": "#191c1d",
-                      "tertiary": "#8a4d00"
-              },
-              "borderRadius": {
-                      "DEFAULT": "0.25rem",
-                      "lg": "0.5rem",
-                      "xl": "0.75rem",
-                      "full": "9999px"
-              },
-              "spacing": {
-                      "base": "8px",
-                      "margin-desktop": "80px",
-                      "margin-mobile": "20px",
-                      "gutter": "24px",
-                      "section-gap": "120px"
-              },
-              "fontFamily": {
-                      "body-md": ["Hanken Grotesk"],
-                      "display-lg": ["Hanken Grotesk"],
-                      "display-lg-mobile": ["Hanken Grotesk"],
-                      "label-sm": ["Hanken Grotesk"],
-                      "body-lg": ["Hanken Grotesk"],
-                      "headline-md": ["Hanken Grotesk"]
-              },
-              "fontSize": {
-                      "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
-                      "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
-                      "display-lg-mobile": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "700"}],
-                      "label-sm": ["13px", {"lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "600"}],
-                      "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
-                      "headline-md": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}]
-              }
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-primary": "#ffffff",
+                        "primary-fixed": "#aeecff",
+                        "on-secondary-fixed": "#001f26",
+                        "surface": "#f8fafa",
+                        "tertiary-container": "#a96418",
+                        "surface-white": "#FFFFFF",
+                        "error": "#ba1a1a",
+                        "on-primary-fixed-variant": "#004e5d",
+                        "warning": "#FF9500",
+                        "secondary-container": "#89e4fd",
+                        "secondary-fixed-dim": "#78d3eb",
+                        "surface-tint": "#00687b",
+                        "on-tertiary-fixed": "#2e1600",
+                        "secondary-fixed": "#adecff",
+                        "success": "#34C759",
+                        "surface-container-lowest": "#ffffff",
+                        "text-main": "#1C1C1E",
+                        "on-secondary": "#ffffff",
+                        "outline-variant": "#bdc8cd",
+                        "on-secondary-fixed-variant": "#004e5c",
+                        "surface-container-high": "#e6e8e8",
+                        "surface-container-low": "#f2f4f4",
+                        "outline": "#6d797d",
+                        "on-primary-container": "#f9fdff",
+                        "primary": "#006578",
+                        "on-surface-variant": "#3d494c",
+                        "secondary": "#00687a",
+                        "background": "#f8fafa",
+                        "on-tertiary-container": "#fffbff",
+                        "on-error": "#ffffff",
+                        "tertiary-fixed": "#ffdcc0",
+                        "on-secondary-container": "#006779",
+                        "on-primary-fixed": "#001f26",
+                        "error-container": "#ffdad6",
+                        "inverse-primary": "#66d5f1",
+                        "on-tertiary": "#ffffff",
+                        "on-error-container": "#93000a",
+                        "primary-container": "#008097",
+                        "text-muted": "#636366",
+                        "surface-bright": "#f8fafa",
+                        "primary-fixed-dim": "#66d5f1",
+                        "surface-dim": "#d8dada",
+                        "surface-container": "#eceeee",
+                        "surface-variant": "#e1e3e3",
+                        "surface-container-highest": "#e1e3e3",
+                        "tertiary-fixed-dim": "#ffb877",
+                        "inverse-surface": "#2e3131",
+                        "on-background": "#191c1d",
+                        "inverse-on-surface": "#eff1f1",
+                        "on-tertiary-fixed-variant": "#6b3b00",
+                        "on-surface": "#191c1d",
+                        "tertiary": "#8a4d00"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "base": "8px",
+                        "margin-desktop": "80px",
+                        "margin-mobile": "20px",
+                        "gutter": "24px",
+                        "section-gap": "120px"
+                    },
+                    "fontFamily": {
+                        "body-md": ["Hanken Grotesk"],
+                        "display-lg": ["Hanken Grotesk"],
+                        "display-lg-mobile": ["Hanken Grotesk"],
+                        "label-sm": ["Hanken Grotesk"],
+                        "body-lg": ["Hanken Grotesk"],
+                        "headline-md": ["Hanken Grotesk"]
+                    },
+                    "fontSize": {
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "display-lg-mobile": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "700" }],
+                        "label-sm": ["13px", { "lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }]
+                    }
+                }
             }
-          }
         }
     </script>
-<style>
-        body { font-family: 'Hanken Grotesk', sans-serif; }
+    <style>
+        body {
+            font-family: 'Hanken Grotesk', sans-serif;
+        }
+
         .glass-card {
             background: rgba(255, 255, 255, 0.9);
             backdrop-filter: blur(10px);
             box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.04);
         }
     </style>
-<style>
-    body {
-      min-height: max(884px, 100dvh);
-    }
-  </style>
+    <style>
+        body {
+            min-height: max(884px, 100dvh);
+        }
+    </style>
 
     <script src="../js/app.js"></script>
     <script src="../js/rbac.js"></script>
     <link rel="manifest" href="../manifest.json">
 </head>
+
 <body class="bg-surface text-on-surface min-h-screen flex flex-col md:flex-row">
-<!-- TopAppBar (Mobile Only) -->
-<header class="md:hidden flex justify-between items-center px-margin-mobile py-4 w-full z-50 bg-surface shadow-[0px_10px_30px_rgba(0,0,0,0.04)] sticky top-0">
-<div class="flex items-center gap-4">
-<span class="material-symbols-outlined text-primary cursor-pointer hover:bg-surface-container-low transition-colors active:scale-95 transition-transform duration-200 rounded-full p-2" data-icon="menu">menu</span>
-<span class="font-headline-md text-headline-md font-bold text-primary">Centro Eslava</span>
-</div>
-<div class="w-10 h-10 rounded-full bg-surface-container-highest overflow-hidden cursor-pointer">
-<img alt="Perfil del Doctor" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDJzN9R-VX8af7lKT2AVm5EvxON2TqY1Wb7fuNBJuZFRaIwlk9ETbo4Fl_VkvGm0DL0l7RhAuXSBMtPsFMI0RIQhfQk0LOKqP3DqeCu6ydcrfDK3DulpiR8IWHT27cyaIuaeWgzH2povPLwuwBHIzlpPiDCNwrMU80H8DppKig7AfKk2TPp213gHX9RK87CFDcH2ohpp_qc2JrbPtzTBZjNft4IFUiynI2PVJSw9Cv8vTCLJehgWhn9kT-3bxNv4kCIfyDKZGSTDOg"/>
-</div>
-</header>
-<!-- NavigationDrawer (Desktop Only) -->
-<nav class="hidden md:flex flex-col p-6 h-full w-72 bg-surface-white shadow-[0px_10px_30px_rgba(0,0,0,0.04)] fixed left-0 top-0 z-40 border-r border-surface-container-high">
-<div class="flex items-center gap-4 mb-8 pb-8 border-b border-surface-container-low">
-<div class="w-12 h-12 rounded-full bg-surface-container overflow-hidden">
-<img alt="Administrador Clínico" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDm8HuhSWf4FVoLrsjDiFTjBL4hcSzrs557rJP6c2X-sjyuADV_uZbnwuGXZDsn4VP0xphR5zh0-yR9y2dDR4xPGmVf1CiqT6pExkTCj7RoXoDuqkVfGIRmwypsOOves38TiLcU87jMXRVC0_X2xSZKCEHKbINCt-NWFDSVCPOhV0hw4090dDGbKODahdDx8nJrFipANbb1B2H9V7xuR3_2gxMLJNbBrBxJ0lSYTEnPHrUem73Y1GXLjk88gxJO9QXcimER-EaqSbE"/>
-</div>
-<div>
-<h2 class="font-headline-md text-headline-md text-primary font-bold text-lg">Dr. Eslava</h2>
-<p class="font-body-md text-body-md text-on-surface-variant text-sm">Director Clínico</p>
-<p class="font-label-sm text-label-sm text-outline text-xs mt-1">Acceso de Admin</p>
-</div>
-</div>
-<ul class="flex flex-col gap-2 flex-grow">
-<li>
-<a class="flex items-center gap-3 px-4 py-3 rounded-xl font-body-md text-body-md text-on-surface-variant hover:bg-surface-container-low transition-all active:scale-[0.98]" href="calendario_dashboard_desktop.html" id="nav-link-calendario">
-<span class="material-symbols-outlined" data-icon="calendar_today">calendar_today</span>
+    <!-- TopAppBar (Mobile Only) -->
+    <header
+        class="md:hidden flex justify-between items-center px-margin-mobile py-4 w-full z-50 bg-surface shadow-[0px_10px_30px_rgba(0,0,0,0.04)] sticky top-0">
+        <div class="flex items-center gap-4">
+            <span
+                class="material-symbols-outlined text-primary cursor-pointer hover:bg-surface-container-low transition-colors active:scale-95 transition-transform duration-200 rounded-full p-2"
+                data-icon="menu">menu</span>
+            <span class="font-headline-md text-headline-md font-bold text-primary">Centro Eslava</span>
+        </div>
+        <div class="w-10 h-10 rounded-full bg-surface-container-highest overflow-hidden cursor-pointer">
+            <img alt="Perfil del Doctor" class="w-full h-full object-cover"
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuDJzN9R-VX8af7lKT2AVm5EvxON2TqY1Wb7fuNBJuZFRaIwlk9ETbo4Fl_VkvGm0DL0l7RhAuXSBMtPsFMI0RIQhfQk0LOKqP3DqeCu6ydcrfDK3DulpiR8IWHT27cyaIuaeWgzH2povPLwuwBHIzlpPiDCNwrMU80H8DppKig7AfKk2TPp213gHX9RK87CFDcH2ohpp_qc2JrbPtzTBZjNft4IFUiynI2PVJSw9Cv8vTCLJehgWhn9kT-3bxNv4kCIfyDKZGSTDOg" />
+        </div>
+    </header>
+    <!-- NavigationDrawer (Desktop Only) -->
+    <nav
+        class="hidden md:flex flex-col p-6 h-full w-72 bg-surface-white shadow-[0px_10px_30px_rgba(0,0,0,0.04)] fixed left-0 top-0 z-40 border-r border-surface-container-high">
+        <div class="flex items-center gap-4 mb-8 pb-8 border-b border-surface-container-low">
+            <div class="w-12 h-12 rounded-full bg-surface-container overflow-hidden">
+                <img alt="Administrador Clínico" class="w-full h-full object-cover"
+                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuDm8HuhSWf4FVoLrsjDiFTjBL4hcSzrs557rJP6c2X-sjyuADV_uZbnwuGXZDsn4VP0xphR5zh0-yR9y2dDR4xPGmVf1CiqT6pExkTCj7RoXoDuqkVfGIRmwypsOOves38TiLcU87jMXRVC0_X2xSZKCEHKbINCt-NWFDSVCPOhV0hw4090dDGbKODahdDx8nJrFipANbb1B2H9V7xuR3_2gxMLJNbBrBxJ0lSYTEnPHrUem73Y1GXLjk88gxJO9QXcimER-EaqSbE" />
+            </div>
+            <div>
+                <h2 class="font-headline-md text-headline-md text-primary font-bold text-lg">Dr. Eslava</h2>
+                <p class="font-body-md text-body-md text-on-surface-variant text-sm">Director Clínico</p>
+                <p class="font-label-sm text-label-sm text-outline text-xs mt-1">Acceso de Admin</p>
+            </div>
+        </div>
+        <ul class="flex flex-col gap-2 flex-grow">
+            <li>
+                <a class="flex items-center gap-3 px-4 py-3 rounded-xl font-body-md text-body-md text-on-surface-variant hover:bg-surface-container-low transition-all active:scale-[0.98]"
+                    href="calendario_dashboard_desktop.html" id="nav-link-calendario">
+                    <span class="material-symbols-outlined" data-icon="calendar_today">calendar_today</span>
                     Horario
                 </a>
-</li>
-<li>
-<a class="flex items-center gap-3 px-4 py-3 rounded-xl font-body-md text-body-md text-on-surface-variant hover:bg-surface-container-low transition-all active:scale-[0.98]" href="pacientes_historia_clinica_desktop.html" id="nav-link-pacientes">
-<span class="material-symbols-outlined" data-icon="groups">groups</span>
+            </li>
+            <li>
+                <a class="flex items-center gap-3 px-4 py-3 rounded-xl font-body-md text-body-md text-on-surface-variant hover:bg-surface-container-low transition-all active:scale-[0.98]"
+                    href="pacientes_historia_clinica_desktop.html" id="nav-link-pacientes">
+                    <span class="material-symbols-outlined" data-icon="groups">groups</span>
                     Pacientes
                 </a>
-</li>
-<li>
-<a class="flex items-center gap-3 px-4 py-3 rounded-xl font-body-md text-body-md text-on-surface-variant hover:bg-surface-container-low transition-all active:scale-[0.98]" href="servicios_ajustes_desktop.html" id="nav-link-servicios">
-<span class="material-symbols-outlined" data-icon="medical_services">medical_services</span>
+            </li>
+            <li>
+                <a class="flex items-center gap-3 px-4 py-3 rounded-xl font-body-md text-body-md text-on-surface-variant hover:bg-surface-container-low transition-all active:scale-[0.98]"
+                    href="tratamientos_desktop.html" id="nav-link-servicios">
+                    <span class="material-symbols-outlined" data-icon="medical_services">medical_services</span>
                     Servicios
                 </a>
-</li>
-<li>
-<a class="flex items-center gap-3 px-4 py-3 rounded-xl font-body-md text-body-md bg-secondary-container text-on-secondary-container transition-all active:scale-[0.98] font-bold" href="pagos_facturacion_desktop.html" id="nav-link-finanzas">
-<span class="material-symbols-outlined" data-icon="payments" data-weight="fill" style="font-variation-settings: 'FILL' 1;">payments</span>
+            </li>
+            <li>
+                <a class="flex items-center gap-3 px-4 py-3 rounded-xl font-body-md text-body-md text-on-surface-variant hover:bg-surface-container-low transition-all active:scale-[0.98]"
+                    href="productos_desktop.html" id="nav-link-productos">
+                    <span class="material-symbols-outlined" data-icon="inventory_2">inventory_2</span>
+                    Productos
+                </a>
+            </li>
+            <li>
+                <a class="flex items-center gap-3 px-4 py-3 rounded-xl font-body-md text-body-md text-on-surface-variant hover:bg-surface-container-low transition-all active:scale-[0.98]"
+                    href="cobrar_desktop.html" id="nav-link-cobrar">
+                    <span class="material-symbols-outlined">point_of_sale</span>
+                    Cobrar / Caja
+                </a>
+            </li>
+            <li>
+                <a class="flex items-center gap-3 px-4 py-3 rounded-xl font-body-md text-body-md bg-secondary-container text-on-secondary-container transition-all active:scale-[0.98] font-bold"
+                    href="pagos_facturacion_desktop.html" id="nav-link-finanzas">
+                    <span class="material-symbols-outlined" data-icon="payments" data-weight="fill"
+                        style="font-variation-settings: 'FILL' 1;">payments</span>
                     Pagos
                 </a>
-</li>
-<li class="mt-auto">
-<a class="flex items-center gap-3 px-4 py-3 rounded-xl font-body-md text-body-md text-on-surface-variant hover:bg-surface-container-low transition-all active:scale-[0.98]" href="servicios_ajustes_desktop.html" id="nav-link-ajustes">
-<span class="material-symbols-outlined" data-icon="settings">settings</span>
+            </li>
+            <li class="mt-auto">
+                <a class="flex items-center gap-3 px-4 py-3 rounded-xl font-body-md text-body-md text-on-surface-variant hover:bg-surface-container-low transition-all active:scale-[0.98]"
+                    href="ajustes_desktop.html" id="nav-link-ajustes">
+                    <span class="material-symbols-outlined" data-icon="settings">settings</span>
                     Configuración
                 </a>
-</li>
-</ul>
-</nav>
-<!-- Main Content Canvas -->
-<main class="flex-grow md:ml-72 p-margin-mobile md:p-margin-desktop pb-24 md:pb-margin-desktop overflow-y-auto">
-<header class="mb-12 flex justify-between items-start">
-<div>
-<h1 class="font-display-lg-mobile md:font-display-lg text-display-lg-mobile md:text-display-lg text-primary font-bold mb-2">Resumen Financiero</h1>
-<p class="font-body-lg text-body-lg text-outline">Administre la facturación, realice un seguimiento de los ingresos y procese pagos pendientes.</p>
-</div>
-<button onclick="abrirModalNuevaFactura()" class="bg-primary text-on-primary p-3.5 rounded-full flex items-center justify-center hover:opacity-90 active:scale-95 transition-all shadow-lg shrink-0 ml-4">
-    <span class="material-symbols-outlined text-white">receipt_long</span>
-</button>
-</header>
-<!-- Bento Grid Layout -->
-<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-<!-- Revenue Summary Card (Spans 2 cols on md) -->
-<div class="md:col-span-2 glass-card rounded-xl p-6 md:p-8 flex flex-col justify-between">
-<div class="flex justify-between items-start mb-6">
-<div>
-<h2 class="font-headline-md text-headline-md text-on-surface mb-1">Ingresos Mensuales</h2>
-<p class="font-body-md text-body-md text-outline">Octubre 2023</p>
-</div>
-<div class="bg-success/10 px-3 py-1 rounded-full flex items-center gap-1">
-<span class="material-symbols-outlined text-success text-sm">trending_up</span>
-<span class="font-label-sm text-label-sm text-success">+12.4%</span>
-</div>
-</div>
-<div class="mb-8">
-<span id="total-ingresos" class="font-display-lg-mobile md:font-display-lg text-display-lg-mobile md:text-display-lg text-primary font-bold">S/ 42,500</span>
-<span class="font-body-md text-body-md text-outline ml-2">/ S/ 50,000 Meta</span>
-</div>
-<!-- Simple Progress Bar for Revenue -->
-<div class="w-full bg-surface-container-low rounded-full h-3 mb-2 overflow-hidden">
-<div class="bg-primary h-3 rounded-full" style="width: 85%;"></div>
-</div>
-<div class="flex justify-between text-sm font-label-sm text-outline">
-<span>S/ 0</span>
-<span>85% de la meta</span>
-<span>S/ 50k</span>
-</div>
-</div>
-<!-- Quick Stats -->
-<div class="glass-card rounded-xl p-6 md:p-8 flex flex-col gap-6">
-<div class="flex-1 border-b border-surface-container-low pb-6">
-<div class="flex items-center gap-2 mb-2">
-<span class="material-symbols-outlined text-warning bg-warning/10 p-2 rounded-lg">pending_actions</span>
-<h3 class="font-headline-md text-base text-on-surface">Reclamos Pendientes</h3>
-</div>
-<p id="total-reclamos" class="font-display-lg-mobile text-2xl font-bold text-on-surface mt-2">S/ 8,240</p>
-<p id="count-reclamos" class="font-label-sm text-label-sm text-outline mt-1">14 Esperando Aprobación</p>
-</div>
-<div class="flex-1">
-<div class="flex items-center gap-2 mb-2">
-<span class="material-symbols-outlined text-error bg-error/10 p-2 rounded-lg">error</span>
-<h3 class="font-headline-md text-base text-on-surface">Saldos Vencidos</h3>
-</div>
-<p id="total-vencidos" class="font-display-lg-mobile text-2xl font-bold text-error mt-2">S/ 1,450</p>
-<p id="count-vencidos" class="font-label-sm text-label-sm text-outline mt-1">3 Pacientes Requieren Acción</p>
-</div>
-</div>
-<!-- Pending Payments List -->
-<div class="md:col-span-2 glass-card rounded-xl p-6 md:p-8">
-<div class="flex justify-between items-center mb-6">
-<h2 class="font-headline-md text-headline-md text-on-surface">Acción Necesaria: Pagos Pendientes</h2>
-<button class="font-label-sm text-label-sm text-primary hover:text-primary-container transition-colors">Ver Todo</button>
-</div>
-<div class="flex flex-col gap-4" id="pagos-pendientes-container">
-<!-- Dynamic content will be loaded here -->
-</div>
-</div>
-<!-- Recent Transactions Mini -->
-<div class="glass-card rounded-xl p-6 md:p-8">
-<div class="flex justify-between items-center mb-6">
-<h2 class="font-headline-md text-base text-on-surface">Actividad Reciente</h2>
-</div>
-<div class="flex flex-col gap-5" id="actividad-reciente-container">
-<!-- Dynamic content will be loaded here -->
-</div>
-<button class="w-full mt-6 py-2 border border-surface-container-highest rounded-full font-label-sm text-label-sm text-on-surface-variant hover:bg-surface-container-low transition-colors">Ver Libro de Transacciones</button>
-</div>
-</div>
-</div>
-</main>
-
-<!-- Modal Nueva Factura / Venta (Mobile) -->
-<dialog id="modalNuevaFactura" class="backdrop:bg-black/50 p-5 rounded-2xl shadow-xl border-none w-[92%] max-w-md bg-surface-white m-auto z-50">
-    <div class="flex justify-between items-center mb-4">
-        <h3 class="text-lg font-bold text-on-surface">Factura / Venta</h3>
-        <button onclick="document.getElementById('modalNuevaFactura').close()" class="w-8 h-8 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container-high transition-colors">
-            <span class="material-symbols-outlined text-[20px]">close</span>
-        </button>
-    </div>
-    <form id="formNuevaFactura" class="space-y-4 text-sm">
-        <div>
-            <label class="block text-xs font-bold text-on-surface-variant mb-1">Paciente</label>
-            <select id="invoice-paciente" required class="w-full bg-surface-container-low border-none rounded-xl py-2 px-3 focus:ring-2 focus:ring-primary text-sm">
-                <option value="">Seleccione Paciente</option>
-            </select>
-        </div>
-        <div>
-            <label class="block text-xs font-bold text-on-surface-variant mb-1">Convenio / Seguro</label>
-            <select id="invoice-convenio" onchange="calcularTotalesFactura()" class="w-full bg-surface-container-low border-none rounded-xl py-2 px-3 focus:ring-2 focus:ring-primary text-sm">
-                <option value="Particular" data-discount="0">Particular (Sin Convenio)</option>
-                <option value="Rimac" data-discount="20">Rimac (20% Desc.)</option>
-                <option value="Pacífico" data-discount="15">Pacífico (15% Desc.)</option>
-                <option value="Sanitas" data-discount="10">Sanitas (10% Desc.)</option>
-            </select>
-        </div>
-        <div class="grid grid-cols-2 gap-3">
+            </li>
+        </ul>
+    </nav>
+    <!-- Main Content Canvas -->
+    <main class="flex-grow md:ml-72 p-margin-mobile md:p-margin-desktop pb-24 md:pb-margin-desktop overflow-y-auto">
+        <header class="mb-12 flex justify-between items-start">
             <div>
-                <label class="block text-xs font-bold text-on-surface-variant mb-1">Servicio</label>
-                <select id="invoice-servicio" onchange="seleccionarServicioPrecio()" class="w-full bg-surface-container-low border-none rounded-xl py-2 px-3 focus:ring-2 focus:ring-primary text-xs">
-                    <option value="" data-precio="0">Ninguno (Venta)</option>
-                </select>
+                <h1
+                    class="font-display-lg-mobile md:font-display-lg text-display-lg-mobile md:text-display-lg text-primary font-bold mb-2">
+                    Resumen Financiero</h1>
+                <p class="font-body-lg text-body-lg text-outline">Administre la facturación, realice un seguimiento de
+                    los ingresos y procese pagos pendientes.</p>
             </div>
-            <div>
-                <label class="block text-xs font-bold text-on-surface-variant mb-1">Precio Servicio</label>
-                <input type="number" id="invoice-servicio-precio" value="0.00" step="0.01" min="0" oninput="calcularTotalesFactura()" class="w-full bg-surface-container-low border-none rounded-xl py-2 px-3 focus:ring-2 focus:ring-primary text-xs">
-            </div>
-        </div>
-
-        <!-- Venta de Productos -->
-        <div class="bg-surface-container-lowest p-3 rounded-xl border border-surface-container">
-            <h4 class="text-xs font-bold text-outline uppercase tracking-wider mb-2 flex items-center gap-1">
-                <span class="material-symbols-outlined text-sm">shopping_cart</span>
-                Venta de Productos
-            </h4>
-            <div class="flex gap-2">
-                <select id="invoice-producto-select" class="flex-1 bg-surface-container-low border-none rounded-xl py-1.5 px-2 text-xs focus:ring-2 focus:ring-primary">
-                    <option value="" data-precio="0">Seleccionar...</option>
-                </select>
-                <button type="button" onclick="agregarProductoAFactura()" class="bg-primary text-white px-3 py-1.5 rounded-lg text-[11px] font-bold hover:opacity-90">
-                    + Add
-                </button>
-            </div>
-            <div id="invoice-productos-list" class="space-y-1.5 max-h-[100px] overflow-y-auto pr-1 mt-2">
-                <p class="text-outline text-[11px] text-center py-1">Sin productos.</p>
-            </div>
-        </div>
-
-        <div class="grid grid-cols-2 gap-3 items-center">
-            <div>
-                <label class="block text-xs font-bold text-on-surface-variant mb-1">Aplicar IGV (18%)</label>
-                <div class="flex items-center mt-1">
-                    <input type="checkbox" id="invoice-igv-toggle" onchange="calcularTotalesFactura()" class="rounded border-outline-variant text-primary focus:ring-primary h-4 w-4">
-                    <span class="ml-2 text-xs font-semibold text-on-surface-variant">Incluir IGV</span>
+        </header>
+        <!-- Bento Grid Layout -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- Revenue Summary Card (Spans 2 cols on md) -->
+            <div class="md:col-span-2 glass-card rounded-xl p-6 md:p-8 flex flex-col justify-between">
+                <div class="flex justify-between items-start mb-6">
+                    <div>
+                        <h2 class="font-headline-md text-headline-md text-on-surface mb-1">Ingresos Mensuales</h2>
+                        <p class="font-body-md text-body-md text-outline">Octubre 2023</p>
+                    </div>
+                    <div class="bg-success/10 px-3 py-1 rounded-full flex items-center gap-1">
+                        <span class="material-symbols-outlined text-success text-sm">trending_up</span>
+                        <span class="font-label-sm text-label-sm text-success">+12.4%</span>
+                    </div>
+                </div>
+                <div class="mb-8">
+                    <span id="total-ingresos"
+                        class="font-display-lg-mobile md:font-display-lg text-display-lg-mobile md:text-display-lg text-primary font-bold">S/
+                        42,500</span>
+                    <span class="font-body-md text-body-md text-outline ml-2">/ S/ 50,000 Meta</span>
+                </div>
+                <!-- Simple Progress Bar for Revenue -->
+                <div class="w-full bg-surface-container-low rounded-full h-3 mb-2 overflow-hidden">
+                    <div class="bg-primary h-3 rounded-full" style="width: 85%;"></div>
+                </div>
+                <div class="flex justify-between text-sm font-label-sm text-outline">
+                    <span>S/ 0</span>
+                    <span>85% de la meta</span>
+                    <span>S/ 50k</span>
                 </div>
             </div>
-            <div>
-                <label class="block text-xs font-bold text-on-surface-variant mb-1">Método</label>
-                <select id="invoice-metodo" required class="w-full bg-surface-container-low border-none rounded-xl py-2 px-3 focus:ring-2 focus:ring-primary text-xs">
-                    <option value="Yape/Plin">Yape / Plin</option>
-                    <option value="Efectivo">Efectivo</option>
-                    <option value="Tarjeta">Tarjeta</option>
-                    <option value="Transferencia">Transferencia</option>
-                </select>
+            <!-- Quick Stats -->
+            <div class="glass-card rounded-xl p-6 md:p-8 flex flex-col gap-6">
+                <div class="flex-1 border-b border-surface-container-low pb-6">
+                    <div class="flex items-center gap-2 mb-2">
+                        <span
+                            class="material-symbols-outlined text-warning bg-warning/10 p-2 rounded-lg">pending_actions</span>
+                        <h3 class="font-headline-md text-base text-on-surface">Reclamos Pendientes</h3>
+                    </div>
+                    <p id="total-reclamos" class="font-display-lg-mobile text-2xl font-bold text-on-surface mt-2">S/
+                        8,240</p>
+                    <p id="count-reclamos" class="font-label-sm text-label-sm text-outline mt-1">14 Esperando Aprobación
+                    </p>
+                </div>
+                <div class="flex-1">
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="material-symbols-outlined text-error bg-error/10 p-2 rounded-lg">error</span>
+                        <h3 class="font-headline-md text-base text-on-surface">Saldos Vencidos</h3>
+                    </div>
+                    <p id="total-vencidos" class="font-display-lg-mobile text-2xl font-bold text-error mt-2">S/ 1,450
+                    </p>
+                    <p id="count-vencidos" class="font-label-sm text-label-sm text-outline mt-1">3 Pacientes Requieren
+                        Acción</p>
+                </div>
+            </div>
+            <!-- Top Services & Top Clients Mobile -->
+            <div class="glass-card rounded-xl p-6 md:p-8 flex flex-col gap-6">
+                <!-- Top Servicios -->
+                <div class="flex-1 border-b border-surface-container-low pb-6">
+                    <h3 class="font-headline-md text-base text-on-surface mb-4 flex items-center gap-2"><span class="material-symbols-outlined text-primary">bar_chart</span> Top Servicios</h3>
+                    <div class="flex flex-col gap-3" id="top-servicios-container">
+                        <div class="flex justify-center"><span class="material-symbols-outlined animate-spin">sync</span></div>
+                    </div>
+                </div>
+                <!-- Top Pacientes -->
+                <div class="flex-1">
+                    <h3 class="font-headline-md text-base text-on-surface mb-4 flex items-center gap-2"><span class="material-symbols-outlined text-primary">group</span> Top Pacientes</h3>
+                    <div class="flex flex-col gap-3" id="top-pacientes-container">
+                        <div class="flex justify-center"><span class="material-symbols-outlined animate-spin">sync</span></div>
+                    </div>
+                </div>
+            </div>
+            <!-- Pending Payments List -->
+            <div class="md:col-span-2 glass-card rounded-xl p-6 md:p-8">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="font-headline-md text-headline-md text-on-surface">Acción Necesaria: Pagos Pendientes
+                    </h2>
+                    <button
+                        class="font-label-sm text-label-sm text-primary hover:text-primary-container transition-colors">Ver
+                        Todo</button>
+                </div>
+                <div class="flex flex-col gap-4" id="pagos-pendientes-container">
+                    <!-- Dynamic content will be loaded here -->
+                </div>
+            </div>
+            <!-- Recent Transactions Mini -->
+            <div class="glass-card rounded-xl p-6 md:p-8">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="font-headline-md text-base text-on-surface">Actividad Reciente</h2>
+                </div>
+                <div class="flex flex-col gap-5" id="actividad-reciente-container">
+                    <!-- Dynamic content will be loaded here -->
+                </div>
+                <button
+                    class="w-full mt-6 py-2 border border-surface-container-highest rounded-full font-label-sm text-label-sm text-on-surface-variant hover:bg-surface-container-low transition-colors">Ver
+                    Libro de Transacciones</button>
             </div>
         </div>
-        <div>
-            <label class="block text-xs font-bold text-on-surface-variant mb-1">Estado de Pago</label>
-            <select id="invoice-estado" required class="w-full bg-surface-container-low border-none rounded-xl py-2 px-3 focus:ring-2 focus:ring-primary text-xs">
-                <option value="Completado">Pagado (Completado)</option>
-                <option value="Pendiente">Por Pagar (Pendiente)</option>
-            </select>
         </div>
-
-        <!-- Desglose de Facturación -->
-        <div class="bg-surface-container-low p-3 rounded-xl space-y-1.5 text-xs">
-            <div class="flex justify-between">
-                <span class="text-on-surface-variant">Subtotal:</span>
-                <span id="invoice-subtotal" class="font-bold">S/. 0.00</span>
-            </div>
-            <div class="flex justify-between text-success font-semibold">
-                <span>Descuento:</span>
-                <span id="invoice-descuento" class="font-bold">- S/. 0.00</span>
-            </div>
-            <div class="flex justify-between">
-                <span class="text-on-surface-variant">IGV (18%):</span>
-                <span id="invoice-igv-monto" class="font-bold">S/. 0.00</span>
-            </div>
-            <div class="flex justify-between border-t border-surface-container-high pt-1.5 text-sm font-extrabold text-primary">
-                <span>TOTAL:</span>
-                <span id="invoice-total">S/. 0.00</span>
-            </div>
-        </div>
-
-        <div class="pt-3 flex flex-col gap-2 border-t border-surface-variant">
-            <button type="submit" class="w-full bg-primary text-white py-2.5 rounded-xl font-bold">Registrar y Cobrar</button>
-            <div class="flex gap-2">
-                <button type="button" onclick="imprimirReciboFactura()" class="flex-1 py-2 border border-outline text-on-surface-variant font-bold rounded-xl flex items-center justify-center gap-1.5 text-xs">
-                    <span class="material-symbols-outlined text-[18px]">print</span> Recibo
-                </button>
-                <button type="button" onclick="document.getElementById('modalNuevaFactura').close()" class="flex-1 py-2 text-on-surface-variant font-bold hover:bg-surface-container-high rounded-xl text-xs">Cancelar</button>
-            </div>
-        </div>
-    </form>
-</dialog>
-
-<!-- BottomNavBar (Mobile Only) -->
-<nav class="md:hidden fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 py-3 bg-surface-white/80 backdrop-blur-md shadow-[0px_-10px_30px_rgba(0,0,0,0.04)] rounded-t-xl border-t-0">
-<a class="flex flex-col items-center justify-center text-outline hover:bg-surface-container-high/50 active:scale-90 transition-all duration-150 p-2 rounded-lg" href="calendario_dashboard_mobile.html" id="nav-mobile-calendario">
-<span class="material-symbols-outlined" data-icon="event">event</span>
-<span class="font-label-sm text-label-sm mt-1 text-[10px]">Calendario</span>
-</a>
-<a class="flex flex-col items-center justify-center text-outline hover:bg-surface-container-high/50 active:scale-90 transition-all duration-150 p-2 rounded-lg" href="pacientes_historia_clinica_mobile.html" id="nav-mobile-pacientes">
-<span class="material-symbols-outlined" data-icon="person_search">person_search</span>
-<span class="font-label-sm text-label-sm mt-1 text-[10px]">Pacientes</span>
-</a>
-<a class="flex flex-col items-center justify-center text-outline hover:bg-surface-container-high/50 active:scale-90 transition-all duration-150 p-2 rounded-lg" href="servicios_ajustes_mobile.html" id="nav-mobile-servicios">
-<span class="material-symbols-outlined" data-icon="healing">healing</span>
-<span class="font-label-sm text-label-sm mt-1 text-[10px]">Tratamientos</span>
-</a>
-<a class="flex flex-col items-center justify-center text-primary font-bold active:scale-90 transition-all duration-150 p-2 rounded-lg bg-secondary-container/20" href="pagos_facturacion_mobile.html" id="nav-mobile-finanzas">
-<span class="material-symbols-outlined" data-icon="account_balance_wallet" data-weight="fill" style="font-variation-settings: 'FILL' 1;">account_balance_wallet</span>
-<span class="font-label-sm text-label-sm mt-1 text-[10px]">Finanzas</span>
-</a>
-</nav>
-<script>
-    
+    </main>
+    <!-- POS Modal removed as it is in cobrar_mobile.html -->
+    <!-- BottomNavBar (Mobile Only) -->
+    <nav
+        class="md:hidden fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 py-3 bg-surface-white/80 backdrop-blur-md shadow-[0px_-10px_30px_rgba(0,0,0,0.04)] rounded-t-xl border-t-0">
+        <a class="flex flex-col items-center justify-center text-outline hover:bg-surface-container-high/50 active:scale-90 transition-all duration-150 p-2 rounded-lg"
+            href="calendario_dashboard_mobile.html">
+            <span class="material-symbols-outlined" data-icon="event">event</span>
+            <span class="font-label-sm text-label-sm mt-1 text-[10px]">Calendario</span>
+        </a>
+        <a class="flex flex-col items-center justify-center text-outline hover:bg-surface-container-high/50 active:scale-90 transition-all duration-150 p-2 rounded-lg"
+            href="pacientes_historia_clinica_mobile.html">
+            <span class="material-symbols-outlined" data-icon="person_search">person_search</span>
+            <span class="font-label-sm text-label-sm mt-1 text-[10px]">Pacientes</span>
+        </a>
+        <a id="nav-mobile-servicios"
+            class="flex flex-col items-center justify-center text-outline hover:bg-surface-container-high/50 active:scale-90 transition-all duration-150 p-2 rounded-lg"
+            href="tratamientos_mobile.html">
+            <span class="material-symbols-outlined" data-icon="healing">healing</span>
+            <span class="font-label-sm text-label-sm mt-1 text-[10px]">Tratamientos</span>
+        </a>
+        <a class="flex flex-col items-center justify-center text-outline min-w-0 flex-1 py-1 px-1 rounded-lg hover:bg-surface-container-low active:scale-90 transition-all duration-150"
+            href="cobrar_mobile.html">
+            <span class="material-symbols-outlined mb-1 text-[22px]">point_of_sale</span>
+            <span class="text-[10px] font-semibold leading-tight truncate">Caja</span>
+        </a>
+        <a class="flex flex-col items-center justify-center text-primary font-bold active:scale-90 transition-all duration-150 p-2 rounded-lg bg-secondary-container/20"
+            href="pagos_facturacion_mobile.html">
+            <span class="material-symbols-outlined" data-icon="account_balance_wallet" data-weight="fill"
+                style="font-variation-settings: 'FILL' 1;">account_balance_wallet</span>
+            <span class="font-label-sm text-label-sm mt-1 text-[10px]">Finanzas</span>
+        </a>
+    </nav>
+    <script>
 
 
-    // Helper function to format currency
-    function formatCurrency(amount) {
-        return new Intl.NumberFormat('es-PE', { style: 'currency', currency: 'PEN' }).format(amount);
-    }
 
-    function getInitials(name) {
-        if (!name) return '??';
-        const parts = name.split(' ');
-        if (parts.length >= 2) {
-            return (parts[0][0] + parts[1][0]).toUpperCase();
+        // Helper function to format currency
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('es-PE', { style: 'currency', currency: 'PEN' }).format(amount);
         }
-        return name.substring(0, 2).toUpperCase();
-    }
 
-    async function cargarDatosFinancieros() {
-        if (currentRole === 'medico' || currentRole === 'asistente') return; // Don't fetch if restricted
-        
-        try {
-            // Fetch pagos
-            const { data: pagos, error } = await supabaseClient
-                .from('pagos')
-                .select(`
+        function getInitials(name) {
+            if (!name) return '??';
+            const parts = name.split(' ');
+            if (parts.length >= 2) {
+                return (parts[0][0] + parts[1][0]).toUpperCase();
+            }
+            return name.substring(0, 2).toUpperCase();
+        }
+
+        async function cargarDatosFinancieros() {
+            if (currentRole === 'medico' || currentRole === 'asistente') return; // Don't fetch if restricted
+
+            try {
+                // Fetch pagos
+                const { data: pagos, error } = await supabaseClient
+                    .from('pagos')
+                    .select(`
                     id,
                     monto,
                     metodo,
                     estado,
                     fecha,
+                    servicio_realizado,
                     pacientes ( nombre ),
                     citas ( tratamiento, motivo )
                 `)
-                .order('fecha', { ascending: false });
+                    .order('fecha', { ascending: false });
 
-            if (error) throw error;
+                if (error) throw error;
 
-            // Calcular totales dinámicos
-            const safePagos = pagos || [];
-            const totalIngresos = safePagos.filter(p => p.estado === 'Completado').reduce((sum, p) => sum + Number(p.monto), 0);
-            const pendientes = safePagos.filter(p => p.estado === 'Pendiente');
-            const totalPendientes = pendientes.reduce((sum, p) => sum + Number(p.monto), 0);
-            const vencidos = safePagos.filter(p => p.estado === 'Vencido');
-            const totalVencidos = vencidos.reduce((sum, p) => sum + Number(p.monto), 0);
+                // Calcular totales dinámicos
+                const safePagos = pagos || [];
+                const totalIngresos = safePagos.filter(p => p.estado === 'Completado').reduce((sum, p) => sum + Number(p.monto), 0);
+                const pendientes = safePagos.filter(p => p.estado === 'Pendiente');
+                const totalPendientes = pendientes.reduce((sum, p) => sum + Number(p.monto), 0);
+                const vencidos = safePagos.filter(p => p.estado === 'Vencido');
+                const totalVencidos = vencidos.reduce((sum, p) => sum + Number(p.monto), 0);
 
-            // Actualizar UI
-            const elIngresos = document.getElementById('total-ingresos');
-            const elReclamos = document.getElementById('total-reclamos');
-            const elReclamosCount = document.getElementById('count-reclamos');
-            const elVencidos = document.getElementById('total-vencidos');
-            const elVencidosCount = document.getElementById('count-vencidos');
+                // Actualizar UI
+                const elIngresos = document.getElementById('total-ingresos');
+                const elReclamos = document.getElementById('total-reclamos');
+                const elReclamosCount = document.getElementById('count-reclamos');
+                const elVencidos = document.getElementById('total-vencidos');
+                const elVencidosCount = document.getElementById('count-vencidos');
 
-            if (elIngresos) elIngresos.textContent = formatCurrency(totalIngresos);
-            if (elReclamos) elReclamos.textContent = formatCurrency(totalPendientes);
-            if (elReclamosCount) elReclamosCount.textContent = `${pendientes.length} Esperando Aprobación`;
-            if (elVencidos) elVencidos.textContent = formatCurrency(totalVencidos);
-            if (elVencidosCount) elVencidosCount.textContent = `${vencidos.length} Pacientes Requieren Acción`;
+                if (elIngresos) elIngresos.textContent = formatCurrency(totalIngresos);
+                if (elReclamos) elReclamos.textContent = formatCurrency(totalPendientes);
+                if (elReclamosCount) elReclamosCount.textContent = `${pendientes.length} Esperando Aprobación`;
+                if (elVencidos) elVencidos.textContent = formatCurrency(totalVencidos);
+                if (elVencidosCount) elVencidosCount.textContent = `${vencidos.length} Pacientes Requieren Acción`;
 
-            renderPagosPendientes(safePagos);
-            renderActividadReciente(safePagos);
-        } catch (error) {
-            console.error("Error al cargar datos financieros:", error);
-            document.getElementById('pagos-pendientes-container').innerHTML = '<p class="text-error">Error al cargar pagos pendientes.</p>';
-            document.getElementById('actividad-reciente-container').innerHTML = '<p class="text-error">Error al cargar actividad.</p>';
-        }
-    }
-
-    function renderPagosPendientes(pagos) {
-        const container = document.getElementById('pagos-pendientes-container');
-        const pagosPendientes = pagos.filter(p => p.estado === 'Pendiente' || p.estado === 'Vencido');
-
-        if (pagosPendientes.length === 0) {
-            container.innerHTML = '<p class="text-outline text-center py-4">No hay pagos pendientes.</p>';
-            return;
+                renderPagosPendientes(safePagos);
+                renderActividadReciente(safePagos);
+                renderTopEstadisticas(safePagos);
+            } catch (error) {
+                console.error("Error al cargar datos financieros:", error);
+                document.getElementById('pagos-pendientes-container').innerHTML = '<p class="text-error">Error al cargar pagos pendientes.</p>';
+                document.getElementById('actividad-reciente-container').innerHTML = '<p class="text-error">Error al cargar actividad.</p>';
+            }
         }
 
-        let html = '';
-        pagosPendientes.forEach(pago => {
-            const pacienteNombre = pago.pacientes ? pago.pacientes.nombre : 'Paciente Desconocido';
-            const iniciales = getInitials(pacienteNombre);
-            const motivo = pago.citas ? (pago.citas.tratamiento || pago.citas.motivo || 'Consulta') : 'Consulta';
-            
-            // Color logic based on status
-            let stateClass = pago.estado === 'Vencido' ? 'text-error' : 'text-on-surface-variant';
-            
-            let avatarColor = 'bg-secondary-container text-on-secondary-container';
-            
-            // In mobile we format it slightly differently to match the existing UI
-            html += `
+        function renderPagosPendientes(pagos) {
+            const container = document.getElementById('pagos-pendientes-container');
+            const pagosPendientes = pagos.filter(p => p.estado === 'Pendiente' || p.estado === 'Vencido');
+
+            if (pagosPendientes.length === 0) {
+                container.innerHTML = '<p class="text-outline text-center py-4">No hay pagos pendientes.</p>';
+                return;
+            }
+
+            let html = '';
+            pagosPendientes.forEach(pago => {
+                const pacienteNombre = pago.pacientes ? pago.pacientes.nombre : 'Paciente Desconocido';
+                const iniciales = getInitials(pacienteNombre);
+                const motivo = pago.citas ? (pago.citas.tratamiento || pago.citas.motivo || 'Consulta') : 'Consulta';
+
+                // Color logic based on status
+                let stateClass = pago.estado === 'Vencido' ? 'text-error' : 'text-on-surface-variant';
+
+                let avatarColor = 'bg-secondary-container text-on-secondary-container';
+
+                // In mobile we format it slightly differently to match the existing UI
+                html += `
             <div class="flex flex-col gap-3 p-4 rounded-lg bg-surface-container-lowest border border-surface-container-low hover:border-primary-container transition-colors">
                 <div class="flex items-center justify-between">
                     <div class="flex items-center gap-3">
@@ -504,32 +467,102 @@
                 </div>
             </div>
             `;
-        });
-        container.innerHTML = html;
-        attachRecordatorioListeners();
-    }
-
-    function renderActividadReciente(pagos) {
-        const container = document.getElementById('actividad-reciente-container');
-        if (pagos.length === 0) {
-            container.innerHTML = '<p class="text-outline text-center py-4">No hay actividad reciente.</p>';
-            return;
+            });
+            container.innerHTML = html;
+            attachRecordatorioListeners();
         }
 
-        let html = '';
-        pagos.slice(0, 10).forEach(pago => {
-            const pacienteNombre = pago.pacientes ? pago.pacientes.nombre : 'Desconocido';
-            const isCompletado = pago.estado === 'Completado';
-            
-            let badgeClass = isCompletado ? 'bg-success/10 text-success' : 'bg-surface-container text-on-surface-variant';
-            let iconName = isCompletado ? 'check' : 'receipt_long';
-            let statusText = isCompletado ? 'Pago Recibido' : 'Pago ' + pago.estado;
-            
-            let montoHtml = isCompletado 
-                ? `<span class="font-label-sm text-label-sm text-success font-bold">+${formatCurrency(pago.monto)}</span>`
-                : `<span class="font-label-sm text-label-sm text-outline">${formatCurrency(pago.monto)}</span>`;
+        function renderTopEstadisticas(pagos) {
+            const serviciosStats = {};
+            const pacientesStats = {};
 
-            html += `
+            pagos.forEach(pago => {
+                if (pago.estado !== 'Completado') return; // Solo contamos ingresos reales
+                
+                // Servicios
+                const motivo = pago.servicio_realizado || (pago.citas ? (pago.citas.tratamiento || pago.citas.motivo || 'Consulta') : 'Venta General');
+                if (!serviciosStats[motivo]) {
+                    serviciosStats[motivo] = { count: 0, revenue: 0 };
+                }
+                serviciosStats[motivo].count += 1;
+                serviciosStats[motivo].revenue += Number(pago.monto);
+
+                // Pacientes
+                const paciente = pago.pacientes ? pago.pacientes.nombre : 'Paciente Desconocido';
+                if (!pacientesStats[paciente]) {
+                    pacientesStats[paciente] = { count: 0, revenue: 0 };
+                }
+                pacientesStats[paciente].count += 1;
+                pacientesStats[paciente].revenue += Number(pago.monto);
+            });
+
+            const topServicios = Object.entries(serviciosStats)
+                .sort((a, b) => b[1].revenue - a[1].revenue)
+                .slice(0, 5);
+
+            const topPacientes = Object.entries(pacientesStats)
+                .sort((a, b) => b[1].revenue - a[1].revenue)
+                .slice(0, 5);
+
+            const containerServicios = document.getElementById('top-servicios-container');
+            if (topServicios.length === 0) {
+                containerServicios.innerHTML = '<p class="text-outline text-center py-2 text-sm">Sin datos suficientes.</p>';
+            } else {
+                containerServicios.innerHTML = topServicios.map(s => \`
+                    <div class="flex justify-between items-center border-b border-surface-container-low pb-2 last:border-0">
+                        <div class="overflow-hidden">
+                            <p class="font-bold text-on-surface text-sm truncate">\${s[0]}</p>
+                            <p class="text-[10px] text-on-surface-variant">\${s[1].count} veces</p>
+                        </div>
+                        <div class="text-right whitespace-nowrap ml-2">
+                            <p class="font-bold text-success text-sm">\${formatCurrency(s[1].revenue)}</p>
+                        </div>
+                    </div>
+                \`).join('');
+            }
+
+            const containerPacientes = document.getElementById('top-pacientes-container');
+            if (topPacientes.length === 0) {
+                containerPacientes.innerHTML = '<p class="text-outline text-center py-2 text-sm">Sin datos suficientes.</p>';
+            } else {
+                containerPacientes.innerHTML = topPacientes.map(p => \`
+                    <div class="flex justify-between items-center border-b border-surface-container-low pb-2 last:border-0">
+                        <div class="flex items-center gap-2 overflow-hidden">
+                            <div class="w-6 h-6 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center font-bold text-[10px] shrink-0">\${getInitials(p[0])}</div>
+                            <div class="overflow-hidden">
+                                <p class="font-bold text-on-surface text-sm truncate">\${p[0]}</p>
+                                <p class="text-[10px] text-on-surface-variant">\${p[1].count} atenciones</p>
+                            </div>
+                        </div>
+                        <div class="text-right whitespace-nowrap ml-2">
+                            <p class="font-bold text-success text-sm">\${formatCurrency(p[1].revenue)}</p>
+                        </div>
+                    </div>
+                \`).join('');
+            }
+        }
+
+        function renderActividadReciente(pagos) {
+            const container = document.getElementById('actividad-reciente-container');
+            if (pagos.length === 0) {
+                container.innerHTML = '<p class="text-outline text-center py-4">No hay actividad reciente.</p>';
+                return;
+            }
+
+            let html = '';
+            pagos.slice(0, 10).forEach(pago => {
+                const pacienteNombre = pago.pacientes ? pago.pacientes.nombre : 'Desconocido';
+                const isCompletado = pago.estado === 'Completado';
+
+                let badgeClass = isCompletado ? 'bg-success/10 text-success' : 'bg-surface-container text-on-surface-variant';
+                let iconName = isCompletado ? 'check' : 'receipt_long';
+                let statusText = isCompletado ? 'Pago Recibido' : 'Pago ' + pago.estado;
+
+                let montoHtml = isCompletado
+                    ? `<span class="font-label-sm text-label-sm text-success font-bold">+${formatCurrency(pago.monto)}</span>`
+                    : `<span class="font-label-sm text-label-sm text-outline">${formatCurrency(pago.monto)}</span>`;
+
+                html += `
             <div class="flex items-start gap-3">
                 <div class="mt-1 w-8 h-8 rounded-full ${badgeClass} flex items-center justify-center">
                     <span class="material-symbols-outlined text-sm">${iconName}</span>
@@ -541,361 +574,63 @@
                 ${montoHtml}
             </div>
             `;
-        });
-        container.innerHTML = html;
-    }
-
-    function attachRecordatorioListeners() {
-        document.querySelectorAll('.recordatorio-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                const originalContent = this.innerHTML;
-                this.innerHTML = '<span class="material-symbols-outlined text-[16px]">done</span> Enviado';
-                this.classList.remove('bg-primary', 'text-on-primary');
-                this.classList.add('bg-success', 'text-white');
-                setTimeout(() => {
-                    this.innerHTML = originalContent;
-                    this.classList.remove('bg-success', 'text-white');
-                    this.classList.add('bg-primary', 'text-on-primary');
-                }, 2000);
             });
-        });
-    }
-
-    async function marcarComoPagado(pagoId) {
-        try {
-            const { error } = await supabaseClient
-                .from('pagos')
-                .update({ estado: 'Completado', fecha: new Date().toISOString() })
-                .eq('id', pagoId);
-
-            if (error) throw error;
-            await cargarDatosFinancieros();
-        } catch (error) {
-            console.error("Error actualizando pago:", error);
-            alert("Hubo un error al marcar el pago como completado.");
-        }
-    }
-
-    function showToast(message, type = "success") {
-        const toast = document.createElement("div");
-        toast.className = `fixed bottom-6 right-6 px-6 py-3 rounded-xl shadow-lg font-bold text-white transition-all transform translate-y-10 opacity-0 z-[100] ${
-            type === "success" ? "bg-success" : type === "error" ? "bg-error" : "bg-primary"
-        }`;
-        toast.textContent = message;
-        document.body.appendChild(toast);
-        
-        setTimeout(() => {
-            toast.classList.remove("translate-y-10", "opacity-0");
-        }, 100);
-        
-        setTimeout(() => {
-            toast.classList.add("translate-y-10", "opacity-0");
-            setTimeout(() => toast.remove(), 500);
-        }, 3000);
-    }
-
-    let globalPacientes = [];
-    let globalServicios = [];
-    let globalProductos = [];
-    let selectedProductos = [];
-
-    async function abrirModalNuevaFactura() {
-        const dialog = document.getElementById('modalNuevaFactura');
-        dialog.showModal();
-
-        // Load patients if not loaded
-        if (globalPacientes.length === 0) {
-            try {
-                const { data: pacs } = await supabaseClient.from('pacientes').select('*').order('nombre');
-                globalPacientes = pacs || [];
-                const selectPac = document.getElementById('invoice-paciente');
-                selectPac.innerHTML = '<option value="">Seleccione Paciente</option>';
-                globalPacientes.forEach(p => {
-                    selectPac.innerHTML += `<option value="${p.id}">${p.nombre}</option>`;
-                });
-            } catch(e) { console.error(e); }
+            container.innerHTML = html;
         }
 
-        // Load services if not loaded
-        if (globalServicios.length === 0) {
-            try {
-                const { data: servs } = await supabaseClient.from('servicios').select('*').order('nombre');
-                globalServicios = servs || [];
-                const selectServ = document.getElementById('invoice-servicio');
-                selectServ.innerHTML = '<option value="" data-precio="0">Ninguno (Venta)</option>';
-                globalServicios.forEach(s => {
-                    selectServ.innerHTML += `<option value="${s.nombre}" data-precio="${s.precio}">${s.nombre} (S/. ${parseFloat(s.precio).toFixed(2)})</option>`;
-                });
-            } catch(e) { console.error(e); }
-        }
-
-        // Load products if not loaded
-        if (globalProductos.length === 0) {
-            try {
-                const { data: prods } = await supabaseClient.from('productos').select('*').order('nombre');
-                globalProductos = prods || [];
-                const selectProd = document.getElementById('invoice-producto-select');
-                selectProd.innerHTML = '<option value="" data-precio="0">Seleccionar...</option>';
-                globalProductos.forEach(p => {
-                    selectProd.innerHTML += `<option value="${p.id}" data-precio="${p.precio}">${p.nombre} (S/. ${parseFloat(p.precio).toFixed(2)})</option>`;
-                });
-            } catch(e) { console.error(e); }
-        }
-
-        // Reset selected products
-        selectedProductos = [];
-        renderSelectedProductos();
-        
-        // Check for URL parameters
-        const urlParams = new URLSearchParams(window.location.search);
-        const pacId = urlParams.get('paciente_id');
-        const citaId = urlParams.get('cita_id');
-
-        if (pacId) {
-            setTimeout(() => {
-                document.getElementById('invoice-paciente').value = pacId;
-            }, 300);
-        }
-
-        if (citaId) {
-            try {
-                const { data: cita } = await supabaseClient.from('citas').select('*').eq('id', citaId).single();
-                if (cita) {
+        function attachRecordatorioListeners() {
+            document.querySelectorAll('.recordatorio-btn').forEach(btn => {
+                btn.addEventListener('click', function () {
+                    const originalContent = this.innerHTML;
+                    this.innerHTML = '<span class="material-symbols-outlined text-[16px]">done</span> Enviado';
+                    this.classList.remove('bg-primary', 'text-on-primary');
+                    this.classList.add('bg-success', 'text-white');
                     setTimeout(() => {
-                        document.getElementById('invoice-servicio').value = cita.tratamiento || '';
-                        document.getElementById('invoice-servicio-precio').value = parseFloat(cita.costo || 150.00).toFixed(2);
-                        calcularTotalesFactura();
-                    }, 400);
-                }
-            } catch(e) { console.error(e); }
+                        this.innerHTML = originalContent;
+                        this.classList.remove('bg-success', 'text-white');
+                        this.classList.add('bg-primary', 'text-on-primary');
+                    }, 2000);
+                });
+            });
         }
 
-        calcularTotalesFactura();
-    }
+        async function marcarComoPagado(pagoId) {
+            try {
+                const { error } = await supabaseClient
+                    .from('pagos')
+                    .update({ estado: 'Completado', fecha: new Date().toISOString() })
+                    .eq('id', pagoId);
 
-    function seleccionarServicioPrecio() {
-        const select = document.getElementById('invoice-servicio');
-        const selectedOption = select.options[select.selectedIndex];
-        const precio = selectedOption.getAttribute('data-precio') || '0';
-        document.getElementById('invoice-servicio-precio').value = parseFloat(precio).toFixed(2);
-        calcularTotalesFactura();
-    }
-
-    function agregarProductoAFactura() {
-        const select = document.getElementById('invoice-producto-select');
-        const productId = select.value;
-        if (!productId) return;
-
-        const prod = globalProductos.find(p => p.id === productId);
-        if (!prod) return;
-
-        const existing = selectedProductos.find(p => p.id === productId);
-        if (existing) {
-            existing.cantidad += 1;
-        } else {
-            selectedProductos.push({ ...prod, cantidad: 1 });
+                if (error) throw error;
+                await cargarDatosFinancieros();
+            } catch (error) {
+                console.error("Error actualizando pago:", error);
+                alert("Hubo un error al marcar el pago como completado.");
+            }
         }
 
-        renderSelectedProductos();
-        calcularTotalesFactura();
-    }
+        function showToast(message, type = "success") {
+            const toast = document.createElement("div");
+            toast.className = `fixed bottom-6 right-6 px-6 py-3 rounded-xl shadow-lg font-bold text-white transition-all transform translate-y-10 opacity-0 z-[100] ${type === "success" ? "bg-success" : type === "error" ? "bg-error" : "bg-primary"
+                }`;
+            toast.textContent = message;
+            document.body.appendChild(toast);
 
-    function eliminarProductoDeFactura(productId) {
-        selectedProductos = selectedProductos.filter(p => p.id !== productId);
-        renderSelectedProductos();
-        calcularTotalesFactura();
-    }
+            setTimeout(() => {
+                toast.classList.remove("translate-y-10", "opacity-0");
+            }, 100);
 
-    function renderSelectedProductos() {
-        const container = document.getElementById('invoice-productos-list');
-        if (selectedProductos.length === 0) {
-            container.innerHTML = '<p class="text-outline text-[11px] text-center py-1">Sin productos.</p>';
-            return;
+            setTimeout(() => {
+                toast.classList.add("translate-y-10", "opacity-0");
+                setTimeout(() => toast.remove(), 500);
+            }, 3000);
         }
 
-        let html = '';
-        selectedProductos.forEach(p => {
-            html += `
-            <div class="flex items-center justify-between p-2 bg-surface-container-low rounded-xl text-xs">
-                <div>
-                    <span class="font-bold text-on-surface">${p.nombre}</span>
-                    <span class="text-outline ml-2">x${p.cantidad}</span>
-                </div>
-                <div class="flex items-center gap-2">
-                    <span class="font-bold text-primary font-bold">S/. ${(p.precio * p.cantidad).toFixed(2)}</span>
-                    <button type="button" onclick="eliminarProductoDeFactura('${p.id}')" class="text-error p-1 hover:bg-error/10 rounded-full">
-                        <span class="material-symbols-outlined text-sm">delete</span>
-                    </button>
-                </div>
-            </div>
-            `;
-        });
-        container.innerHTML = html;
-    }
 
-    function calcularTotalesFactura() {
-        const servicePrice = parseFloat(document.getElementById('invoice-servicio-precio').value) || 0;
-        const productsPrice = selectedProductos.reduce((sum, p) => sum + (p.precio * p.cantidad), 0);
-        
-        const subtotal = servicePrice + productsPrice;
-
-        const selectConvenio = document.getElementById('invoice-convenio');
-        const discountPct = parseFloat(selectConvenio.options[selectConvenio.selectedIndex]?.getAttribute('data-discount')) || 0;
-        const discount = subtotal * (discountPct / 100);
-
-        const igvToggle = document.getElementById('invoice-igv-toggle').checked;
-        const baseForIgv = subtotal - discount;
-        const igv = igvToggle ? (baseForIgv * 0.18) : 0;
-
-        const total = baseForIgv + igv;
-
-        document.getElementById('invoice-subtotal').textContent = `S/. ${subtotal.toFixed(2)}`;
-        document.getElementById('invoice-descuento').textContent = `- S/. ${discount.toFixed(2)}`;
-        document.getElementById('invoice-igv-monto').textContent = `S/. ${igv.toFixed(2)}`;
-        document.getElementById('invoice-total').textContent = `S/. ${total.toFixed(2)}`;
-    }
-
-    document.getElementById('formNuevaFactura').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const pacId = document.getElementById('invoice-paciente').value;
-        const convenio = document.getElementById('invoice-convenio').value;
-        const servicio = document.getElementById('invoice-servicio').value;
-        const total = parseFloat(document.getElementById('invoice-total').textContent.replace('S/. ', ''));
-        const metodo = document.getElementById('invoice-metodo').value;
-        const estado = document.getElementById('invoice-estado').value;
-
-        if (!pacId) {
-            alert("Seleccione un paciente.");
-            return;
-        }
-
-        try {
-            const urlParams = new URLSearchParams(window.location.search);
-            const citaId = urlParams.get('cita_id');
-
-            let desc = servicio ? `Servicio: ${servicio}` : 'Venta de Productos';
-            if (selectedProductos.length > 0) {
-                desc += ` + Prod: ${selectedProductos.map(p => `${p.nombre} (x${p.cantidad})`).join(', ')}`;
-            }
-            if (convenio && convenio !== 'Particular') {
-                desc += ` [Convenio ${convenio}]`;
-            }
-
-            const payload = {
-                paciente_id: pacId,
-                cita_id: citaId || null,
-                monto: total,
-                metodo: metodo,
-                estado: estado,
-                fecha: new Date().toISOString(),
-                descripcion: desc
-            };
-
-            const { error } = await supabaseClient.from('pagos').insert([payload]);
-            if (error) throw error;
-
-            for (const p of selectedProductos) {
-                const newStock = Math.max(0, p.stock - p.cantidad);
-                await supabaseClient.from('productos').update({ stock: newStock }).eq('id', p.id);
-            }
-
-            if (citaId && estado === 'Completado') {
-                await supabaseClient.from('citas').update({ estado: 'Completado' }).eq('id', citaId);
-            }
-
-            document.getElementById('modalNuevaFactura').close();
-            showToast("Factura registrada exitosamente", "success");
-            
-            window.history.replaceState({}, document.title, window.location.pathname);
+        document.addEventListener("DOMContentLoaded", async () => {
             await cargarDatosFinancieros();
-        } catch (err) {
-            console.error("Error al registrar factura móvil:", err);
-            alert("Error al procesar la factura.");
-        }
-    });
-
-    function imprimirReciboFactura() {
-        const selectPaciente = document.getElementById('invoice-paciente');
-        const pacienteNombre = selectPaciente.options[selectPaciente.selectedIndex]?.text || 'Paciente General';
-        
-        const selectConvenio = document.getElementById('invoice-convenio').value;
-        const servicio = document.getElementById('invoice-servicio').value || 'Venta de Productos';
-        const subtotal = document.getElementById('invoice-subtotal').textContent;
-        const descuento = document.getElementById('invoice-descuento').textContent;
-        const igv = document.getElementById('invoice-igv-monto').textContent;
-        const total = document.getElementById('invoice-total').textContent;
-        const metodo = document.getElementById('invoice-metodo').value;
-
-        const prtContent = `
-            <html>
-            <head>
-                <title>Recibo Centro Eslava</title>
-                <style>
-                    body { font-family: sans-serif; padding: 20px; color: #333; }
-                    .header { text-align: center; border-bottom: 2px solid #006578; padding-bottom: 10px; margin-bottom: 20px; }
-                    .header h1 { margin: 0; color: #006578; font-size: 24px; }
-                    .details { margin-bottom: 20px; line-height: 1.5; font-size: 14px; }
-                    table { width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 14px; }
-                    th, td { padding: 10px; text-align: left; border-bottom: 1px solid #ddd; }
-                    th { background-color: #f2f8f9; }
-                    .totals { float: right; width: 100%; max-width: 250px; line-height: 1.8; font-weight: bold; font-size: 14px; }
-                    .footer { margin-top: 50px; text-align: center; font-size: 11px; color: #777; border-top: 1px dashed #ccc; padding-top: 15px; }
-                </style>
-            </head>
-            <body>
-                <div class="header">
-                    <h1>CENTRO ESLAVA</h1>
-                    <p>Clínica de Fisioterapia y Terapia Física</p>
-                </div>
-                <div class="details">
-                    <p><strong>Paciente:</strong> ${pacienteNombre}</p>
-                    <p><strong>Fecha:</strong> ${new Date().toLocaleDateString('es-PE')}</p>
-                    <p><strong>Convenio:</strong> ${selectConvenio}</p>
-                    <p><strong>Método de Pago:</strong> ${metodo}</p>
-                </div>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Concepto</th>
-                            <th style="text-align: right;">Total</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>${servicio}</td>
-                            <td style="text-align: right;">${subtotal}</td>
-                        </tr>
-                    </tbody>
-                </table>
-                <div class="totals">
-                    <div style="display:flex; justify-content:space-between"><span>Subtotal:</span> <span>${subtotal}</span></div>
-                    <div style="display:flex; justify-content:space-between; color:green"><span>Descuento:</span> <span>${descuento}</span></div>
-                    <div style="display:flex; justify-content:space-between"><span>IGV:</span> <span>${igv}</span></div>
-                    <div style="display:flex; justify-content:space-between; font-size:1.1em; color:#006578; border-top:1px solid #333; padding-top:3px;"><span>TOTAL:</span> <span>${total}</span></div>
-                </div>
-                <div style="clear:both"></div>
-                <div class="footer">
-                    <p>Gracias por confiar en el Centro Eslava.</p>
-                </div>
-                <script>window.print();<\/script>
-            </body>
-            </html>
-        `;
-        const WinPrint = window.open('', '', 'width=600,height=600');
-        WinPrint.document.write(prtContent);
-        WinPrint.document.close();
-        WinPrint.focus();
-    }
-
-    document.addEventListener("DOMContentLoaded", async () => {
-        await cargarDatosFinancieros();
-        
-        const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.get('paciente_id') || urlParams.get('cita_id')) {
-            abrirModalNuevaFactura();
-        }
-    });
-</script>
+        });
+    </script>
 
     <script>
         if ('serviceWorker' in navigator) {
@@ -908,4 +643,6 @@
             });
         }
     </script>
-</body></html>
+</body>
+
+</html>

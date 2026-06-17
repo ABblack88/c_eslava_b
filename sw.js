@@ -1,4 +1,4 @@
-const CACHE_NAME = 'c-eslava-cache-v2';
+const CACHE_NAME = 'c-eslava-cache-v5';
 const urlsToCache = [
     './',
     './index.html',
@@ -12,11 +12,14 @@ const urlsToCache = [
     './html/pagos_facturacion_mobile.html',
     './html/servicios_ajustes_desktop.html',
     './html/servicios_ajustes_mobile.html',
+    './html/pedidos_desktop.html',
+    './html/master_root.html',
     './js/rbac.js',
     './js/supabase.js'
 ];
 
 self.addEventListener('install', event => {
+    self.skipWaiting(); // Forzar activación inmediata
     event.waitUntil(
         caches.open(CACHE_NAME)
             .then(cache => {
@@ -26,14 +29,11 @@ self.addEventListener('install', event => {
 });
 
 self.addEventListener('fetch', event => {
+    // Network First Strategy bypass cache
     event.respondWith(
-        caches.match(event.request)
-            .then(response => {
-                if (response) {
-                    return response; // Return from cache
-                }
-                return fetch(event.request); // Fallback to network
-            })
+        fetch(event.request, { cache: 'no-store' }).catch(() => {
+            return caches.match(event.request);
+        })
     );
 });
 

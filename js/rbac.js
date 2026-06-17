@@ -21,8 +21,23 @@ function applyRBACRules() {
         if (linkAjustes) linkAjustes.style.display = 'none';
         if (resumenCuentaCard) resumenCuentaCard.style.display = 'none';
     }
+    // 2. Inyectar botón de Master Root en el SideNavBar
+    if (role === 'root') {
+        const navBar = document.querySelector('nav');
+        if (navBar && !document.getElementById('nav-link-master')) {
+            const masterLink = document.createElement('a');
+            masterLink.id = 'nav-link-master';
+            masterLink.className = 'flex items-center px-4 py-3 font-body-md text-body-md text-error hover:bg-error/10 transition-colors duration-200 group mt-auto border-t border-surface-container mt-4';
+            masterLink.href = 'master_root.html?role=root';
+            masterLink.innerHTML = `
+                <span class="material-symbols-outlined mr-3">admin_panel_settings</span>
+                <span class="font-bold">Panel Master</span>
+            `;
+            navBar.appendChild(masterLink);
+        }
+    }
 
-    // 2. Dashboard Specific Rules (calendario_dashboard)
+    // 3. Dashboard Specific Rules (calendario_dashboard)
     const financialCard = document.getElementById("financial-insight-card");
     if (financialCard && (role === 'medico' || role === 'asistente')) {
         financialCard.innerHTML = `

@@ -84,6 +84,20 @@
         </div>
 
         <!-- Clinical observations entry -->
+        <div class="bg-surface-white rounded-2xl p-5 shadow-sm border border-outline-variant/30 space-y-4 hidden" id="plan-dashboard-card">
+            <h4 class="text-sm font-semibold text-text-muted mb-1 uppercase tracking-wider border-b border-surface-container pb-2">Plan de Tratamiento</h4>
+            <div class="grid grid-cols-1 gap-3">
+                <div class="bg-surface-container-low p-4 rounded-xl border-l-4 border-primary">
+                    <p class="text-xs text-primary font-bold uppercase mb-1">Objetivo de Hoy (Sesión Actual)</p>
+                    <p class="font-body-md text-sm text-on-surface-variant" id="plan-dashboard-actual">--</p>
+                </div>
+                <div class="bg-surface-container-low p-4 rounded-xl border-l-4 border-secondary">
+                    <p class="text-xs text-secondary font-bold uppercase mb-1">Próxima Sesión</p>
+                    <p class="font-body-md text-sm text-on-surface-variant" id="plan-dashboard-siguiente">--</p>
+                </div>
+            </div>
+        </div>
+
         <div class="bg-surface-white rounded-2xl p-5 shadow-sm border border-outline-variant/30 space-y-4">
             <div class="flex justify-between items-center">
                 <h3 class="font-bold text-sm text-on-surface">Evolución de la Sesión</h3>
@@ -91,9 +105,49 @@
             </div>
 
             <form id="form-evolucion" class="space-y-4">
-                <textarea id="observaciones" required rows="6" class="w-full rounded-xl border border-outline-variant px-3 py-2 text-sm focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all bg-surface-container-lowest" placeholder="Registre la evolución, respuesta al ejercicio y dolor..."></textarea>
+                <textarea id="observaciones" required rows="4" class="w-full rounded-xl border border-outline-variant px-3 py-2 text-sm focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all bg-surface-container-lowest" placeholder="Registre la evolución, respuesta al ejercicio y dolor..."></textarea>
                 
+                <div class="space-y-1 mb-4">
+                    <label class="block text-xs font-bold text-on-surface text-primary">Tratamiento Realizado</label>
+                    <p class="text-[10px] text-outline mb-1">Seleccione el servicio principal brindado en esta sesión.</p>
+                    <select id="tratamientoCobrado" class="w-full rounded-xl border border-outline-variant px-3 py-2 text-sm focus:ring-2 focus:ring-primary outline-none bg-surface-container-lowest">
+                        <option value="">Cargando tratamientos...</option>
+                    </select>
+                </div>
+
+                <div class="space-y-1">
+                    <label class="block text-xs font-bold text-on-surface">Acciones Realizadas (Bullets)</label>
+                    <textarea id="inputAccionesEvo" rows="2" placeholder="Ej. Magneto&#10;Masajes" class="w-full rounded-xl border border-outline-variant px-3 py-2 text-sm focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all bg-surface-container-lowest resize-none"></textarea>
+                    <div class="mt-2 flex flex-wrap gap-2">
+                        <button type="button" onclick="agregarAccionEvo('Magneto')" class="px-2 py-1 bg-surface-container text-on-surface-variant text-[10px] font-bold rounded-full hover:bg-primary/10 hover:text-primary transition-colors">+ Magneto</button>
+                        <button type="button" onclick="agregarAccionEvo('Masajes')" class="px-2 py-1 bg-surface-container text-on-surface-variant text-[10px] font-bold rounded-full hover:bg-primary/10 hover:text-primary transition-colors">+ Masajes</button>
+                        <button type="button" onclick="agregarAccionEvo('C. Calientes')" class="px-2 py-1 bg-surface-container text-on-surface-variant text-[10px] font-bold rounded-full hover:bg-primary/10 hover:text-primary transition-colors">+ C. Cal</button>
+                        <button type="button" onclick="agregarAccionEvo('C. Frías')" class="px-2 py-1 bg-surface-container text-on-surface-variant text-[10px] font-bold rounded-full hover:bg-primary/10 hover:text-primary transition-colors">+ C. Frías</button>
+                        <button type="button" onclick="agregarAccionEvo('Electricidad')" class="px-2 py-1 bg-surface-container text-on-surface-variant text-[10px] font-bold rounded-full hover:bg-primary/10 hover:text-primary transition-colors">+ Electri.</button>
+                    </div>
+                </div>
+
                 <input type="text" id="recomendaciones" class="w-full rounded-xl border border-outline-variant px-3 py-2 text-sm focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all bg-surface-container-lowest" placeholder="Recomendaciones post-sesión (opcional)"/>
+                
+                <div class="space-y-1 mt-2">
+                    <label class="block text-xs font-bold text-on-surface">Plan para la siguiente sesión (Opcional)</label>
+                    <input type="text" id="planSiguienteSesion" class="w-full rounded-xl border border-outline-variant px-3 py-2 text-sm focus:ring-2 focus:ring-primary outline-none transition-all bg-surface-container-lowest" placeholder="ej. Iniciar ejercicios propiocepción..."/>
+                </div>
+                
+                <!-- Image Upload (Camera) -->
+                <div class="space-y-2 mt-2">
+                    <label class="block text-xs font-bold text-on-surface">Imágenes Clínicas</label>
+                    <div class="flex items-center gap-3">
+                        <label for="camera-upload" class="flex items-center gap-2 px-4 py-2 bg-secondary-container text-on-secondary-container rounded-xl font-bold text-xs cursor-pointer active:scale-95 transition-transform shadow-sm">
+                            <span class="material-symbols-outlined text-[18px]">photo_camera</span>
+                            Tomar / Subir Foto
+                        </label>
+                        <input type="file" id="camera-upload" accept="image/*" capture="environment" class="hidden" onchange="previewImage(event)">
+                    </div>
+                    <div id="image-preview-container" class="flex gap-2 overflow-x-auto py-2 hide-scrollbar">
+                        <!-- Previews will appear here -->
+                    </div>
+                </div>
                 
                 <div class="flex gap-2 pt-2">
                     <button type="button" id="btn-save-draft" onclick="guardarBorrador()" class="flex-1 py-3 border border-outline text-on-surface-variant font-bold text-xs rounded-xl hover:bg-surface-container-low transition-all">
@@ -123,6 +177,44 @@
             await cargarDatosCita();
         });
 
+        function agregarAccionEvo(accion) {
+            const textarea = document.getElementById('inputAccionesEvo');
+            const current = textarea.value.trim();
+            textarea.value = current ? current + '\n' + accion : accion;
+            textarea.focus();
+        }
+
+        async function cargarServicios() {
+            try {
+                const { data: servicios, error } = await supabaseClient
+                    .from('servicios')
+                    .select('*')
+                    .order('nombre', { ascending: true });
+
+                if (error) throw error;
+
+                const select = document.getElementById('tratamientoCobrado');
+                select.innerHTML = '';
+                
+                // Add the current appointment treatment as default if possible, or just options
+                if (servicios && servicios.length > 0) {
+                    servicios.forEach(srv => {
+                        const opt = document.createElement('option');
+                        opt.value = srv.nombre;
+                        opt.textContent = srv.nombre;
+                        if (currentCita && currentCita.tratamiento === srv.nombre) {
+                            opt.selected = true;
+                        }
+                        select.appendChild(opt);
+                    });
+                } else {
+                    select.innerHTML = '<option value="">Sin servicios disponibles</option>';
+                }
+            } catch (err) {
+                console.error("Error cargando servicios:", err);
+            }
+        }
+
         async function cargarDatosCita() {
             try {
                 const { data: cita, error } = await supabaseClient
@@ -135,6 +227,8 @@
                 currentCita = cita;
                 currentPaciente = cita.pacientes;
 
+                await cargarServicios();
+
                 if (currentPaciente) {
                     document.getElementById('patient-name').textContent = currentPaciente.nombre;
                     document.getElementById('patient-id').textContent = 'ID: #' + currentPaciente.id.substring(0,8).toUpperCase();
@@ -146,8 +240,28 @@
 
                 document.getElementById('appt-treatment').textContent = cita.tratamiento || 'Procedimiento General';
 
-                if (cita.observaciones_medicas) {
-                    document.getElementById('observaciones').value = cita.observaciones_medicas;
+                if (cita.notas) {
+                    document.getElementById('observaciones').value = cita.notas;
+                }
+
+                // Load Treatment Dashboard info
+                if (currentPaciente) {
+                    const storedTrat = localStorage.getItem(`paciente_tratamiento_${currentPaciente.id}`);
+                    if (storedTrat) {
+                        const data = JSON.parse(storedTrat);
+                        document.getElementById('plan-dashboard-card').classList.remove('hidden');
+                        document.getElementById('plan-dashboard-actual').textContent = data.actual || 'Sin definir';
+                        document.getElementById('plan-dashboard-siguiente').textContent = data.siguiente || 'Sin definir';
+                    }
+                }
+
+                if (cita.estado === 'Completado') {
+                    const btnComplete = document.getElementById('btn-complete');
+                    btnComplete.innerHTML = `<span class="material-symbols-outlined text-sm">edit_document</span> Guardar Edición`;
+                    btnComplete.onclick = editarProcedimiento;
+                    
+                    const btnSaveDraft = document.getElementById('btn-save-draft');
+                    btnSaveDraft.style.display = 'none'; // Hide draft button if already completed
                 }
             } catch (err) {
                 console.error("Error cargando cita móvil:", err);
@@ -159,6 +273,7 @@
             const obs = document.getElementById('observaciones').value;
             const rec = document.getElementById('recomendaciones').value;
             const fullObs = rec ? `${obs}\n\nRecomendaciones: ${rec}` : obs;
+            const nuevoTratamiento = document.getElementById('tratamientoCobrado').value;
 
             const btn = document.getElementById('btn-save-draft');
             btn.disabled = true;
@@ -167,8 +282,9 @@
                 const { error } = await supabaseClient
                     .from('citas')
                     .update({ 
-                        observaciones_medicas: fullObs,
-                        estado: 'En Progreso'
+                        notas: fullObs,
+                        estado: 'En Progreso',
+                        tratamiento: nuevoTratamiento
                     })
                     .eq('id', citaId);
 
@@ -198,11 +314,59 @@
             btn.disabled = true;
 
             try {
+                // Prepare notes for the timeline
+                const rawAcc = document.getElementById('inputAccionesEvo').value;
+                const accList = rawAcc.split('\n').map(x => x.trim()).filter(x => x);
+
+                const now = new Date();
+                const timeStr = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+
+                let bulletsHtml = '';
+                if (accList.length > 0) {
+                    bulletsHtml = `<div class="mt-4"><p class="text-xs font-bold text-outline uppercase mb-2">Acciones:</p><ul class="space-y-1">` + 
+                        accList.map(a => `<li class="text-sm text-on-surface-variant flex items-center gap-2"><span class="material-symbols-outlined text-[14px] text-success">check</span> ${a}</li>`).join('') +
+                    `</ul></div>`;
+                }
+
+                // Add to LocalStorage timeline history
+                if (currentPaciente) {
+                    const newEvo = {
+                        headerText: `Procedimiento (Atención Virtual): ${currentCita ? currentCita.tratamiento : 'General'}`,
+                        timeStr: timeStr,
+                        notas: fullObs,
+                        bulletsHtml: bulletsHtml,
+                        imgHtml: '' // In real app, we'd process the images
+                    };
+
+                    let evos = JSON.parse(localStorage.getItem(`paciente_evoluciones_${currentPaciente.id}`) || '[]');
+                    evos.unshift(newEvo);
+                    localStorage.setItem(`paciente_evoluciones_${currentPaciente.id}`, JSON.stringify(evos));
+
+                    // Shift Treatment Dashboard
+                    const planSig = document.getElementById('planSiguienteSesion').value.trim();
+                    const storedTrat = localStorage.getItem(`paciente_tratamiento_${currentPaciente.id}`);
+                    if (storedTrat) {
+                        const tratData = JSON.parse(storedTrat);
+                        tratData.anterior = tratData.actual; 
+                        if (planSig) {
+                            tratData.actual = tratData.siguiente;
+                            tratData.siguiente = planSig; 
+                        } else {
+                            tratData.actual = tratData.siguiente || '';
+                            tratData.siguiente = '';
+                        }
+                        localStorage.setItem(`paciente_tratamiento_${currentPaciente.id}`, JSON.stringify(tratData));
+                    }
+                }
+
+                const nuevoTratamiento = document.getElementById('tratamientoCobrado').value;
+
                 const { error } = await supabaseClient
                     .from('citas')
                     .update({
-                        observaciones_medicas: fullObs,
-                        estado: 'Completado'
+                        notas: fullObs,
+                        estado: 'Completado',
+                        tratamiento: nuevoTratamiento
                     })
                     .eq('id', citaId);
 
@@ -212,13 +376,76 @@
                 
                 setTimeout(() => {
                     const role = new URLSearchParams(window.location.search).get('role') || 'admin';
-                    window.location.href = `pagos_facturacion_mobile.html?paciente_id=${currentPaciente.id}&cita_id=${citaId}&role=${role}`;
+                    const pacienteIdStr = currentPaciente ? currentPaciente.id : '';
+                    window.location.href = `pagos_facturacion_mobile.html?paciente_id=${pacienteIdStr}&cita_id=${citaId}&role=${role}`;
                 }, 1500);
 
             } catch (err) {
                 console.error("Error al culminar procedimiento móvil:", err);
                 alert("Error al culminar el procedimiento.");
                 btn.disabled = false;
+            }
+        }
+
+        async function editarProcedimiento() {
+            const obs = document.getElementById('observaciones').value;
+            const rec = document.getElementById('recomendaciones').value;
+            const fullObs = rec ? `${obs}\n\nRecomendaciones: ${rec}` : obs;
+            const nuevoTratamiento = document.getElementById('tratamientoCobrado').value;
+
+            if (!obs) {
+                alert("Ingrese observaciones antes de guardar.");
+                return;
+            }
+
+            const btn = document.getElementById('btn-complete');
+            btn.disabled = true;
+            btn.innerHTML = `<span class="material-symbols-outlined text-sm">hourglass_empty</span> Guardando...`;
+
+            try {
+                const { error } = await supabaseClient
+                    .from('citas')
+                    .update({
+                        notas: fullObs,
+                        tratamiento: nuevoTratamiento
+                        // no cambiamos el estado, ya es Completado
+                    })
+                    .eq('id', citaId);
+
+                if (error) throw error;
+
+                showToast("Procedimiento actualizado correctamente.", "success");
+                setTimeout(() => {
+                    const role = new URLSearchParams(window.location.search).get('role') || 'admin';
+                    window.location.href = `calendario_dashboard_mobile.html?role=${role}`;
+                }, 1500);
+
+            } catch (err) {
+                console.error("Error actualizando procedimiento:", err);
+                alert("Error al actualizar el procedimiento.");
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = `<span class="material-symbols-outlined text-sm">edit_document</span> Guardar Edición`;
+            }
+        }
+
+        function previewImage(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const container = document.getElementById('image-preview-container');
+                    const imgDiv = document.createElement('div');
+                    imgDiv.className = 'relative min-w-[80px] w-20 h-20 rounded-xl overflow-hidden border border-outline-variant shadow-sm shrink-0';
+                    imgDiv.innerHTML = `
+                        <img src="${e.target.result}" class="w-full h-full object-cover">
+                        <button type="button" onclick="this.parentElement.remove()" class="absolute top-1 right-1 bg-surface-white/80 text-error rounded-full w-5 h-5 flex items-center justify-center shadow-sm backdrop-blur-sm">
+                            <span class="material-symbols-outlined text-[14px]">close</span>
+                        </button>
+                    `;
+                    container.appendChild(imgDiv);
+                };
+                reader.readAsDataURL(file);
             }
         }
     </script>

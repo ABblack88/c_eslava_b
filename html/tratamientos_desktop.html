@@ -144,7 +144,7 @@
 <span class="material-symbols-outlined">groups</span>
 <span class="font-body-md">Pacientes</span>
 </a>
-<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-on-surface-variant hover:bg-surface-container-low transition-colors duration-200" href="tratamientos_desktop.html" id="nav-link-servicios">
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-primary border-r-4 border-primary font-bold bg-surface-container-low" href="tratamientos_desktop.html" id="nav-link-servicios">
 <span class="material-symbols-outlined">medical_services</span>
 <span class="font-body-md">Tratamientos</span>
 </a>
@@ -160,7 +160,7 @@
 <span class="material-symbols-outlined">payments</span>
 <span class="font-body-md">Finanzas</span>
 </a>
-<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-primary border-r-4 border-primary font-bold bg-surface-container-low" href="ajustes_desktop.html" id="nav-link-ajustes">
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-on-surface-variant hover:bg-surface-container-low transition-colors duration-200" href="ajustes_desktop.html" id="nav-link-ajustes">
 <span class="material-symbols-outlined">settings</span>
 <span class="font-body-md">Ajustes</span>
 </a>
@@ -204,13 +204,13 @@
 <div class="flex flex-col gap-8">
 <!-- Page Header -->
 <div class="flex flex-col gap-1">
-<h2 class="font-display-lg text-display-lg text-primary">Servicios y Gestión</h2>
-<p class="text-body-lg text-on-surface-variant max-w-2xl">Administra la oferta clínica del centro y ajusta los parámetros operativos de la clínica en tiempo real.</p>
+<h2 class="font-display-lg text-display-lg text-primary">Tratamientos</h2>
+<p class="text-body-lg text-on-surface-variant max-w-2xl">Administra la oferta clínica del centro, servicios y paquetes de recuperación.</p>
 </div>
-<!-- Split View Layout -->
-<div class="grid grid-cols-12 gap-8 items-start">
-<!-- Left Side: Clinical Offerings (Services) -->
-<section class="col-span-7 space-y-6">
+<!-- Full Width View Layout -->
+<div class="flex flex-col gap-8 items-start">
+<!-- Clinical Offerings (Services) -->
+<section class="w-full space-y-6">
 <div class="flex items-center justify-between">
 <h3 class="font-headline-md text-headline-md flex items-center gap-2">
 <span class="material-symbols-outlined text-primary">medical_services</span>
@@ -236,98 +236,7 @@
 </div>
 </div>
 </section>
-<!-- Right Side: Settings (Management) -->
-<aside class="col-span-5 space-y-8">
-<div class="bg-surface-white p-8 rounded-3xl shadow-[0px_10px_30px_rgba(0,0,0,0.04)] flex flex-col gap-8">
-<div>
-<h3 class="font-headline-md text-headline-md flex items-center gap-2 mb-6">
-<span class="material-symbols-outlined text-primary">tune</span>
-                                Ajustes Operativos
-                            </h3>
-<!-- Operating Hours -->
-<div class="space-y-4">
-<div class="flex items-center justify-between pb-4 border-b border-outline-variant/30">
-<div class="flex items-center gap-3">
-<span class="material-symbols-outlined text-on-surface-variant">schedule</span>
-<div>
-<p class="font-bold text-sm">Horario de Apertura</p>
-<p class="text-xs text-on-surface-variant">Lun - Vie, 08:00 - 20:00</p>
-</div>
-</div>
-<button class="text-primary text-sm font-bold">Editar</button>
-</div>
-<!-- Notifications -->
-<div class="flex items-center justify-between pb-4 border-b border-outline-variant/30">
-<div class="flex items-center gap-3">
-<span class="material-symbols-outlined text-on-surface-variant">notifications_active</span>
-<div>
-<p class="font-bold text-sm">Recordatorios SMS/Email</p>
-<p class="text-xs text-on-surface-variant">Enviados 24h antes de la cita</p>
-</div>
-</div>
-<div class="relative inline-flex h-6 w-11 items-center rounded-full bg-primary cursor-pointer">
-<span class="inline-block h-4 w-4 translate-x-6 transform rounded-full bg-white transition"></span>
-</div>
-</div>
-<!-- Staff Management -->
-<div class="flex flex-col gap-4">
-<p class="font-bold text-sm">Gestión de Personal</p>
-<div class="flex -space-x-3 overflow-hidden">
-<img alt="Foto del miembro del personal 1" class="inline-block h-10 w-10 rounded-full ring-2 ring-white" src="https://lh3.googleusercontent.com/aida-public/AB6AXuADeeaumHaXrHfh5UrsXfh_DnejLE_7XGBoxjnpFzU1adzfTOLHD97Mol3XeMBQ5BAu-msPRFGlXi8FoEefSU8Fdlv6UeR3_qjEHitN7k212DSRbvUbiS6bakHF1MYRdoLQe4V6BdvOM--vGrLUxV7ZcXHxHy6ixvz7Yn9m6V0nZd92AXOPjFgiOM0YMMXbJLfU0bf5SeykLYkfcvEzEAkR0A9K6FZhh4AC_-H4HiFmchPoh8Nhtjm0TCHnOELi01rX_986SF3jmy0"/>
-<img alt="Foto del miembro del personal 2" class="inline-block h-10 w-10 rounded-full ring-2 ring-white" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC1B1PBvepVdNwsS72qcnMR0I9mS9S8PIM6eljZSb1vlsagk1NBiSXyBb6KvRDJKc75Ekk-U9RUR6ny3Z1ZW125-LdwyCKQ3BpXVsoGe_Fizr855GAiI9nuYO4B7O4msyppnc7Vn6N7EH8UO45Kc8z-XW-sVNaL9CmcqMNgPaR5ZBN1FlTBLJXH3gU3S-xx8FUvAkuT2jVJX-bOA3YWc_zw9kV2vk_ljxv8yVyrALgxFSNloJrScY8BsFD-YZM7N1lE9o51tRgEiUA"/>
-<img alt="Foto del miembro del personal 3" class="inline-block h-10 w-10 rounded-full ring-2 ring-white" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCJFoFf8jBdKgTz5uxguQeWLa-sHxZu8Ug1ZTTgX5PoNkrhS2BldEkggHeIaEsAserd7CSBmBVwDCOqCmudmw3H_fpXFSM-bE_HMEun3-ppvNlQXdBqnib2MF7hY05l6tx3xGhvdsNWQwmJ7CaCN_edEjMrlBTo2xOtZwb-GCs0XaElknNxDAltjkD7MFY_t01OB0SFRsoy5j_vZ3-ipTlw18FKPUKCaN0EngX5vmhOPxRf2XUidufMl6oSlxeNg7BZYhsR5dHbn5E"/>
-<div class="flex items-center justify-center h-10 w-10 rounded-full ring-2 ring-white bg-surface-container-high text-[10px] font-bold text-on-surface-variant">+4</div>
-</div>
-<button class="w-full py-2 bg-surface-container-low text-primary rounded-xl text-sm font-bold hover:bg-primary/5 transition-colors">Administrar Roles</button>
-</div>
-</div>
-<!-- Productos Terapéuticos Card -->
-<div class="bg-surface-white p-8 rounded-3xl shadow-[0px_10px_30px_rgba(0,0,0,0.04)] flex flex-col gap-6">
-    <div class="flex items-center justify-between">
-        <h3 class="font-headline-md text-headline-md flex items-center gap-2">
-            <span class="material-symbols-outlined text-primary">shopping_bag</span>
-            Productos
-        </h3>
-        <button onclick="abrirModalNuevoProducto()" class="text-primary text-sm font-bold flex items-center gap-1 hover:underline">
-            <span class="material-symbols-outlined text-sm">add_circle</span> Nuevo
-        </button>
-    </div>
-    <div id="productos-list" class="space-y-4 max-h-[300px] overflow-y-auto pr-2">
-        <!-- Cargado dinámicamente -->
-        <p class="text-outline text-xs text-center py-4">Cargando productos...</p>
-    </div>
-</div>
-<!-- System Health Card -->
-<div class="p-6 bg-surface-container-low rounded-2xl">
-<h5 class="font-bold text-sm mb-4">Resumen de Canal</h5>
-<div class="space-y-3">
-<div class="flex justify-between items-center text-xs">
-<span class="text-on-surface-variant">Reservas Web</span>
-<span class="font-bold">62%</span>
-</div>
-<div class="w-full bg-outline-variant/30 h-1.5 rounded-full overflow-hidden">
-<div class="bg-primary h-full" style="width: 62%"></div>
-</div>
-<div class="flex justify-between items-center text-xs">
-<span class="text-on-surface-variant">Reservas Directas</span>
-<span class="font-bold">38%</span>
-</div>
-<div class="w-full bg-outline-variant/30 h-1.5 rounded-full overflow-hidden">
-<div class="bg-secondary h-full" style="width: 38%"></div>
-</div>
-</div>
-</div>
-<!-- Emergency Contact -->
-<div class="flex items-start gap-4 p-4 rounded-2xl border-2 border-dashed border-outline-variant/40">
-<span class="material-symbols-outlined text-error p-2 bg-error/10 rounded-full">support_agent</span>
-<div>
-<p class="font-bold text-sm">Soporte Técnico VIP</p>
-<p class="text-xs text-on-surface-variant mb-2">Línea directa para incidencias críticas del sistema.</p>
-<a class="text-xs font-bold text-primary" href="tel:+51900000000">+51 900 000 000</a>
-</div>
-</div>
-</div>
-</aside>
+<!-- Right Side: Settings (Management) removed -->
 </div>
 </div>
 </main>
@@ -360,6 +269,19 @@
                 <input type="number" name="duracion" required min="1" value="1" class="w-full rounded-xl border-outline-variant px-4 py-2 focus:ring-primary focus:border-primary">
             </div>
         </div>
+        <div class="grid grid-cols-2 gap-4">
+            <div>
+                <label class="block text-sm font-bold text-on-surface mb-1">Aplica Convenio?</label>
+                <select name="aplica_convenio" class="w-full rounded-xl border-outline-variant px-4 py-2 focus:ring-primary focus:border-primary">
+                    <option value="true">Sí (Aplica desc. o precio especial)</option>
+                    <option value="false">No (Solo precio regular)</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-sm font-bold text-on-surface mb-1">Precio Convenio (S/.) (Opcional)</label>
+                <input type="number" name="precio_convenio" min="0" step="0.01" placeholder="Dejar en blanco para usar %" class="w-full rounded-xl border-outline-variant px-4 py-2 focus:ring-primary focus:border-primary">
+            </div>
+        </div>
         <div class="grid grid-cols-2 gap-4 pt-2">
             <div>
                 <label class="block text-sm font-bold text-on-surface mb-1">Estado</label>
@@ -368,9 +290,41 @@
                     <option value="Inactivo">Inactivo</option>
                 </select>
             </div>
-            <div>
-                <label class="block text-sm font-bold text-on-surface mb-1">Ícono (Material Symbol)</label>
-                <input type="text" name="icono" value="healing" required class="w-full rounded-xl border-outline-variant px-4 py-2 focus:ring-primary focus:border-primary">
+            <div class="col-span-2">
+                <label class="block text-sm font-bold text-on-surface mb-2">Ícono Representativo</label>
+                <input type="hidden" name="icono" value="healing">
+                <div class="flex flex-wrap gap-2">
+                    <div class="icon-option cursor-pointer p-2 rounded-xl border-2 border-primary bg-primary/10 text-primary flex items-center justify-center transition-colors" onclick="seleccionarIcono(this, 'healing')">
+                        <span class="material-symbols-outlined">healing</span>
+                    </div>
+                    <div class="icon-option cursor-pointer p-2 rounded-xl border-2 border-transparent hover:bg-surface-container text-on-surface-variant flex items-center justify-center transition-colors" onclick="seleccionarIcono(this, 'medical_services')">
+                        <span class="material-symbols-outlined">medical_services</span>
+                    </div>
+                    <div class="icon-option cursor-pointer p-2 rounded-xl border-2 border-transparent hover:bg-surface-container text-on-surface-variant flex items-center justify-center transition-colors" onclick="seleccionarIcono(this, 'vaccines')">
+                        <span class="material-symbols-outlined">vaccines</span>
+                    </div>
+                    <div class="icon-option cursor-pointer p-2 rounded-xl border-2 border-transparent hover:bg-surface-container text-on-surface-variant flex items-center justify-center transition-colors" onclick="seleccionarIcono(this, 'psychology')">
+                        <span class="material-symbols-outlined">psychology</span>
+                    </div>
+                    <div class="icon-option cursor-pointer p-2 rounded-xl border-2 border-transparent hover:bg-surface-container text-on-surface-variant flex items-center justify-center transition-colors" onclick="seleccionarIcono(this, 'spa')">
+                        <span class="material-symbols-outlined">spa</span>
+                    </div>
+                    <div class="icon-option cursor-pointer p-2 rounded-xl border-2 border-transparent hover:bg-surface-container text-on-surface-variant flex items-center justify-center transition-colors" onclick="seleccionarIcono(this, 'fitness_center')">
+                        <span class="material-symbols-outlined">fitness_center</span>
+                    </div>
+                    <div class="icon-option cursor-pointer p-2 rounded-xl border-2 border-transparent hover:bg-surface-container text-on-surface-variant flex items-center justify-center transition-colors" onclick="seleccionarIcono(this, 'monitor_heart')">
+                        <span class="material-symbols-outlined">monitor_heart</span>
+                    </div>
+                    <div class="icon-option cursor-pointer p-2 rounded-xl border-2 border-transparent hover:bg-surface-container text-on-surface-variant flex items-center justify-center transition-colors" onclick="seleccionarIcono(this, 'stethoscope')">
+                        <span class="material-symbols-outlined">stethoscope</span>
+                    </div>
+                    <div class="icon-option cursor-pointer p-2 rounded-xl border-2 border-transparent hover:bg-surface-container text-on-surface-variant flex items-center justify-center transition-colors" onclick="seleccionarIcono(this, 'prescriptions')">
+                        <span class="material-symbols-outlined">prescriptions</span>
+                    </div>
+                    <div class="icon-option cursor-pointer p-2 rounded-xl border-2 border-transparent hover:bg-surface-container text-on-surface-variant flex items-center justify-center transition-colors" onclick="seleccionarIcono(this, 'favorite')">
+                        <span class="material-symbols-outlined">favorite</span>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -465,6 +419,16 @@
         // GESTIÓN DE PRODUCTOS
         // ==========================================
         let listaProductosGlobal = [];
+
+        function seleccionarIcono(elemento, iconName) {
+            const form = elemento.closest('form');
+            form.elements['icono'].value = iconName;
+            const options = form.querySelectorAll('.icon-option');
+            options.forEach(opt => {
+                opt.className = "icon-option cursor-pointer p-2 rounded-xl border-2 border-transparent hover:bg-surface-container text-on-surface-variant flex items-center justify-center transition-colors";
+            });
+            elemento.className = "icon-option cursor-pointer p-2 rounded-xl border-2 border-primary bg-primary/10 text-primary flex items-center justify-center transition-colors";
+        }
 
         async function cargarProductos() {
             try {
@@ -585,6 +549,9 @@
             
             const form = document.getElementById('formNuevoServicio');
             form.elements['duracion'].value = '1';
+            
+            const defaultIconOpt = form.querySelector('.icon-option[onclick*="healing"]');
+            if(defaultIconOpt) seleccionarIcono(defaultIconOpt, 'healing');
 
             document.getElementById('modalNuevoServicio').showModal();
         }
@@ -605,11 +572,13 @@
             const precio = parseFloat(el.getAttribute('data-precio'));
             const estado = el.getAttribute('data-estado');
             const icono = el.getAttribute('data-icono');
+            const aplicaConvenio = el.getAttribute('data-aplica-convenio');
+            const precioConvenio = el.getAttribute('data-precio-convenio');
             
-            abrirModalEdicion(id, nombre, descripcion, duracion, precio, estado, icono);
+            abrirModalEdicion(id, nombre, descripcion, duracion, precio, estado, icono, aplicaConvenio, precioConvenio);
         }
 
-        function abrirModalEdicion(id, nombre, descripcion, duracion, precio, estado, icono) {
+        function abrirModalEdicion(id, nombre, descripcion, duracion, precio, estado, icono, aplicaConvenio, precioConvenio) {
             document.getElementById('formNuevoServicio').reset();
             document.getElementById('servicioId').value = id;
             document.getElementById('modalTitle').textContent = 'Editar Servicio';
@@ -622,6 +591,18 @@
             form.elements['precio'].value = precio;
             form.elements['estado'].value = estado;
             form.elements['icono'].value = icono || 'healing';
+            form.elements['aplica_convenio'].value = (aplicaConvenio === 'false') ? "false" : "true";
+            form.elements['precio_convenio'].value = (precioConvenio && precioConvenio !== 'null') ? precioConvenio : '';
+            
+            const iconOpt = form.querySelector(`.icon-option[onclick*="${icono || 'healing'}"]`);
+            if(iconOpt) {
+                seleccionarIcono(iconOpt, icono || 'healing');
+            } else {
+                const options = form.querySelectorAll('.icon-option');
+                options.forEach(opt => {
+                    opt.className = "icon-option cursor-pointer p-2 rounded-xl border-2 border-transparent hover:bg-surface-container text-on-surface-variant flex items-center justify-center transition-colors";
+                });
+            }
             
             document.getElementById('modalNuevoServicio').showModal();
         }
@@ -677,6 +658,8 @@
                 descripcion: data.descripcion,
                 duracion: parseInt(data.duracion),
                 precio: parseFloat(data.precio),
+                aplica_convenio: data.aplica_convenio === 'true',
+                precio_convenio: data.precio_convenio ? parseFloat(data.precio_convenio) : null,
                 estado: data.estado,
                 icono: data.icono
             };
@@ -757,6 +740,8 @@
                              data-precio="${servicio.precio}" 
                              data-estado="${servicio.estado}" 
                              data-icono="${safeIcono}"
+                             data-aplica-convenio="${servicio.aplica_convenio}"
+                             data-precio-convenio="${servicio.precio_convenio}"
                              onclick="abrirModalEdicionDesdeElemento(this)"
                              class="cursor-pointer bg-surface-white p-6 rounded-2xl shadow-[0px_10px_30px_rgba(0,0,0,0.04)] border border-transparent hover:border-primary/20 transition-all group relative">
                             <div class="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity">

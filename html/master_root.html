@@ -142,6 +142,11 @@
                         <h4 class="font-bold text-white mb-1">Purga de Datos de Prueba</h4>
                         <p class="text-xs text-error/80">Elimina todos los pacientes y pagos marcados como 'Test'. Acción irreversible.</p>
                     </div>
+                    <div class="bg-white/5 border border-white/10 p-6 rounded-xl hover:bg-primary/10 cursor-pointer transition-colors border-primary/20" onclick="limpiarCacheTotal()">
+                        <span class="material-symbols-outlined text-3xl text-primary mb-2">cleaning_services</span>
+                        <h4 class="font-bold text-white mb-1">Forzar Actualización de UI (Limpiar Caché)</h4>
+                        <p class="text-xs text-primary/80">Soluciona errores visuales o código fantasma. Desregistra Service Workers y recarga.</p>
+                    </div>
                 </div>
             </div>
         </section>
@@ -160,6 +165,34 @@
             // Show selected
             document.getElementById('tab-' + tabId).classList.remove('hidden');
             document.getElementById('nav-' + tabId).className = 'flex items-center gap-3 text-sm font-bold text-primary bg-primary/10 px-4 py-3 rounded-lg border border-primary/20 transition-all';
+        }
+
+        async function limpiarCacheTotal() {
+            if (confirm('¿Estás seguro de que quieres forzar la actualización? Esto recargará la aplicación.')) {
+                if ('serviceWorker' in navigator) {
+                    try {
+                        const registrations = await navigator.serviceWorker.getRegistrations();
+                        for (let registration of registrations) {
+                            await registration.unregister();
+                        }
+                    } catch (e) {
+                        console.error('Error unregistering SW', e);
+                    }
+                }
+                // Clear all caches
+                if ('caches' in window) {
+                    try {
+                        const keys = await caches.keys();
+                        for (let key of keys) {
+                            await caches.delete(key);
+                        }
+                    } catch (e) {
+                        console.error('Error clearing caches', e);
+                    }
+                }
+                alert('Caché limpiado. La página se recargará ahora.');
+                window.location.reload(true);
+            }
         }
     </script>
 </body>

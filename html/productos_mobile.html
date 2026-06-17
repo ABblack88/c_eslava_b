@@ -170,18 +170,16 @@
 </a>
 </li>
 <li>
-<a class="flex items-center gap-4 px-4 py-3 rounded-xl bg-secondary-container dark:bg-secondary-fixed-variant text-on-secondary-container dark:text-secondary-fixed transition-all active:scale-[0.98]" href="tratamientos_mobile.html">
-<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">medical_services</span>
+<a class="flex items-center gap-4 px-4 py-3 rounded-xl text-on-surface-variant dark:text-outline hover:bg-surface-container-low transition-all active:scale-[0.98]" href="tratamientos_mobile.html">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">medical_services</span>
 <span class="font-label-sm text-label-sm">Servicios</span>
 </a>
 </li>
 <li>
-<a class="flex items-center gap-4 px-4 py-3 rounded-xl text-on-surface-variant dark:text-outline hover:bg-surface-container-low transition-all active:scale-[0.98]" href="productos_mobile.html">
-<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">inventory_2</span>
+<a class="flex items-center gap-4 px-4 py-3 rounded-xl bg-secondary-container dark:bg-secondary-fixed-variant text-on-secondary-container dark:text-secondary-fixed transition-all active:scale-[0.98]" href="productos_mobile.html">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">inventory_2</span>
 <span class="font-label-sm text-label-sm">Productos</span>
 </a>
-</li>
-<li>
 <a class="flex flex-col items-center justify-center text-outline dark:text-outline-variant min-w-0 flex-1 py-1 px-1 rounded-lg hover:bg-[#f2f4f4] active:scale-90 transition-all duration-150" href="cobrar_mobile.html">
 <span class="material-symbols-outlined mb-1 text-[22px]">point_of_sale</span>
 <span class="text-[10px] font-semibold leading-tight truncate">Caja</span>
@@ -205,148 +203,93 @@
         </div>
 </nav>
 <!-- Main Content Area -->
-<main class="w-full max-w-[1280px] mx-auto px-margin-mobile md:px-margin-desktop py-8 md:py-12">
+<main class="w-full max-w-[1280px] mx-auto px-margin-mobile md:px-margin-desktop py-8 pb-32">
 <!-- Page Header -->
-<div class="mb-12 flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
+<div class="mb-8 flex flex-col gap-4">
 <div>
-<h1 class="font-display-lg-mobile md:font-display-lg text-display-lg-mobile md:text-display-lg text-on-background mb-2">Servicios y Gestión</h1>
-<p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl">Configure las ofertas de la clínica, gestione los precios y ajuste la configuración operativa para garantizar una atención óptima al paciente.</p>
+<h1 class="text-xl font-bold font-headline-md text-on-background">Productos</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant text-sm">Inventario de cremas, vendas y ortopedia.</p>
 </div>
-<button class="bg-primary hover:bg-primary-container text-on-primary font-label-sm text-label-sm px-6 py-3 rounded-full flex items-center gap-2 transition-colors active:scale-95 shadow-[0px_10px_30px_rgba(0,0,0,0.04)] whitespace-nowrap">
+<button onclick="abrirModalNuevoProductoMobile()" class="bg-surface-white text-primary font-bold text-sm px-6 py-3 rounded-full flex items-center justify-center gap-2 shadow-sm border border-outline-variant/30 active:scale-95 transition-transform w-full">
 <span class="material-symbols-outlined text-[20px]">add</span>
-                Nuevo Servicio
-            </button>
-</div>
-<!-- Bento Grid Layout -->
-<div class="grid grid-cols-1 md:grid-cols-12 gap-gutter">
-<!-- Clinical Services Section (Takes up 8 columns on desktop) -->
-<section class="md:col-span-8 flex flex-col gap-6">
-<!-- Section Title -->
-<div class="flex items-center justify-between border-b border-surface-variant pb-4">
-<h2 class="font-headline-md text-headline-md text-on-background flex items-center gap-2">
-<span class="material-symbols-outlined text-primary">medical_services</span>
-                        Ofertas Clínicas
-                    </h2>
-<span class="bg-surface-container-high text-on-surface-variant font-label-sm text-label-sm px-3 py-1 rounded-full">12 Activos</span>
-</div>
-<!-- Services Grid -->
-<div class="grid grid-cols-1 sm:grid-cols-2 gap-4" id="serviciosGrid">
-<!-- Dynamic content will be injected here via Supabase -->
-</div>
-<button onclick="abrirModalNuevoMobile()" class="w-full py-4 text-center text-primary font-bold hover:bg-surface-container-low rounded-xl transition-colors border border-dashed border-outline-variant mt-2 flex items-center justify-center gap-2">
-<span class="material-symbols-outlined">add_circle</span>
-                    Nuevo Servicio
-                </button>
-</section>
-<!-- Management & Settings Side Panel (Takes up 4 columns on desktop) -->
-<aside class="md:col-span-4 flex flex-col gap-6">
-<!-- Ajustes (Settings) Card -->
-<div class="bg-surface-white rounded-xl p-6 shadow-[0px_10px_30px_rgba(0,0,0,0.04)] flex flex-col gap-6">
-<div class="flex items-center gap-3 border-b border-surface-variant pb-4">
-<span class="material-symbols-outlined text-secondary">tune</span>
-<h2 class="font-headline-md text-headline-md text-on-background">Ajustes</h2>
-</div>
-<!-- Clinic Profile Snapshot -->
-<div class="flex items-center gap-4">
-<div class="w-16 h-16 rounded-lg bg-surface-container-high overflow-hidden shrink-0">
-<img alt="Fachada de la clínica" class="w-full h-full object-cover" data-alt="A modern, high-end physical therapy clinic interior. The space is bright and minimalist with clean lines, white walls, and warm wood accents. Natural light floods through large windows. Medical teal accents are subtle but present in the decor. The mood is calm, professional, and healing." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBY62Fm4qA_yE9VTUckyWsCly8YLJtrlDggJJ-LgX1Shvj7VhpFrmT0r5FT00W3hl5coVEm1dCkx264EOWO7kFSs6jeKq0ojEgSrO4EmXeO_Yjr4TEwufXg3JPulvMihMsjeKIqlpmfn_qjHECVEFeObsaSqTm7CRS3L-vMdDn5KRj8IXr56Pb2ZN_OU77wJn3m4awejF61ihWqlUfFFi7rxgw00AONT6e77_no4NxNgOK_OmxF2jeaAkt9ntM39OD1bxSUcfLkZbc"/>
-</div>
-<div>
-<h3 class="font-body-lg text-body-lg font-bold text-on-surface">Centro Eslava</h3>
-<p class="font-body-md text-body-md text-on-surface-variant text-sm">Calle Principal 123, Madrid</p>
-<a class="text-primary font-label-sm text-label-sm mt-1 inline-block hover:underline" href="#">Editar Perfil</a>
-</div>
-</div>
-<!-- Operating Hours Form Segment -->
-<div class="bg-surface-container-lowest rounded-lg border border-surface-variant p-4">
-<h4 class="font-label-sm text-label-sm text-on-surface mb-3 flex items-center gap-2">
-<span class="material-symbols-outlined text-[18px]">schedule</span> Horario de Atención
-                        </h4>
-<div class="flex flex-col gap-3">
-<!-- Weekday Row -->
-<div class="flex items-center justify-between">
-<span class="font-body-md text-body-md text-on-surface-variant text-sm">Lun - Vie</span>
-<div class="flex items-center gap-2">
-<input class="bg-surface-container-low border-none rounded focus:ring-2 focus:ring-primary text-sm p-1.5 w-[85px] text-center font-label-sm text-label-sm text-on-surface" type="time" value="08:00"/>
-<span class="text-outline-variant">-</span>
-<input class="bg-surface-container-low border-none rounded focus:ring-2 focus:ring-primary text-sm p-1.5 w-[85px] text-center font-label-sm text-label-sm text-on-surface" type="time" value="20:00"/>
-</div>
-</div>
-<!-- Saturday Row -->
-<div class="flex items-center justify-between">
-<span class="font-body-md text-body-md text-on-surface-variant text-sm">Sábado</span>
-<div class="flex items-center gap-2">
-<input class="bg-surface-container-low border-none rounded focus:ring-2 focus:ring-primary text-sm p-1.5 w-[85px] text-center font-label-sm text-label-sm text-on-surface" type="time" value="09:00"/>
-<span class="text-outline-variant">-</span>
-<input class="bg-surface-container-low border-none rounded focus:ring-2 focus:ring-primary text-sm p-1.5 w-[85px] text-center font-label-sm text-label-sm text-on-surface" type="time" value="14:00"/>
-</div>
-</div>
-<!-- Sunday Row (Closed) -->
-<div class="flex items-center justify-between opacity-50">
-<span class="font-body-md text-body-md text-on-surface-variant text-sm">Domingo</span>
-<span class="bg-surface-container-high px-3 py-1 rounded text-xs font-semibold uppercase tracking-wide">Cerrado</span>
-</div>
-</div>
-<button class="w-full mt-4 bg-surface-container-low text-on-surface hover:bg-surface-container-high font-label-sm text-label-sm py-2 rounded transition-colors">
-                            Actualizar Horario
-                        </button>
-</div>
-<!-- Quick Links List -->
-<div class="flex flex-col gap-1">
-<a class="flex items-center justify-between p-3 rounded-lg hover:bg-surface-container-low transition-colors group" href="#">
-<div class="flex items-center gap-3">
-<span class="material-symbols-outlined text-outline group-hover:text-primary transition-colors">notifications</span>
-<span class="font-body-md text-body-md text-on-surface">Notificaciones</span>
-</div>
-<span class="material-symbols-outlined text-outline-variant">chevron_right</span>
-</a>
-<a class="flex items-center justify-between p-3 rounded-lg hover:bg-surface-container-low transition-colors group" href="#">
-<div class="flex items-center gap-3">
-<span class="material-symbols-outlined text-outline group-hover:text-primary transition-colors">team_dashboard</span>
-<span class="font-body-md text-body-md text-on-surface">Gestión de Personal</span>
-</div>
-<span class="material-symbols-outlined text-outline-variant">chevron_right</span>
-</a>
-<a class="flex items-center justify-between p-3 rounded-lg hover:bg-surface-container-low transition-colors group" href="#">
-<div class="flex items-center gap-3">
-<span class="material-symbols-outlined text-outline group-hover:text-primary transition-colors">integration_instructions</span>
-<span class="font-body-md text-body-md text-on-surface">Integraciones</span>
-</div>
-<span class="material-symbols-outlined text-outline-variant">chevron_right</span>
-</a>
-</div>
-</div>
-<!-- Usage / Stats Mini Card -->
-<div class="bg-surface-tint text-on-primary rounded-xl p-6 shadow-[0px_10px_30px_rgba(0,0,0,0.04)] relative overflow-hidden">
-<div class="absolute -right-10 -top-10 opacity-10">
-<span class="material-symbols-outlined text-[120px]">monitoring</span>
-</div>
-<h3 class="font-label-sm text-label-sm opacity-80 mb-1">Utilización Semanal</h3>
-<div class="font-display-lg-mobile text-display-lg-mobile font-bold mb-4">84%</div>
-<div class="w-full bg-on-primary/20 rounded-full h-2 mb-2">
-<div class="bg-secondary-fixed h-2 rounded-full" style="width: 84%"></div>
-</div>
-<p class="font-body-md text-body-md text-sm opacity-80">La capacidad de la sala se acerca a los límites óptimos.</p>
+    Nuevo Producto
+</button>
 </div>
 
-<!-- Productos Terapéuticos Card -->
-<div class="bg-surface-white rounded-xl p-6 shadow-[0px_10px_30px_rgba(0,0,0,0.04)] flex flex-col gap-4">
-    <div class="flex items-center justify-between border-b border-surface-variant pb-4">
-        <h2 class="font-headline-md text-headline-md text-on-background flex items-center gap-2">
-            <span class="material-symbols-outlined text-primary">shopping_bag</span>
-            Productos
-        </h2>
-        <button onclick="abrirModalNuevoProductoMobile()" class="text-primary text-xs font-bold flex items-center gap-0.5 hover:underline">
-            <span class="material-symbols-outlined text-sm">add_circle</span> Nuevo
-        </button>
-    </div>
-    <div id="productos-list" class="space-y-3 max-h-[250px] overflow-y-auto pr-1">
-        <p class="text-outline text-xs text-center py-4">Cargando productos...</p>
-    </div>
+<!-- Products Grid -->
+<section class="w-full flex flex-col gap-4">
+<div class="grid grid-cols-1 gap-4" id="productos-list">
+<!-- Dynamic content will be injected here via Supabase -->
 </div>
-</aside>
-</div>
+</section>
 </main>
+
+<!-- Sticky Mini Cart (Mobile) -->
+<div class="fixed bottom-[72px] left-0 w-full bg-surface-white border-t border-outline-variant/30 shadow-[0px_-5px_15px_rgba(0,0,0,0.05)] p-4 z-40 flex items-center justify-between transition-transform duration-300 transform translate-y-0" id="mobile-mini-cart" style="display:none;">
+    <div class="flex flex-col">
+        <span class="text-xs text-on-surface-variant font-bold uppercase tracking-wider flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">shopping_cart</span> Ticket</span>
+        <span class="font-bold text-primary text-lg" id="cart-total-mobile">S/ 0.00</span>
+    </div>
+    <button onclick="abrirCartMobile()" class="bg-primary text-on-primary font-bold px-6 py-2.5 rounded-full active:scale-95 transition-transform shadow-md">
+        Ver / Cobrar (<span id="cart-count-mobile">0</span>)
+    </button>
+</div>
+
+<!-- Full Cart Modal (Mobile) -->
+<dialog id="modalCartMobile" class="backdrop:bg-black/50 m-0 w-full h-[90vh] mt-[10vh] rounded-t-3xl shadow-xl border-none bg-surface-white transition-transform duration-300 slide-up">
+    <div class="flex flex-col h-full">
+        <div class="flex justify-between items-center p-6 border-b border-surface-container-highest">
+            <h3 class="text-xl font-bold text-on-surface flex items-center gap-2"><span class="material-symbols-outlined">shopping_cart</span> Ticket de Venta</h3>
+            <button onclick="document.getElementById('modalCartMobile').close()" class="text-on-surface-variant hover:text-error transition-colors p-2 bg-surface-container-low rounded-full">
+                <span class="material-symbols-outlined">expand_more</span>
+            </button>
+        </div>
+        
+        <div class="flex-1 overflow-y-auto p-4 space-y-3" id="cart-items-mobile">
+            <!-- Items cart -->
+        </div>
+
+        <div class="p-6 bg-surface-container-lowest border-t border-surface-container-highest space-y-3 pb-8">
+            <div class="flex justify-between items-center text-on-surface-variant text-sm">
+                <span>Subtotal</span>
+                <span id="cart-subtotal-modal" class="font-bold">S/ 0.00</span>
+            </div>
+            <div class="flex justify-between items-center text-on-surface-variant text-sm">
+                <span>IGV (18%)</span>
+                <span id="cart-igv-modal" class="font-bold">S/ 0.00</span>
+            </div>
+            <div class="flex justify-between items-center text-primary text-xl font-bold pt-2 border-t border-outline-variant/30">
+                <span>Total</span>
+                <span id="cart-total-modal">S/ 0.00</span>
+            </div>
+            <div class="pt-4 space-y-3">
+                <button onclick="cobrarCarritoMobile()" class="w-full bg-primary text-on-primary py-3.5 rounded-xl font-bold active:scale-95 transition-transform flex justify-center items-center gap-2 shadow-md">
+                    <span class="material-symbols-outlined">payments</span>
+                    Cobrar Inmediato
+                </button>
+                <div id="pos-paciente-container-mobile" class="mb-2 space-y-2 relative">
+                    <input type="text" id="pos-paciente-search-mobile" placeholder="Buscar paciente..." class="w-full bg-surface-container border-none rounded-xl py-3 px-4 text-sm focus:ring-primary text-on-surface" autocomplete="off" oninput="filtrarPacientesPOSMobile(this.value)" onfocus="mostrarListaPacientesMobile()" />
+                    <input type="hidden" id="pos-paciente-id-mobile" />
+                    <ul id="pos-paciente-list-mobile" class="absolute z-50 w-full bg-surface-white border border-outline-variant/30 rounded-xl shadow-lg max-h-48 overflow-y-auto hidden top-full mt-1">
+                    </ul>
+                </div>
+                <button onclick="cargarCuentaPacienteMobile()" class="w-full bg-surface-container text-primary py-3.5 rounded-xl font-bold active:scale-95 transition-transform flex justify-center items-center gap-2">
+                    <span class="material-symbols-outlined">person_add</span>
+                    Cargar a Cuenta
+                </button>
+            </div>
+        </div>
+    </div>
+</dialog>
+<style>
+.slide-up[open] {
+    animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+@keyframes slideUp {
+    0% { transform: translateY(100%); }
+    100% { transform: translateY(0); }
+}
+</style>
 
 <!-- Modal for New Service (Mobile) -->
 <dialog id="modalNuevoServicioMobile" class="backdrop:bg-black/50 p-6 rounded-2xl shadow-xl border-none w-[90%] max-w-sm bg-surface-white m-auto">
@@ -452,12 +395,12 @@
 <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">person_search</span>
 <span class="font-label-sm text-label-sm mt-1 text-[10px]">Pacientes</span>
 </a>
-<a class="flex flex-col items-center justify-center text-primary dark:text-primary-fixed font-bold active:scale-90 transition-all duration-150 p-2 rounded-lg" href="tratamientos_mobile.html">
-<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">healing</span>
+<a class="flex flex-col items-center justify-center text-outline dark:text-outline-variant hover:bg-surface-container-high/50 active:scale-90 transition-all duration-150 p-2 rounded-lg" href="tratamientos_mobile.html">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">healing</span>
 <span class="font-label-sm text-label-sm mt-1 text-[10px]">Tratamientos</span>
 </a>
-<a class="flex flex-col items-center justify-center text-outline dark:text-outline-variant hover:bg-surface-container-high/50 active:scale-90 transition-all duration-150 p-2 rounded-lg" href="productos_mobile.html">
-<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">inventory_2</span>
+<a class="flex flex-col items-center justify-center text-primary dark:text-primary-fixed font-bold active:scale-90 transition-all duration-150 p-2 rounded-lg" href="productos_mobile.html">
+<span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 1;">inventory_2</span>
 <span class="font-label-sm text-label-sm mt-1 text-[10px]">Productos</span>
 </a>
 <a class="flex flex-col items-center justify-center text-outline dark:text-outline-variant min-w-0 flex-1 py-1 px-1 rounded-lg hover:bg-[#f2f4f4] active:scale-90 transition-all duration-150" href="cobrar_mobile.html">
@@ -473,6 +416,66 @@
         document.addEventListener('DOMContentLoaded', () => {
             cargarServicios();
             cargarProductos();
+            cargarPacientesPOSMobile();
+        });
+
+        let pacientesPOSMobileGlobal = [];
+        async function cargarPacientesPOSMobile() {
+            try {
+                const { data: pacs } = await supabaseClient.from('pacientes').select('*').order('nombre');
+                if (pacs) {
+                    pacientesPOSMobileGlobal = pacs;
+                    renderListaPacientesPOSMobile(pacs);
+                }
+            } catch(e) { console.error("Error al cargar pacientes POS mobile:", e); }
+        }
+
+        function renderListaPacientesPOSMobile(pacs) {
+            const list = document.getElementById('pos-paciente-list-mobile');
+            if(!list) return;
+            list.innerHTML = '';
+            if(pacs.length === 0) {
+                list.innerHTML = '<li class="px-4 py-3 text-sm text-outline">No se encontraron pacientes</li>';
+                return;
+            }
+            pacs.forEach(p => {
+                const li = document.createElement('li');
+                li.className = 'px-4 py-3 text-sm hover:bg-surface-container-low cursor-pointer border-b border-outline-variant/10 last:border-0';
+                li.textContent = p.nombre;
+                li.onclick = () => seleccionarPacientePOSMobile(p.id, p.nombre);
+                list.appendChild(li);
+            });
+        }
+
+        function filtrarPacientesPOSMobile(query) {
+            const list = document.getElementById('pos-paciente-list-mobile');
+            if(!list) return;
+            list.classList.remove('hidden');
+            const q = query.toLowerCase();
+            const filtrados = pacientesPOSMobileGlobal.filter(p => p.nombre.toLowerCase().includes(q));
+            renderListaPacientesPOSMobile(filtrados);
+            if(query === '') {
+                document.getElementById('pos-paciente-id-mobile').value = '';
+            }
+        }
+
+        function mostrarListaPacientesMobile() {
+            const list = document.getElementById('pos-paciente-list-mobile');
+            if(list) list.classList.remove('hidden');
+        }
+
+        function seleccionarPacientePOSMobile(id, nombre) {
+            document.getElementById('pos-paciente-id-mobile').value = id;
+            document.getElementById('pos-paciente-search-mobile').value = nombre;
+            document.getElementById('pos-paciente-list-mobile').classList.add('hidden');
+        }
+
+        document.addEventListener('click', (e) => {
+            const container = document.getElementById('pos-paciente-container-mobile');
+            if(container && !container.contains(e.target)) {
+                const list = document.getElementById('pos-paciente-list-mobile');
+                if(list) list.classList.add('hidden');
+            }
         });
 
         // ==========================================
@@ -506,15 +509,21 @@
 
             let html = '';
             productos.forEach(p => {
+                const stockWarning = p.stock < 5 ? '<span class="text-error font-bold material-symbols-outlined text-[14px] align-middle">warning</span>' : '';
                 html += `
-                <div onclick="abrirModalEdicionProductoMobile('${p.id}')" class="flex items-center justify-between p-3 bg-surface-container-low rounded-2xl cursor-pointer hover:bg-surface-container transition-colors">
-                    <div class="flex-1 min-w-0">
-                        <p class="font-bold text-sm text-on-surface truncate">${p.nombre}</p>
-                        <p class="text-[10px] text-outline truncate">${p.descripcion || 'Sin descripción'}</p>
+                <div onclick="agregarAlCarritoMobile('${p.id}')" class="bg-surface-white rounded-2xl p-4 shadow-sm border border-outline-variant/30 flex items-center gap-4 active:scale-[0.98] transition-transform relative">
+                    <button onclick="event.stopPropagation(); abrirModalEdicionProductoMobile('${p.id}')" class="absolute top-2 right-2 p-2 bg-surface-container-low rounded-full text-on-surface-variant active:bg-surface-container-high">
+                        <span class="material-symbols-outlined text-[16px]">edit</span>
+                    </button>
+                    <div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary shrink-0">
+                        <span class="material-symbols-outlined">vaccines</span>
                     </div>
-                    <div class="text-right ml-4">
-                        <p class="font-bold text-sm text-primary">S/. ${parseFloat(p.precio).toFixed(2)}</p>
-                        <p class="text-[10px] text-outline">Stock: ${p.stock}</p>
+                    <div class="flex-1 pr-6">
+                        <h4 class="font-bold text-sm text-on-surface leading-tight mb-1 line-clamp-1">${p.nombre}</h4>
+                        <div class="flex items-center justify-between">
+                            <span class="font-bold text-primary">S/ ${parseFloat(p.precio).toFixed(2)}</span>
+                            <span class="text-[10px] bg-surface-container-high px-2 py-0.5 rounded text-on-surface-variant font-medium">${stockWarning} Stock: ${p.stock}</span>
+                        </div>
                     </div>
                 </div>
                 `;
@@ -590,208 +599,131 @@
             }
         }
 
-        function abrirModalNuevoMobile() {
-            document.getElementById('formNuevoServicioMobile').reset();
-            document.getElementById('servicioIdMobile').value = '';
-            document.getElementById('modalTitleMobile').textContent = 'Nuevo Servicio';
-            document.getElementById('btnEliminarServicioMobile').classList.add('hidden');
-            
-            const form = document.getElementById('formNuevoServicioMobile');
-            form.elements['duracion'].value = '1';
+        // ==========================================
+        // LÓGICA DE CARRITO (MÓVIL)
+        // ==========================================
+        let carritoMobile = [];
 
-            document.getElementById('modalNuevoServicioMobile').showModal();
+        function abrirCartMobile() {
+            document.getElementById('modalCartMobile').showModal();
         }
 
-        function abrirModalEdicionMobile(id, nombre, descripcion, duracion, precio, estado, icono) {
-            document.getElementById('formNuevoServicioMobile').reset();
-            document.getElementById('servicioIdMobile').value = id;
-            document.getElementById('modalTitleMobile').textContent = 'Editar Servicio';
-            document.getElementById('btnEliminarServicioMobile').classList.remove('hidden');
-            
-            const form = document.getElementById('formNuevoServicioMobile');
-            form.elements['nombre'].value = nombre;
-            form.elements['descripcion'].value = descripcion || '';
-            form.elements['duracion'].value = duracion;
-            form.elements['precio'].value = precio;
-            form.elements['estado'].value = estado;
-            form.elements['icono'].value = icono || 'healing';
-            
-            document.getElementById('modalNuevoServicioMobile').showModal();
-        }
+        function agregarAlCarritoMobile(id) {
+            const p = listaProductosGlobal.find(item => item.id === id);
+            if (!p) return;
 
-        async function eliminarServicioMobile() {
-            const id = document.getElementById('servicioIdMobile').value;
-            if (!id) return;
-            
-            if (!confirm('¿Estás seguro de que deseas eliminar este servicio? Esta acción no se puede deshacer.')) return;
-            
-            const btnSubmit = document.getElementById('btnSubmitServicioMobile');
-            const spinner = document.getElementById('spinnerSubmitServicioMobile');
-            const btnEliminar = document.getElementById('btnEliminarServicioMobile');
-            
-            btnSubmit.disabled = true;
-            btnEliminar.disabled = true;
-            spinner.classList.remove('hidden');
-
-            try {
-                const { error } = await supabaseClient
-                    .from('servicios')
-                    .delete()
-                    .eq('id', id);
-
-                if (error) throw error;
-
-                document.getElementById('modalNuevoServicioMobile').close();
-                await cargarServicios();
-            } catch (err) {
-                console.error("Error al eliminar servicio:", err);
-                alert("Hubo un error al eliminar el servicio.");
-            } finally {
-                btnSubmit.disabled = false;
-                btnEliminar.disabled = false;
-                spinner.classList.add('hidden');
-            }
-        }
-
-        document.getElementById('formNuevoServicioMobile').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const btnSubmit = document.getElementById('btnSubmitServicioMobile');
-            const spinner = document.getElementById('spinnerSubmitServicioMobile');
-            
-            btnSubmit.disabled = true;
-            spinner.classList.remove('hidden');
-
-            const formData = new FormData(e.target);
-            const data = Object.fromEntries(formData.entries());
-
-            const payload = {
-                nombre: data.nombre,
-                descripcion: data.descripcion,
-                duracion: parseInt(data.duracion),
-                precio: parseFloat(data.precio),
-                estado: data.estado,
-                icono: data.icono
-            };
-
-            try {
-                let error;
-                if (data.id) {
-                    const res = await supabaseClient
-                        .from('servicios')
-                        .update(payload)
-                        .eq('id', data.id);
-                    error = res.error;
+            const ex = carritoMobile.find(item => item.id === id);
+            if (ex) {
+                if(ex.cantidad < p.stock) {
+                    ex.cantidad += 1;
                 } else {
-                    const res = await supabaseClient
-                        .from('servicios')
-                        .insert([payload]);
-                    error = res.error;
+                    alert("No hay más stock disponible para este producto.");
                 }
-
-                if (error) throw error;
-
-                // Close modal, reset form and reload services
-                document.getElementById('modalNuevoServicioMobile').close();
-                e.target.reset();
-                await cargarServicios();
-
-            } catch (err) {
-                console.error("Error al crear servicio:", err);
-                alert("Hubo un error al crear el servicio. Inténtelo de nuevo.");
-            } finally {
-                btnSubmit.disabled = false;
-                spinner.classList.add('hidden');
-            }
-        });
-
-        async function cargarServicios() {
-            try {
-                const grid = document.getElementById('serviciosGrid');
-                if (!grid) return;
-                
-                grid.innerHTML = '<div class="col-span-full text-center py-8"><div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div><p class="text-outline mt-4 font-label-sm">Cargando servicios...</p></div>';
-
-                const { data: servicios, error } = await supabaseClient
-                    .from('servicios')
-                    .select('*')
-                    .order('created_at', { ascending: false });
-
-                if (error) throw error;
-                
-                grid.innerHTML = '';
-                
-                if (servicios.length === 0) {
-                    grid.innerHTML = `
-                        <div class="col-span-full text-center py-12 bg-surface-white rounded-2xl border border-dashed border-outline-variant">
-                            <span class="material-symbols-outlined text-4xl text-outline mb-3">medical_services</span>
-                            <p class="font-body-md text-on-surface">No hay servicios configurados</p>
-                        </div>
-                    `;
-                    // Update active count
-                    const activesSpan = document.querySelector('h2.text-headline-md').nextElementSibling;
-                    if(activesSpan) activesSpan.textContent = '0 Activos';
-                    return;
-                }
-
-                const colors = [
-                    'bg-secondary-container text-on-secondary-container',
-                    'bg-tertiary-fixed text-on-tertiary-fixed',
-                    'bg-error-container text-on-error-container',
-                    'bg-primary-fixed text-on-primary-fixed'
-                ];
-                
-                let numActivos = 0;
-
-                servicios.forEach((servicio, index) => {
-                    if (servicio.estado === 'Activo') numActivos++;
-                    
-                    const randomColor = colors[index % colors.length];
-                    const iconName = servicio.icono || 'healing';
-                    
-                    const isActive = servicio.estado === 'Activo';
-                    const badgeClass = isActive ? 'bg-success/10 text-success' : 'bg-outline-variant/20 text-on-surface-variant';
-                    const badgeIcon = isActive ? 'check_circle' : 'cancel';
-                    
-                    const safeDesc = (servicio.descripcion || '').replace(/'/g, "&#39;").replace(/"/g, "&quot;");
-                    const safeNombre = servicio.nombre.replace(/'/g, "&#39;").replace(/"/g, "&quot;");
-                    const safeIcono = iconName.replace(/'/g, "&#39;").replace(/"/g, "&quot;");
-
-                    const cardHTML = `
-                        <div onclick="abrirModalEdicionMobile('${servicio.id}', '${safeNombre}', '${safeDesc}', ${servicio.duracion}, ${servicio.precio}, '${servicio.estado}', '${safeIcono}')" class="bg-surface-white rounded-xl p-6 shadow-[0px_10px_30px_rgba(0,0,0,0.04)] border border-transparent hover:border-outline-variant transition-colors group cursor-pointer relative">
-                            <div class="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity">
-                                <span class="material-symbols-outlined text-outline-variant hover:text-primary">edit</span>
-                            </div>
-                            <div class="flex justify-between items-start mb-4">
-                                <div class="w-12 h-12 rounded-full ${randomColor} flex items-center justify-center">
-                                    <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">${iconName}</span>
-                                </div>
-                                <span class="${badgeClass} font-label-sm text-label-sm px-2 py-1 rounded flex items-center gap-1">
-                                    <span class="material-symbols-outlined text-[14px]">${badgeIcon}</span> ${servicio.estado}
-                                </span>
-                            </div>
-                            <h3 class="font-body-lg text-body-lg font-bold text-on-surface mb-1">${servicio.nombre}</h3>
-                            <p class="font-body-md text-body-md text-on-surface-variant text-sm mb-4 line-clamp-2">${servicio.descripcion || ''}</p>
-                            <div class="flex items-center justify-between mt-auto">
-                                <span class="font-label-sm text-label-sm text-on-surface font-semibold">${servicio.duracion} ${servicio.duracion === 1 ? 'Sesión' : 'Sesiones'}</span>
-                                <span class="font-label-sm text-label-sm text-primary font-bold">S/ ${parseFloat(servicio.precio).toFixed(0)}</span>
-                            </div>
-                        </div>
-                    `;
-                    grid.insertAdjacentHTML('beforeend', cardHTML);
-                });
-                
-                // Update active count
-                const activesSpan = document.querySelector('h2.text-headline-md').nextElementSibling;
-                if(activesSpan) activesSpan.textContent = `${numActivos} Activos`;
-
-            } catch (err) {
-                console.error("Error cargando servicios:", err);
-                const grid = document.getElementById('serviciosGrid');
-                if (grid) {
-                    grid.innerHTML = '<div class="col-span-full text-center text-error">Error al cargar datos. Verifica la conexión.</div>';
+            } else {
+                if (p.stock > 0) {
+                    carritoMobile.push({ ...p, cantidad: 1 });
+                } else {
+                    alert("Producto sin stock.");
                 }
             }
+            renderCarritoMobile();
+        }
+
+        function modificarCantidadMobile(id, delta) {
+            const index = carritoMobile.findIndex(item => item.id === id);
+            if (index === -1) return;
+            
+            const p = listaProductosGlobal.find(item => item.id === id);
+            
+            carritoMobile[index].cantidad += delta;
+            
+            if (carritoMobile[index].cantidad <= 0) {
+                carritoMobile.splice(index, 1);
+            } else if (carritoMobile[index].cantidad > p.stock) {
+                carritoMobile[index].cantidad = p.stock;
+            }
+            
+            renderCarritoMobile();
+        }
+
+        function renderCarritoMobile() {
+            const container = document.getElementById('cart-items-mobile');
+            const miniCart = document.getElementById('mobile-mini-cart');
+            
+            if (carritoMobile.length === 0) {
+                container.innerHTML = '<p class="text-center text-outline-variant text-sm mt-10">El carrito está vacío.</p>';
+                document.getElementById('cart-subtotal-modal').textContent = 'S/ 0.00';
+                document.getElementById('cart-igv-modal').textContent = 'S/ 0.00';
+                document.getElementById('cart-total-modal').textContent = 'S/ 0.00';
+                document.getElementById('cart-total-mobile').textContent = 'S/ 0.00';
+                document.getElementById('cart-count-mobile').textContent = '0';
+                miniCart.style.display = 'none';
+                return;
+            }
+
+            miniCart.style.display = 'flex';
+
+            let html = '';
+            let subtotal = 0;
+            let count = 0;
+
+            carritoMobile.forEach(item => {
+                const totalItem = item.precio * item.cantidad;
+                subtotal += totalItem;
+                count += item.cantidad;
+
+                html += `
+                <div class="flex items-center justify-between p-3 bg-surface-container-lowest rounded-xl border border-surface-container-highest shadow-sm">
+                    <div class="flex-1 pr-2">
+                        <p class="font-bold text-sm text-on-surface line-clamp-1">${item.nombre}</p>
+                        <p class="text-primary font-bold text-xs">S/ ${parseFloat(item.precio).toFixed(2)}</p>
+                    </div>
+                    <div class="flex items-center gap-3 bg-surface-container-low rounded-lg px-2 py-1">
+                        <button onclick="modificarCantidadMobile('${item.id}', -1)" class="text-on-surface-variant hover:text-error active:scale-90 p-1">
+                            <span class="material-symbols-outlined text-[16px]">remove</span>
+                        </button>
+                        <span class="font-bold text-sm min-w-[1ch] text-center">${item.cantidad}</span>
+                        <button onclick="modificarCantidadMobile('${item.id}', 1)" class="text-on-surface-variant hover:text-primary active:scale-90 p-1">
+                            <span class="material-symbols-outlined text-[16px]">add</span>
+                        </button>
+                    </div>
+                </div>
+                `;
+            });
+
+            container.innerHTML = html;
+            
+            const total = subtotal;
+            const igv = total * 0.18;
+            const subtotalSinIgv = total - igv;
+
+            document.getElementById('cart-subtotal-modal').textContent = 'S/ ' + subtotalSinIgv.toFixed(2);
+            document.getElementById('cart-igv-modal').textContent = 'S/ ' + igv.toFixed(2);
+            document.getElementById('cart-total-modal').textContent = 'S/ ' + total.toFixed(2);
+            
+            document.getElementById('cart-total-mobile').textContent = 'S/ ' + total.toFixed(2);
+            document.getElementById('cart-count-mobile').textContent = count;
+        }
+
+        function cobrarCarritoMobile() {
+            if (carritoMobile.length === 0) return alert("El carrito está vacío");
+            alert("Pago procesado y registrado con éxito.");
+            carritoMobile = [];
+            renderCarritoMobile();
+            document.getElementById('modalCartMobile').close();
+        }
+
+        function cargarCuentaPacienteMobile() {
+            if (carritoMobile.length === 0) return alert("El carrito está vacío");
+            const pacId = document.getElementById('pos-paciente-id-mobile') ? document.getElementById('pos-paciente-id-mobile').value : '';
+            if (!pacId) return alert("Por favor, seleccione un paciente primero para cargar a su cuenta.");
+            
+            // Redirigir conservando los params para que el AuthGuard no cierre sesión en modo simulador
+            localStorage.setItem('temp_pos_cart', JSON.stringify(carritoMobile));
+            const currentParams = new URLSearchParams(window.location.search);
+            currentParams.set('from_pos', 'true');
+            currentParams.set('paciente_id', pacId);
+            window.location.href = `pagos_facturacion_mobile.html?${currentParams.toString()}`;
         }
     </script>
 

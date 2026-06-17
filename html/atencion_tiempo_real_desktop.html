@@ -49,7 +49,7 @@
     <header class="bg-surface-white border-b border-surface-container flex justify-between items-center h-16 px-8 sticky top-0 z-40 shadow-sm">
         <div class="flex items-center space-x-4">
             <span class="material-symbols-outlined text-primary text-2xl animate-pulse">radio_button_checked</span>
-            <h1 class="font-headline-md text-xl font-bold text-primary">Procedimiento Activo en Tiempo Real</h1>
+            <h1 class="font-headline-md text-xl font-bold text-primary">Atención de Cita</h1>
         </div>
         <div class="flex items-center space-x-4">
             <button onclick="window.history.back()" class="bg-surface-white border border-outline-variant text-on-surface-variant px-4 py-2 rounded-xl font-bold hover:bg-surface-container-low transition-all">
@@ -124,6 +124,21 @@
 
         <!-- Right Column: Observaciones & Clinical Record Entry -->
         <section class="col-span-8 space-y-6">
+            <!-- Treatment Goal Dashboard Info -->
+            <div class="bg-surface-white rounded-2xl p-6 shadow-sm border border-outline-variant/30 mb-6 hidden" id="plan-dashboard-card">
+                <h4 class="text-sm font-semibold text-text-muted mb-3 uppercase tracking-wider border-b border-surface-container pb-2">Plan de Tratamiento</h4>
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="bg-surface-container-low p-4 rounded-xl border-l-4 border-primary">
+                        <p class="text-xs text-primary font-bold uppercase mb-1">Objetivo de Hoy (Sesión Actual)</p>
+                        <p class="font-body-md text-sm text-on-surface-variant" id="plan-dashboard-actual">--</p>
+                    </div>
+                    <div class="bg-surface-container-low p-4 rounded-xl border-l-4 border-secondary">
+                        <p class="text-xs text-secondary font-bold uppercase mb-1">Próxima Sesión</p>
+                        <p class="font-body-md text-sm text-on-surface-variant" id="plan-dashboard-siguiente">--</p>
+                    </div>
+                </div>
+            </div>
+
             <div class="bg-surface-white rounded-2xl p-8 shadow-sm border border-outline-variant/30 flex flex-col h-full">
                 <div class="flex justify-between items-center mb-6">
                     <h3 class="font-headline-md text-xl font-bold text-on-surface">Registro de Observaciones Clínicas</h3>
@@ -135,12 +150,54 @@
                 <form id="form-evolucion" class="space-y-6 flex-1 flex flex-col">
                     <div class="space-y-2">
                         <label class="block text-sm font-bold text-on-surface">Observaciones y Notas de Evolución (Tiempo Real)</label>
-                        <textarea id="observaciones" required rows="10" class="w-full rounded-xl border border-outline-variant px-4 py-3 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all bg-surface-container-lowest text-base leading-relaxed" placeholder="Describa el estado actual del paciente, tolerancia al tratamiento, ejercicios realizados, dolor referido (EVA), etc..."></textarea>
+                        <textarea id="observaciones" required rows="6" class="w-full rounded-xl border border-outline-variant px-4 py-3 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all bg-surface-container-lowest text-base leading-relaxed" placeholder="Describa el estado actual del paciente, tolerancia al tratamiento, ejercicios realizados, dolor referido (EVA), etc..."></textarea>
+                    </div>
+
+                    <div class="space-y-2 mb-6">
+                        <label class="block text-sm font-bold text-on-surface text-primary">Tratamiento Realizado</label>
+                        <p class="text-xs text-outline mb-1">Seleccione el servicio principal brindado en esta sesión.</p>
+                        <select id="tratamientoCobrado" class="w-full rounded-xl border border-outline-variant px-4 py-3 focus:ring-2 focus:ring-primary outline-none transition-all bg-surface-container-lowest text-base">
+                            <option value="">Cargando tratamientos...</option>
+                        </select>
+                    </div>
+
+                    <div class="space-y-2">
+                        <label class="block text-sm font-bold text-on-surface">Acciones Realizadas (Bullets)</label>
+                        <textarea id="inputAccionesEvo" rows="2" placeholder="Ej. Magneto&#10;Masajes" class="w-full rounded-xl border border-outline-variant px-4 py-3 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all bg-surface-container-lowest resize-none"></textarea>
+                        <div class="mt-2 flex flex-wrap gap-2">
+                            <button type="button" onclick="agregarAccionEvo('Magneto')" class="px-3 py-1 bg-surface-container text-on-surface-variant text-xs font-bold rounded-full hover:bg-primary/10 hover:text-primary transition-colors">+ Magneto</button>
+                            <button type="button" onclick="agregarAccionEvo('Masajes')" class="px-3 py-1 bg-surface-container text-on-surface-variant text-xs font-bold rounded-full hover:bg-primary/10 hover:text-primary transition-colors">+ Masajes</button>
+                            <button type="button" onclick="agregarAccionEvo('C. Calientes')" class="px-3 py-1 bg-surface-container text-on-surface-variant text-xs font-bold rounded-full hover:bg-primary/10 hover:text-primary transition-colors">+ C. Calientes</button>
+                            <button type="button" onclick="agregarAccionEvo('C. Frías')" class="px-3 py-1 bg-surface-container text-on-surface-variant text-xs font-bold rounded-full hover:bg-primary/10 hover:text-primary transition-colors">+ C. Frías</button>
+                            <button type="button" onclick="agregarAccionEvo('Electricidad')" class="px-3 py-1 bg-surface-container text-on-surface-variant text-xs font-bold rounded-full hover:bg-primary/10 hover:text-primary transition-colors">+ Electricidad</button>
+                        </div>
                     </div>
 
                     <div class="space-y-2">
                         <label class="block text-sm font-bold text-on-surface">Plan / Recomendaciones post-sesión</label>
                         <input type="text" id="recomendaciones" class="w-full rounded-xl border border-outline-variant px-4 py-3 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all bg-surface-container-lowest" placeholder="ej. Reposo 24 horas, colocar compresa fría 15 min..."/>
+                    </div>
+
+                    <div class="space-y-2 mt-4">
+                        <label class="block text-sm font-bold text-on-surface">Plan para la siguiente sesión (Opcional)</label>
+                        <p class="text-xs text-outline mb-1">Esto actualizará el Dashboard de Tratamiento automáticamente.</p>
+                        <input type="text" id="planSiguienteSesion" class="w-full rounded-xl border border-outline-variant px-4 py-3 focus:ring-2 focus:ring-primary outline-none transition-all bg-surface-container-lowest" placeholder="ej. Iniciar ejercicios de propiocepción..."/>
+                    </div>
+
+                    <!-- Image Upload (Desktop) -->
+                    <div class="space-y-2">
+                        <label class="block text-sm font-bold text-on-surface">Adjuntar Imágenes Clínicas</label>
+                        <div class="flex items-center gap-3">
+                            <label for="camera-upload-desktop" class="flex items-center gap-2 px-5 py-2.5 bg-secondary-container text-on-secondary-container rounded-xl font-bold text-sm cursor-pointer hover:opacity-90 active:scale-95 transition-all shadow-sm">
+                                <span class="material-symbols-outlined text-[20px]">add_photo_alternate</span>
+                                Subir Imágenes
+                            </label>
+                            <input type="file" id="camera-upload-desktop" accept="image/*" multiple class="hidden" onchange="previewImageDesktop(event)">
+                            <span class="text-xs text-outline font-medium">Soporta JPG, PNG</span>
+                        </div>
+                        <div id="image-preview-container-desktop" class="flex gap-4 overflow-x-auto py-3 hide-scrollbar">
+                            <!-- Previews will appear here -->
+                        </div>
                     </div>
 
                     <div class="pt-6 border-t border-surface-container flex justify-end items-center gap-4">
@@ -172,6 +229,43 @@
             await cargarDatosCita();
         });
 
+        function agregarAccionEvo(accion) {
+            const textarea = document.getElementById('inputAccionesEvo');
+            const current = textarea.value.trim();
+            textarea.value = current ? current + '\n' + accion : accion;
+            textarea.focus();
+        }
+
+        async function cargarServicios() {
+            try {
+                const { data: servicios, error } = await supabaseClient
+                    .from('servicios')
+                    .select('*')
+                    .order('nombre', { ascending: true });
+
+                if (error) throw error;
+
+                const select = document.getElementById('tratamientoCobrado');
+                select.innerHTML = '';
+
+                if (servicios && servicios.length > 0) {
+                    servicios.forEach(srv => {
+                        const opt = document.createElement('option');
+                        opt.value = srv.nombre;
+                        opt.textContent = srv.nombre;
+                        if (currentCita && currentCita.tratamiento === srv.nombre) {
+                            opt.selected = true;
+                        }
+                        select.appendChild(opt);
+                    });
+                } else {
+                    select.innerHTML = '<option value="">Sin servicios disponibles</option>';
+                }
+            } catch (err) {
+                console.error("Error cargando servicios:", err);
+            }
+        }
+
         async function cargarDatosCita() {
             try {
                 // Fetch cita details with patient
@@ -184,6 +278,8 @@
                 if (error) throw error;
                 currentCita = cita;
                 currentPaciente = cita.pacientes;
+
+                await cargarServicios();
 
                 if (currentPaciente) {
                     document.getElementById('patient-name').textContent = currentPaciente.nombre;
@@ -200,8 +296,28 @@
                 document.getElementById('appt-room').textContent = cita.consultorio || '--';
                 document.getElementById('appt-time').textContent = `${cita.fecha} • ${cita.hora}`;
 
-                if (cita.observaciones_medicas) {
-                    document.getElementById('observaciones').value = cita.observaciones_medicas;
+                if (cita.notas) {
+                    document.getElementById('observaciones').value = cita.notas;
+                }
+
+                // Load Treatment Dashboard info
+                if (currentPaciente) {
+                    const storedTrat = localStorage.getItem(`paciente_tratamiento_${currentPaciente.id}`);
+                    if (storedTrat) {
+                        const data = JSON.parse(storedTrat);
+                        document.getElementById('plan-dashboard-card').classList.remove('hidden');
+                        document.getElementById('plan-dashboard-actual').textContent = data.actual || 'Sin definir';
+                        document.getElementById('plan-dashboard-siguiente').textContent = data.siguiente || 'Sin definir';
+                    }
+                }
+
+                if (cita.estado === 'Completado') {
+                    const btnComplete = document.getElementById('btn-complete');
+                    btnComplete.innerHTML = `<span class="material-symbols-outlined text-sm">edit_document</span> Guardar Edición`;
+                    btnComplete.onclick = editarProcedimiento;
+                    
+                    const btnSaveDraft = document.getElementById('btn-save-draft');
+                    btnSaveDraft.style.display = 'none'; // Hide draft button if already completed
                 }
             } catch (err) {
                 console.error("Error cargando cita:", err);
@@ -213,6 +329,7 @@
             const obs = document.getElementById('observaciones').value;
             const rec = document.getElementById('recomendaciones').value;
             const fullObs = rec ? `${obs}\n\nRecomendaciones: ${rec}` : obs;
+            const nuevoTratamiento = document.getElementById('tratamientoCobrado').value;
 
             const btn = document.getElementById('btn-save-draft');
             btn.disabled = true;
@@ -222,8 +339,9 @@
                 const { error } = await supabaseClient
                     .from('citas')
                     .update({ 
-                        observaciones_medicas: fullObs,
-                        estado: 'En Progreso' // Update state to En Progreso if saving draft
+                        notas: fullObs,
+                        estado: 'En Progreso', // Update state to En Progreso if saving draft
+                        tratamiento: nuevoTratamiento
                     })
                     .eq('id', citaId);
 
@@ -255,12 +373,60 @@
             btn.textContent = 'Procesando...';
 
             try {
+                // Prepare notes for the timeline
+                const rawAcc = document.getElementById('inputAccionesEvo').value;
+                const accList = rawAcc.split('\n').map(x => x.trim()).filter(x => x);
+
+                const now = new Date();
+                const timeStr = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+
+                let bulletsHtml = '';
+                if (accList.length > 0) {
+                    bulletsHtml = `<div class="mt-4"><p class="text-xs font-bold text-outline uppercase mb-2">Acciones:</p><ul class="space-y-1">` + 
+                        accList.map(a => `<li class="text-sm text-on-surface-variant flex items-center gap-2"><span class="material-symbols-outlined text-[14px] text-success">check</span> ${a}</li>`).join('') +
+                    `</ul></div>`;
+                }
+
+                // Add to LocalStorage timeline history and update Treatment Plan
+                if (currentPaciente) {
+                    const newEvo = {
+                        headerText: `Procedimiento (Atención Virtual): ${currentCita ? currentCita.tratamiento : 'General'}`,
+                        timeStr: timeStr,
+                        notas: fullObs,
+                        bulletsHtml: bulletsHtml,
+                        imgHtml: '' // In real app, we'd process the images
+                    };
+
+                    let evos = JSON.parse(localStorage.getItem(`paciente_evoluciones_${currentPaciente.id}`) || '[]');
+                    evos.unshift(newEvo);
+                    localStorage.setItem(`paciente_evoluciones_${currentPaciente.id}`, JSON.stringify(evos));
+
+                    // Shift Treatment Dashboard
+                    const planSig = document.getElementById('planSiguienteSesion').value.trim();
+                    const storedTrat = localStorage.getItem(`paciente_tratamiento_${currentPaciente.id}`);
+                    if (storedTrat) {
+                        const tratData = JSON.parse(storedTrat);
+                        tratData.anterior = tratData.actual; // Lo actual pasa a ser anterior
+                        if (planSig) {
+                            tratData.actual = tratData.siguiente; // Lo siguiente pasa a ser actual
+                            tratData.siguiente = planSig; // El nuevo plan es lo siguiente
+                        } else {
+                            tratData.actual = tratData.siguiente || '';
+                            tratData.siguiente = '';
+                        }
+                        localStorage.setItem(`paciente_tratamiento_${currentPaciente.id}`, JSON.stringify(tratData));
+                    }
+                }
+
                 // Update appointment state to Completado and save final notes
+                const nuevoTratamiento = document.getElementById('tratamientoCobrado').value;
+
                 const { error } = await supabaseClient
                     .from('citas')
                     .update({
-                        observaciones_medicas: fullObs,
-                        estado: 'Completado'
+                        notas: fullObs,
+                        estado: 'Completado',
+                        tratamiento: nuevoTratamiento
                     })
                     .eq('id', citaId);
 
@@ -271,7 +437,8 @@
                 
                 setTimeout(() => {
                     const role = new URLSearchParams(window.location.search).get('role') || 'admin';
-                    window.location.href = `pagos_facturacion_desktop.html?paciente_id=${currentPaciente.id}&cita_id=${citaId}&role=${role}`;
+                    const pacienteIdStr = currentPaciente ? currentPaciente.id : '';
+                    window.location.href = `pagos_facturacion_desktop.html?paciente_id=${pacienteIdStr}&cita_id=${citaId}&role=${role}`;
                 }, 1500);
 
             } catch (err) {
@@ -280,6 +447,74 @@
                 btn.disabled = false;
                 btn.textContent = 'Culminar Procedimiento';
             }
+        }
+
+        async function editarProcedimiento() {
+            const obs = document.getElementById('observaciones').value;
+            const rec = document.getElementById('recomendaciones').value;
+            const fullObs = rec ? `${obs}\n\nRecomendaciones: ${rec}` : obs;
+            const nuevoTratamiento = document.getElementById('tratamientoCobrado').value;
+
+            if (!obs.trim()) {
+                alert("Por favor ingrese las observaciones antes de guardar la edición.");
+                return;
+            }
+
+            const btn = document.getElementById('btn-complete');
+            btn.disabled = true;
+            btn.innerHTML = `<span class="material-symbols-outlined text-sm">hourglass_empty</span> Guardando...`;
+
+            try {
+                const { error } = await supabaseClient
+                    .from('citas')
+                    .update({
+                        notas: fullObs,
+                        tratamiento: nuevoTratamiento
+                        // no cambiamos el estado, ya es Completado
+                    })
+                    .eq('id', citaId);
+
+                if (error) throw error;
+
+                showToast("Procedimiento actualizado correctamente.", "success");
+                setTimeout(() => {
+                    const role = new URLSearchParams(window.location.search).get('role') || 'admin';
+                    window.location.href = `calendario_dashboard_desktop.html?role=${role}`;
+                }, 1500);
+
+            } catch (err) {
+                console.error("Error actualizando procedimiento:", err);
+                alert("Hubo un error al actualizar el procedimiento.");
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = `<span class="material-symbols-outlined text-sm">edit_document</span> Guardar Edición`;
+            }
+        }
+
+        function previewImageDesktop(event) {
+            const files = event.target.files;
+            const container = document.getElementById('image-preview-container-desktop');
+            
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const imgDiv = document.createElement('div');
+                    imgDiv.className = 'relative min-w-[100px] w-24 h-24 rounded-xl overflow-hidden border border-outline-variant shadow-sm shrink-0 group';
+                    imgDiv.innerHTML = `
+                        <img src="${e.target.result}" class="w-full h-full object-cover">
+                        <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                            <button type="button" onclick="this.closest('.relative').remove()" class="bg-error text-white rounded-full w-8 h-8 flex items-center justify-center shadow-md hover:scale-110 transition-transform">
+                                <span class="material-symbols-outlined text-[16px]">delete</span>
+                            </button>
+                        </div>
+                    `;
+                    container.appendChild(imgDiv);
+                };
+                reader.readAsDataURL(file);
+            }
+            // Reset input so the same files can be selected again if needed
+            event.target.value = '';
         }
     </script>
 </body>

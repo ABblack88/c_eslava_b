@@ -176,12 +176,10 @@
 </a>
 </li>
 <li>
-<a class="flex items-center gap-4 px-4 py-3 rounded-xl text-on-surface-variant dark:text-outline hover:bg-surface-container-low transition-all active:scale-[0.98]" href="productos_mobile.html">
-<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">inventory_2</span>
-<span class="font-label-sm text-label-sm">Productos</span>
+<a class="flex flex-col items-center justify-center text-outline dark:text-outline-variant w-1/5" href="productos_mobile.html">
+<span class="material-symbols-outlined mb-1" data-icon="inventory_2">inventory_2</span>
+<span>Productos</span>
 </a>
-</li>
-<li>
 <a class="flex flex-col items-center justify-center text-outline dark:text-outline-variant min-w-0 flex-1 py-1 px-1 rounded-lg hover:bg-[#f2f4f4] active:scale-90 transition-all duration-150" href="cobrar_mobile.html">
 <span class="material-symbols-outlined mb-1 text-[22px]">point_of_sale</span>
 <span class="text-[10px] font-semibold leading-tight truncate">Caja</span>
@@ -209,8 +207,8 @@
 <!-- Page Header -->
 <div class="mb-12 flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
 <div>
-<h1 class="font-display-lg-mobile md:font-display-lg text-display-lg-mobile md:text-display-lg text-on-background mb-2">Servicios y Gestión</h1>
-<p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl">Configure las ofertas de la clínica, gestione los precios y ajuste la configuración operativa para garantizar una atención óptima al paciente.</p>
+<h1 class="font-display-lg-mobile md:font-display-lg text-display-lg-mobile md:text-display-lg text-on-background mb-2">Tratamientos</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl">Administra la oferta clínica del centro, servicios y paquetes de recuperación.</p>
 </div>
 <button class="bg-primary hover:bg-primary-container text-on-primary font-label-sm text-label-sm px-6 py-3 rounded-full flex items-center gap-2 transition-colors active:scale-95 shadow-[0px_10px_30px_rgba(0,0,0,0.04)] whitespace-nowrap">
 <span class="material-symbols-outlined text-[20px]">add</span>
@@ -218,9 +216,9 @@
             </button>
 </div>
 <!-- Bento Grid Layout -->
-<div class="grid grid-cols-1 md:grid-cols-12 gap-gutter">
-<!-- Clinical Services Section (Takes up 8 columns on desktop) -->
-<section class="md:col-span-8 flex flex-col gap-6">
+<div class="flex flex-col gap-8 items-start">
+<!-- Clinical Services Section -->
+<section class="w-full flex flex-col gap-6">
 <!-- Section Title -->
 <div class="flex items-center justify-between border-b border-surface-variant pb-4">
 <h2 class="font-headline-md text-headline-md text-on-background flex items-center gap-2">
@@ -238,113 +236,6 @@
                     Nuevo Servicio
                 </button>
 </section>
-<!-- Management & Settings Side Panel (Takes up 4 columns on desktop) -->
-<aside class="md:col-span-4 flex flex-col gap-6">
-<!-- Ajustes (Settings) Card -->
-<div class="bg-surface-white rounded-xl p-6 shadow-[0px_10px_30px_rgba(0,0,0,0.04)] flex flex-col gap-6">
-<div class="flex items-center gap-3 border-b border-surface-variant pb-4">
-<span class="material-symbols-outlined text-secondary">tune</span>
-<h2 class="font-headline-md text-headline-md text-on-background">Ajustes</h2>
-</div>
-<!-- Clinic Profile Snapshot -->
-<div class="flex items-center gap-4">
-<div class="w-16 h-16 rounded-lg bg-surface-container-high overflow-hidden shrink-0">
-<img alt="Fachada de la clínica" class="w-full h-full object-cover" data-alt="A modern, high-end physical therapy clinic interior. The space is bright and minimalist with clean lines, white walls, and warm wood accents. Natural light floods through large windows. Medical teal accents are subtle but present in the decor. The mood is calm, professional, and healing." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBY62Fm4qA_yE9VTUckyWsCly8YLJtrlDggJJ-LgX1Shvj7VhpFrmT0r5FT00W3hl5coVEm1dCkx264EOWO7kFSs6jeKq0ojEgSrO4EmXeO_Yjr4TEwufXg3JPulvMihMsjeKIqlpmfn_qjHECVEFeObsaSqTm7CRS3L-vMdDn5KRj8IXr56Pb2ZN_OU77wJn3m4awejF61ihWqlUfFFi7rxgw00AONT6e77_no4NxNgOK_OmxF2jeaAkt9ntM39OD1bxSUcfLkZbc"/>
-</div>
-<div>
-<h3 class="font-body-lg text-body-lg font-bold text-on-surface">Centro Eslava</h3>
-<p class="font-body-md text-body-md text-on-surface-variant text-sm">Calle Principal 123, Madrid</p>
-<a class="text-primary font-label-sm text-label-sm mt-1 inline-block hover:underline" href="#">Editar Perfil</a>
-</div>
-</div>
-<!-- Operating Hours Form Segment -->
-<div class="bg-surface-container-lowest rounded-lg border border-surface-variant p-4">
-<h4 class="font-label-sm text-label-sm text-on-surface mb-3 flex items-center gap-2">
-<span class="material-symbols-outlined text-[18px]">schedule</span> Horario de Atención
-                        </h4>
-<div class="flex flex-col gap-3">
-<!-- Weekday Row -->
-<div class="flex items-center justify-between">
-<span class="font-body-md text-body-md text-on-surface-variant text-sm">Lun - Vie</span>
-<div class="flex items-center gap-2">
-<input class="bg-surface-container-low border-none rounded focus:ring-2 focus:ring-primary text-sm p-1.5 w-[85px] text-center font-label-sm text-label-sm text-on-surface" type="time" value="08:00"/>
-<span class="text-outline-variant">-</span>
-<input class="bg-surface-container-low border-none rounded focus:ring-2 focus:ring-primary text-sm p-1.5 w-[85px] text-center font-label-sm text-label-sm text-on-surface" type="time" value="20:00"/>
-</div>
-</div>
-<!-- Saturday Row -->
-<div class="flex items-center justify-between">
-<span class="font-body-md text-body-md text-on-surface-variant text-sm">Sábado</span>
-<div class="flex items-center gap-2">
-<input class="bg-surface-container-low border-none rounded focus:ring-2 focus:ring-primary text-sm p-1.5 w-[85px] text-center font-label-sm text-label-sm text-on-surface" type="time" value="09:00"/>
-<span class="text-outline-variant">-</span>
-<input class="bg-surface-container-low border-none rounded focus:ring-2 focus:ring-primary text-sm p-1.5 w-[85px] text-center font-label-sm text-label-sm text-on-surface" type="time" value="14:00"/>
-</div>
-</div>
-<!-- Sunday Row (Closed) -->
-<div class="flex items-center justify-between opacity-50">
-<span class="font-body-md text-body-md text-on-surface-variant text-sm">Domingo</span>
-<span class="bg-surface-container-high px-3 py-1 rounded text-xs font-semibold uppercase tracking-wide">Cerrado</span>
-</div>
-</div>
-<button class="w-full mt-4 bg-surface-container-low text-on-surface hover:bg-surface-container-high font-label-sm text-label-sm py-2 rounded transition-colors">
-                            Actualizar Horario
-                        </button>
-</div>
-<!-- Quick Links List -->
-<div class="flex flex-col gap-1">
-<a class="flex items-center justify-between p-3 rounded-lg hover:bg-surface-container-low transition-colors group" href="#">
-<div class="flex items-center gap-3">
-<span class="material-symbols-outlined text-outline group-hover:text-primary transition-colors">notifications</span>
-<span class="font-body-md text-body-md text-on-surface">Notificaciones</span>
-</div>
-<span class="material-symbols-outlined text-outline-variant">chevron_right</span>
-</a>
-<a class="flex items-center justify-between p-3 rounded-lg hover:bg-surface-container-low transition-colors group" href="#">
-<div class="flex items-center gap-3">
-<span class="material-symbols-outlined text-outline group-hover:text-primary transition-colors">team_dashboard</span>
-<span class="font-body-md text-body-md text-on-surface">Gestión de Personal</span>
-</div>
-<span class="material-symbols-outlined text-outline-variant">chevron_right</span>
-</a>
-<a class="flex items-center justify-between p-3 rounded-lg hover:bg-surface-container-low transition-colors group" href="#">
-<div class="flex items-center gap-3">
-<span class="material-symbols-outlined text-outline group-hover:text-primary transition-colors">integration_instructions</span>
-<span class="font-body-md text-body-md text-on-surface">Integraciones</span>
-</div>
-<span class="material-symbols-outlined text-outline-variant">chevron_right</span>
-</a>
-</div>
-</div>
-<!-- Usage / Stats Mini Card -->
-<div class="bg-surface-tint text-on-primary rounded-xl p-6 shadow-[0px_10px_30px_rgba(0,0,0,0.04)] relative overflow-hidden">
-<div class="absolute -right-10 -top-10 opacity-10">
-<span class="material-symbols-outlined text-[120px]">monitoring</span>
-</div>
-<h3 class="font-label-sm text-label-sm opacity-80 mb-1">Utilización Semanal</h3>
-<div class="font-display-lg-mobile text-display-lg-mobile font-bold mb-4">84%</div>
-<div class="w-full bg-on-primary/20 rounded-full h-2 mb-2">
-<div class="bg-secondary-fixed h-2 rounded-full" style="width: 84%"></div>
-</div>
-<p class="font-body-md text-body-md text-sm opacity-80">La capacidad de la sala se acerca a los límites óptimos.</p>
-</div>
-
-<!-- Productos Terapéuticos Card -->
-<div class="bg-surface-white rounded-xl p-6 shadow-[0px_10px_30px_rgba(0,0,0,0.04)] flex flex-col gap-4">
-    <div class="flex items-center justify-between border-b border-surface-variant pb-4">
-        <h2 class="font-headline-md text-headline-md text-on-background flex items-center gap-2">
-            <span class="material-symbols-outlined text-primary">shopping_bag</span>
-            Productos
-        </h2>
-        <button onclick="abrirModalNuevoProductoMobile()" class="text-primary text-xs font-bold flex items-center gap-0.5 hover:underline">
-            <span class="material-symbols-outlined text-sm">add_circle</span> Nuevo
-        </button>
-    </div>
-    <div id="productos-list" class="space-y-3 max-h-[250px] overflow-y-auto pr-1">
-        <p class="text-outline text-xs text-center py-4">Cargando productos...</p>
-    </div>
-</div>
-</aside>
 </div>
 </main>
 
@@ -378,15 +269,60 @@
         </div>
         <div class="grid grid-cols-2 gap-4">
             <div>
+                <label class="block text-sm font-bold text-on-surface mb-1">Aplica Convenio?</label>
+                <select name="aplica_convenio" class="w-full rounded-xl border-outline-variant px-4 py-2 focus:ring-primary focus:border-primary">
+                    <option value="true">Sí (Aplica desc. o precio especial)</option>
+                    <option value="false">No (Solo precio regular)</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-sm font-bold text-on-surface mb-1">Precio Convenio (S/.) (Opcional)</label>
+                <input type="number" name="precio_convenio" min="0" step="0.01" placeholder="Dejar en blanco para usar %" class="w-full rounded-xl border-outline-variant px-4 py-2 focus:ring-primary focus:border-primary">
+            </div>
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+            <div>
                 <label class="block text-sm font-bold text-on-surface mb-1">Estado</label>
                 <select name="estado" class="w-full rounded-xl border-outline-variant px-4 py-2 focus:ring-primary focus:border-primary">
                     <option value="Activo">Activo</option>
                     <option value="Inactivo">Inactivo</option>
                 </select>
             </div>
-            <div>
-                <label class="block text-sm font-bold text-on-surface mb-1">Ícono</label>
-                <input type="text" name="icono" value="healing" required class="w-full rounded-xl border-outline-variant px-4 py-2 focus:ring-primary focus:border-primary text-sm placeholder:text-xs" placeholder="Material symbol">
+            <div class="col-span-2">
+                <label class="block text-xs font-bold text-on-surface mb-2">Ícono Representativo</label>
+                <input type="hidden" name="icono" value="healing">
+                <div class="flex flex-wrap gap-2">
+                    <div class="icon-option cursor-pointer p-2 rounded-xl border-2 border-primary bg-primary/10 text-primary flex items-center justify-center transition-colors" onclick="seleccionarIcono(this, 'healing')">
+                        <span class="material-symbols-outlined">healing</span>
+                    </div>
+                    <div class="icon-option cursor-pointer p-2 rounded-xl border-2 border-transparent hover:bg-surface-container text-on-surface-variant flex items-center justify-center transition-colors" onclick="seleccionarIcono(this, 'medical_services')">
+                        <span class="material-symbols-outlined">medical_services</span>
+                    </div>
+                    <div class="icon-option cursor-pointer p-2 rounded-xl border-2 border-transparent hover:bg-surface-container text-on-surface-variant flex items-center justify-center transition-colors" onclick="seleccionarIcono(this, 'vaccines')">
+                        <span class="material-symbols-outlined">vaccines</span>
+                    </div>
+                    <div class="icon-option cursor-pointer p-2 rounded-xl border-2 border-transparent hover:bg-surface-container text-on-surface-variant flex items-center justify-center transition-colors" onclick="seleccionarIcono(this, 'psychology')">
+                        <span class="material-symbols-outlined">psychology</span>
+                    </div>
+                    <div class="icon-option cursor-pointer p-2 rounded-xl border-2 border-transparent hover:bg-surface-container text-on-surface-variant flex items-center justify-center transition-colors" onclick="seleccionarIcono(this, 'spa')">
+                        <span class="material-symbols-outlined">spa</span>
+                    </div>
+                    <div class="icon-option cursor-pointer p-2 rounded-xl border-2 border-transparent hover:bg-surface-container text-on-surface-variant flex items-center justify-center transition-colors" onclick="seleccionarIcono(this, 'fitness_center')">
+                        <span class="material-symbols-outlined">fitness_center</span>
+                    </div>
+                    <div class="icon-option cursor-pointer p-2 rounded-xl border-2 border-transparent hover:bg-surface-container text-on-surface-variant flex items-center justify-center transition-colors" onclick="seleccionarIcono(this, 'monitor_heart')">
+                        <span class="material-symbols-outlined">monitor_heart</span>
+                    </div>
+                    <div class="icon-option cursor-pointer p-2 rounded-xl border-2 border-transparent hover:bg-surface-container text-on-surface-variant flex items-center justify-center transition-colors" onclick="seleccionarIcono(this, 'stethoscope')">
+                        <span class="material-symbols-outlined">stethoscope</span>
+                    </div>
+                    <div class="icon-option cursor-pointer p-2 rounded-xl border-2 border-transparent hover:bg-surface-container text-on-surface-variant flex items-center justify-center transition-colors" onclick="seleccionarIcono(this, 'prescriptions')">
+                        <span class="material-symbols-outlined">prescriptions</span>
+                    </div>
+                    <div class="icon-option cursor-pointer p-2 rounded-xl border-2 border-transparent hover:bg-surface-container text-on-surface-variant flex items-center justify-center transition-colors" onclick="seleccionarIcono(this, 'favorite')">
+                        <span class="material-symbols-outlined">favorite</span>
+                    </div>
+                </div>
             </div>
         </div>
         <div class="pt-4 flex flex-col gap-3">
@@ -456,9 +392,9 @@
 <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">healing</span>
 <span class="font-label-sm text-label-sm mt-1 text-[10px]">Tratamientos</span>
 </a>
-<a class="flex flex-col items-center justify-center text-outline dark:text-outline-variant hover:bg-surface-container-high/50 active:scale-90 transition-all duration-150 p-2 rounded-lg" href="productos_mobile.html">
-<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">inventory_2</span>
-<span class="font-label-sm text-label-sm mt-1 text-[10px]">Productos</span>
+<a class="flex flex-col items-center justify-center text-outline dark:text-outline-variant w-1/5" href="productos_mobile.html">
+<span class="material-symbols-outlined mb-1" data-icon="inventory_2">inventory_2</span>
+<span>Productos</span>
 </a>
 <a class="flex flex-col items-center justify-center text-outline dark:text-outline-variant min-w-0 flex-1 py-1 px-1 rounded-lg hover:bg-[#f2f4f4] active:scale-90 transition-all duration-150" href="cobrar_mobile.html">
 <span class="material-symbols-outlined mb-1 text-[22px]">point_of_sale</span>
@@ -509,7 +445,7 @@
                 html += `
                 <div onclick="abrirModalEdicionProductoMobile('${p.id}')" class="flex items-center justify-between p-3 bg-surface-container-low rounded-2xl cursor-pointer hover:bg-surface-container transition-colors">
                     <div class="flex-1 min-w-0">
-                        <p class="font-bold text-sm text-on-surface truncate">${p.nombre}</p>
+                        <p class="font-bold text-sm text-on-surface">${p.nombre}</p>
                         <p class="text-[10px] text-outline truncate">${p.descripcion || 'Sin descripción'}</p>
                     </div>
                     <div class="text-right ml-4">
@@ -590,6 +526,16 @@
             }
         }
 
+        function seleccionarIcono(elemento, iconName) {
+            const form = elemento.closest('form');
+            form.elements['icono'].value = iconName;
+            const options = form.querySelectorAll('.icon-option');
+            options.forEach(opt => {
+                opt.className = "icon-option cursor-pointer p-2 rounded-xl border-2 border-transparent hover:bg-surface-container text-on-surface-variant flex items-center justify-center transition-colors";
+            });
+            elemento.className = "icon-option cursor-pointer p-2 rounded-xl border-2 border-primary bg-primary/10 text-primary flex items-center justify-center transition-colors";
+        }
+
         function abrirModalNuevoMobile() {
             document.getElementById('formNuevoServicioMobile').reset();
             document.getElementById('servicioIdMobile').value = '';
@@ -598,11 +544,14 @@
             
             const form = document.getElementById('formNuevoServicioMobile');
             form.elements['duracion'].value = '1';
+            
+            const defaultIconOpt = form.querySelector('.icon-option[onclick*="healing"]');
+            if(defaultIconOpt) seleccionarIcono(defaultIconOpt, 'healing');
 
             document.getElementById('modalNuevoServicioMobile').showModal();
         }
 
-        function abrirModalEdicionMobile(id, nombre, descripcion, duracion, precio, estado, icono) {
+        function abrirModalEdicionMobile(id, nombre, descripcion, duracion, precio, estado, icono, aplicaConvenio, precioConvenio) {
             document.getElementById('formNuevoServicioMobile').reset();
             document.getElementById('servicioIdMobile').value = id;
             document.getElementById('modalTitleMobile').textContent = 'Editar Servicio';
@@ -615,6 +564,11 @@
             form.elements['precio'].value = precio;
             form.elements['estado'].value = estado;
             form.elements['icono'].value = icono || 'healing';
+            form.elements['aplica_convenio'].value = (aplicaConvenio === 'false') ? "false" : "true";
+            form.elements['precio_convenio'].value = (precioConvenio && precioConvenio !== 'null') ? precioConvenio : '';
+
+            const iconOpt = form.querySelector(`.icon-option[onclick*="${icono}"]`);
+            if(iconOpt) seleccionarIcono(iconOpt, icono);
             
             document.getElementById('modalNuevoServicioMobile').showModal();
         }
@@ -670,6 +624,8 @@
                 descripcion: data.descripcion,
                 duracion: parseInt(data.duracion),
                 precio: parseFloat(data.precio),
+                aplica_convenio: data.aplica_convenio === 'true',
+                precio_convenio: data.precio_convenio ? parseFloat(data.precio_convenio) : null,
                 estado: data.estado,
                 icono: data.icono
             };
@@ -758,7 +714,7 @@
                     const safeIcono = iconName.replace(/'/g, "&#39;").replace(/"/g, "&quot;");
 
                     const cardHTML = `
-                        <div onclick="abrirModalEdicionMobile('${servicio.id}', '${safeNombre}', '${safeDesc}', ${servicio.duracion}, ${servicio.precio}, '${servicio.estado}', '${safeIcono}')" class="bg-surface-white rounded-xl p-6 shadow-[0px_10px_30px_rgba(0,0,0,0.04)] border border-transparent hover:border-outline-variant transition-colors group cursor-pointer relative">
+                        <div onclick="abrirModalEdicionMobile('${servicio.id}', '${safeNombre}', '${safeDesc}', ${servicio.duracion}, ${servicio.precio}, '${servicio.estado}', '${safeIcono}', '${servicio.aplica_convenio}', '${servicio.precio_convenio}')" class="bg-surface-white rounded-xl p-6 shadow-[0px_10px_30px_rgba(0,0,0,0.04)] border border-transparent hover:border-outline-variant transition-colors group cursor-pointer relative">
                             <div class="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity">
                                 <span class="material-symbols-outlined text-outline-variant hover:text-primary">edit</span>
                             </div>

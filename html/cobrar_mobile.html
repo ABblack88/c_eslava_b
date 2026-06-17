@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html class="light" lang="es">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+    <title>Centro Eslava - Cobrar / Caja</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../js/supabase.js"></script>
+    <style>
+        body { font-family: 'Hanken Grotesk', sans-serif; -webkit-tap-highlight-color: transparent; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; vertical-align: middle; }
+    </style>
+    <script id="tailwind-config">
+        tailwind.config={darkMode:"class",theme:{extend:{colors:{"primary":"#006578","on-primary":"#ffffff","primary-container":"#008097","surface":"#f8fafa","surface-container":"#eceeee","surface-container-low":"#f2f4f4","surface-container-high":"#e6e8e8","surface-container-lowest":"#ffffff","on-surface":"#191c1d","on-surface-variant":"#3d494c","outline":"#6d797d","outline-variant":"#bdc8cd","error":"#ba1a1a","success":"#34C759","warning":"#FF9500"}}}}
+    </script>
+    <script src="../js/app.js"></script>
+    <script src="../js/rbac.js"></script>
+</head>
+<body class="bg-surface text-on-surface min-h-screen pb-20">
+
+<!-- Header -->
+<header class="bg-primary text-white pt-10 pb-4 px-4 sticky top-0 z-40 rounded-b-3xl shadow-md">
+    <div class="flex justify-between items-center mb-4">
+        <div class="flex items-center gap-2">
+            <button onclick="window.history.back()" class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/20">
+                <span class="material-symbols-outlined text-xl">arrow_back</span>
+            </button>
+            <h1 class="text-xl font-bold">Cobrar / Caja</h1>
+        </div>
+    </div>
+</header>
+
+<!-- Main -->
+<main class="p-4 space-y-4 pb-24">
+    <!-- Dashboard de Cobros Pendientes -->
+    <div class="bg-surface-white rounded-2xl p-4 shadow-sm border border-outline-variant/20 mb-4">
+        <h3 class="font-bold text-sm text-primary flex items-center gap-2 border-b border-surface-container pb-2 mb-3">
+            <span class="material-symbols-outlined text-warning text-[18px]">schedule</span> Próximos a Cobrar
+        </h3>
+        <div id="dashboard-cobros-pendientes" class="flex overflow-x-auto gap-3 pb-2 snap-x">
+            <div class="w-full text-center py-2 text-on-surface-variant text-xs"><span class="material-symbols-outlined animate-spin inline-block align-middle">sync</span> Cargando...</div>
+        </div>
+    </div>
+
+    <form id="formNuevaFactura" class="space-y-4">
+        
+        <!-- Paciente -->
+        <div class="bg-white p-4 rounded-2xl shadow-sm border border-outline-variant/20">
+            <h3 class="text-sm font-bold text-primary mb-3 flex items-center gap-1">
+                <span class="material-symbols-outlined text-[18px]">person</span> Identificación
+            </h3>
+            <div class="space-y-3">
+                <div class="relative z-50">
+                    <label class="block text-xs font-bold text-on-surface-variant mb-1">Paciente</label>
+                    <input type="text" id="invoice-paciente-search" placeholder="Buscar paciente..." autocomplete="off" oninput="filtrarPacientesFactura()" onfocus="filtrarPacientesFactura()" onkeydown="if(event.key==='Enter') event.preventDefault();" class="w-full bg-surface-container-low border-none rounded-xl py-2.5 px-3 focus:ring-2 focus:ring-primary text-sm">
+                    <input type="hidden" id="invoice-paciente" required>
+                    <div id="invoice-paciente-dropdown" class="hidden absolute top-full left-0 right-0 bg-white border border-surface-container-high rounded-xl shadow-lg z-[100] max-h-48 overflow-y-auto mt-1"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ítems Pendientes -->
+        <div class="bg-surface-white rounded-2xl p-4 shadow-sm border border-outline-variant/20 mb-4">
+            <h3 class="font-bold text-[15px] text-primary flex items-center gap-2 border-b border-surface-container pb-2 mb-3">
+                <span class="material-symbols-outlined text-[18px]">receipt_long</span> Ítems Pendientes
+            </h3>
+            <div id="invoice-pendientes-list" class="space-y-2 max-h-72 overflow-y-auto pr-1">
+                <p class="text-outline text-sm py-2">Seleccione un paciente para ver sus ítems pendientes.</p>
+            </div>
+        </div>
+
+        <!-- Detalles Pago -->
+        <div class="bg-surface-white rounded-2xl p-4 shadow-sm border border-outline-variant/20 mb-4 pb-24">
+            <h3 class="font-bold text-[15px] text-primary flex items-center gap-2 border-b border-surface-container pb-2 mb-3">
+                <span class="material-symbols-outlined text-[18px]">payments</span> Pago
+            </h3>
+            <div class="space-y-3">
+                <select id="invoice-medico" class="w-full bg-surface-container-low border-none rounded-xl py-2.5 px-3 text-sm focus:ring-primary">
+                    <option value="">Sin Médico Asignado</option>
+                </select>
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="block text-[10px] font-bold text-on-surface-variant mb-1">Método</label>
+                        <select id="invoice-metodo" required onchange="onMetodoPagoChange()" class="w-full bg-surface-container-low border-none rounded-xl py-2 px-3 focus:ring-primary text-xs">
+                            <option value="Yape/Plin">Yape / Plin</option>
+                            <option value="Efectivo">Efectivo</option>
+                            <option value="Tarjeta">Tarjeta</option>
+                            <option value="Transferencia">Transferencia</option>
+                        </select>
+                    </div>
+                    <input type="hidden" id="invoice-estado" value="Completado">
+                </div>
+                
+                <div id="container-tipo-tarjeta" class="hidden">
+                    <label class="block text-[10px] font-bold text-on-surface-variant mb-1">Tipo Tarjeta</label>
+                    <select id="invoice-tipo-tarjeta" onchange="calcularTotalesFactura()" class="w-full bg-surface-container-low border-none rounded-xl py-2 px-3 focus:ring-primary text-xs">
+                        <option value="Nacional">Nacional</option>
+                        <option value="Internacional">Internacional</option>
+                    </select>
+                </div>
+                
+                <div class="flex flex-col gap-2 pt-2">
+                    <div class="flex items-center">
+                        <input type="checkbox" id="invoice-igv-toggle" checked onchange="calcularTotalesFactura()" class="rounded border-outline-variant text-primary h-4 w-4">
+                        <label for="invoice-igv-toggle" class="ml-2 text-xs font-semibold">Incluir IGV</label>
+                    </div>
+                    <div id="container-convenio-toggle" class="flex items-center">
+                        <input type="checkbox" id="invoice-convenio-toggle" onchange="calcularTotalesFactura()" class="rounded border-outline-variant text-primary h-4 w-4">
+                        <label for="invoice-convenio-toggle" class="ml-2 text-xs font-semibold">Aplicar Convenio (No válido con Tarjeta)</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ticket Summary -->
+        <div class="bg-primary text-white p-5 rounded-2xl shadow-lg mt-6">
+            <div class="flex items-center justify-center gap-2 mb-4 border-b border-white/20 pb-3">
+                <span class="material-symbols-outlined">receipt</span>
+                <h3 class="text-lg font-bold">Ticket de Venta</h3>
+            </div>
+            <div class="space-y-2 text-sm mb-6">
+                <div class="flex justify-between border-b border-white/10 pb-1">
+                    <span class="opacity-80">Subtotal:</span>
+                    <span id="invoice-subtotal" class="font-bold">S/. 0.00</span>
+                </div>
+                <div class="flex justify-between border-b border-white/10 pb-1 text-success">
+                    <span>Descuento:</span>
+                    <span id="invoice-descuento" class="font-bold">- S/. 0.00</span>
+                </div>
+                <div class="flex justify-between border-b border-white/10 pb-1">
+                    <span id="label-igv" class="opacity-80">IGV:</span>
+                    <span id="invoice-igv" class="font-bold">S/. 0.00</span>
+                </div>
+                <div class="flex justify-between pt-2">
+                    <span class="text-lg font-bold">TOTAL:</span>
+                    <span id="invoice-total" class="text-xl font-bold">S/. 0.00</span>
+                </div>
+            </div>
+            <button type="submit" class="w-full bg-white text-primary py-3 rounded-xl font-bold shadow-md hover:scale-105 transition-transform flex justify-center items-center gap-2">
+                <span class="material-symbols-outlined text-sm">payments</span> Procesar Cobro
+            </button>
+        </div>
+    </form>
+</main>
+
+<!-- BottomNavBar -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-1 py-2 bg-white/95 backdrop-blur-md shadow-[0px_-2px_12px_rgba(0,0,0,0.08)] border-t border-outline-variant/30">
+    <a class="flex flex-col items-center justify-center min-w-0 flex-1 py-1 px-1 rounded-lg text-outline hover:bg-surface-container-low transition-all" href="calendario_dashboard_mobile.html">
+        <span class="material-symbols-outlined text-[22px]">event</span><span class="text-[10px] font-semibold">Calendario</span>
+    </a>
+    <a class="flex flex-col items-center justify-center min-w-0 flex-1 py-1 px-1 rounded-lg text-outline hover:bg-surface-container-low transition-all" href="pacientes_historia_clinica_mobile.html">
+        <span class="material-symbols-outlined text-[22px]">person_search</span><span class="text-[10px] font-semibold">Pacientes</span>
+    </a>
+    <a class="flex flex-col items-center justify-center min-w-0 flex-1 py-1 px-1 rounded-lg text-outline hover:bg-surface-container-low transition-all" href="tratamientos_mobile.html">
+        <span class="material-symbols-outlined text-[22px]">healing</span><span class="text-[10px] font-semibold">Tratam.</span>
+    </a>
+    <a class="flex flex-col items-center justify-center min-w-0 flex-1 py-1 px-1 rounded-lg text-outline hover:bg-surface-container-low transition-all" href="productos_mobile.html">
+        <span class="material-symbols-outlined text-[22px]">inventory_2</span><span class="text-[10px] font-semibold">Productos</span>
+    </a>
+    <a class="flex flex-col items-center justify-center min-w-0 flex-1 py-1 px-1 rounded-lg text-primary bg-surface-container-low transition-all" href="cobrar_mobile.html">
+        <span class="material-symbols-outlined text-[22px]" style="font-variation-settings:'FILL' 1;">point_of_sale</span><span class="text-[10px] font-bold">Caja</span>
+    </a>
+    <a class="flex flex-col items-center justify-center min-w-0 flex-1 py-1 px-1 rounded-lg text-outline hover:bg-surface-container-low transition-all" href="pagos_facturacion_mobile.html">
+        <span class="material-symbols-outlined text-[22px]">payments</span><span class="text-[10px] font-semibold">Finanzas</span>
+    </a>
+</nav>
+
+<script src="../js/caja.js"></script>
+</body>
+</html>

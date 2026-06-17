@@ -144,15 +144,23 @@
 <span class="material-symbols-outlined">groups</span>
 <span class="font-body-md text-body-md">Pacientes</span>
 </a>
-<a class="flex items-center gap-3 px-4 py-3 rounded-xl transition-colors duration-200 text-on-surface-variant hover:bg-surface-container-low" href="servicios_ajustes_desktop.html" id="nav-link-servicios">
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl transition-colors duration-200 text-on-surface-variant hover:bg-surface-container-low" href="tratamientos_desktop.html" id="nav-link-servicios">
 <span class="material-symbols-outlined">medical_services</span>
 <span class="font-body-md text-body-md">Tratamientos</span>
+</a>
+<a class="flex items-center px-4 py-3 space-x-3 text-on-surface-variant dark:text-outline-variant hover:text-primary dark:hover:text-primary-fixed-dim hover:bg-surface-container-low transition-colors duration-200" href="productos_desktop.html" id="nav-link-productos">
+<span class="material-symbols-outlined">inventory_2</span>
+<span class="font-body-md text-body-md">Productos</span>
+</a>
+<a class="flex items-center px-4 py-3 space-x-3 text-on-surface-variant dark:text-outline-variant hover:text-primary dark:hover:text-primary-fixed-dim hover:bg-surface-container-low transition-colors duration-200" href="cobrar_desktop.html" id="nav-link-cobrar">
+<span class="material-symbols-outlined">point_of_sale</span>
+<span class="font-body-md text-body-md">Cobrar / Caja</span>
 </a>
 <a class="flex items-center gap-3 px-4 py-3 rounded-xl transition-colors duration-200 text-on-surface-variant hover:bg-surface-container-low" href="pagos_facturacion_desktop.html" id="nav-link-finanzas">
 <span class="material-symbols-outlined">payments</span>
 <span class="font-body-md text-body-md">Finanzas</span>
 </a>
-<a class="flex items-center gap-3 px-4 py-3 rounded-xl transition-colors duration-200 text-on-surface-variant hover:bg-surface-container-low" href="servicios_ajustes_desktop.html" id="nav-link-ajustes">
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl transition-colors duration-200 text-on-surface-variant hover:bg-surface-container-low" href="ajustes_desktop.html" id="nav-link-ajustes">
 <span class="material-symbols-outlined">settings</span>
 <span class="font-body-md text-body-md">Ajustes</span>
 </a>
@@ -169,18 +177,14 @@
 <div class="flex items-center flex-1 max-w-xl">
 <div class="relative w-full group">
 <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline">search</span>
-<input class="w-full pl-12 pr-4 py-2 bg-surface-container-low border-none rounded-full font-body-md focus:ring-2 focus:ring-primary outline-none transition-all" placeholder="Buscar pacientes por nombre, ID o tratamiento..." type="text"/>
+<input id="searchInput" oninput="filtrarPacientes()" class="w-full pl-12 pr-4 py-2 bg-surface-container-low border-none rounded-full font-body-md focus:ring-2 focus:ring-primary outline-none transition-all" placeholder="Buscar pacientes por nombre, ID o tratamiento..." type="text"/>
 </div>
 </div>
 <div class="flex items-center gap-6">
-<button class="text-on-surface-variant hover:text-primary transition-all relative">
+<button onclick="alert('No hay notificaciones nuevas.')" class="text-on-surface-variant hover:text-primary transition-all relative">
 <span class="material-symbols-outlined">notifications</span>
 <span class="absolute top-0 right-0 w-2 h-2 bg-error rounded-full"></span>
 </button>
-<button class="text-on-surface-variant hover:text-primary transition-all">
-<span class="material-symbols-outlined">help</span>
-</button>
-
 </div>
 </header>
 <!-- Main Content -->
@@ -201,30 +205,32 @@
 <p class="text-label-sm text-outline">Total Pacientes</p>
 <p class="text-2xl font-bold text-primary">1,284</p>
 </div>
-<div class="bg-surface-white p-4 rounded-2xl shadow-[0px_10px_30px_rgba(0,0,0,0.04)] min-w-[140px]">
-<p class="text-label-sm text-outline">En Recuperación</p>
-<p class="text-2xl font-bold text-success">842</p>
-</div>
 </div>
 </div>
 <!-- Filters Section -->
 <div class="flex items-center justify-between mb-8">
 <div class="flex gap-2 bg-surface-container-low p-1.5 rounded-xl">
-<button class="px-6 py-2 rounded-lg font-bold transition-all bg-surface-white shadow-sm text-primary">Todos</button>
-<button class="px-6 py-2 rounded-lg font-bold transition-all text-on-surface-variant hover:bg-surface-container-high">Activos</button>
-<button class="px-6 py-2 rounded-lg font-bold transition-all text-on-surface-variant hover:bg-surface-container-high">En Recuperación</button>
+<button onclick="filtrarPorEstado('Todos', this)" class="px-6 py-2 rounded-lg font-bold transition-all bg-surface-white shadow-sm text-primary">Todos</button>
+<button onclick="filtrarPorEstado('Activo', this)" class="px-6 py-2 rounded-lg font-bold transition-all text-on-surface-variant hover:bg-surface-container-high">Activos</button>
+<button onclick="filtrarPorEstado('Inactivo', this)" class="px-6 py-2 rounded-lg font-bold transition-all text-on-surface-variant hover:bg-surface-container-high">Inactivos</button>
 </div>
-<div class="flex gap-3">
-<button class="flex items-center gap-2 px-5 py-2.5 bg-surface-white border border-outline-variant rounded-xl font-bold text-on-surface-variant hover:bg-surface-container-low transition-all">
+<div class="flex gap-3 items-center">
+<button onclick="alert('Próximamente: Panel de filtros avanzados.')" class="flex items-center gap-2 px-5 py-2.5 bg-surface-white border border-outline-variant rounded-xl font-bold text-on-surface-variant hover:bg-surface-container-low transition-all">
 <span class="material-symbols-outlined text-[20px]">filter_list</span>
                     Filtrar
                 </button>
-<button class="flex items-center gap-2 px-5 py-2.5 bg-surface-white border border-outline-variant rounded-xl font-bold text-on-surface-variant hover:bg-surface-container-low transition-all">
-<span class="material-symbols-outlined text-[20px]">download</span>
+<input type="file" id="csvFileInput" accept=".csv" style="display: none;" onchange="importarPacientesCSV(event)">
+<button onclick="triggerImportarCSV()" class="flex items-center gap-2 px-5 py-2.5 bg-surface-white border border-outline-variant rounded-xl font-bold text-on-surface-variant hover:bg-surface-container-low transition-all">
+<span class="material-symbols-outlined text-[20px]">upload</span>
+                    Importar
+                </button>
+<button onclick="exportarPacientesCSV()" class="flex items-center gap-2 px-5 py-2.5 bg-primary text-white rounded-xl font-bold hover:bg-primary-fixed-dim transition-all shadow-md">
+<span class="material-symbols-outlined text-[20px] text-white">download</span>
                     Exportar
                 </button>
 </div>
-<<!-- Patient Grid (Bento Style) -->
+<!-- Patient Grid (Bento Style) -->
+<h3 class="font-headline-md text-xl font-bold mb-4">Pacientes Programados para Hoy</h3>
 <div id="pacientes-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 <!-- Las tarjetas se insertarán dinámicamente -->
 </div>
@@ -248,8 +254,8 @@
 <th class="px-8 py-4 text-xs font-bold uppercase tracking-widest text-outline">Paciente</th>
 <th class="px-8 py-4 text-xs font-bold uppercase tracking-widest text-outline">ID Registro</th>
 <th class="px-8 py-4 text-xs font-bold uppercase tracking-widest text-outline">Estado</th>
-<th class="px-8 py-4 text-xs font-bold uppercase tracking-widest text-outline">Tratamiento Actual</th>
-<th class="px-8 py-4 text-xs font-bold uppercase tracking-widest text-outline">Última Visita</th>
+<th class="px-8 py-4 text-xs font-bold uppercase tracking-widest text-outline">Estado Sesiones</th>
+<th class="px-8 py-4 text-xs font-bold uppercase tracking-widest text-outline">Estado Cuentas</th>
 <th class="px-8 py-4 text-xs font-bold uppercase tracking-widest text-outline text-right">Acciones</th>
 </tr>
 </thead>
@@ -302,10 +308,7 @@
             <input type="email" name="email" class="w-full rounded-xl border border-outline-variant px-4 py-3 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all">
         </div>
 
-        <div>
-            <label class="block text-sm font-bold text-on-surface mb-1">Motivo de Consulta (Tratamiento Actual)</label>
-            <input type="text" name="motivo_consulta" class="w-full rounded-xl border border-outline-variant px-4 py-3 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all">
-        </div>
+
 
         <div>
             <label class="block text-sm font-bold text-on-surface mb-1">Notas Médicas (Evolución)</label>
@@ -316,7 +319,6 @@
             <label class="block text-sm font-bold text-on-surface mb-1">Estado</label>
             <select name="estado" class="w-full rounded-xl border border-outline-variant px-4 py-3 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all bg-surface-white">
                 <option value="Activo">Activo</option>
-                <option value="En Recuperación">En Recuperación</option>
                 <option value="Inactivo">Inactivo</option>
             </select>
         </div>
@@ -378,7 +380,7 @@
             document.getElementById('modalNuevoPaciente').showModal();
         }
 
-        function abrirModalEdicionPaciente(id, nombre, email, telefono, fecha_nacimiento, motivo_consulta, notas_medicas, estado) {
+        function abrirModalEdicionPaciente(id, nombre, email, telefono, fecha_nacimiento, notas_medicas, estado) {
             document.getElementById('formNuevoPaciente').reset();
             document.getElementById('pacienteId').value = id;
             document.getElementById('modalTitlePaciente').textContent = 'Editar Perfil y Notas';
@@ -389,7 +391,6 @@
             form.elements['email'].value = email || '';
             form.elements['telefono'].value = telefono || '';
             form.elements['fecha_nacimiento'].value = fecha_nacimiento || '';
-            form.elements['motivo_consulta'].value = motivo_consulta || '';
             form.elements['notas_medicas'].value = notas_medicas || '';
             form.elements['estado'].value = estado || 'Activo';
             
@@ -447,9 +448,8 @@
                 email: data.email || null,
                 telefono: data.telefono || null,
                 fecha_nacimiento: data.fecha_nacimiento || null,
-                motivo_consulta: data.motivo_consulta || null,
                 notas_medicas: data.notas_medicas || null,
-                estado: data.estado
+                estado: data.estado || 'Activo'
             };
 
             try {
@@ -481,11 +481,44 @@
             }
         });
 
+        let allPacientes = [];
+        let estadoFiltro = 'Todos';
+
+        function filtrarPorEstado(estado, btnElement) {
+            estadoFiltro = estado;
+            // Estilos de botones
+            const filterBtns = document.querySelectorAll('.bg-surface-container-low > button');
+            filterBtns.forEach(b => {
+                b.classList.remove('bg-surface-white', 'shadow-sm', 'text-primary');
+                b.classList.add('text-on-surface-variant', 'hover:bg-surface-container-high');
+            });
+            btnElement.classList.add('bg-surface-white', 'shadow-sm', 'text-primary');
+            btnElement.classList.remove('text-on-surface-variant', 'hover:bg-surface-container-high');
+            
+            filtrarPacientes();
+        }
+
+        function filtrarPacientes() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            
+            const filtrados = allPacientes.filter(p => {
+                const matchTexto = 
+                    p.nombre.toLowerCase().includes(query) || 
+                    p.id.toLowerCase().includes(query);
+                
+                const matchEstado = (estadoFiltro === 'Todos') || (p.estado === estadoFiltro);
+                
+                return matchTexto && matchEstado;
+            });
+
+            renderPacientes(filtrados);
+        }
+
         async function cargarPacientes() {
             const tbody = document.getElementById('pacientes-tbody');
             tbody.innerHTML = '<tr><td colspan="6" class="px-8 py-4 text-center">Cargando pacientes...</td></tr>';
             
-            const { data, error } = await window.supabaseClient.from('pacientes').select('*').order('created_at', { ascending: false });
+            const { data, error } = await window.supabaseClient.from('pacientes').select('*, citas(id, estado, fecha, hora, tratamiento, consultorio), pagos(id, estado)').order('created_at', { ascending: false });
             
             if (error) {
                 console.error("Error al cargar pacientes:", error);
@@ -493,25 +526,107 @@
                 return;
             }
 
-            if (!data || data.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="6" class="px-8 py-4 text-center">No hay pacientes registrados.</td></tr>';
-                document.getElementById('pacientes-grid').innerHTML = '<p class="text-center text-outline">No hay pacientes registrados.</p>';
+            allPacientes = data || [];
+            
+            // Actualizar estadísticas simples
+            const total = allPacientes.length;
+            document.querySelector('.text-2xl.font-bold.text-primary').textContent = total;
+
+            filtrarPacientes(); // Usamos la función de filtrar para inicializar
+            renderPacientesHoy(allPacientes);
+        }
+
+        function renderPacientesHoy(data) {
+            const gridContainer = document.getElementById('pacientes-grid');
+            gridContainer.innerHTML = '';
+            
+            const today = new Date().toISOString().split('T')[0];
+            
+            const pacientesHoy = [];
+            data.forEach(p => {
+                if (!p.citas) return;
+                const citasHoy = p.citas.filter(c => c.fecha === today && (c.estado === 'Pendiente' || c.estado === 'Sin confirmar' || c.estado === 'Confirmada' || c.estado === 'Confirmado' || c.estado === 'En Progreso'));
+                if (citasHoy.length > 0) {
+                    const citaToShow = citasHoy.sort((a,b) => a.hora.localeCompare(b.hora))[0];
+                    pacientesHoy.push({ paciente: p, cita: citaToShow });
+                }
+            });
+
+            if (pacientesHoy.length === 0) {
+                gridContainer.innerHTML = '<p class="text-on-surface-variant col-span-full py-2 italic text-sm">No hay pacientes pendientes de atención para hoy.</p>';
                 return;
             }
 
+            pacientesHoy.forEach(item => {
+                const { paciente, cita } = item;
+                
+                let horaFormat = cita.hora;
+                if (cita.hora) {
+                    const [h, m] = cita.hora.split(':');
+                    const hInt = parseInt(h);
+                    const ampm = hInt >= 12 ? 'PM' : 'AM';
+                    const h12 = hInt > 12 ? hInt - 12 : (hInt === 0 ? 12 : hInt);
+                    horaFormat = `${h12.toString().padStart(2, '0')}:${m} ${ampm}`;
+                }
+                
+                const card = document.createElement('div');
+                card.className = 'bg-surface-white p-5 rounded-3xl shadow-sm hover:shadow-md transition-all group cursor-pointer border border-surface-container hover:border-primary/30 flex flex-col';
+                card.onclick = () => {
+                    const role = new URLSearchParams(window.location.search).get('role') || 'admin';
+                    window.location.href = `atencion_tiempo_real_desktop.html?cita_id=${cita.id}&role=${role}`;
+                };
+                card.innerHTML = `
+                <div class="flex justify-between items-start mb-4">
+                    <div class="flex gap-4">
+                        <div class="w-12 h-12 rounded-2xl bg-primary flex items-center justify-center text-white font-bold text-lg flex-shrink-0">
+                            ${paciente.nombre.charAt(0)}
+                        </div>
+                        <div class="overflow-hidden">
+                            <h3 class="font-headline-md text-base font-bold text-on-surface truncate pr-2">${paciente.nombre}</h3>
+                            <p class="text-label-sm text-primary">${horaFormat} • ${cita.tratamiento || 'Procedimiento'}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-auto flex justify-between items-center">
+                    <span class="bg-warning/10 text-warning-dark px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider">${cita.estado}</span>
+                    <span class="text-primary font-bold text-xs flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+                        Atender <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+                    </span>
+                </div>`;
+                gridContainer.appendChild(card);
+            });
+        }
+
+        function renderPacientes(data) {
+            const tbody = document.getElementById('pacientes-tbody');
             tbody.innerHTML = '';
-            const gridContainer = document.getElementById('pacientes-grid');
-            gridContainer.innerHTML = '';
 
             data.forEach(paciente => {
                 const esActivo = paciente.estado === 'Activo';
-                const badgeClass = esActivo ? 'bg-success/10 text-success' : 'bg-primary/10 text-primary';
+                const badgeClass = esActivo ? 'bg-success/10 text-success' : 'bg-surface-container-high text-outline';
+                
+                // Calculando indicadores
+                const citasPend = (paciente.citas || []).filter(c => c.estado === 'Pendiente' || c.estado === 'En Progreso').length;
+                const pagosPend = (paciente.pagos || []).filter(p => p.estado === 'Pendiente' || p.estado === 'Vencido').length;
+
+                let sesionesHTML = '';
+                if (citasPend > 0) {
+                    sesionesHTML = `<span class="bg-primary/10 text-primary px-2 py-1 rounded-md text-[10px] font-bold" title="Sesiones pendientes">${citasPend} Sesiones</span>`;
+                } else {
+                    sesionesHTML = `<span class="text-outline text-xs">Al día</span>`;
+                }
+
+                let pagosHTML = '';
+                if (pagosPend > 0) {
+                    pagosHTML = `<span class="bg-error/10 text-error px-2 py-1 rounded-md text-[10px] font-bold" title="Cuentas por cobrar">${pagosPend} Deudas</span>`;
+                } else {
+                    pagosHTML = `<span class="text-outline text-xs">Al día</span>`;
+                }
                 
                 // --- Renderear fila en tabla ---
                 const safeName = paciente.nombre.replace(/'/g, "&#39;").replace(/"/g, "&quot;");
                 const safeEmail = (paciente.email || '').replace(/'/g, "&#39;").replace(/"/g, "&quot;");
                 const safeTelefono = (paciente.telefono || '').replace(/'/g, "&#39;").replace(/"/g, "&quot;");
-                const safeMotivo = (paciente.motivo_consulta || '').replace(/'/g, "&#39;").replace(/"/g, "&quot;");
                 const safeNotas = (paciente.notas_medicas || '').replace(/'/g, "&#39;").replace(/"/g, "&quot;");
                 const safeEstado = paciente.estado.replace(/'/g, "&#39;").replace(/"/g, "&quot;");
                 const fnac = paciente.fecha_nacimiento || '';
@@ -533,70 +648,127 @@
                     </td>
                     <td class="px-8 py-4 text-sm text-on-surface-variant">${paciente.id.substring(0,8)}</td>
                     <td class="px-8 py-4">
-                        <span class="px-2.5 py-0.5 ${badgeClass} rounded-full text-xs font-bold">${paciente.estado || 'Activo'}</span>
+                        <span class="px-2.5 py-0.5 ${badgeClass} rounded-full text-xs font-bold whitespace-nowrap">${paciente.estado || 'Activo'}</span>
                     </td>
-                    <td class="px-8 py-4 text-sm text-on-surface-variant font-medium">${paciente.motivo_consulta || 'N/A'}</td>
-                    <td class="px-8 py-4 text-sm text-on-surface-variant">Reciente</td>
+                    <td class="px-8 py-4 text-sm text-on-surface-variant">${sesionesHTML}</td>
+                    <td class="px-8 py-4 text-sm text-on-surface-variant">${pagosHTML}</td>
                     <td class="px-8 py-4 text-right">
-                        <button onclick="event.stopPropagation(); abrirModalEdicionPaciente('${paciente.id}', '${safeName}', '${safeEmail}', '${safeTelefono}', '${fnac}', '${safeMotivo}', '${safeNotas}', '${safeEstado}')" class="p-2 text-outline hover:text-primary transition-colors">
+                        <button onclick="event.stopPropagation(); abrirModalEdicionPaciente('${paciente.id}', '${safeName}', '${safeEmail}', '${safeTelefono}', '${fnac}', '${safeNotas}', '${safeEstado}')" class="p-2 text-outline hover:text-primary transition-colors">
                             <span class="material-symbols-outlined">edit</span>
                         </button>
                     </td>
                 `;
                 tbody.appendChild(tr);
-
-                // --- Renderear tarjeta (Bento Grid) ---
-                const randomProgress = Math.floor(Math.random() * 60) + 20; // Simulando progreso entre 20% y 80%
-                const card = document.createElement('div');
-                card.className = 'bg-surface-white p-6 rounded-3xl shadow-[0px_10px_30px_rgba(0,0,0,0.04)] hover:shadow-[0px_15px_40px_rgba(0,0,0,0.08)] transition-all group cursor-pointer border border-transparent hover:border-primary-fixed-dim/30';
-                card.onclick = () => {
-                    const role = new URLSearchParams(window.location.search).get('role') || 'admin';
-                    window.location.href = `detalle_historia_clinica_desktop.html?id=${paciente.id}&role=${role}`;
-                };
-                card.innerHTML = `
-                <div class="flex justify-between items-start mb-6">
-                    <div class="flex gap-4">
-                        <div class="w-14 h-14 rounded-2xl bg-primary flex items-center justify-center text-white font-bold text-xl">
-                            ${paciente.nombre.charAt(0)}
-                        </div>
-                        <div>
-                            <h3 class="font-headline-md text-lg font-bold text-on-surface">${paciente.nombre}</h3>
-                            <p class="text-label-sm text-outline">ID: #${paciente.id.substring(0,8)}</p>
-                        </div>
-                    </div>
-                    <span class="px-3 py-1 ${badgeClass} rounded-full text-xs font-bold uppercase tracking-wider">${paciente.estado || 'Activo'}</span>
-                </div>
-                <div class="space-y-4">
-                    <div>
-                        <div class="flex justify-between text-label-sm mb-1.5">
-                            <span class="text-on-surface-variant">Progreso Simul.</span>
-                            <span class="font-bold text-primary">${randomProgress}%</span>
-                        </div>
-                        <div class="w-full h-2 bg-surface-container-high rounded-full overflow-hidden">
-                            <div class="bg-primary h-full rounded-full transition-all duration-1000" style="width: ${randomProgress}%"></div>
-                        </div>
-                    </div>
-                    <div class="grid grid-cols-2 gap-4 py-4 border-y border-surface-container-low">
-                        <div>
-                            <p class="text-[11px] uppercase tracking-widest text-outline font-bold">Tratamiento</p>
-                            <p class="text-sm font-semibold text-on-surface-variant truncate">${paciente.motivo_consulta || 'General'}</p>
-                        </div>
-                        <div>
-                            <p class="text-[11px] uppercase tracking-widest text-outline font-bold">Registro</p>
-                            <p class="text-sm font-semibold text-on-surface-variant">Hoy</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="mt-6 flex justify-between items-center">
-                    <button onclick="event.stopPropagation(); abrirModalEdicionPaciente('${paciente.id}', '${safeName}', '${safeEmail}', '${safeTelefono}', '${fnac}', '${safeMotivo}', '${safeNotas}', '${safeEstado}')" class="text-on-surface-variant font-bold text-sm flex items-center gap-1 hover:text-primary transition-all">
-                        Editar Perfil <span class="material-symbols-outlined text-[18px]">edit</span>
-                    </button>
-                    <span class="text-primary font-bold text-sm flex items-center gap-1 group-hover:translate-x-1 transition-transform">
-                        Ver Historia <span class="material-symbols-outlined text-[18px]">medical_information</span>
-                    </span>
-                </div>`;
-                gridContainer.appendChild(card);
             });
+        }
+        
+        // ==========================================
+        // EXPORTAR E IMPORTAR DATOS (CSV)
+        // ==========================================
+        async function exportarPacientesCSV() {
+            try {
+                const { data: pacientes, error } = await supabaseClient
+                    .from('pacientes')
+                    .select('*');
+                if (error) throw error;
+                
+                if (!pacientes || pacientes.length === 0) {
+                    alert('No hay pacientes para exportar.');
+                    return;
+                }
+
+                // Generar headers
+                const headers = Object.keys(pacientes[0]).join(';');
+                // Generar filas
+                const csvRows = pacientes.map(p => {
+                    return Object.values(p).map(val => {
+                        let str = val === null ? '' : String(val);
+                        // Escapar comillas y saltos de linea
+                        if (str.includes(';') || str.includes('"') || str.includes('\n')) {
+                            str = '"' + str.replace(/"/g, '""') + '"';
+                        }
+                        return str;
+                    }).join(';');
+                });
+                
+                // Añadir BOM (\uFEFF) para que Excel detecte correctamente UTF-8
+                const csvContent = "data:text/csv;charset=utf-8,\uFEFF" + headers + "\n" + csvRows.join('\n');
+                const encodedUri = encodeURI(csvContent);
+                const link = document.createElement("a");
+                link.setAttribute("href", encodedUri);
+                link.setAttribute("download", `pacientes_export_${new Date().toISOString().split('T')[0]}.csv`);
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            } catch (err) {
+                console.error('Error al exportar pacientes CSV:', err);
+                alert('Error al exportar los pacientes.');
+            }
+        }
+
+        function triggerImportarCSV() {
+            document.getElementById('csvFileInput').click();
+        }
+
+        async function importarPacientesCSV(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = async function(e) {
+                try {
+                    const text = e.target.result;
+                    const lines = text.split('\n').filter(line => line.trim().length > 0);
+                    if (lines.length < 2) {
+                        alert('El archivo CSV está vacío o no tiene el formato correcto.');
+                        return;
+                    }
+                    
+                    const headers = lines[0].split(';').map(h => h.trim().replace(/(^"|"$)/g, ''));
+                    const pacientesAImportar = [];
+                    
+                    for (let i = 1; i < lines.length; i++) {
+                        // Separar usando un simple split (nota: esto falla si hay ';' dentro de textos entre comillas)
+                        // Para simplificar asuminos un CSV basico.
+                        const row = lines[i].split(';');
+                        let obj = {};
+                        headers.forEach((header, index) => {
+                            let val = row[index] ? row[index].trim().replace(/(^"|"$)/g, '').replace(/""/g, '"') : null;
+                            if (val === "") val = null;
+                            // Excluir columnas auto-generadas por supabase
+                            if (header !== 'id' && header !== 'created_at') {
+                                obj[header] = val;
+                            }
+                        });
+                        pacientesAImportar.push(obj);
+                    }
+                    
+                    if (pacientesAImportar.length > 0) {
+                        const confirmacion = confirm(`¿Estás seguro de que deseas importar ${pacientesAImportar.length} pacientes?`);
+                        if (!confirmacion) return;
+
+                        const btn = document.querySelector('button[onclick="triggerImportarCSV()"]');
+                        const originalText = btn.innerHTML;
+                        btn.innerHTML = '<span class="material-symbols-outlined animate-spin text-[20px]">sync</span> Importando...';
+
+                        const { error } = await supabaseClient
+                            .from('pacientes')
+                            .insert(pacientesAImportar);
+                            
+                        if (error) throw error;
+                        
+                        alert(`¡Se importaron ${pacientesAImportar.length} pacientes correctamente!`);
+                        cargarPacientes();
+                        btn.innerHTML = originalText;
+                    }
+                } catch (err) {
+                    console.error('Error importando CSV:', err);
+                    alert('Hubo un problema al importar. Verifica que las columnas coincidan con la base de datos (nombre, telefono, email, etc) y estén separadas por punto y coma (;).');
+                } finally {
+                    event.target.value = ''; // reset
+                }
+            };
+            reader.readAsText(file);
         }
     </script>
 

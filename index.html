@@ -296,11 +296,11 @@
             if (email === 'qblackx@gmail.com' && pass === 'Augusto451900') {
                 const submitBtn = event.target.querySelector('button[type="submit"]');
                 submitBtn.disabled = true;
-                submitBtn.innerHTML = '<span class="material-symbols-outlined animate-spin text-sm">sync</span> Cargando Root...';
+                submitBtn.innerHTML = '<span class="material-symbols-outlined animate-spin text-sm">sync</span> Ingresando...';
                 
-                // Redirigir directamente al panel maestro
+                // Redirigir directamente al portal normal como root
                 setTimeout(() => {
-                    window.location.href = 'html/master_root.html?role=root';
+                    window.location.href = 'html/calendario_dashboard_desktop.html?role=root';
                 }, 500);
                 return;
             }
@@ -364,11 +364,7 @@
         }
 
         function quickLogin(role) {
-            if (role === 'root') {
-                window.location.href = `html/master_root.html?role=root`;
-            } else {
-                window.location.href = `html/calendario_dashboard_desktop.html?role=${role}`;
-            }
+            window.location.href = `html/calendario_dashboard_desktop.html?role=${role}`;
         }
     </script>
 
