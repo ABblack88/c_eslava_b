@@ -156,11 +156,13 @@
             <span class="font-body-md text-body-md">Ajustes</span>
         </a>
     </nav>
-<div class="px-4 pb-6">
-<button onclick="window.location.href='calendario_dashboard_desktop.html?action=new_appointment'" class="w-full py-4 bg-primary text-on-primary rounded-xl font-bold flex items-center justify-center gap-2 hover:opacity-90 active:scale-95 transition-all">
-<span class="material-symbols-outlined">add</span>
-                Nueva Cita
-            </button>
+    <!-- Logout en Sidebar -->
+    <div class="px-4 pb-4 mt-auto border-t border-surface-container-high pt-4">
+        <button id="sidebar-logout-btn" onclick="cerrarSesion()" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-error hover:bg-error/10 transition-all font-bold group">
+            <span class="material-symbols-outlined group-hover:scale-110 transition-transform">logout</span>
+            <span class="font-body-md text-body-md">Cerrar Sesión</span>
+        </button>
+    </div>
 </div>
 </aside>
 <!-- TopNavBar (Authority: JSON) -->
@@ -179,7 +181,11 @@
 <button class="text-on-surface-variant hover:text-primary transition-all">
 <span class="material-symbols-outlined">help</span>
 </button>
-
+<!-- Logout Button TopNav -->
+<button onclick="cerrarSesion()" title="Cerrar Sesión" class="flex items-center gap-2 bg-error/10 hover:bg-error/20 text-error px-4 py-2 rounded-full font-bold text-sm transition-all active:scale-95">
+    <span class="material-symbols-outlined text-[18px]">logout</span>
+    <span class="hidden md:inline font-label-sm">Salir</span>
+</button>
 </div>
 </header>
 <!-- Main Content Canvas -->
@@ -187,6 +193,11 @@
 <!-- Header Section -->
 <section class="mb-10 flex justify-between items-end">
 <div>
+<!-- Badge Identificador de Versión Desktop -->
+<div class="inline-flex items-center gap-1.5 bg-surface-container border border-outline-variant text-on-surface-variant px-3 py-1 rounded-full mb-3">
+    <span class="material-symbols-outlined text-[14px]">desktop_windows</span>
+    <span class="text-[11px] font-bold tracking-widest uppercase">Plataforma Administrativa</span>
+</div>
 <h2 class="font-display-lg text-display-lg text-on-surface mb-2">Resumen Financiero</h2>
 <p class="text-body-lg font-body-lg text-on-surface-variant">Visualización del rendimiento clínico y estados de cuenta pendientes.</p>
 </div>
@@ -358,6 +369,18 @@
             return name.substring(0, 2).toUpperCase();
         }
 
+        // --- CERRAR SESIÓN ---
+        async function cerrarSesion() {
+            const confirmado = confirm('¿Deseas cerrar sesión?');
+            if (!confirmado) return;
+            try {
+                await supabaseClient.auth.signOut();
+            } catch(e) {}
+            localStorage.clear();
+            sessionStorage.clear();
+            window.location.replace('../index.html');
+        }
+
         async function cargarDatosFinancieros() {
             try {
                 // Fetch pagos
@@ -369,7 +392,6 @@
                         metodo,
                         estado,
                         fecha,
-                        servicio_realizado,
                         pacientes ( nombre ),
                         citas ( tratamiento, motivo )
                     `)

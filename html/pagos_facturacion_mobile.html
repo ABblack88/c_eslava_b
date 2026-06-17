@@ -137,9 +137,13 @@
                 data-icon="menu">menu</span>
             <span class="font-headline-md text-headline-md font-bold text-primary">Centro Eslava</span>
         </div>
-        <div class="w-10 h-10 rounded-full bg-surface-container-highest overflow-hidden cursor-pointer">
-            <img alt="Perfil del Doctor" class="w-full h-full object-cover"
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuDJzN9R-VX8af7lKT2AVm5EvxON2TqY1Wb7fuNBJuZFRaIwlk9ETbo4Fl_VkvGm0DL0l7RhAuXSBMtPsFMI0RIQhfQk0LOKqP3DqeCu6ydcrfDK3DulpiR8IWHT27cyaIuaeWgzH2povPLwuwBHIzlpPiDCNwrMU80H8DppKig7AfKk2TPp213gHX9RK87CFDcH2ohpp_qc2JrbPtzTBZjNft4IFUiynI2PVJSw9Cv8vTCLJehgWhn9kT-3bxNv4kCIfyDKZGSTDOg" />
+        <div class="flex items-center gap-2">
+            <!-- Logout button en TopBar Móvil -->
+            <button onclick="cerrarSesion()" title="Cerrar Sesión"
+                class="flex items-center gap-1.5 bg-error/10 hover:bg-error/20 text-error px-3 py-2 rounded-full font-bold text-xs transition-all active:scale-95">
+                <span class="material-symbols-outlined text-[18px]">logout</span>
+                <span class="text-[11px] font-bold">Salir</span>
+            </button>
         </div>
     </header>
     <!-- NavigationDrawer (Desktop Only) -->
@@ -208,11 +212,23 @@
                 </a>
             </li>
         </ul>
+        <!-- Logout en Sidebar Móvil -->
+        <div class="pt-4 mt-2 border-t border-surface-container-high">
+            <button onclick="cerrarSesion()" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-error hover:bg-error/10 transition-all font-bold group">
+                <span class="material-symbols-outlined group-hover:scale-110 transition-transform">logout</span>
+                <span class="font-body-md text-body-md">Cerrar Sesión</span>
+            </button>
+        </div>
     </nav>
     <!-- Main Content Canvas -->
     <main class="flex-grow md:ml-72 p-margin-mobile md:p-margin-desktop pb-24 md:pb-margin-desktop overflow-y-auto">
-        <header class="mb-12 flex justify-between items-start">
+        <header class="mb-8 flex justify-between items-start">
             <div>
+                <!-- Badge Identificador de Versión Móvil -->
+                <div class="inline-flex items-center gap-1.5 bg-primary/10 border border-primary/20 text-primary px-3 py-1 rounded-full mb-3">
+                    <span class="material-symbols-outlined text-[14px]">smartphone</span>
+                    <span class="text-[11px] font-bold tracking-widest uppercase">Gestión Clínica Móvil</span>
+                </div>
                 <h1
                     class="font-display-lg-mobile md:font-display-lg text-display-lg-mobile md:text-display-lg text-primary font-bold mb-2">
                     Resumen Financiero</h1>
@@ -369,6 +385,18 @@
             return name.substring(0, 2).toUpperCase();
         }
 
+        // --- CERRAR SESIÓN ---
+        async function cerrarSesion() {
+            const confirmado = confirm('¿Deseas cerrar sesión?');
+            if (!confirmado) return;
+            try {
+                await supabaseClient.auth.signOut();
+            } catch(e) {}
+            localStorage.clear();
+            sessionStorage.clear();
+            window.location.replace('../index.html');
+        }
+
         async function cargarDatosFinancieros() {
             if (currentRole === 'medico' || currentRole === 'asistente') return; // Don't fetch if restricted
 
@@ -382,7 +410,6 @@
                     metodo,
                     estado,
                     fecha,
-                    servicio_realizado,
                     pacientes ( nombre ),
                     citas ( tratamiento, motivo )
                 `)
