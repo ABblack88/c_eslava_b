@@ -288,8 +288,13 @@
 
                 if (error) throw error;
                 
+                // Verificar si hay sesión activa (si no la hay, el correo no está verificado)
+                if (data.user && !data.session) {
+                    throw new Error("Por favor, verifica tu correo electrónico antes de iniciar sesión.");
+                }
+                
                 // Verificar si está aprobado en la tabla profiles
-                if (data.user) {
+                if (data.user && data.session) {
                     const { data: profile } = await supabaseClient.from('profiles').select('status, role').eq('id', data.user.id).single();
                     
                     const status = profile?.status || data.user.user_metadata?.status;
@@ -300,14 +305,8 @@
                     
                     const role = profile?.role || data.user.user_metadata?.role || 'asistente';
                     
-                    // DEPURACIÓN: Verificar si el token se guardó
-                    let foundKey = false;
-                    for (let i = 0; i < localStorage.length; i++) {
-                        if (localStorage.key(i).includes('c-eslava-auth-token')) foundKey = true;
-                    }
-                    if (!foundKey) {
-                        alert('ERROR LOGIN: Supabase no guardó el token en localStorage después de hacer login.');
-                    }
+                    // Forzar guardado manual del token por si acaso
+                    localStorage.setItem('c-eslava-auth-token', JSON.stringify(data.session));
                     
                     // Pequeño delay para asegurar que Supabase guarde la sesión en localStorage
                     setTimeout(() => {
