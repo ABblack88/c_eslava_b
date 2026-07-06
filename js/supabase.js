@@ -17,12 +17,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         const { data, error } = await supabaseClient.auth.getSession();
         
         if (!data.session && !isPublicPage) {
-            // No hay sesión en página privada. 
-            // Validar si existe el parámetro de rol por URL para acceso rápido temporal del simulador
-            const urlParams = new URLSearchParams(window.location.search);
-            if (!urlParams.get('role')) {
-                window.location.href = '../index.html';
-            }
+            // No hay sesión en página privada. Redirigir a login.
+            window.location.href = '../index.html';
         } else if (data.session && !isPublicPage) {
             // Si hay sesión en página privada, asegurar que exista el rol en la URL
             const userRole = data.session.user?.user_metadata?.role || 'admin';
