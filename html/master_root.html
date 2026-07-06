@@ -145,25 +145,34 @@
                 
                 <p class="text-sm text-gray-400 mb-8">Administra qué correos transaccionales y de marketing son enviados automáticamente a los pacientes y doctores. Las credenciales de SMTP deben configurarse en el Dashboard de Supabase.</p>
                 
+                <!-- Info de la Empresa y APIs -->
+                <div class="mb-8 p-6 bg-white/5 rounded-2xl border border-white/10">
+                    <h4 class="text-lg font-bold text-white mb-4 border-b border-white/10 pb-2 flex items-center gap-2">
+                        <span class="material-symbols-outlined text-primary">domain</span> Información Corporativa e Integraciones
+                    </h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Teléfono / WhatsApp Business</label>
+                            <input type="tel" id="cfg-empresa-whatsapp" class="w-full bg-black border border-white/10 rounded-lg py-2.5 px-3 text-sm text-white focus:border-primary focus:outline-none transition-colors" placeholder="Ej. +51 987654321" onchange="localStorage.setItem('cfg_whatsapp', this.value)">
+                            <p class="text-[10px] text-gray-400 mt-1">Usado para enviar recordatorios y enlaces de citas por WhatsApp a los pacientes.</p>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Correo (Google Calendar)</label>
+                            <input type="email" id="cfg-empresa-email" class="w-full bg-black border border-white/10 rounded-lg py-2.5 px-3 text-sm text-white focus:border-primary focus:outline-none transition-colors" placeholder="ejemplo@gmail.com" onchange="localStorage.setItem('cfg_gcalendar', this.value)">
+                            <p class="text-[10px] text-gray-400 mt-1">Usado para sincronizar automáticamente las citas agendadas al calendario de Google.</p>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <!-- Configuración de Pacientes -->
                     <div>
-                        <h4 class="text-lg font-bold text-white mb-4 border-b border-white/10 pb-2">Notificaciones a Pacientes</h4>
+                        <h4 class="text-lg font-bold text-white mb-4 border-b border-white/10 pb-2">Notificaciones Automáticas a Pacientes</h4>
                         <div class="space-y-4">
                             <div class="flex items-center justify-between p-4 bg-white/5 rounded-xl border border-white/10">
                                 <div>
-                                    <p class="font-bold text-sm text-white">Verificación de Correo (Registro)</p>
-                                    <p class="text-xs text-gray-400">Solicitar a usuarios confirmar su email antes de entrar.</p>
-                                </div>
-                                <div class="relative inline-flex h-6 w-11 items-center rounded-full bg-primary cursor-pointer config-toggle" data-key="emailVerificacion">
-                                    <span class="inline-block h-4 w-4 translate-x-6 transform rounded-full bg-black transition"></span>
-                                </div>
-                            </div>
-                            
-                            <div class="flex items-center justify-between p-4 bg-white/5 rounded-xl border border-white/10">
-                                <div>
                                     <p class="font-bold text-sm text-white">Recordatorio de Citas (24h)</p>
-                                    <p class="text-xs text-gray-400">Enviar correo o SMS automático recordatorio.</p>
+                                    <p class="text-xs text-gray-400">Enviar correo automático recordatorio al paciente.</p>
                                 </div>
                                 <div class="relative inline-flex h-6 w-11 items-center rounded-full bg-primary cursor-pointer config-toggle" data-key="emailRecordatorio">
                                     <span class="inline-block h-4 w-4 translate-x-6 transform rounded-full bg-black transition"></span>
@@ -186,6 +195,16 @@
                     <div>
                         <h4 class="text-lg font-bold text-white mb-4 border-b border-white/10 pb-2">Comunicaciones Internas (Staff)</h4>
                         <div class="space-y-4">
+                            <div class="flex items-center justify-between p-4 bg-white/5 rounded-xl border border-white/10">
+                                <div>
+                                    <p class="font-bold text-sm text-white">Verificación de Correo (Registro Staff)</p>
+                                    <p class="text-xs text-gray-400">Solicitar confirmación al crear nuevo usuario interno.</p>
+                                </div>
+                                <div class="relative inline-flex h-6 w-11 items-center rounded-full bg-primary cursor-pointer config-toggle" data-key="emailVerificacion">
+                                    <span class="inline-block h-4 w-4 translate-x-6 transform rounded-full bg-black transition"></span>
+                                </div>
+                            </div>
+
                             <div class="flex items-center justify-between p-4 bg-white/5 rounded-xl border border-white/10">
                                 <div>
                                     <p class="font-bold text-sm text-white">Alerta de Nuevos Registros</p>
@@ -345,10 +364,18 @@
                 if(headerDesc) headerDesc.textContent = 'Gestión de usuarios y aprobaciones de acceso.';
             }
             loadUsers();
-            initToggles();
+            initSistemaConfigs();
         });
 
-        function initToggles() {
+        function initSistemaConfigs() {
+            // Cargar datos de empresa
+            const whatsappInput = document.getElementById('cfg-empresa-whatsapp');
+            const emailInput = document.getElementById('cfg-empresa-email');
+            
+            if(whatsappInput) whatsappInput.value = localStorage.getItem('cfg_whatsapp') || '';
+            if(emailInput) emailInput.value = localStorage.getItem('cfg_gcalendar') || '';
+
+            // Cargar toggles
             const toggles = document.querySelectorAll('.config-toggle');
             toggles.forEach(toggle => {
                 const key = toggle.getAttribute('data-key');
