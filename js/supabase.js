@@ -18,22 +18,32 @@ document.addEventListener("DOMContentLoaded", async () => {
     const handleSession = (session) => {
         if (!session && !isPublicPage) {
             console.error('Auth Guard: No se encontró sesión.');
-            const rawToken = localStorage.getItem('sb-scubijqoifshvyotrlgx-auth-token');
-            if (!rawToken) {
-                alert('Sesión expirada o no iniciada. Redirigiendo al inicio...');
-                window.location.replace('../index.html');
+            
+            // Debugging total de localStorage en pantalla
+            let lsDump = '';
+            let foundToken = null;
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                if (key.includes('auth-token')) foundToken = localStorage.getItem(key);
+                lsDump += key + ': ' + localStorage.getItem(key).substring(0, 30) + '...<br>';
+            }
+
+            if (!foundToken) {
+                // Dibujar en pantalla para depurar
+                document.body.innerHTML += `
+                <div style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(255,0,0,0.9);color:white;z-index:999999;padding:20px;overflow:auto;">
+                    <h2>ERROR CRÍTICO: No se guardó la sesión</h2>
+                    <p>El almacenamiento local del navegador está vacío o el login no guardó el token.</p>
+                    <h3>Contenido de LocalStorage:</h3>
+                    <p style="font-family:monospace; font-size:12px;">${lsDump || 'Vacio!'}</p>
+                    <br><br>
+                    <button onclick="window.location.href='../index.html'" style="padding:10px 20px; background:white; color:red; font-weight:bold; border-radius:8px;">Volver al Login</button>
+                </div>
+                `;
+                return;
             } else {
-                console.warn('Hay token en localStorage pero la sesión es nula.');
-                // Forzar lectura del token
-                try {
-                    const parsed = JSON.parse(rawToken);
-                    if (parsed && parsed.access_token) {
-                        console.log('Token recuperado manualmente. No redirigimos aún.');
-                        return;
-                    }
-                } catch(e) {}
-                alert('Tu sesión es inválida. Redirigiendo al inicio...');
-                window.location.replace('../index.html');
+                console.warn('Hay token pero la sesión es nula. Forzando paso.');
+                return; // Let the app run so we don't block them if there's a token
             }
         } else if (session && !isPublicPage) {
             const userRole = session.user?.user_metadata?.role || 'admin';
