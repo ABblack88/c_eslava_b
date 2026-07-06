@@ -136,28 +136,7 @@
                     Acceder al sistema
                 </button>
                 
-                <div class="mt-8 border-t border-slate-200 pt-6">
-                    <p class="text-[10px] text-slate-500 mb-3 uppercase tracking-widest font-semibold">Entorno de Simulación</p>
-                    <div class="grid grid-cols-2 gap-2">
-                        <button type="button" onclick="quickLogin('root')" class="py-2 px-3 bg-red-50 text-red-700 tech-border hover:bg-red-100 transition-colors text-xs text-left flex items-center gap-2">
-                            <span class="material-symbols-outlined text-[16px]">admin_panel_settings</span>
-                            <span class="font-semibold">Root Master</span>
-                        </button>
-                        <button type="button" onclick="quickLogin('admin')" class="py-2 px-3 bg-slate-50 text-slate-700 tech-border hover:bg-slate-100 transition-colors text-xs text-left flex items-center gap-2">
-                            <span class="material-symbols-outlined text-[16px]">admin_panel_settings</span>
-                            <span class="font-medium">Admin</span>
-                        </button>
-                        <button type="button" onclick="quickLogin('medico')" class="py-2 px-3 bg-slate-50 text-slate-700 tech-border hover:bg-slate-100 transition-colors text-xs text-left flex items-center gap-2">
-                            <span class="material-symbols-outlined text-[16px]">stethoscope</span>
-                            <span class="font-medium">Médico</span>
-                        </button>
-                        <button type="button" onclick="quickLogin('asistente')" class="py-2 px-3 bg-slate-50 text-slate-700 tech-border hover:bg-slate-100 transition-colors text-xs text-left flex items-center gap-2">
-                            <span class="material-symbols-outlined text-[16px]">support_agent</span>
-                            <span class="font-medium">Asistente</span>
-                        </button>
-                    </div>
-                </div>
-            </form>
+                </form>
 
             <form id="form-signup" class="flex flex-col gap-5 hidden" onsubmit="handleSignup(event)">
                 <div>
@@ -378,10 +357,6 @@
                 submitBtn.disabled = false;
                 submitBtn.innerHTML = 'Crear cuenta';
             }
-        }
-
-        function quickLogin(role) {
-            window.location.href = `html/calendario_dashboard_desktop.html?role=${role}`;
         }
     </script>
 
