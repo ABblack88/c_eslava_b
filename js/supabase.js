@@ -17,6 +17,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         const { data, error } = await supabaseClient.auth.getSession();
         
         if (!data.session && !isPublicPage) {
+            console.error('Auth Guard: No se encontró sesión. data=', data);
+            alert('Atención: El sistema no detectó tu sesión al cambiar de página. Serás redirigido al inicio.');
             // No hay sesión en página privada. Redirigir a login.
             window.location.href = '../index.html';
         } else if (data.session && !isPublicPage) {
