@@ -95,24 +95,7 @@
                         </tr>
                     </thead>
                     <tbody id="usuarios-list" class="divide-y divide-white/5">
-                        <tr class="hover:bg-white/5 transition-colors">
-                            <td class="py-4 font-bold text-white">admin@centroeslava.com</td>
-                            <td class="py-4"><span class="bg-blue-500/20 text-blue-400 px-2 py-1 rounded text-xs font-bold">Administrador</span></td>
-                            <td class="py-4 text-gray-400">Hace 2 min</td>
-                            <td class="py-4 text-right">
-                                <button class="text-gray-400 hover:text-white px-2"><span class="material-symbols-outlined text-[18px]">edit</span></button>
-                                <button class="text-gray-400 hover:text-error px-2"><span class="material-symbols-outlined text-[18px]">block</span></button>
-                            </td>
-                        </tr>
-                        <tr class="hover:bg-white/5 transition-colors">
-                            <td class="py-4 font-bold text-white">dr.perez@centroeslava.com</td>
-                            <td class="py-4"><span class="bg-green-500/20 text-green-400 px-2 py-1 rounded text-xs font-bold">Médico</span></td>
-                            <td class="py-4 text-gray-400">Ayer</td>
-                            <td class="py-4 text-right">
-                                <button class="text-gray-400 hover:text-white px-2"><span class="material-symbols-outlined text-[18px]">edit</span></button>
-                                <button class="text-gray-400 hover:text-error px-2"><span class="material-symbols-outlined text-[18px]">block</span></button>
-                            </td>
-                        </tr>
+                        <tr><td colspan="4" class="py-4 text-center text-gray-400">Cargando usuarios...</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -146,6 +129,90 @@
                         <span class="material-symbols-outlined text-3xl text-primary mb-2">cleaning_services</span>
                         <h4 class="font-bold text-white mb-1">Forzar Actualización de UI (Limpiar Caché)</h4>
                         <p class="text-xs text-primary/80">Soluciona errores visuales o código fantasma. Desregistra Service Workers y recarga.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Tab: Sistema / Notificaciones -->
+        <section id="tab-sistema" class="hidden">
+            <div class="glass-panel p-8 rounded-2xl border border-primary/30">
+                <div class="flex justify-between items-center mb-6 border-b border-white/10 pb-4">
+                    <h3 class="text-xl font-bold flex items-center gap-2">
+                        <span class="material-symbols-outlined text-primary">mark_email_read</span> Centro de Comunicaciones y Correos
+                    </h3>
+                </div>
+                
+                <p class="text-sm text-gray-400 mb-8">Administra qué correos transaccionales y de marketing son enviados automáticamente a los pacientes y doctores. Las credenciales de SMTP deben configurarse en el Dashboard de Supabase.</p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <!-- Configuración de Pacientes -->
+                    <div>
+                        <h4 class="text-lg font-bold text-white mb-4 border-b border-white/10 pb-2">Notificaciones a Pacientes</h4>
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between p-4 bg-white/5 rounded-xl border border-white/10">
+                                <div>
+                                    <p class="font-bold text-sm text-white">Verificación de Correo (Registro)</p>
+                                    <p class="text-xs text-gray-400">Solicitar a usuarios confirmar su email antes de entrar.</p>
+                                </div>
+                                <div class="relative inline-flex h-6 w-11 items-center rounded-full bg-primary cursor-pointer config-toggle" data-key="emailVerificacion">
+                                    <span class="inline-block h-4 w-4 translate-x-6 transform rounded-full bg-black transition"></span>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-center justify-between p-4 bg-white/5 rounded-xl border border-white/10">
+                                <div>
+                                    <p class="font-bold text-sm text-white">Recordatorio de Citas (24h)</p>
+                                    <p class="text-xs text-gray-400">Enviar correo o SMS automático recordatorio.</p>
+                                </div>
+                                <div class="relative inline-flex h-6 w-11 items-center rounded-full bg-primary cursor-pointer config-toggle" data-key="emailRecordatorio">
+                                    <span class="inline-block h-4 w-4 translate-x-6 transform rounded-full bg-black transition"></span>
+                                </div>
+                            </div>
+
+                            <div class="flex items-center justify-between p-4 bg-white/5 rounded-xl border border-white/10">
+                                <div>
+                                    <p class="font-bold text-sm text-white">Factura de Pago (Comprobante)</p>
+                                    <p class="text-xs text-gray-400">Enviar boleta automática luego del pago.</p>
+                                </div>
+                                <div class="relative inline-flex h-6 w-11 items-center rounded-full bg-primary cursor-pointer config-toggle" data-key="emailFactura">
+                                    <span class="inline-block h-4 w-4 translate-x-6 transform rounded-full bg-black transition"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Configuración Interna -->
+                    <div>
+                        <h4 class="text-lg font-bold text-white mb-4 border-b border-white/10 pb-2">Comunicaciones Internas (Staff)</h4>
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between p-4 bg-white/5 rounded-xl border border-white/10">
+                                <div>
+                                    <p class="font-bold text-sm text-white">Alerta de Nuevos Registros</p>
+                                    <p class="text-xs text-gray-400">Avisar a Admin cuando hay un usuario pendiente de aprobación.</p>
+                                </div>
+                                <div class="relative inline-flex h-6 w-11 items-center rounded-full bg-outline-variant cursor-pointer config-toggle" data-key="emailAlertaAdmin">
+                                    <span class="inline-block h-4 w-4 translate-x-1 transform rounded-full bg-white transition"></span>
+                                </div>
+                            </div>
+
+                            <div class="flex items-center justify-between p-4 bg-white/5 rounded-xl border border-white/10">
+                                <div>
+                                    <p class="font-bold text-sm text-white">Citas Canceladas</p>
+                                    <p class="text-xs text-gray-400">Notificar al Médico si su paciente canceló.</p>
+                                </div>
+                                <div class="relative inline-flex h-6 w-11 items-center rounded-full bg-primary cursor-pointer config-toggle" data-key="emailCancelacion">
+                                    <span class="inline-block h-4 w-4 translate-x-6 transform rounded-full bg-black transition"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-6 p-4 bg-primary/10 rounded-xl border border-primary/20 text-center">
+                            <span class="material-symbols-outlined text-primary mb-2 text-3xl">mark_email_unread</span>
+                            <p class="text-sm font-bold text-white mb-2">Plantillas de Email</p>
+                            <p class="text-xs text-gray-400 mb-4">Para modificar el diseño y texto de los correos (Reset Password, Verificación), ve a Supabase > Authentication > Email Templates.</p>
+                            <a href="https://supabase.com/dashboard/project/_/auth/templates" target="_blank" class="text-xs font-bold bg-primary text-black px-4 py-2 rounded-lg hover:bg-primary/80 transition-colors inline-block">Abrir Dashboard Supabase</a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -246,13 +313,135 @@
             // Hide all
             document.getElementById('tab-usuarios').classList.add('hidden');
             document.getElementById('tab-db').classList.add('hidden');
+            document.getElementById('tab-sistema').classList.add('hidden');
             // Remove active classes
             document.getElementById('nav-usuarios').className = 'flex items-center gap-3 text-sm font-bold text-gray-400 hover:text-white px-4 py-3 rounded-lg transition-all';
             document.getElementById('nav-db').className = 'flex items-center gap-3 text-sm font-bold text-gray-400 hover:text-white px-4 py-3 rounded-lg transition-all';
+            document.getElementById('nav-sistema').className = 'flex items-center gap-3 text-sm font-bold text-gray-400 hover:text-white px-4 py-3 rounded-lg transition-all';
             
             // Show selected
             document.getElementById('tab-' + tabId).classList.remove('hidden');
             document.getElementById('nav-' + tabId).className = 'flex items-center gap-3 text-sm font-bold text-primary bg-primary/10 px-4 py-3 rounded-lg border border-primary/20 transition-all';
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const role = urlParams.get('role');
+            if (role !== 'root') {
+                const dbNav = document.getElementById('nav-db');
+                const sysNav = document.getElementById('nav-sistema');
+                if(dbNav) dbNav.style.display = 'none';
+                // Si queremos que el admin sí vea sistema, lo dejamos, si no, lo ocultamos.
+                // Como el requerimiento es un panel admin para esto, dejaremos visible el tab-sistema para el admin.
+                
+                const title = document.querySelector('h1.text-xl');
+                const subtitle = document.querySelector('p.text-xs.uppercase');
+                if(title) title.textContent = 'ADMIN';
+                if(subtitle) subtitle.textContent = 'Panel de Usuarios';
+                
+                const headerTitle = document.querySelector('h2.text-3xl');
+                const headerDesc = document.querySelector('header p.text-gray-400');
+                if(headerTitle) headerTitle.textContent = 'Panel de Administración';
+                if(headerDesc) headerDesc.textContent = 'Gestión de usuarios y aprobaciones de acceso.';
+            }
+            loadUsers();
+            initToggles();
+        });
+
+        function initToggles() {
+            const toggles = document.querySelectorAll('.config-toggle');
+            toggles.forEach(toggle => {
+                const key = toggle.getAttribute('data-key');
+                const knob = toggle.querySelector('span');
+                const state = localStorage.getItem('cfg_' + key) === 'true';
+                
+                if (state) {
+                    toggle.classList.replace('bg-outline-variant', 'bg-primary');
+                    toggle.classList.replace('bg-white/20', 'bg-primary');
+                    knob.classList.add('translate-x-6');
+                    knob.classList.remove('translate-x-1');
+                    knob.classList.replace('bg-white', 'bg-black');
+                } else {
+                    toggle.classList.replace('bg-primary', 'bg-white/20');
+                    knob.classList.remove('translate-x-6');
+                    knob.classList.add('translate-x-1');
+                    knob.classList.replace('bg-black', 'bg-white');
+                }
+                
+                toggle.addEventListener('click', () => {
+                    const isEnabled = !knob.classList.contains('translate-x-6');
+                    localStorage.setItem('cfg_' + key, isEnabled);
+                    
+                    if (isEnabled) {
+                        toggle.classList.replace('bg-white/20', 'bg-primary');
+                        knob.classList.add('translate-x-6');
+                        knob.classList.remove('translate-x-1');
+                        knob.classList.replace('bg-white', 'bg-black');
+                    } else {
+                        toggle.classList.replace('bg-primary', 'bg-white/20');
+                        knob.classList.remove('translate-x-6');
+                        knob.classList.add('translate-x-1');
+                        knob.classList.replace('bg-black', 'bg-white');
+                    }
+                });
+            });
+        }
+
+        async function loadUsers() {
+            const tbody = document.getElementById('usuarios-list');
+            tbody.innerHTML = '<tr><td colspan="4" class="py-4 text-center text-gray-400">Cargando usuarios...</td></tr>';
+            
+            try {
+                const { data: users, error } = await supabaseClient.from('profiles').select('*').order('created_at', { ascending: false });
+                if (error) throw error;
+                
+                if (!users || users.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="4" class="py-4 text-center text-gray-500">No hay usuarios registrados.</td></tr>';
+                    return;
+                }
+
+                tbody.innerHTML = '';
+                users.forEach(user => {
+                    const tr = document.createElement('tr');
+                    tr.className = "hover:bg-white/5 transition-colors";
+                    
+                    const roleColor = user.role === 'medico' ? 'bg-green-500/20 text-green-400' : 
+                                      user.role === 'admin' ? 'bg-blue-500/20 text-blue-400' : 
+                                      'bg-purple-500/20 text-purple-400';
+                                      
+                    const isPending = user.status === 'pendiente';
+                    const statusBadge = isPending 
+                        ? `<span class="bg-yellow-500/20 text-yellow-400 px-2 py-1 rounded text-xs font-bold ml-2">Pendiente</span>` 
+                        : `<span class="bg-primary/20 text-primary px-2 py-1 rounded text-xs font-bold ml-2">Aprobado</span>`;
+                        
+                    tr.innerHTML = `
+                        <td class="py-4 font-bold text-white">${user.full_name || user.nombre || 'Sin Nombre'} <br><span class="text-xs font-normal text-gray-500">${user.email || user.username || 'Sin correo'}</span></td>
+                        <td class="py-4"><span class="${roleColor} px-2 py-1 rounded text-xs font-bold capitalize">${user.role || 'Usuario'}</span>${statusBadge}</td>
+                        <td class="py-4 text-gray-400 text-sm">${user.created_at ? new Date(user.created_at).toLocaleDateString() : '-'}</td>
+                        <td class="py-4 text-right">
+                            <div class="flex justify-end gap-2 items-center">
+                                ${isPending ? `<button onclick="approveUser('${user.id}')" class="text-green-400 hover:text-white px-3 text-xs font-bold border border-green-400/30 rounded py-1.5 bg-green-400/10 transition-colors">Aprobar</button>` : ''}
+                                <button class="text-gray-400 hover:text-white px-2"><span class="material-symbols-outlined text-[18px]">edit</span></button>
+                                <button class="text-gray-400 hover:text-error px-2"><span class="material-symbols-outlined text-[18px]">block</span></button>
+                            </div>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            } catch (err) {
+                tbody.innerHTML = `<tr><td colspan="4" class="py-4 text-center text-error">Error al cargar: ${err.message}</td></tr>`;
+            }
+        }
+
+        async function approveUser(userId) {
+            if (!confirm('¿Seguro que deseas aprobar a este usuario para que pueda ingresar al sistema?')) return;
+            try {
+                const { error } = await supabaseClient.from('profiles').update({ status: 'aprobado' }).eq('id', userId);
+                if (error) throw error;
+                loadUsers();
+            } catch (err) {
+                alert("Error al aprobar usuario: " + err.message);
+            }
         }
 
         // Lógica para el modal de Creación de Usuario
