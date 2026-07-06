@@ -320,7 +320,11 @@
                     }
                     
                     const role = profile?.role || data.user.user_metadata?.role || 'asistente';
-                    window.location.href = `html/calendario_dashboard_desktop.html?role=${role}`;
+                    
+                    // Pequeño delay para asegurar que Supabase guarde la sesión en localStorage
+                    setTimeout(() => {
+                        window.location.href = `html/calendario_dashboard_desktop.html?role=${role}`;
+                    }, 500);
                 }
             } catch (error) {
                 showError("Credenciales incorrectas o error de red: " + error.message);
