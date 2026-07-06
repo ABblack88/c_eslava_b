@@ -472,8 +472,9 @@
                         <td class="py-4 text-right">
                             <div class="flex justify-end gap-2 items-center">
                                 ${isPending ? `<button onclick="approveUser('${user.id}')" class="text-green-400 hover:text-white px-3 text-xs font-bold border border-green-400/30 rounded py-1.5 bg-green-400/10 transition-colors">Aprobar</button>` : ''}
-                                <button class="text-gray-400 hover:text-white px-2"><span class="material-symbols-outlined text-[18px]">edit</span></button>
-                                <button class="text-gray-400 hover:text-error px-2"><span class="material-symbols-outlined text-[18px]">block</span></button>
+                                <button onclick="resetPassword('${user.email}')" title="Restablecer Contraseña" class="text-gray-400 hover:text-secondary px-2 transition-colors"><span class="material-symbols-outlined text-[18px]">lock_reset</span></button>
+                                <button onclick="editUser('${user.id}', '${user.full_name || user.nombre || ''}', '${user.role}')" title="Editar Rol o Nombre" class="text-gray-400 hover:text-white px-2 transition-colors"><span class="material-symbols-outlined text-[18px]">edit</span></button>
+                                <button onclick="deleteUser('${user.id}')" title="Eliminar Usuario" class="text-gray-400 hover:text-error px-2 transition-colors"><span class="material-symbols-outlined text-[18px]">delete</span></button>
                             </div>
                         </td>
                     `;
@@ -492,6 +493,62 @@
                 loadUsers();
             } catch (err) {
                 alert("Error al aprobar usuario: " + err.message);
+            }
+        }
+
+        async function resetPassword(email) {
+            if (!email) {
+                alert("El usuario no tiene un correo registrado.");
+                return;
+            }
+            if (!confirm(`¿Enviar enlace de recuperación de contraseña a ${email}?`)) return;
+            
+            try {
+                const { error } = await supabaseClient.auth.resetPasswordForEmail(email, {
+                    redirectTo: window.location.origin + '/index.html',
+                });
+                if (error) throw error;
+                alert(`Correo de recuperación enviado a ${email}.`);
+            } catch (err) {
+                alert("Error al enviar correo de recuperación: " + err.message);
+            }
+        }
+
+        async function editUser(userId, currentName, currentRole) {
+            const newName = prompt("Nuevo nombre del usuario:", currentName);
+            if (newName === null) return; // Cancelado
+            
+            const newRole = prompt("Nuevo rol (asistente, medico, admin, root):", currentRole);
+            if (newRole === null) return; // Cancelado
+
+            if (!['asistente', 'medico', 'admin', 'root'].includes(newRole.toLowerCase())) {
+                alert("Rol inválido. Debe ser: asistente, medico, admin o root.");
+                return;
+            }
+
+            try {
+                const { error } = await supabaseClient.from('profiles').update({ 
+                    full_name: newName,
+                    role: newRole.toLowerCase()
+                }).eq('id', userId);
+                
+                if (error) throw error;
+                alert("Usuario actualizado exitosamente (Nota: si cambió el rol de admin/root, podría requerir que el usuario vuelva a iniciar sesión o configuración desde backend para permisos profundos).");
+                loadUsers();
+            } catch (err) {
+                alert("Error al actualizar usuario: " + err.message);
+            }
+        }
+
+        async function deleteUser(userId) {
+            if (!confirm('¿ESTÁS SEGURO? Eliminar el perfil del usuario limitará su acceso a las vistas de la plataforma. (Para borrarlo completamente de la base de datos se requiere acceso desde Supabase)')) return;
+            try {
+                // Borrar perfil, al no tener backend no podemos borrar auth.users de forma segura desde JS frontend
+                const { error } = await supabaseClient.from('profiles').delete().eq('id', userId);
+                if (error) throw error;
+                loadUsers();
+            } catch (err) {
+                alert("Error al eliminar el perfil del usuario: " + err.message);
             }
         }
 
