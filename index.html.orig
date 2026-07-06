@@ -303,7 +303,7 @@
                     // DEPURACIÓN: Verificar si el token se guardó
                     let foundKey = false;
                     for (let i = 0; i < localStorage.length; i++) {
-                        if (localStorage.key(i).includes('c-eslava-auth-token')) foundKey = true;
+                        if (localStorage.key(i).includes('auth-token')) foundKey = true;
                     }
                     if (!foundKey) {
                         alert('ERROR LOGIN: Supabase no guardó el token en localStorage después de hacer login.');
@@ -312,6 +312,7 @@
                     // Pequeño delay para asegurar que Supabase guarde la sesión en localStorage
                     setTimeout(() => {
                         window.location.href = `html/calendario_dashboard_desktop.html?role=${role}`;
+                    }, 500);
                     }, 500);
                 }
             } catch (error) {
