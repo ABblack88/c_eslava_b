@@ -318,16 +318,8 @@
                 </div>
             </div>
             <div class="grid grid-cols-2 gap-4">
-                <div>
-                    <label class="block text-sm font-semibold text-on-surface-variant mb-1">Tratamiento</label>
-                    <select id="appt-treatment" onchange="verificarSesionesPaciente()" required class="w-full bg-surface-container-low border-none rounded-xl py-3 px-4 text-body-md focus:ring-2 focus:ring-primary">
-                        <option value="Ondas de Choque">Ondas de Choque</option>
-                        <option value="Fisioterapia Deportiva">Fisioterapia Deportiva</option>
-                        <option value="Descarga Muscular">Descarga Muscular</option>
-                        <option value="Evaluación Inicial">Evaluación Inicial</option>
-                    </select>
-                </div>
-                <div>
+                <input type="hidden" id="appt-treatment" value="Por Definir">
+                <div class="col-span-2">
                     <label class="block text-sm font-semibold text-on-surface-variant mb-1">Tratante</label>
                     <select id="appt-doctor" required class="w-full bg-surface-container-low border-none rounded-xl py-3 px-4 text-body-md focus:ring-2 focus:ring-primary">
                         <option value="Dr. Eslava">Dr. Eslava</option>
@@ -845,7 +837,7 @@
             window.serviciosActivos = data;
             
             const selectTratamiento = document.getElementById('appt-treatment');
-            if (selectTratamiento) {
+            if (selectTratamiento && selectTratamiento.tagName === 'SELECT') {
                 selectTratamiento.innerHTML = '';
                 data.forEach(s => {
                     const option = document.createElement('option');
