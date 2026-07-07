@@ -347,6 +347,23 @@
         data.forEach(cita => {
             const nombrePaciente = cita.pacientes ? cita.pacientes.nombre : 'Desconocido';
             const initials = nombrePaciente.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+            
+            let sessionStr = '-';
+            if (cita.tratamiento) {
+                const baseTrat = cita.tratamiento.replace('(Continuación)', '').trim();
+                const prevOccurrences = allCitas.filter(c => 
+                    c.paciente_id === cita.paciente_id && 
+                    c.tratamiento && 
+                    c.tratamiento.includes(baseTrat) && 
+                    c.estado !== 'Cancelada' &&
+                    (c.fecha < cita.fecha || (c.fecha === cita.fecha && (c.hora || '') <= (cita.hora || '')))
+                );
+                const totalOccurrences = allCitas.filter(c => c.paciente_id === cita.paciente_id && c.tratamiento && c.tratamiento.includes(baseTrat) && c.estado !== 'Cancelada').length;
+                if (cita.tratamiento.includes('(Continuación)') || totalOccurrences > 1) {
+                    sessionStr = prevOccurrences.length > 0 ? prevOccurrences.length : 1;
+                }
+            }
+            
             const colors = ['bg-primary-container text-on-primary-container', 'bg-secondary-container text-on-secondary-container', 'bg-tertiary-fixed text-on-tertiary-fixed'];
             const randomColor = colors[Math.abs(cita.id.hashCode ? cita.id.hashCode() : nombrePaciente.charCodeAt(0)) % colors.length];
             
@@ -376,6 +393,7 @@
                             <div>
                                 <h3 class="font-body-lg text-body-lg font-semibold text-on-surface">${nombrePaciente}</h3>
                                 <p class="font-label-sm text-label-sm text-primary">${cita.fecha} • ${horaFormat}</p>
+                                <p class="font-label-sm text-[11px] text-outline mt-0.5">Sesión: <span class="font-bold text-on-surface">${sessionStr}</span></p>
                             </div>
                         </div>
                     </div>

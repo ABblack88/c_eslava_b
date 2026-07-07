@@ -251,6 +251,7 @@
 
 <th class="px-8 py-4 text-xs font-bold uppercase tracking-widest text-outline">Paciente</th>
 <th class="px-8 py-4 text-xs font-bold uppercase tracking-widest text-outline">Estado</th>
+<th class="px-8 py-4 text-xs font-bold uppercase tracking-widest text-outline">Sesión</th>
 <th class="px-8 py-4 text-xs font-bold uppercase tracking-widest text-outline">Fecha y Hora</th>
 <th class="px-8 py-4 text-xs font-bold uppercase tracking-widest text-outline text-right">Acciones</th>
 </tr>
@@ -386,6 +387,26 @@
                 
                 const nombrePaciente = cita.pacientes ? cita.pacientes.nombre : 'Paciente Desconocido';
                 
+                let sessionStr = '-';
+                if (cita.tratamiento) {
+                    const baseTrat = cita.tratamiento.replace('(Continuación)', '').trim();
+                    const prevOccurrences = allCitas.filter(c => 
+                        c.paciente_id === cita.paciente_id && 
+                        c.tratamiento && 
+                        c.tratamiento.includes(baseTrat) && 
+                        c.estado !== 'Cancelada' &&
+                        (c.fecha < cita.fecha || (c.fecha === cita.fecha && (c.hora || '') <= (cita.hora || '')))
+                    );
+                    
+                    // Solo mostramos número si es una continuación explícita, o si hay más de 1 ocurrencia en todo el historial para este tratamiento.
+                    // Así evitamos marcar como "Sesión 1" tratamientos únicos que nunca tuvieron seguimiento.
+                    const totalOccurrences = allCitas.filter(c => c.paciente_id === cita.paciente_id && c.tratamiento && c.tratamiento.includes(baseTrat) && c.estado !== 'Cancelada').length;
+                    
+                    if (cita.tratamiento.includes('(Continuación)') || totalOccurrences > 1) {
+                        sessionStr = prevOccurrences.length > 0 ? prevOccurrences.length : 1;
+                    }
+                }
+                
                 const tr = document.createElement('tr');
                 tr.className = 'hover:bg-surface-bright transition-colors cursor-pointer group';
                 tr.onclick = () => {
@@ -415,6 +436,7 @@
                             <option value="Por Reprogramar" ${cita.estado === 'Por Reprogramar' ? 'selected' : ''} class="bg-surface-white text-on-surface">Por Reprogramar</option>
                         </select>
                     </td>
+                    <td class="px-8 py-4 text-sm font-bold text-on-surface">${sessionStr}</td>
                     <td class="px-8 py-4 text-sm text-on-surface-variant">${cita.fecha} <br> <span class="text-xs text-outline">${formatHora(cita.hora)}</span></td>
                     <td class="px-8 py-4 text-right">
                         <span class="material-symbols-outlined text-outline group-hover:text-primary">arrow_forward</span>
