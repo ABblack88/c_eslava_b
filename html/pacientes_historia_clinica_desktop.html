@@ -703,7 +703,7 @@
                         sessionText = `${prefix}: ${dateToShow}`;
                     }
                     
-                    sesionesHTML = `<span class="bg-surface-container-high text-on-surface px-2 py-1 rounded-md text-[10px] font-bold">${sessionText}</span>`;
+                    sesionesHTML = `<button onclick="event.stopPropagation(); const role = new URLSearchParams(window.location.search).get('role') || 'admin'; window.location.href='atencion_tiempo_real_desktop.html?cita_id=${targetCita.id}&role=' + role" class="bg-primary/10 text-primary px-2 py-1 rounded-md text-[10px] font-bold hover:bg-primary/20 transition-colors cursor-pointer text-left" title="Ir a la cita">${sessionText}</button>`;
                 }
 
                 const pagosPend = (paciente.pagos || []).filter(p => p.estado === 'Pendiente' || p.estado === 'Vencido').length;
