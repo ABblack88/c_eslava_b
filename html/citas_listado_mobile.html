@@ -291,6 +291,20 @@
     
     let allCitas = [];
 
+    async function cargarServicios() {
+        try {
+            const { data, error } = await window.supabaseClient
+                .from('servicios')
+                .select('*')
+                .eq('estado', 'Activo');
+            if (!error && data) {
+                window.serviciosActivos = data;
+            }
+        } catch (err) {
+            console.error("Error al cargar servicios:", err);
+        }
+    }
+
     async function cargarCitas() {
         try {
             const gridBody = document.getElementById('patientsGrid');
@@ -351,16 +365,20 @@
             let sessionStr = '-';
             if (cita.tratamiento) {
                 const baseTrat = cita.tratamiento.replace('(Continuación)', '').trim();
-                const prevOccurrences = allCitas.filter(c => 
-                    c.paciente_id === cita.paciente_id && 
-                    c.tratamiento && 
-                    c.tratamiento.includes(baseTrat) && 
-                    c.estado !== 'Cancelada' &&
-                    (c.fecha < cita.fecha || (c.fecha === cita.fecha && (c.hora || '') <= (cita.hora || '')))
-                );
-                const totalOccurrences = allCitas.filter(c => c.paciente_id === cita.paciente_id && c.tratamiento && c.tratamiento.includes(baseTrat) && c.estado !== 'Cancelada').length;
-                if (cita.tratamiento.includes('(Continuación)') || totalOccurrences > 1) {
-                    sessionStr = prevOccurrences.length > 0 ? prevOccurrences.length : 1;
+                const servicioObj = window.serviciosActivos ? window.serviciosActivos.find(s => s.nombre === baseTrat) : null;
+                
+                if (servicioObj && servicioObj.duracion && servicioObj.duracion > 1) {
+                    const prevOccurrences = allCitas.filter(c => 
+                        c.paciente_id === cita.paciente_id && 
+                        c.tratamiento && 
+                        c.tratamiento.includes(baseTrat) && 
+                        c.estado !== 'Cancelada' &&
+                        (c.fecha < cita.fecha || (c.fecha === cita.fecha && (c.hora || '') <= (cita.hora || '')))
+                    );
+                    const totalOccurrences = allCitas.filter(c => c.paciente_id === cita.paciente_id && c.tratamiento && c.tratamiento.includes(baseTrat) && c.estado !== 'Cancelada').length;
+                    if (cita.tratamiento.includes('(Continuación)') || totalOccurrences > 1 || prevOccurrences.length > 0) {
+                        sessionStr = prevOccurrences.length > 0 ? prevOccurrences.length : 1;
+                    }
                 }
             }
             
@@ -458,7 +476,8 @@
         }
     }
 
-    document.addEventListener("DOMContentLoaded", () => {
+    document.addEventListener("DOMContentLoaded", async () => {
+        await cargarServicios();
         cargarCitas();
         
         const searchInput = document.querySelector('input[placeholder="Buscar por nombre, ID o condición..."]');

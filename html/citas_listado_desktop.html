@@ -296,13 +296,27 @@
         
 
 
-        
-        document.addEventListener("DOMContentLoaded", () => {
+        document.addEventListener("DOMContentLoaded", async () => {
+            await cargarServicios();
             cargarCitas();
         });
 
         let allCitas = [];
         let estadoFiltro = 'Todos';
+
+        async function cargarServicios() {
+            try {
+                const { data, error } = await window.supabaseClient
+                    .from('servicios')
+                    .select('*')
+                    .eq('estado', 'Activo');
+                if (!error && data) {
+                    window.serviciosActivos = data;
+                }
+            } catch (err) {
+                console.error("Error al cargar servicios:", err);
+            }
+        }
 
         function filtrarPorEstado(estado, btnElement) {
             estadoFiltro = estado;
@@ -390,20 +404,22 @@
                 let sessionStr = '-';
                 if (cita.tratamiento) {
                     const baseTrat = cita.tratamiento.replace('(Continuación)', '').trim();
-                    const prevOccurrences = allCitas.filter(c => 
-                        c.paciente_id === cita.paciente_id && 
-                        c.tratamiento && 
-                        c.tratamiento.includes(baseTrat) && 
-                        c.estado !== 'Cancelada' &&
-                        (c.fecha < cita.fecha || (c.fecha === cita.fecha && (c.hora || '') <= (cita.hora || '')))
-                    );
+                    const servicioObj = window.serviciosActivos ? window.serviciosActivos.find(s => s.nombre === baseTrat) : null;
                     
-                    // Solo mostramos número si es una continuación explícita, o si hay más de 1 ocurrencia en todo el historial para este tratamiento.
-                    // Así evitamos marcar como "Sesión 1" tratamientos únicos que nunca tuvieron seguimiento.
-                    const totalOccurrences = allCitas.filter(c => c.paciente_id === cita.paciente_id && c.tratamiento && c.tratamiento.includes(baseTrat) && c.estado !== 'Cancelada').length;
-                    
-                    if (cita.tratamiento.includes('(Continuación)') || totalOccurrences > 1) {
-                        sessionStr = prevOccurrences.length > 0 ? prevOccurrences.length : 1;
+                    if (servicioObj && servicioObj.duracion && servicioObj.duracion > 1) {
+                        const prevOccurrences = allCitas.filter(c => 
+                            c.paciente_id === cita.paciente_id && 
+                            c.tratamiento && 
+                            c.tratamiento.includes(baseTrat) && 
+                            c.estado !== 'Cancelada' &&
+                            (c.fecha < cita.fecha || (c.fecha === cita.fecha && (c.hora || '') <= (cita.hora || '')))
+                        );
+                        
+                        const totalOccurrences = allCitas.filter(c => c.paciente_id === cita.paciente_id && c.tratamiento && c.tratamiento.includes(baseTrat) && c.estado !== 'Cancelada').length;
+                        
+                        if (cita.tratamiento.includes('(Continuación)') || totalOccurrences > 1 || prevOccurrences.length > 0) {
+                            sessionStr = prevOccurrences.length > 0 ? prevOccurrences.length : 1;
+                        }
                     }
                 }
                 
