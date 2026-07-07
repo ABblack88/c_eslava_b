@@ -205,9 +205,51 @@
 <p class="text-body-lg text-on-surface-variant max-w-2xl">Ajusta los parámetros operativos de la clínica en tiempo real.</p>
 </div>
 <!-- Split View Layout -->
-<div class="flex flex-col gap-8 items-start">
+<div class="flex flex-col gap-8 items-start w-full">
+<!-- Zona de Cuenta: Control de Cuenta -->
+<section id="cuenta-settings-section" class="w-full space-y-8 mb-4">
+    <div class="bg-surface-white p-8 rounded-3xl shadow-[0px_10px_30px_rgba(0,0,0,0.04)] flex flex-col gap-6">
+        <div class="flex items-center gap-3 border-b border-surface-variant pb-4">
+            <span class="material-symbols-outlined text-primary text-2xl">manage_accounts</span>
+            <h2 class="font-headline-md text-headline-md text-on-background">Control de Cuenta</h2>
+        </div>
+        <div class="flex flex-col md:flex-row gap-6">
+            <div class="flex-1 space-y-4">
+                <div>
+                    <label class="block text-sm font-bold text-on-surface mb-1">Usuario / Nombre</label>
+                    <input type="text" id="account-nombre" class="w-full rounded-xl border-outline-variant px-4 py-2 focus:ring-primary focus:border-primary bg-surface-container-low" disabled>
+                </div>
+                <div>
+                    <label class="block text-sm font-bold text-on-surface mb-1">Correo Electrónico</label>
+                    <input type="email" id="account-email" class="w-full rounded-xl border-outline-variant px-4 py-2 focus:ring-primary focus:border-primary" placeholder="tu@correo.com">
+                </div>
+                <div>
+                    <label class="block text-sm font-bold text-on-surface mb-1">Datos Personales (Teléfono, etc)</label>
+                    <input type="text" id="account-datos" class="w-full rounded-xl border-outline-variant px-4 py-2 focus:ring-primary focus:border-primary" placeholder="Datos adicionales...">
+                </div>
+                <div>
+                    <label class="block text-sm font-bold text-on-surface mb-1">Cambiar Contraseña</label>
+                    <input type="password" id="account-password" class="w-full rounded-xl border-outline-variant px-4 py-2 focus:ring-primary focus:border-primary" placeholder="Nueva contraseña (opcional)">
+                </div>
+                <div class="pt-2">
+                    <button onclick="guardarDatosCuenta()" class="bg-primary hover:bg-primary-container text-on-primary font-bold px-6 py-2 rounded-xl transition-colors shadow-sm">
+                        Guardar Cambios
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- Logout for all users -->
+        <div class="pt-4 mt-2 border-t border-surface-variant">
+            <button onclick="cerrarSesion()" class="flex items-center justify-center gap-3 px-6 py-3 rounded-xl bg-error/10 hover:bg-error/20 text-error font-bold transition-all active:scale-95 border border-error/20 group w-full md:w-auto">
+                <span class="material-symbols-outlined group-hover:scale-110 transition-transform">logout</span>
+                <span class="font-body-md">Cerrar Sesión</span>
+            </button>
+        </div>
+    </div>
+</section>
+
 <!-- Left Side: Clinical Offerings (Services) removed -->
-<section class="w-full space-y-8">
+<section id="admin-settings-section" class="w-full space-y-8">
 <div class="bg-surface-white p-8 rounded-3xl shadow-[0px_10px_30px_rgba(0,0,0,0.04)] flex flex-col gap-8">
 <div>
 <h3 class="font-headline-md text-headline-md flex items-center gap-2 mb-6">
@@ -431,6 +473,77 @@
 
 <!-- Contextual Micro-interactions -->
 <script>
+        // --- GESTIÓN DE CUENTA ---
+        async function cargarDatosCuenta() {
+            try {
+                const { data: { session }, error } = await supabaseClient.auth.getSession();
+                if (error || !session) return;
+                
+                const user = session.user;
+                const emailInput = document.getElementById('account-email');
+                if (emailInput) emailInput.value = user.email;
+                
+                const { data: profile } = await supabaseClient.from('profiles').select('*').eq('id', user.id).single();
+                if (profile) {
+                    const nombreInput = document.getElementById('account-nombre');
+                    if (nombreInput) nombreInput.value = profile.nombre || '';
+                    
+                    const datosInput = document.getElementById('account-datos');
+                    if (datosInput) datosInput.value = profile.datos_personales || '';
+                }
+            } catch (err) {
+                console.error("Error al cargar datos de cuenta:", err);
+            }
+        }
+
+        async function guardarDatosCuenta() {
+            try {
+                const btn = event.currentTarget;
+                const originalText = btn.innerHTML;
+                btn.innerHTML = 'Guardando...';
+                btn.disabled = true;
+
+                const { data: { session } } = await supabaseClient.auth.getSession();
+                if (!session) return;
+
+                const email = document.getElementById('account-email').value;
+                const password = document.getElementById('account-password').value;
+                const datosPersonales = document.getElementById('account-datos').value;
+
+                // Update auth (email/password)
+                let authUpdates = {};
+                if (email && email !== session.user.email) authUpdates.email = email;
+                if (password) authUpdates.password = password;
+                
+                if (Object.keys(authUpdates).length > 0) {
+                    const { error } = await supabaseClient.auth.updateUser(authUpdates);
+                    if (error) throw error;
+                }
+
+                // Update profile (datos)
+                const { error: profileError } = await supabaseClient.from('profiles')
+                    .update({ datos_personales: datosPersonales })
+                    .eq('id', session.user.id);
+                
+                if (profileError) throw profileError;
+
+                alert('Datos de cuenta actualizados correctamente.');
+                document.getElementById('account-password').value = '';
+
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            } catch (err) {
+                console.error("Error al guardar cuenta:", err);
+                alert("Error al actualizar la cuenta: " + err.message);
+                event.currentTarget.innerHTML = 'Guardar Cambios';
+                event.currentTarget.disabled = false;
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            cargarDatosCuenta();
+        });
+
         // --- CERRAR SESIÓN ---
         async function cerrarSesion() {
             if (!confirm('¿Deseas cerrar sesión?')) return;

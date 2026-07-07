@@ -286,7 +286,7 @@
                             <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Rol a Asignar</label>
                             <select id="nuevo-rol" required class="w-full bg-black border border-white/10 rounded-lg py-2.5 px-3 text-sm text-white focus:border-primary focus:outline-none transition-colors">
                                 <option value="asistente">Asistente Clínico</option>
-                                <option value="medico">Médico / Especialista</option>
+                                <option value="tratante">Tratante / Especialista</option>
                                 <option value="admin">Administrador</option>
                             </select>
                         </div>
@@ -456,7 +456,7 @@
                     const tr = document.createElement('tr');
                     tr.className = "hover:bg-white/5 transition-colors";
                     
-                    const roleColor = user.role === 'medico' ? 'bg-green-500/20 text-green-400' : 
+                    const roleColor = user.role === 'tratante' ? 'bg-green-500/20 text-green-400' : 
                                       user.role === 'admin' ? 'bg-blue-500/20 text-blue-400' : 
                                       'bg-purple-500/20 text-purple-400';
                                       
@@ -518,11 +518,11 @@
             const newName = prompt("Nuevo nombre del usuario:", currentName);
             if (newName === null) return; // Cancelado
             
-            const newRole = prompt("Nuevo rol (asistente, medico, admin, root):", currentRole);
-            if (newRole === null) return; // Cancelado
-
-            if (!['asistente', 'medico', 'admin', 'root'].includes(newRole.toLowerCase())) {
-                alert("Rol inválido. Debe ser: asistente, medico, admin o root.");
+            const newRole = prompt("Nuevo rol (asistente, tratante, admin, root):", currentRole);
+            if (!newRole) return;
+            
+            if (!['asistente', 'tratante', 'admin', 'root'].includes(newRole.toLowerCase())) {
+                alert("Rol inválido. Debe ser: asistente, tratante, admin o root.");
                 return;
             }
 

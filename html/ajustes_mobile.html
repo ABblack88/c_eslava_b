@@ -218,7 +218,7 @@
 <!-- Full Width Layout -->
 <div class="flex flex-col gap-8 items-start">
 <!-- Management & Settings Side Panel -->
-<section class="w-full flex flex-col gap-6">
+<section id="admin-settings-section" class="w-full flex flex-col gap-6">
 <!-- Ajustes (Settings) Card -->
 <div class="bg-surface-white rounded-xl p-6 shadow-[0px_10px_30px_rgba(0,0,0,0.04)] flex flex-col gap-6">
 <div class="flex items-center gap-3 border-b border-surface-variant pb-4">
@@ -344,25 +344,41 @@
 </div>
 
 <!-- Zona de Cuenta: Cerrar Sesión -->
-<div class="bg-surface-white rounded-xl p-6 shadow-[0px_10px_30px_rgba(0,0,0,0.04)] flex flex-col gap-4">
-    <div class="flex items-center gap-3 border-b border-surface-variant pb-4">
-        <span class="material-symbols-outlined text-on-surface-variant">manage_accounts</span>
-        <h2 class="font-headline-md text-headline-md text-on-background">Cuenta</h2>
-    </div>
-    <div class="flex items-center gap-4 py-2">
-        <div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-            <span class="material-symbols-outlined text-primary">account_circle</span>
+<section id="cuenta-settings-section" class="w-full flex flex-col gap-6 w-full">
+    <div class="bg-surface-white rounded-xl p-6 shadow-[0px_10px_30px_rgba(0,0,0,0.04)] flex flex-col gap-4">
+        <div class="flex items-center gap-3 border-b border-surface-variant pb-4">
+            <span class="material-symbols-outlined text-primary text-2xl">manage_accounts</span>
+            <h2 class="font-headline-md text-headline-md text-on-background">Cuenta</h2>
         </div>
-        <div>
-            <p class="font-bold text-on-surface">Dr. Eslava</p>
-            <p class="text-sm text-on-surface-variant">Director Clínico &bull; Admin</p>
+        <div class="flex flex-col gap-4 py-2">
+            <div>
+                <label class="block text-sm font-bold text-on-surface mb-1">Usuario / Nombre</label>
+                <input type="text" id="account-nombre" class="w-full rounded-xl border-outline-variant px-4 py-2 focus:ring-primary focus:border-primary bg-surface-container-low" disabled>
+            </div>
+            <div>
+                <label class="block text-sm font-bold text-on-surface mb-1">Correo Electrónico</label>
+                <input type="email" id="account-email" class="w-full rounded-xl border-outline-variant px-4 py-2 focus:ring-primary focus:border-primary" placeholder="tu@correo.com">
+            </div>
+            <div>
+                <label class="block text-sm font-bold text-on-surface mb-1">Datos Personales</label>
+                <input type="text" id="account-datos" class="w-full rounded-xl border-outline-variant px-4 py-2 focus:ring-primary focus:border-primary" placeholder="Datos adicionales...">
+            </div>
+            <div>
+                <label class="block text-sm font-bold text-on-surface mb-1">Cambiar Contraseña</label>
+                <input type="password" id="account-password" class="w-full rounded-xl border-outline-variant px-4 py-2 focus:ring-primary focus:border-primary" placeholder="Nueva contraseña (opcional)">
+            </div>
+            <div class="pt-2 pb-4 border-b border-surface-variant">
+                <button onclick="guardarDatosCuenta()" class="w-full bg-primary hover:bg-primary-container text-on-primary font-bold px-6 py-3 rounded-xl transition-colors shadow-sm text-center">
+                    Guardar Cambios
+                </button>
+            </div>
         </div>
+        <button onclick="cerrarSesion()" class="w-full flex items-center justify-center gap-3 px-4 py-3 rounded-xl bg-error/10 hover:bg-error/20 text-error font-bold transition-all active:scale-95 border border-error/20 group mt-2">
+            <span class="material-symbols-outlined group-hover:scale-110 transition-transform">logout</span>
+            <span class="font-body-md text-body-md">Cerrar Sesión</span>
+        </button>
     </div>
-    <button onclick="cerrarSesion()" class="w-full flex items-center justify-center gap-3 px-4 py-4 rounded-xl bg-error/10 hover:bg-error/20 text-error font-bold transition-all active:scale-95 border border-error/20 group">
-        <span class="material-symbols-outlined group-hover:scale-110 transition-transform">logout</span>
-        <span class="font-body-md text-body-md">Cerrar Sesión</span>
-    </button>
-</div>
+</section>
 
 </div>
 </main>
@@ -489,6 +505,73 @@
 </a>
 </nav>
     <script>
+        // --- GESTIÓN DE CUENTA ---
+        async function cargarDatosCuenta() {
+            try {
+                const { data: { session }, error } = await supabaseClient.auth.getSession();
+                if (error || !session) return;
+                
+                const user = session.user;
+                const emailInput = document.getElementById('account-email');
+                if (emailInput) emailInput.value = user.email;
+                
+                const { data: profile } = await supabaseClient.from('profiles').select('*').eq('id', user.id).single();
+                if (profile) {
+                    const nombreInput = document.getElementById('account-nombre');
+                    if (nombreInput) nombreInput.value = profile.nombre || '';
+                    
+                    const datosInput = document.getElementById('account-datos');
+                    if (datosInput) datosInput.value = profile.datos_personales || '';
+                }
+            } catch (err) {
+                console.error("Error al cargar datos de cuenta:", err);
+            }
+        }
+
+        async function guardarDatosCuenta() {
+            try {
+                const btn = event.currentTarget;
+                const originalText = btn.innerHTML;
+                btn.innerHTML = 'Guardando...';
+                btn.disabled = true;
+
+                const { data: { session } } = await supabaseClient.auth.getSession();
+                if (!session) return;
+
+                const email = document.getElementById('account-email').value;
+                const password = document.getElementById('account-password').value;
+                const datosPersonales = document.getElementById('account-datos').value;
+
+                // Update auth (email/password)
+                let authUpdates = {};
+                if (email && email !== session.user.email) authUpdates.email = email;
+                if (password) authUpdates.password = password;
+                
+                if (Object.keys(authUpdates).length > 0) {
+                    const { error } = await supabaseClient.auth.updateUser(authUpdates);
+                    if (error) throw error;
+                }
+
+                // Update profile (datos)
+                const { error: profileError } = await supabaseClient.from('profiles')
+                    .update({ datos_personales: datosPersonales })
+                    .eq('id', session.user.id);
+                
+                if (profileError) throw profileError;
+
+                alert('Datos de cuenta actualizados correctamente.');
+                document.getElementById('account-password').value = '';
+
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            } catch (err) {
+                console.error("Error al guardar cuenta:", err);
+                alert("Error al actualizar la cuenta: " + err.message);
+                event.currentTarget.innerHTML = 'Guardar Cambios';
+                event.currentTarget.disabled = false;
+            }
+        }
+
         // --- CERRAR SESIÓN ---
         async function cerrarSesion() {
             if (!confirm('¿Deseas cerrar sesión?')) return;
@@ -502,6 +585,7 @@
             cargarServicios();
             cargarProductos();
             cargarAjustes();
+            cargarDatosCuenta();
         });
 
         function cargarAjustes() {

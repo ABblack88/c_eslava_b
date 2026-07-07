@@ -9,18 +9,25 @@ function applyRBACRules() {
     const role = getRoleFromURL();
 
     // 1. Hide tabs/links based on role
+    const linkServicios = document.getElementById("nav-link-servicios");
+    const linkCobrar = document.getElementById("nav-link-cobrar");
     const linkFinanzas = document.getElementById("nav-link-finanzas");
     const linkAjustes = document.getElementById("nav-link-ajustes");
     const resumenCuentaCard = document.getElementById("resumen-cuenta-card");
 
-    if (role === 'medico') {
+    if (role === 'tratante' || role === 'asistente') {
+        if (linkServicios) linkServicios.style.display = 'none';
+        if (linkCobrar) linkCobrar.style.display = 'none';
         if (linkFinanzas) linkFinanzas.style.display = 'none';
+        
+        // Hide summary card for both roles
         if (resumenCuentaCard) resumenCuentaCard.style.display = 'none';
-    } else if (role === 'asistente') {
-        if (linkFinanzas) linkFinanzas.style.display = 'none';
-        if (linkAjustes) linkAjustes.style.display = 'none';
-        if (resumenCuentaCard) resumenCuentaCard.style.display = 'none';
+
+        // Hide non-account settings in Ajustes
+        const adminSettings = document.getElementById("admin-settings-section");
+        if (adminSettings) adminSettings.style.display = 'none';
     }
+
     // 2. Inyectar botón de Master Root o Admin en el SideNavBar
     if (role === 'root' || role === 'admin') {
         const navBar = document.querySelector('nav');
@@ -39,7 +46,7 @@ function applyRBACRules() {
 
     // 3. Dashboard Specific Rules (calendario_dashboard)
     const financialCard = document.getElementById("financial-insight-card");
-    if (financialCard && (role === 'medico' || role === 'asistente')) {
+    if (financialCard && (role === 'tratante' || role === 'asistente')) {
         financialCard.innerHTML = `
             <div class="relative z-10 flex flex-col justify-between h-full">
                 <div>

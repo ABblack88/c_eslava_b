@@ -386,14 +386,14 @@
                 } catch(e) { console.error(e); }
             }
 
-            // Load medicos if not loaded
-            if (globalMedicos.length === 0) {
+            // Load tratantes if not loaded
+            if (globalTratantes.length === 0) {
                 try {
-                    const { data: meds } = await supabaseClient.from('profiles').select('*').eq('role', 'medico').order('full_name');
-                    globalMedicos = meds || [];
-                    const selectMed = document.getElementById('invoice-medico');
-                    selectMed.innerHTML = '<option value="">Sin Médico (No aplica comisión)</option>';
-                    globalMedicos.forEach(m => {
+                    const { data: meds } = await supabaseClient.from('profiles').select('*').eq('role', 'tratante').order('full_name');
+                    globalTratantes = meds || [];
+                    const selectMed = document.getElementById('invoice-tratante');
+                    selectMed.innerHTML = '<option value="">Sin Tratante (No aplica comisión)</option>';
+                    globalTratantes.forEach(m => {
                         selectMed.innerHTML += `<option value="${m.id}">${m.full_name || m.email}</option>`;
                     });
                 } catch(e) { console.error(e); }
@@ -723,7 +723,7 @@
                 const nroOperacion = document.getElementById('invoice-nro-operacion') ? document.getElementById('invoice-nro-operacion').value : '';
                 let metodo = document.getElementById('invoice-metodo') ? document.getElementById('invoice-metodo').value : '';
                 const tipoTarjeta = document.getElementById('invoice-tipo-tarjeta') ? document.getElementById('invoice-tipo-tarjeta').value : null;
-                const medicoId = document.getElementById('invoice-medico') ? document.getElementById('invoice-medico').value : null;
+                const medicoId = document.getElementById('invoice-tratante') ? document.getElementById('invoice-tratante').value : null;
 
                 if (!pacId) {
                     alert("Seleccione un paciente.");
@@ -1130,15 +1130,15 @@
                 } catch(e) { console.error(e); }
             }
 
-            // Load medicos
-            if (globalMedicos.length === 0) {
+            // Load tratantes
+            if (medicosCargados.length === 0) {
                 try {
-                    const { data: meds } = await supabaseClient.from('profiles').select('*').eq('role', 'medico').order('full_name');
-                    globalMedicos = meds || [];
-                    const selectMed = document.getElementById('invoice-medico');
+                    const { data: meds } = await supabaseClient.from('profiles').select('*').eq('role', 'tratante').order('full_name');
+                    if (meds) medicosCargados = meds;
+                    const selectMed = document.getElementById('invoice-tratante');
                     if (selectMed) {
-                        selectMed.innerHTML = '<option value="">Sin Médico (No aplica comisión)</option>';
-                        globalMedicos.forEach(m => {
+                        selectMed.innerHTML = '<option value="">Sin Tratante (No aplica comisión)</option>';
+                        medicosCargados.forEach(m => {
                             selectMed.innerHTML += `<option value="${m.id}">${m.full_name || m.email}</option>`;
                         });
                     }
