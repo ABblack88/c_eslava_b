@@ -174,8 +174,20 @@
                     <div class="space-y-2 mb-6">
                         <label class="block text-sm font-bold text-on-surface text-primary">Tratamientos Realizados</label>
                         <p class="text-xs text-outline mb-1">Seleccione los servicios brindados en esta sesión. El costo se sumará automáticamente en caja.</p>
-                        <div id="tratamientosContainer" class="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-48 overflow-y-auto p-4 border border-outline-variant rounded-xl bg-surface-container-lowest">
+                        <div id="tratamientosContainer" class="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-48 overflow-y-auto p-4 border border-outline-variant rounded-xl bg-surface-container-lowest mb-3">
                             <p class="text-xs text-outline italic col-span-full">Cargando tratamientos...</p>
+                        </div>
+                        
+                        <!-- Panel de Paquetes y Continuación -->
+                        <div class="p-4 bg-surface-container-low border border-outline-variant rounded-xl flex flex-col gap-2">
+                            <label class="flex items-center gap-3 cursor-pointer">
+                                <input type="checkbox" id="esContinuacionCheckbox" class="rounded border-outline-variant text-primary focus:ring-primary h-5 w-5">
+                                <span class="text-sm font-bold text-on-surface">Marcar como Continuación de Paquete / Sesión</span>
+                            </label>
+                            <div class="ml-8 text-xs text-outline flex flex-col gap-1">
+                                <span>Si activas esta opción, el costo de la cita será <strong class="text-primary">S/. 0.00</strong> (ya pagado en sesión previa).</span>
+                                <span id="sesiones-counter-text" class="text-secondary font-bold hidden">Calculando sesiones previas...</span>
+                            </div>
                         </div>
                     </div>
 
@@ -259,7 +271,14 @@
 
                 let tratamientosSeleccionados = [];
                 if (currentCita && currentCita.tratamiento) {
-                    tratamientosSeleccionados = currentCita.tratamiento.split(',').map(t => t.trim());
+                    const isCont = currentCita.tratamiento.includes('(Continuación)');
+                    if (isCont) {
+                        setTimeout(() => { 
+                            const chk = document.getElementById('esContinuacionCheckbox');
+                            if(chk) chk.checked = true; 
+                        }, 50);
+                    }
+                    tratamientosSeleccionados = currentCita.tratamiento.split(',').map(t => t.trim().replace(' (Continuación)', ''));
                 }
 
                 if (servicios && servicios.length > 0) {
@@ -268,7 +287,7 @@
                         
                         container.innerHTML += `
                             <label class="flex items-start gap-3 cursor-pointer p-3 rounded-lg hover:bg-surface-container transition-colors border border-transparent hover:border-outline-variant/30">
-                                <input type="checkbox" name="tratamientoCobrado" value="${srv.nombre}" data-precio="${srv.precio}" ${isChecked} class="mt-0.5 rounded border-outline-variant text-primary focus:ring-primary h-4 w-4">
+                                <input type="checkbox" onchange="calcularSesionesPrevias()" name="tratamientoCobrado" value="${srv.nombre}" data-precio="${srv.precio}" ${isChecked} class="mt-0.5 rounded border-outline-variant text-primary focus:ring-primary h-4 w-4">
                                 <div class="flex-1 text-sm leading-tight">
                                     <span class="block font-bold text-on-surface">${srv.nombre}</span>
                                     <span class="block text-xs text-primary font-semibold mt-1">S/. ${parseFloat(srv.precio).toFixed(2)}</span>
@@ -279,6 +298,8 @@
                 } else {
                     container.innerHTML = '<p class="text-xs text-outline italic col-span-full">Sin servicios disponibles</p>';
                 }
+
+                setTimeout(() => calcularSesionesPrevias(), 500);
             } catch (err) {
                 console.error("Error cargando servicios:", err);
             }
@@ -286,9 +307,63 @@
 
         function getTratamientosSeleccionados() {
             const checkboxes = document.querySelectorAll('input[name="tratamientoCobrado"]:checked');
-            const seleccionados = Array.from(checkboxes).map(cb => cb.value);
-            const montoTotal = Array.from(checkboxes).reduce((sum, cb) => sum + parseFloat(cb.getAttribute('data-precio') || 0), 0);
+            const isCont = document.getElementById('esContinuacionCheckbox') ? document.getElementById('esContinuacionCheckbox').checked : false;
+            
+            let seleccionados = [];
+            let montoTotal = 0;
+            
+            checkboxes.forEach(cb => {
+                let name = cb.value;
+                if (isCont) {
+                    name += ' (Continuación)';
+                } else {
+                    montoTotal += parseFloat(cb.getAttribute('data-precio') || 0);
+                }
+                seleccionados.push(name);
+            });
+            
             return { tratamientos: seleccionados.join(', '), montoTotal };
+        }
+
+        async function calcularSesionesPrevias() {
+            if (!currentPaciente) return;
+            const checkboxes = document.querySelectorAll('input[name="tratamientoCobrado"]:checked');
+            const counterText = document.getElementById('sesiones-counter-text');
+            if (!counterText) return;
+
+            if (checkboxes.length === 0) {
+                counterText.classList.add('hidden');
+                return;
+            }
+            
+            const tratSeleccionado = checkboxes[0].value;
+            
+            try {
+                counterText.classList.remove('hidden');
+                counterText.innerHTML = `Calculando historial de "${tratSeleccionado}"...`;
+                
+                const { data: pastCitas } = await supabaseClient
+                    .from('citas')
+                    .select('tratamiento')
+                    .eq('paciente_id', currentPaciente.id)
+                    .neq('estado', 'Cancelada');
+                    
+                let count = 0;
+                if (pastCitas) {
+                    pastCitas.forEach(c => {
+                        if (c.tratamiento && c.tratamiento.includes(tratSeleccionado)) {
+                            count++;
+                        }
+                    });
+                }
+                
+                counterText.innerHTML = `<span class="material-symbols-outlined text-[14px] align-middle">history</span> El paciente tiene <strong>${count} citas registradas</strong> que incluyen "${tratSeleccionado}".`;
+                
+                // Si ya tiene citas con este tratamiento, autochequear continuación si es mayor a 0 y esta cita no es de hoy recién creada (lógica sugerida, dejamos que doctor lo chequee manual)
+            } catch (err) {
+                console.error("Error al contar sesiones previas:", err);
+                counterText.classList.add('hidden');
+            }
         }
 
         async function cargarDatosCita() {

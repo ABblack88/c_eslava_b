@@ -127,10 +127,23 @@
                     </div>
                 </div>
                 
+                <div class="space-y-2 mb-4">
                     <label class="block text-xs font-bold text-on-surface text-primary">Tratamientos Realizados</label>
                     <p class="text-[10px] text-outline mb-1">Seleccione los servicios brindados. El costo se sumará automáticamente.</p>
-                    <div id="tratamientosContainer" class="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-40 overflow-y-auto p-3 border border-outline-variant rounded-xl bg-surface-container-lowest">
+                    <div id="tratamientosContainer" class="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-40 overflow-y-auto p-3 border border-outline-variant rounded-xl bg-surface-container-lowest mb-2">
                         <p class="text-[10px] text-outline italic col-span-full">Cargando tratamientos...</p>
+                    </div>
+                    
+                    <!-- Panel de Paquetes y Continuación Mobile -->
+                    <div class="p-3 bg-surface-container-low border border-outline-variant rounded-xl flex flex-col gap-1">
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="checkbox" id="esContinuacionCheckbox" class="rounded border-outline-variant text-primary focus:ring-primary h-4 w-4">
+                            <span class="text-xs font-bold text-on-surface">Marcar como Continuación</span>
+                        </label>
+                        <div class="ml-6 text-[10px] text-outline flex flex-col gap-0.5">
+                            <span>El costo será <strong class="text-primary">S/. 0.00</strong>.</span>
+                            <span id="sesiones-counter-text" class="text-secondary font-bold hidden">Calculando...</span>
+                        </div>
                     </div>
                 </div>
 
@@ -211,7 +224,14 @@
 
                 let tratamientosSeleccionados = [];
                 if (currentCita && currentCita.tratamiento) {
-                    tratamientosSeleccionados = currentCita.tratamiento.split(',').map(t => t.trim());
+                    const isCont = currentCita.tratamiento.includes('(Continuación)');
+                    if (isCont) {
+                        setTimeout(() => { 
+                            const chk = document.getElementById('esContinuacionCheckbox');
+                            if(chk) chk.checked = true; 
+                        }, 50);
+                    }
+                    tratamientosSeleccionados = currentCita.tratamiento.split(',').map(t => t.trim().replace(' (Continuación)', ''));
                 }
 
                 if (servicios && servicios.length > 0) {
@@ -220,7 +240,7 @@
                         
                         container.innerHTML += `
                             <label class="flex items-start gap-2 cursor-pointer p-2 rounded-lg hover:bg-surface-container transition-colors border border-transparent hover:border-outline-variant/30">
-                                <input type="checkbox" name="tratamientoCobrado" value="${srv.nombre}" data-precio="${srv.precio}" ${isChecked} class="mt-0.5 rounded border-outline-variant text-primary focus:ring-primary h-3.5 w-3.5">
+                                <input type="checkbox" onchange="calcularSesionesPrevias()" name="tratamientoCobrado" value="${srv.nombre}" data-precio="${srv.precio}" ${isChecked} class="mt-0.5 rounded border-outline-variant text-primary focus:ring-primary h-3.5 w-3.5">
                                 <div class="flex-1 text-xs leading-tight">
                                     <span class="block font-bold text-on-surface">${srv.nombre}</span>
                                     <span class="block text-[10px] text-primary font-semibold mt-0.5">S/. ${parseFloat(srv.precio).toFixed(2)}</span>
@@ -231,6 +251,7 @@
                 } else {
                     container.innerHTML = '<p class="text-[10px] text-outline italic col-span-full">Sin servicios disponibles</p>';
                 }
+                setTimeout(() => calcularSesionesPrevias(), 500);
             } catch (err) {
                 console.error("Error cargando servicios:", err);
             }
@@ -238,9 +259,61 @@
 
         function getTratamientosSeleccionados() {
             const checkboxes = document.querySelectorAll('input[name="tratamientoCobrado"]:checked');
-            const seleccionados = Array.from(checkboxes).map(cb => cb.value);
-            const montoTotal = Array.from(checkboxes).reduce((sum, cb) => sum + parseFloat(cb.getAttribute('data-precio') || 0), 0);
+            const isCont = document.getElementById('esContinuacionCheckbox') ? document.getElementById('esContinuacionCheckbox').checked : false;
+            
+            let seleccionados = [];
+            let montoTotal = 0;
+            
+            checkboxes.forEach(cb => {
+                let name = cb.value;
+                if (isCont) {
+                    name += ' (Continuación)';
+                } else {
+                    montoTotal += parseFloat(cb.getAttribute('data-precio') || 0);
+                }
+                seleccionados.push(name);
+            });
+            
             return { tratamientos: seleccionados.join(', '), montoTotal };
+        }
+
+        async function calcularSesionesPrevias() {
+            if (!currentPaciente) return;
+            const checkboxes = document.querySelectorAll('input[name="tratamientoCobrado"]:checked');
+            const counterText = document.getElementById('sesiones-counter-text');
+            if (!counterText) return;
+
+            if (checkboxes.length === 0) {
+                counterText.classList.add('hidden');
+                return;
+            }
+            
+            const tratSeleccionado = checkboxes[0].value;
+            
+            try {
+                counterText.classList.remove('hidden');
+                counterText.innerHTML = `Calculando historial...`;
+                
+                const { data: pastCitas } = await supabaseClient
+                    .from('citas')
+                    .select('tratamiento')
+                    .eq('paciente_id', currentPaciente.id)
+                    .neq('estado', 'Cancelada');
+                    
+                let count = 0;
+                if (pastCitas) {
+                    pastCitas.forEach(c => {
+                        if (c.tratamiento && c.tratamiento.includes(tratSeleccionado)) {
+                            count++;
+                        }
+                    });
+                }
+                
+                counterText.innerHTML = `<span class="material-symbols-outlined text-[12px] align-middle">history</span> <strong>${count} citas registradas</strong>.`;
+            } catch (err) {
+                console.error("Error al contar sesiones previas:", err);
+                counterText.classList.add('hidden');
+            }
         }
 
         async function cargarDatosCita() {
