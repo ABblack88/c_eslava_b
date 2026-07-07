@@ -276,12 +276,20 @@
 </div>
 <div class="grid grid-cols-2 gap-4 mb-4">
     <div>
-        <p class="text-[10px] text-outline font-bold uppercase mb-1">Total Pagado</p>
-        <p class="text-lg font-bold text-success" id="patient-paid-balance">S/. 0.00</p>
+        <p class="text-[10px] text-outline font-bold uppercase mb-1">Total Invertido</p>
+        <p class="text-xl font-bold text-on-surface" id="patient-total-inversion">S/. 0.00</p>
     </div>
     <div>
-        <p class="text-[10px] text-outline font-bold uppercase mb-1">Saldo Pendiente</p>
-        <p class="text-lg font-bold text-error" id="patient-pending-balance">S/. 0.00</p>
+        <p class="text-[10px] text-outline font-bold uppercase mb-1">Visitas</p>
+        <p class="text-xs font-bold text-on-surface-variant mt-1 leading-tight" id="patient-frecuencia">--</p>
+    </div>
+    <div>
+        <p class="text-[10px] text-outline font-bold uppercase mb-1">Total Pagado</p>
+        <p class="text-md font-bold text-success" id="patient-paid-balance">S/. 0.00</p>
+    </div>
+    <div>
+        <p class="text-[10px] text-outline font-bold uppercase mb-1">Por Pagar</p>
+        <p class="text-md font-bold text-error" id="patient-pending-balance">S/. 0.00</p>
     </div>
 </div>
 <div class="mt-4 pt-4 border-t border-outline-variant/30">
@@ -698,21 +706,27 @@
 
                 const totalPendiente = (pagos || []).filter(p => p.estado === 'Pendiente' || p.estado === 'Vencido').reduce((sum, p) => sum + Number(p.monto), 0);
                 const totalPagado = (pagos || []).filter(p => p.estado === 'Completado').reduce((sum, p) => sum + Number(p.monto), 0);
+                const totalInversion = totalPendiente + totalPagado;
                 
                 const pendingEl = document.getElementById('patient-pending-balance');
                 if(pendingEl) pendingEl.textContent = `S/. ${totalPendiente.toFixed(2)}`;
                 const paidEl = document.getElementById('patient-paid-balance');
                 if(paidEl) paidEl.textContent = `S/. ${totalPagado.toFixed(2)}`;
+                const inversionEl = document.getElementById('patient-total-inversion');
+                if(inversionEl) inversionEl.textContent = `S/. ${totalInversion.toFixed(2)}`;
 
                 const transList = document.getElementById('patient-recent-transactions');
                 if (transList) {
                     if (pagos && pagos.length > 0) {
-                        transList.innerHTML = pagos.slice(0, 3).map(p => `
+                        transList.innerHTML = pagos.slice(0, 3).map(p => {
+                            const dParts = p.fecha ? p.fecha.split('-') : [];
+                            const dStr = dParts.length === 3 ? `${dParts[2]}/${dParts[1]}/${dParts[0].substring(2)}` : '--';
+                            return `
                             <li class="flex justify-between border-b border-outline-variant/10 pb-1">
-                                <span class="truncate pr-2">${p.descripcion || 'Sin descripción'}</span>
+                                <span class="truncate pr-2" title="${p.descripcion || ''}">${dStr} - ${p.descripcion || 'Sin descripción'}</span>
                                 <span class="font-bold ${p.estado === 'Completado' ? 'text-success' : 'text-error'}">S/. ${Number(p.monto).toFixed(2)}</span>
                             </li>
-                        `).join('');
+                        `}).join('');
                     } else {
                         transList.innerHTML = '<li class="italic text-outline">Sin transacciones</li>';
                     }
@@ -724,6 +738,19 @@
                     .select('*')
                     .eq('paciente_id', pacId)
                     .order('fecha', { ascending: false });
+                    
+                const frecuenciaEl = document.getElementById('patient-frecuencia');
+                if(frecuenciaEl) {
+                    if (citas && citas.length > 0) {
+                        const completadas = citas.filter(c => c.estado === 'Completada' || c.estado === 'Atendido' || c.estado === 'Atendida').length;
+                        const firstVisit = citas[citas.length - 1].fecha;
+                        const dParts = firstVisit ? firstVisit.split('-') : [];
+                        const dStr = dParts.length === 3 ? `${dParts[2]}/${dParts[1]}/${dParts[0].substring(2)}` : '--';
+                        frecuenciaEl.innerHTML = `${completadas} completadas<br><span class="text-outline font-normal">Desde: ${dStr}</span>`;
+                    } else {
+                        frecuenciaEl.textContent = '0 citas';
+                    }
+                }
 
                 // Update evolution timeline with real appointments
                 const timelineContainer = document.querySelector('.relative.space-y-8');
