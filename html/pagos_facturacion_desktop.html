@@ -366,8 +366,10 @@
 
         async function cargarDatosFinancieros() {
             try {
-                // Fetch pagos
-                const { data: pagos, error } = await supabaseClient
+                const urlParams = new URLSearchParams(window.location.search);
+                const pacienteId = urlParams.get('paciente_id');
+                
+                let query = supabaseClient
                     .from('pagos')
                     .select(`
                         id,
@@ -380,6 +382,12 @@
                     `)
                     .order('fecha', { ascending: false });
 
+                if (pacienteId) {
+                    query = query.eq('paciente_id', pacienteId);
+                }
+
+                const { data: pagos, error } = await query;
+
                 if (error) throw error;
 
                 // Calcular totales dinámicos
@@ -390,6 +398,24 @@
                 const vencidos = safePagos.filter(p => p.estado === 'Vencido');
                 const totalVencidos = vencidos.reduce((sum, p) => sum + Number(p.monto), 0);
 
+                // Actualizar titulo si es por paciente
+                if (pacienteId && safePagos.length > 0 && safePagos[0].pacientes) {
+                    const titleEl = document.querySelector('h2.font-display-lg');
+                    if (titleEl) titleEl.textContent = 'Facturación: ' + safePagos[0].pacientes.nombre;
+                    
+                    const labelIngresos = document.querySelector('p.text-primary.uppercase');
+                    if (labelIngresos) labelIngresos.textContent = 'Total Pagado por Paciente';
+                    
+                    const topPacientesDiv = document.getElementById('top-pacientes-container')?.parentElement;
+                    if (topPacientesDiv) topPacientesDiv.style.display = 'none';
+                    
+                    const topServiciosDiv = document.getElementById('top-servicios-container')?.parentElement;
+                    if (topServiciosDiv) {
+                        topServiciosDiv.classList.remove('col-span-1', 'col-span-6');
+                        topServiciosDiv.classList.add('col-span-12');
+                    }
+                }
+
                 // Actualizar UI
                 const elIngresos = document.getElementById('total-ingresos');
                 const elReclamos = document.getElementById('total-reclamos');
@@ -399,7 +425,7 @@
 
                 if (elIngresos) elIngresos.textContent = formatCurrency(totalIngresos);
                 if (elReclamos) elReclamos.textContent = formatCurrency(totalPendientes);
-                if (elReclamosCount) elReclamosCount.textContent = `${pendientes.length} expedientes abiertos este mes`;
+                if (elReclamosCount) elReclamosCount.textContent = `${pendientes.length} expedientes abiertos`;
                 if (elVencidos) elVencidos.textContent = formatCurrency(totalVencidos);
                 if (elVencidosCount) elVencidosCount.textContent = vencidos.length.toString();
 
