@@ -749,7 +749,7 @@
                                 </p>
                                 <div class="mt-4 flex items-center space-x-2">
                                     <span class="font-label-sm text-label-sm font-bold text-primary">${cita.doctor || 'Dr. Alejandro Eslava'}</span>
-                                    <span class="bg-surface-container px-2 py-0.5 rounded text-[10px] text-outline font-bold uppercase">${cita.estado}</span>
+                                    <span onclick="window.location.href='atencion_tiempo_real_desktop.html?cita_id=${cita.id}&paciente_id=${cita.paciente_id}'" class="bg-surface-container hover:bg-primary/20 hover:text-primary cursor-pointer px-2 py-0.5 rounded text-[10px] text-outline font-bold uppercase transition-colors shadow-sm" title="Abrir detalle de cita">${cita.estado}</span>
                                 </div>
                             </div>
                         </div>
