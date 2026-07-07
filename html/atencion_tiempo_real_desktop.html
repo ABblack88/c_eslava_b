@@ -148,9 +148,27 @@
                 </div>
 
                 <form id="form-evolucion" class="space-y-6 flex-1 flex flex-col">
-                    <div class="space-y-2">
-                        <label class="block text-sm font-bold text-on-surface">Observaciones y Notas de Evolución (Tiempo Real)</label>
-                        <textarea id="observaciones" required rows="6" class="w-full rounded-xl border border-outline-variant px-4 py-3 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all bg-surface-container-lowest text-base leading-relaxed" placeholder="Describa el estado actual del paciente, tolerancia al tratamiento, ejercicios realizados, dolor referido (EVA), etc..."></textarea>
+                    <div class="space-y-4">
+                        <label class="block text-sm font-bold text-on-surface">Evolución Clínica (Formato SOAP)</label>
+                        <p class="text-xs text-outline mb-2">Esta información viajará automáticamente a la Historia Clínica (Registro de Sesiones).</p>
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                            <div>
+                                <label class="text-xs font-bold text-primary">S - Subjetivo (Motivo de consulta y EVA)</label>
+                                <textarea id="soap_s" required rows="3" class="w-full mt-1 rounded-xl border border-outline-variant px-3 py-2 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all bg-surface-container-lowest text-sm" placeholder="Lo que refiere el paciente. Ej: Dolor punzante lumbar, EVA 7/10..."></textarea>
+                            </div>
+                            <div>
+                                <label class="text-xs font-bold text-primary">O - Objetivo (Evaluación / Inspección)</label>
+                                <textarea id="soap_o" required rows="3" class="w-full mt-1 rounded-xl border border-outline-variant px-3 py-2 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all bg-surface-container-lowest text-sm" placeholder="Lo que observa el terapeuta. Ej: Tensión en cuadrado lumbar, limitación flexión..."></textarea>
+                            </div>
+                            <div>
+                                <label class="text-xs font-bold text-secondary">A - Análisis (Impresión clínica)</label>
+                                <textarea id="soap_a" required rows="3" class="w-full mt-1 rounded-xl border border-outline-variant px-3 py-2 focus:ring-2 focus:ring-secondary focus:border-transparent outline-none transition-all bg-surface-container-lowest text-sm" placeholder="Impresión sobre el estado. Ej: Lumbalgia mecánica, mejora rango post-terapia..."></textarea>
+                            </div>
+                            <div>
+                                <label class="text-xs font-bold text-secondary">P - Plan (Recomendaciones y Sig. Sesión)</label>
+                                <textarea id="soap_p" required rows="3" class="w-full mt-1 rounded-xl border border-outline-variant px-3 py-2 focus:ring-2 focus:ring-secondary focus:border-transparent outline-none transition-all bg-surface-container-lowest text-sm" placeholder="Plan a seguir. Ej: Compresas frías 15 min, continuar ejercicios isométricos..."></textarea>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="space-y-2 mb-6">
@@ -173,16 +191,7 @@
                         </div>
                     </div>
 
-                    <div class="space-y-2">
-                        <label class="block text-sm font-bold text-on-surface">Plan / Recomendaciones post-sesión</label>
-                        <input type="text" id="recomendaciones" class="w-full rounded-xl border border-outline-variant px-4 py-3 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all bg-surface-container-lowest" placeholder="ej. Reposo 24 horas, colocar compresa fría 15 min..."/>
-                    </div>
-
-                    <div class="space-y-2 mt-4">
-                        <label class="block text-sm font-bold text-on-surface">Plan para la siguiente sesión (Opcional)</label>
-                        <p class="text-xs text-outline mb-1">Esto actualizará el Dashboard de Tratamiento automáticamente.</p>
-                        <input type="text" id="planSiguienteSesion" class="w-full rounded-xl border border-outline-variant px-4 py-3 focus:ring-2 focus:ring-primary outline-none transition-all bg-surface-container-lowest" placeholder="ej. Iniciar ejercicios de propiocepción..."/>
-                    </div>
+                    <!-- Recomendaciones and Plan are now part of SOAP -->
 
                     <!-- Image Upload (Desktop) -->
                     <div class="space-y-2">
@@ -313,7 +322,21 @@
                 document.getElementById('appt-time').textContent = `${cita.fecha} • ${cita.hora}`;
 
                 if (cita.notas) {
-                    document.getElementById('observaciones').value = cita.notas;
+                    const notas = cita.notas;
+                    const sMatch = notas.match(/\[S\] Subjetivo:\n([\s\S]*?)(?=\n\n\[O\]|\n\nRecomendaciones:|$)/);
+                    const oMatch = notas.match(/\[O\] Objetivo:\n([\s\S]*?)(?=\n\n\[A\]|$)/);
+                    const aMatch = notas.match(/\[A\] Análisis:\n([\s\S]*?)(?=\n\n\[P\]|$)/);
+                    const pMatch = notas.match(/\[P\] Plan:\n([\s\S]*?)$/);
+
+                    if (sMatch || oMatch || aMatch || pMatch) {
+                        if (sMatch) document.getElementById('soap_s').value = sMatch[1];
+                        if (oMatch) document.getElementById('soap_o').value = oMatch[1];
+                        if (aMatch) document.getElementById('soap_a').value = aMatch[1];
+                        if (pMatch) document.getElementById('soap_p').value = pMatch[1];
+                    } else {
+                        // Fallback for old notes
+                        document.getElementById('soap_s').value = notas;
+                    }
                 }
 
                 // Load Treatment Dashboard info
@@ -342,9 +365,11 @@
         }
 
         async function guardarBorrador() {
-            const obs = document.getElementById('observaciones').value;
-            const rec = document.getElementById('recomendaciones').value;
-            const fullObs = rec ? `${obs}\n\nRecomendaciones: ${rec}` : obs;
+            const s = document.getElementById('soap_s').value;
+            const o = document.getElementById('soap_o').value;
+            const a = document.getElementById('soap_a').value;
+            const p = document.getElementById('soap_p').value;
+            const fullObs = `[S] Subjetivo:\n${s}\n\n[O] Objetivo:\n${o}\n\n[A] Análisis:\n${a}\n\n[P] Plan:\n${p}`;
             const tratData = getTratamientosSeleccionados();
 
             const btn = document.getElementById('btn-save-draft');
@@ -384,13 +409,15 @@
             }
         }
 
-        async function culminarProcedimiento() {
-            const obs = document.getElementById('observaciones').value;
-            const rec = document.getElementById('recomendaciones').value;
-            const fullObs = rec ? `${obs}\n\nRecomendaciones: ${rec}` : obs;
+            const s = document.getElementById('soap_s').value;
+            const o = document.getElementById('soap_o').value;
+            const a = document.getElementById('soap_a').value;
+            const p = document.getElementById('soap_p').value;
+            
+            const fullObs = `[S] Subjetivo:\n${s}\n\n[O] Objetivo:\n${o}\n\n[A] Análisis:\n${a}\n\n[P] Plan:\n${p}`;
 
-            if (!obs.trim()) {
-                alert("Por favor ingrese las observaciones antes de culminar el procedimiento.");
+            if (!s.trim() || !o.trim() || !a.trim() || !p.trim()) {
+                alert("Por favor complete todos los campos del formato SOAP antes de culminar el procedimiento.");
                 return;
             }
 
@@ -427,19 +454,13 @@
                     evos.unshift(newEvo);
                     localStorage.setItem(`paciente_evoluciones_${currentPaciente.id}`, JSON.stringify(evos));
 
-                    // Shift Treatment Dashboard
-                    const planSig = document.getElementById('planSiguienteSesion').value.trim();
+                    // Shift Treatment Dashboard (Using SOAP fields)
                     const storedTrat = localStorage.getItem(`paciente_tratamiento_${currentPaciente.id}`);
                     if (storedTrat) {
                         const tratData = JSON.parse(storedTrat);
-                        tratData.anterior = tratData.actual; // Lo actual pasa a ser anterior
-                        if (planSig) {
-                            tratData.actual = tratData.siguiente; // Lo siguiente pasa a ser actual
-                            tratData.siguiente = planSig; // El nuevo plan es lo siguiente
-                        } else {
-                            tratData.actual = tratData.siguiente || '';
-                            tratData.siguiente = '';
-                        }
+                        tratData.anterior = s; // Lo referido (diagnostico principal/dolor)
+                        tratData.actual = o + "\\n" + a; // Lo observado y analizado
+                        tratData.siguiente = p; // Plan
                         localStorage.setItem(`paciente_tratamiento_${currentPaciente.id}`, JSON.stringify(tratData));
                     }
                 }
@@ -486,13 +507,15 @@
         }
 
         async function editarProcedimiento() {
-            const obs = document.getElementById('observaciones').value;
-            const rec = document.getElementById('recomendaciones').value;
-            const fullObs = rec ? `${obs}\n\nRecomendaciones: ${rec}` : obs;
+            const s = document.getElementById('soap_s').value;
+            const o = document.getElementById('soap_o').value;
+            const a = document.getElementById('soap_a').value;
+            const p = document.getElementById('soap_p').value;
+            const fullObs = `[S] Subjetivo:\n${s}\n\n[O] Objetivo:\n${o}\n\n[A] Análisis:\n${a}\n\n[P] Plan:\n${p}`;
             const tratData = getTratamientosSeleccionados();
 
-            if (!obs.trim()) {
-                alert("Por favor ingrese las observaciones antes de guardar la edición.");
+            if (!s.trim() || !o.trim() || !a.trim() || !p.trim()) {
+                alert("Por favor complete todos los campos del formato SOAP antes de guardar la edición.");
                 return;
             }
 
