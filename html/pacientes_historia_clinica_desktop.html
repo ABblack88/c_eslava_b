@@ -365,8 +365,22 @@
         
 
 
-        document.addEventListener("DOMContentLoaded", () => {
-            
+        async function cargarServicios() {
+            try {
+                const { data, error } = await window.supabaseClient
+                    .from('servicios')
+                    .select('*')
+                    .eq('estado', 'Activo');
+                if (!error && data) {
+                    window.serviciosActivos = data;
+                }
+            } catch (err) {
+                console.error("Error al cargar servicios:", err);
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", async () => {
+            await cargarServicios();
             cargarPacientes();
         });
 
@@ -625,12 +639,54 @@
                 const badgeClass = esActivo ? 'bg-success/10 text-success' : 'bg-surface-container-high text-outline';
                 
                 // Calculando indicadores
-                const citasPend = (paciente.citas || []).filter(c => c.estado === 'Pendiente' || c.estado === 'En Progreso').length;
+                const pendingCitas = (paciente.citas || []).filter(c => c.estado === 'Pendiente' || c.estado === 'En Progreso');
                 const pagosPend = (paciente.pagos || []).filter(p => p.estado === 'Pendiente' || p.estado === 'Vencido').length;
 
                 let sesionesHTML = '';
-                if (citasPend > 0) {
-                    sesionesHTML = `<span class="bg-primary/10 text-primary px-2 py-1 rounded-md text-[10px] font-bold" title="Sesiones pendientes">${citasPend} Sesiones</span>`;
+                if (pendingCitas.length > 0) {
+                    pendingCitas.sort((a,b) => {
+                        if (a.fecha === b.fecha) {
+                            return (a.hora || '').localeCompare(b.hora || '');
+                        }
+                        return (a.fecha || '').localeCompare(b.fecha || '');
+                    });
+                    
+                    const nextCita = pendingCitas[0];
+                    let isPackage = false;
+                    let currentSessionNum = 1;
+                    let totalSessions = 1;
+                    
+                    if (nextCita.tratamiento) {
+                        const baseTrat = nextCita.tratamiento.replace('(Continuación)', '').trim();
+                        const servicioObj = window.serviciosActivos ? window.serviciosActivos.find(s => s.nombre === baseTrat) : null;
+                        
+                        if (servicioObj && servicioObj.duracion && servicioObj.duracion > 1) {
+                            isPackage = true;
+                            totalSessions = servicioObj.duracion;
+                            
+                            const prevOccurrences = (paciente.citas || []).filter(c => 
+                                c.tratamiento && 
+                                c.tratamiento.includes(baseTrat) && 
+                                c.estado !== 'Cancelada' &&
+                                (c.fecha < nextCita.fecha || (c.fecha === nextCita.fecha && (c.hora || '') <= (nextCita.hora || '')))
+                            );
+                            
+                            const totalOccurrences = (paciente.citas || []).filter(c => c.tratamiento && c.tratamiento.includes(baseTrat) && c.estado !== 'Cancelada').length;
+                            
+                            if (nextCita.tratamiento.includes('(Continuación)') || totalOccurrences > 1 || prevOccurrences.length > 0) {
+                                currentSessionNum = prevOccurrences.length > 0 ? prevOccurrences.length : 1;
+                            }
+                        }
+                    }
+                    
+                    let sessionText = '';
+                    if (isPackage) {
+                        sessionText = `${currentSessionNum} de ${totalSessions} Sesiones`;
+                    } else {
+                        sessionText = pendingCitas.length === 1 ? '1 Cita pdte.' : `${pendingCitas.length} Citas pdtes.`;
+                    }
+                    
+                    sesionesHTML = `<span class="bg-primary/10 text-primary px-2 py-1 rounded-md text-[10px] font-bold" title="Citas/Sesiones pendientes">${sessionText}</span>`;
                 } else {
                     sesionesHTML = `<span class="text-outline text-xs">Al día</span>`;
                 }
