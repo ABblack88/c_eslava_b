@@ -314,11 +314,6 @@
         </div>
 
         <div>
-            <label class="block text-sm font-bold text-on-surface mb-1">Notas Médicas (Evolución)</label>
-            <textarea name="notas_medicas" rows="4" class="w-full rounded-xl border border-outline-variant px-4 py-3 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all bg-surface-container-lowest" placeholder="Registra la evolución, diagnóstico y tratamiento aplicado..."></textarea>
-        </div>
-        
-        <div>
             <label class="block text-sm font-bold text-on-surface mb-1">Estado</label>
             <select name="estado" class="w-full rounded-xl border border-outline-variant px-4 py-3 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all bg-surface-white">
                 <option value="Activo">Activo</option>
@@ -394,7 +389,6 @@
             form.elements['email'].value = email || '';
             form.elements['telefono'].value = telefono || '';
             form.elements['fecha_nacimiento'].value = fecha_nacimiento || '';
-            form.elements['notas_medicas'].value = notas_medicas || '';
             form.elements['estado'].value = estado || 'Activo';
             
             const stored = localStorage.getItem(`paciente_registro_${id}`);
