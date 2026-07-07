@@ -261,9 +261,14 @@
                     document.getElementById('patient-name').textContent = currentPaciente.nombre;
                     document.getElementById('patient-id').textContent = 'ID: #' + currentPaciente.id.substring(0,8).toUpperCase();
                     document.getElementById('patient-phone').textContent = 'Contacto: ' + (currentPaciente.telefono || '--');
-                    document.getElementById('patient-initials').textContent = currentPaciente.nombre.charAt(0).toUpperCase();
                     
-                    document.getElementById('patient-allergies').textContent = currentPaciente.notas_medicas || 'Sin alertas reportadas.';
+                    const storedRegistro = localStorage.getItem(`paciente_registro_${currentPaciente.id}`);
+                    let alergiasLocal = '';
+                    if (storedRegistro) {
+                        const parsed = JSON.parse(storedRegistro);
+                        if (parsed.alergias) alergiasLocal = parsed.alergias;
+                    }
+                    document.getElementById('patient-allergies').textContent = alergiasLocal || currentPaciente.notas_medicas || 'Sin alergias o riesgos reportados.';
                 }
 
                 document.getElementById('appt-treatment').textContent = cita.tratamiento || 'Procedimiento General';

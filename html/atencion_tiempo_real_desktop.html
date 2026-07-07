@@ -314,7 +314,13 @@
                     document.getElementById('patient-status').textContent = currentPaciente.estado || 'Activo';
                     document.getElementById('patient-initials').textContent = currentPaciente.nombre.charAt(0).toUpperCase();
                     
-                    document.getElementById('patient-allergies').textContent = currentPaciente.notas_medicas || 'Sin alergias o riesgos reportados.';
+                    const storedRegistro = localStorage.getItem(`paciente_registro_${currentPaciente.id}`);
+                    let alergiasLocal = '';
+                    if (storedRegistro) {
+                        const parsed = JSON.parse(storedRegistro);
+                        if (parsed.alergias) alergiasLocal = parsed.alergias;
+                    }
+                    document.getElementById('patient-allergies').textContent = alergiasLocal || currentPaciente.notas_medicas || 'Sin alergias o riesgos reportados.';
                 }
 
                 document.getElementById('appt-treatment').textContent = cita.tratamiento || 'Procedimiento general';
