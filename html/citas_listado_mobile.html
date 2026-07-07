@@ -379,11 +379,18 @@
                             </div>
                         </div>
                     </div>
-                    <div class="mt-2 flex justify-between items-center">
-                        <span class="px-3 py-1 ${badgeClass} rounded-full font-label-sm text-[10px] flex items-center gap-1 uppercase tracking-wider">
-                            ${cita.estado}
-                        </span>
-                        <span class="text-primary font-bold text-sm flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+                    <div class="mt-2 flex justify-between items-center" onclick="event.stopPropagation()">
+                        <select 
+                            class="px-3 py-1 ${badgeClass} rounded-full font-label-sm text-[10px] uppercase tracking-wider focus:outline-none focus:ring-2 focus:ring-primary/30 border-none cursor-pointer"
+                            onchange="actualizarEstado(${cita.id}, this.value)"
+                        >
+                            <option value="Pendiente" ${cita.estado === 'Pendiente' ? 'selected' : ''} class="bg-surface-white text-on-surface normal-case text-sm">Pendiente</option>
+                            <option value="Confirmada" ${cita.estado === 'Confirmada' ? 'selected' : ''} class="bg-surface-white text-on-surface normal-case text-sm">Confirmada</option>
+                            <option value="En Progreso" ${cita.estado === 'En Progreso' ? 'selected' : ''} class="bg-surface-white text-on-surface normal-case text-sm">En Progreso</option>
+                            <option value="Completada" ${cita.estado === 'Completada' ? 'selected' : ''} class="bg-surface-white text-on-surface normal-case text-sm">Completada</option>
+                            <option value="Por Reprogramar" ${cita.estado === 'Por Reprogramar' ? 'selected' : ''} class="bg-surface-white text-on-surface normal-case text-sm">Por Reprogramar</option>
+                        </select>
+                        <span class="text-primary font-bold text-sm flex items-center gap-1 group-hover:translate-x-1 transition-transform" onclick="const role = new URLSearchParams(window.location.search).get('role') || 'admin'; window.location.href='atencion_tiempo_real_mobile.html?cita_id=${cita.id}&role=' + role">
                             Ver Cita <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
                         </span>
                     </div>
@@ -391,6 +398,45 @@
             `;
             gridBody.insertAdjacentHTML('beforeend', cardHTML);
         });
+    }
+
+    async function actualizarEstado(citaId, nuevoEstado) {
+        try {
+            // Notificación visual de carga (opcional)
+            const cardElement = document.querySelector(`select[onchange="actualizarEstado(${citaId}, this.value)"]`).closest('div.bg-surface-white');
+            cardElement.style.opacity = '0.5';
+
+            const { error } = await window.supabaseClient
+                .from('citas')
+                .update({ estado: nuevoEstado })
+                .eq('id', citaId);
+
+            if (error) throw error;
+            
+            // Actualizar array local
+            const index = allCitas.findIndex(c => c.id === citaId);
+            if (index !== -1) {
+                allCitas[index].estado = nuevoEstado;
+            }
+            
+            // Re-renderizar lista para actualizar colores
+            const searchInput = document.querySelector('input[placeholder="Buscar por nombre, ID o condición..."]');
+            if (searchInput && searchInput.value) {
+                const query = searchInput.value.toLowerCase();
+                const filtrados = allCitas.filter(c => {
+                    const nombre = c.pacientes ? c.pacientes.nombre.toLowerCase() : '';
+                    return nombre.includes(query) || (c.tratamiento && c.tratamiento.toLowerCase().includes(query));
+                });
+                renderCitas(filtrados);
+            } else {
+                renderCitas(allCitas);
+            }
+        } catch (error) {
+            console.error("Error actualizando estado:", error);
+            alert("Hubo un error al actualizar el estado de la cita.");
+            // Revertir a la vista original si falla
+            renderCitas(allCitas);
+        }
     }
 
     document.addEventListener("DOMContentLoaded", () => {

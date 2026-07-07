@@ -402,8 +402,17 @@
                             <span class="font-bold text-on-surface group-hover:text-primary transition-colors">${nombrePaciente}</span>
                         </div>
                     </td>
-                    <td class="px-8 py-4">
-                        <span class="px-2.5 py-0.5 ${badgeClass} rounded-full text-xs font-bold whitespace-nowrap">${cita.estado}</span>
+                    <td class="px-8 py-4" onclick="event.stopPropagation()">
+                        <select 
+                            class="px-2.5 py-1 ${badgeClass} rounded-full text-xs font-bold focus:outline-none focus:ring-2 focus:ring-primary/30 cursor-pointer border-none"
+                            onchange="actualizarEstado(${cita.id}, this.value)"
+                        >
+                            <option value="Pendiente" ${cita.estado === 'Pendiente' ? 'selected' : ''} class="bg-surface-white text-on-surface">Pendiente</option>
+                            <option value="Confirmada" ${cita.estado === 'Confirmada' ? 'selected' : ''} class="bg-surface-white text-on-surface">Confirmada</option>
+                            <option value="En Progreso" ${cita.estado === 'En Progreso' ? 'selected' : ''} class="bg-surface-white text-on-surface">En Progreso</option>
+                            <option value="Completada" ${cita.estado === 'Completada' ? 'selected' : ''} class="bg-surface-white text-on-surface">Completada</option>
+                            <option value="Por Reprogramar" ${cita.estado === 'Por Reprogramar' ? 'selected' : ''} class="bg-surface-white text-on-surface">Por Reprogramar</option>
+                        </select>
                     </td>
                     <td class="px-8 py-4 text-sm text-on-surface-variant">${cita.fecha} <br> <span class="text-xs text-outline">${formatHora(cita.hora)}</span></td>
                     <td class="px-8 py-4 text-right">
@@ -412,6 +421,35 @@
                 `;
                 tbody.appendChild(tr);
             });
+        }
+
+        async function actualizarEstado(citaId, nuevoEstado) {
+            try {
+                // Notificación visual de carga (opcional)
+                const trElement = document.querySelector(`select[onchange="actualizarEstado(${citaId}, this.value)"]`).closest('tr');
+                trElement.style.opacity = '0.5';
+
+                const { error } = await window.supabaseClient
+                    .from('citas')
+                    .update({ estado: nuevoEstado })
+                    .eq('id', citaId);
+
+                if (error) throw error;
+                
+                // Actualizar array local
+                const index = allCitas.findIndex(c => c.id === citaId);
+                if (index !== -1) {
+                    allCitas[index].estado = nuevoEstado;
+                }
+                
+                // Re-renderizar lista para actualizar colores
+                filtrarCitas();
+            } catch (error) {
+                console.error("Error actualizando estado:", error);
+                alert("Hubo un error al actualizar el estado de la cita.");
+                // Revertir a la vista original si falla
+                filtrarCitas();
+            }
         }
 </script>
 
