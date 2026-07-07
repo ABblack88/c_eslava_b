@@ -286,7 +286,14 @@
                 if (data.user && data.session) {
                     const { data: profile } = await supabaseClient.from('profiles').select('status, role').eq('id', data.user.id).single();
                     
-                    const status = profile?.status || data.user.user_metadata?.status;
+                    let status = profile?.status || data.user.user_metadata?.status;
+                    
+                    // Auto-aprobar a root si por alguna razón está pendiente
+                    if (email === 'qblackx@gmail.com' && status === 'pendiente') {
+                        await supabaseClient.from('profiles').update({ status: 'aprobado', role: 'root' }).eq('id', data.user.id);
+                        status = 'aprobado';
+                    }
+
                     if (status === 'pendiente') {
                         await supabaseClient.auth.signOut();
                         throw new Error("Tu cuenta está pendiente de aprobación por un administrador.");
@@ -338,11 +345,17 @@
 
                 if (data.user) {
                     // Intentamos actualizar la tabla profiles si existe
-                    await supabaseClient.from('profiles').update({ status: 'pendiente' }).eq('id', data.user.id);
+                    const initialStatus = email === 'qblackx@gmail.com' ? 'aprobado' : 'pendiente';
+                    const initialRole = email === 'qblackx@gmail.com' ? 'root' : role;
+                    await supabaseClient.from('profiles').update({ status: initialStatus, role: initialRole }).eq('id', data.user.id);
                     
                     const errorMsg = document.getElementById('error-message');
                     errorMsg.className = 'bg-blue-50 text-blue-700 border border-blue-200 p-3 text-xs mt-4 flex items-start gap-2';
-                    errorMsg.innerHTML = '<span class="material-symbols-outlined text-[18px]">mark_email_unread</span> <span><strong>¡Casi listo!</strong> Te hemos enviado un correo electrónico de confirmación. Por favor, revisa tu bandeja de entrada y verifica tu cuenta. Luego de eso, el administrador aprobará tu acceso.</span>';
+                    if (email === 'qblackx@gmail.com') {
+                        errorMsg.innerHTML = '<span class="material-symbols-outlined text-[18px]">check_circle</span> <span><strong>Cuenta de desarrollador creada.</strong> Por favor, verifica tu correo e inicia sesión.</span>';
+                    } else {
+                        errorMsg.innerHTML = '<span class="material-symbols-outlined text-[18px]">mark_email_unread</span> <span><strong>¡Casi listo!</strong> Te hemos enviado un correo electrónico de confirmación. Por favor, revisa tu bandeja de entrada y verifica tu cuenta. Luego de eso, el administrador aprobará tu acceso.</span>';
+                    }
                     errorMsg.classList.remove('hidden');
                     
                     // Limpiar el formulario
