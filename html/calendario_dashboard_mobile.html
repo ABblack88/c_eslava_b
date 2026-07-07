@@ -268,6 +268,13 @@
 </div>
 <!-- Calendar Board -->
 <div class="bg-surface-white rounded-2xl shadow-[0px_10px_30px_rgba(0,0,0,0.04)] border border-surface-container overflow-hidden flex flex-col h-[700px]">
+<div class="p-3 border-b border-surface-container flex gap-3 items-center justify-start overflow-x-auto no-scrollbar whitespace-nowrap">
+    <div class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-warning"></span><span class="text-[10px] text-outline font-bold">Por Confirmar</span></div>
+    <div class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-success"></span><span class="text-[10px] text-outline font-bold">Confirmada</span></div>
+    <div class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-primary"></span><span class="text-[10px] text-outline font-bold">En Procedimiento</span></div>
+    <div class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-outline-variant"></span><span class="text-[10px] text-outline font-bold">Completada</span></div>
+    <div class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-[#8b5cf6]"></span><span class="text-[10px] text-outline font-bold">Reprogramar</span></div>
+</div>
 <!-- Room Headers -->
 <div class="flex border-b border-surface-container bg-surface/50">
 <div class="w-20 flex-shrink-0 border-r border-surface-container p-4"></div> <!-- Time column spacer -->
@@ -493,6 +500,17 @@
                 <span class="material-symbols-outlined text-lg">receipt_long</span>
                 Facturar Servicio
             </button>
+            
+            <div class="my-1 p-2.5 bg-surface-container-lowest border border-outline-variant rounded-xl flex items-center gap-2">
+                <label class="text-[13px] font-bold text-on-surface flex-shrink-0">Estado:</label>
+                <select id="select-opt-estado-mobile" onchange="cambiarEstadoCitaLocal(this.value)" class="w-full bg-surface-container-low border-none rounded-lg py-1.5 px-2 text-[13px] font-bold focus:ring-2 focus:ring-primary text-primary outline-none">
+                    <option value="Pendiente">Por Confirmar</option>
+                    <option value="Confirmada">Confirmada</option>
+                    <option value="En Progreso">En Procedimiento</option>
+                    <option value="Completado">Completada</option>
+                    <option value="Por Reprogramar">Por Reprogramar</option>
+                </select>
+            </div>
             <button id="btn-opt-historial" class="w-full bg-surface-container-high text-on-surface-variant py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-1 hover:bg-surface-container-highest active:scale-95 transition-all">
                 <span class="material-symbols-outlined text-lg">medical_information</span>
                 Ver Historia Clínica
@@ -607,11 +625,19 @@
                 
             if (error) throw error;
             
+            window.currentCitaId = citaId;
             document.getElementById('opt-paciente-nombre').textContent = cita.pacientes?.nombre || 'Desconocido';
             document.getElementById('opt-tratamiento').textContent = cita.tratamiento || 'Procedimiento general';
             document.getElementById('opt-fecha-hora').textContent = `Fecha: ${cita.fecha} • ${cita.hora}`;
             document.getElementById('opt-consultorio').textContent = `Tratante: ${cita.consultorio}`;
             document.getElementById('opt-estado').textContent = `Estado: ${cita.estado}`;
+            
+            const selectEstado = document.getElementById('select-opt-estado-mobile');
+            if (selectEstado) {
+                let estadoNormalized = cita.estado;
+                if (estadoNormalized === 'Cancelado' || estadoNormalized === 'Cancelada') estadoNormalized = 'Pendiente';
+                selectEstado.value = estadoNormalized;
+            }
             
             // Set up button actions
             const role = new URLSearchParams(window.location.search).get('role') || 'admin';
@@ -653,6 +679,23 @@
         } catch (err) {
             console.error("Error al abrir opciones de cita móvil:", err);
             dialog.close();
+        }
+    }
+
+    async function cambiarEstadoCitaLocal(nuevoEstado) {
+        if (!window.currentCitaId) return;
+        try {
+            const { error } = await supabaseClient
+                .from('citas')
+                .update({ estado: nuevoEstado })
+                .eq('id', window.currentCitaId);
+            
+            if (error) throw error;
+            document.getElementById('opt-estado').textContent = `Estado: ${nuevoEstado}`;
+            await cargarCitas();
+        } catch (err) {
+            console.error('Error al cambiar estado:', err);
+            alert('Hubo un problema al cambiar el estado.');
         }
     }
 
@@ -925,7 +968,7 @@
                 .from('citas')
                 .select('id, fecha, hora, estado, pacientes(nombre)')
                 .in('fecha', [today, tomorrow])
-                .eq('estado', 'Pendiente');
+                .in('estado', ['Pendiente', 'Por Reprogramar']);
 
             if (error) throw error;
 
@@ -941,7 +984,13 @@
                         const pacienteNombre = c.pacientes ? c.pacientes.nombre : 'Desconocido';
                         const iniciales = getInitials(pacienteNombre);
                         const isTomorrow = c.fecha === tomorrow;
-                        const actionText = isTomorrow ? "Pendiente confirmar asistencia para mañana" : "Pendiente confirmar asistencia u ordenar";
+                        
+                        let actionText = "";
+                        if (c.estado === 'Por Reprogramar') {
+                            actionText = "<span class='text-primary font-bold'>Contactar para Reprogramar</span>";
+                        } else {
+                            actionText = isTomorrow ? "Confirmar asistencia mañana" : "Confirmar asistencia u ordenar";
+                        }
                         
                         html += `
                         <div class="flex justify-between items-center p-3 bg-surface-container-lowest border border-outline-variant rounded-xl group">
@@ -1184,7 +1233,7 @@
 
             if (estadoLower.includes('pendiente') || estadoLower.includes('sin confirmar')) {
                 bgClass = "bg-warning/10 border-warning/20";
-                textClass = "text-warning-dark";
+                textClass = "text-warning-dark"; // Note: might not exist in tailwind default, text-warning is fine
             } else if (estadoLower.includes('confirmad')) {
                 bgClass = "bg-success/10 border-success/20";
                 textClass = "text-success";
@@ -1192,6 +1241,9 @@
                 bgClass = "bg-surface-variant border-outline/20";
                 textClass = "text-on-surface-variant";
                 extraClass = "opacity-50 grayscale";
+            } else if (estadoLower.includes('reprogramar')) {
+                bgClass = "bg-[#8b5cf6]/10 border-[#8b5cf6]/20";
+                textClass = "text-[#8b5cf6]";
             }
 
             const pacienteNombre = cita.pacientes ? cita.pacientes.nombre : 'Paciente Desconocido';

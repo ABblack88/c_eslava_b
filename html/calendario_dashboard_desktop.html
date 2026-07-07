@@ -36,10 +36,16 @@
         .fc-event-main {
             white-space: normal !important;
             overflow: visible !important;
+            color: #ffffff !important;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+            font-size: 0.85rem !important;
+            font-weight: 600 !important;
+            padding: 2px 4px !important;
         }
         .fc-event {
             overflow: visible !important;
             height: auto !important;
+            cursor: pointer !important;
         }
         .fc-timegrid-event-short .fc-event-main-frame {
             flex-direction: column !important;
@@ -245,6 +251,13 @@
 </div>
 <!-- Calendar Wide Grid -->
 <div class="bg-surface-white rounded-3xl shadow-[0px_10px_30px_rgba(0,0,0,0.04)] overflow-hidden border border-surface-container-low p-4">
+    <div class="flex gap-4 items-center justify-end mb-4 flex-wrap">
+        <div class="flex items-center gap-1"><span class="w-3 h-3 rounded-full bg-warning"></span><span class="text-xs text-outline font-bold">Por Confirmar</span></div>
+        <div class="flex items-center gap-1"><span class="w-3 h-3 rounded-full bg-success"></span><span class="text-xs text-outline font-bold">Confirmada</span></div>
+        <div class="flex items-center gap-1"><span class="w-3 h-3 rounded-full bg-primary"></span><span class="text-xs text-outline font-bold">En Procedimiento</span></div>
+        <div class="flex items-center gap-1"><span class="w-3 h-3 rounded-full bg-outline-variant"></span><span class="text-xs text-outline font-bold">Completada</span></div>
+        <div class="flex items-center gap-1"><span class="w-3 h-3 rounded-full" style="background-color: #8b5cf6;"></span><span class="text-xs text-outline font-bold">Reprogramar</span></div>
+    </div>
     <div id="calendar" style="min-height: 600px;"></div>
 </div>
 </section>
@@ -433,6 +446,18 @@
                 <span class="material-symbols-outlined">receipt_long</span>
                 Facturar Servicio
             </button>
+            
+            <div class="my-2 p-3 bg-surface-container-lowest border border-outline-variant rounded-xl flex items-center gap-3">
+                <label class="text-sm font-bold text-on-surface flex-shrink-0">Cambiar Estado:</label>
+                <select id="select-opt-estado" onchange="cambiarEstadoCitaLocal(this.value)" class="w-full bg-surface-container-low border-none rounded-xl py-2 px-3 text-sm font-bold focus:ring-2 focus:ring-primary text-primary outline-none">
+                    <option value="Pendiente">Por Confirmar</option>
+                    <option value="Confirmada">Confirmada</option>
+                    <option value="En Progreso">En Procedimiento</option>
+                    <option value="Completado">Completada</option>
+                    <option value="Por Reprogramar">Por Reprogramar</option>
+                </select>
+            </div>
+
             <button id="btn-opt-historial" class="w-full bg-surface-container-high text-on-surface-variant py-3 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-surface-container-highest active:scale-95 transition-all">
                 <span class="material-symbols-outlined">medical_information</span>
                 Ver Historia Clínica
@@ -520,11 +545,20 @@
                 
             if (error) throw error;
             
+            window.currentCitaId = citaId;
             document.getElementById('opt-paciente-nombre').textContent = cita.pacientes?.nombre || 'Desconocido';
             document.getElementById('opt-tratamiento').textContent = cita.tratamiento || 'Procedimiento general';
             document.getElementById('opt-fecha-hora').textContent = `Fecha: ${cita.fecha} • ${cita.hora}`;
             document.getElementById('opt-consultorio').textContent = `Tratante: ${cita.consultorio}`;
             document.getElementById('opt-estado').textContent = `Estado: ${cita.estado}`;
+            
+            const selectEstado = document.getElementById('select-opt-estado');
+            if (selectEstado) {
+                // Ensure the value matches the actual select options
+                let estadoNormalized = cita.estado;
+                if (estadoNormalized === 'Cancelado' || estadoNormalized === 'Cancelada') estadoNormalized = 'Pendiente'; // Just a fallback so it doesn't break select
+                selectEstado.value = estadoNormalized;
+            }
             
             // Set up button actions
             const role = new URLSearchParams(window.location.search).get('role') || 'admin';
@@ -567,6 +601,23 @@
         } catch (err) {
             console.error("Error al abrir opciones de cita:", err);
             dialog.close();
+        }
+    }
+
+    async function cambiarEstadoCitaLocal(nuevoEstado) {
+        if (!window.currentCitaId) return;
+        try {
+            const { error } = await supabaseClient
+                .from('citas')
+                .update({ estado: nuevoEstado })
+                .eq('id', window.currentCitaId);
+            
+            if (error) throw error;
+            document.getElementById('opt-estado').textContent = `Estado: ${nuevoEstado}`;
+            await cargarCitas();
+        } catch (err) {
+            console.error('Error al cambiar estado:', err);
+            alert('Hubo un problema al cambiar el estado.');
         }
     }
 
@@ -984,12 +1035,16 @@
                     
                     const estadoLower = (c.estado || '').toLowerCase();
                     if (estadoLower.includes('pendiente') || estadoLower.includes('sin confirmar')) {
-                        color = '#f59e0b'; // yellow/orange
-                    } else if (estadoLower.includes('completado') || estadoLower.includes('atendida') || estadoLower.includes('progreso')) {
-                        color = '#9ca3af'; // gray
-                        classNames.push('opacity-50');
+                        color = '#f59e0b'; // yellow (Por confirmar)
                     } else if (estadoLower.includes('confirmad')) {
-                        color = '#10b981'; // green
+                        color = '#10b981'; // green (Confirmada)
+                    } else if (estadoLower.includes('progreso')) {
+                        color = '#3b82f6'; // blue (En procedimiento)
+                    } else if (estadoLower.includes('completad') || estadoLower.includes('atendida')) {
+                        color = '#9ca3af'; // gray (Completada)
+                        classNames.push('opacity-50');
+                    } else if (estadoLower.includes('reprogramar')) {
+                        color = '#8b5cf6'; // purple (Reprogramar)
                     }
                     
                     return {
@@ -1110,8 +1165,11 @@
                 tomorrowDate.setDate(tomorrowDate.getDate() + 1);
                 const tomorrow = tomorrowDate.toISOString().split('T')[0];
 
-                // Filtrar citas pendientes de hoy y mañana
-                const tareas = data.filter(c => c.estado === 'Pendiente' && (c.fecha === today || c.fecha === tomorrow)).sort((a, b) => a.fecha.localeCompare(b.fecha) || a.hora.localeCompare(b.hora));
+                // Filtrar citas pendientes de hoy y mañana, y también las 'Por Reprogramar'
+                const tareas = data.filter(c => 
+                    (c.estado === 'Pendiente' && (c.fecha === today || c.fecha === tomorrow)) || 
+                    (c.estado === 'Por Reprogramar')
+                ).sort((a, b) => a.fecha.localeCompare(b.fecha) || a.hora.localeCompare(b.hora));
                 
                 if (tareas.length === 0) {
                     tareasContainer.innerHTML = '<p class="text-outline text-center py-4">No hay tareas pendientes para agendar o confirmar.</p>';
@@ -1121,7 +1179,13 @@
                         const pacienteNombre = c.pacientes ? c.pacientes.nombre : 'Desconocido';
                         const iniciales = getInitials(pacienteNombre);
                         const isTomorrow = c.fecha === tomorrow;
-                        const actionText = isTomorrow ? "Pendiente confirmar asistencia para mañana" : "Pendiente confirmar asistencia u ordenar";
+                        
+                        let actionText = "";
+                        if (c.estado === 'Por Reprogramar') {
+                            actionText = "<span class='text-primary font-bold'>Contactar para Reprogramar Cita</span>";
+                        } else {
+                            actionText = isTomorrow ? "Pendiente confirmar asistencia para mañana" : "Pendiente confirmar asistencia u ordenar";
+                        }
                         
                         html += `
                         <div class="flex items-center justify-between p-4 bg-surface-container-lowest border border-outline-variant rounded-2xl group hover:border-primary transition-colors">
