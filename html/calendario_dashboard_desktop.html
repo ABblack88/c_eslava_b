@@ -1052,7 +1052,7 @@
                     let classNames = [];
                     
                     const estadoLower = (c.estado || '').toLowerCase();
-                    if (estadoLower.includes('pendiente') || estadoLower.includes('sin confirmar')) {
+                    if (estadoLower.includes('pendiente') || estadoLower.includes('sin confirmar') || estadoLower.includes('por confirmar')) {
                         color = '#f59e0b'; // yellow (Por confirmar)
                     } else if (estadoLower.includes('confirmad')) {
                         color = '#10b981'; // green (Confirmada)

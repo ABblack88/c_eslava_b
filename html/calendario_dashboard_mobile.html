@@ -1244,7 +1244,7 @@
             let textClass = "text-primary";
             let extraClass = "";
 
-            if (estadoLower.includes('pendiente') || estadoLower.includes('sin confirmar')) {
+            if (estadoLower.includes('pendiente') || estadoLower.includes('sin confirmar') || estadoLower.includes('por confirmar')) {
                 bgClass = "bg-warning/10 border-warning/20";
                 textClass = "text-warning-dark"; // Note: might not exist in tailwind default, text-warning is fine
             } else if (estadoLower.includes('confirmad')) {
