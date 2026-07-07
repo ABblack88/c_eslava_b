@@ -418,7 +418,8 @@
                         const totalOccurrences = allCitas.filter(c => c.paciente_id === cita.paciente_id && c.tratamiento && c.tratamiento.includes(baseTrat) && c.estado !== 'Cancelada').length;
                         
                         if (cita.tratamiento.includes('(Continuación)') || totalOccurrences > 1 || prevOccurrences.length > 0) {
-                            sessionStr = prevOccurrences.length > 0 ? prevOccurrences.length : 1;
+                            let currentSessionNum = prevOccurrences.length > 0 ? prevOccurrences.length : 1;
+                            sessionStr = `${currentSessionNum} de ${servicioObj.duracion}`;
                         }
                     }
                 }
