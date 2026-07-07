@@ -280,12 +280,16 @@
         <p class="text-xl font-bold text-on-surface" id="patient-total-inversion">S/. 0.00</p>
     </div>
     <div>
-        <p class="text-[10px] text-outline font-bold uppercase mb-1">Visitas</p>
+        <p class="text-[10px] text-outline font-bold uppercase mb-1">Visitas / Frecuencia</p>
         <p class="text-xs font-bold text-on-surface-variant mt-1 leading-tight" id="patient-frecuencia">--</p>
     </div>
     <div>
         <p class="text-[10px] text-outline font-bold uppercase mb-1">Total Pagado</p>
         <p class="text-md font-bold text-success" id="patient-paid-balance">S/. 0.00</p>
+    </div>
+    <div>
+        <p class="text-[10px] text-outline font-bold uppercase mb-1">Promedio Mensual</p>
+        <p class="text-md font-bold text-primary" id="patient-monthly-avg">S/. 0.00</p>
     </div>
     <div>
         <p class="text-[10px] text-outline font-bold uppercase mb-1">Por Pagar</p>
@@ -343,10 +347,16 @@
 <div class="bg-surface-white rounded-xl p-8 shadow-[0px_10px_30px_rgba(0,0,0,0.04)]">
 <div class="flex justify-between items-center mb-8">
 <h3 class="font-headline-md text-headline-md text-on-surface">Procedimientos / Notas de Evolución</h3>
+<div class="flex gap-2">
+<button onclick="window.print()" class="text-on-surface-variant font-bold flex items-center space-x-1 border border-outline-variant hover:bg-surface-container-low px-3 py-2 rounded-full transition-colors">
+<span class="material-symbols-outlined text-[18px]">print</span>
+<span class="font-label-sm text-label-sm">Exportar (PDF)</span>
+</button>
 <button onclick="document.getElementById('modalNuevaEvolucion').showModal()" class="text-primary font-bold flex items-center space-x-1 hover:bg-primary/10 px-3 py-2 rounded-full transition-colors">
 <span class="material-symbols-outlined text-[18px]">add</span>
 <span class="font-label-sm text-label-sm">Registrar Procedimiento</span>
 </button>
+</div>
 </div>
 <div class="relative space-y-8 before:absolute before:inset-0 before:ml-5 before:-translate-x-px before:h-full before:w-0.5 before:bg-gradient-to-b before:from-primary before:to-surface-container" id="timeline-container">
 <!-- Timeline Item 1 -->
@@ -803,15 +813,32 @@
                     .order('fecha', { ascending: false });
                     
                 const frecuenciaEl = document.getElementById('patient-frecuencia');
-                if(frecuenciaEl) {
+                const avgEl = document.getElementById('patient-monthly-avg');
+                
+                if(frecuenciaEl && avgEl) {
                     if (citas && citas.length > 0) {
                         const completadas = citas.filter(c => c.estado === 'Completada' || c.estado === 'Atendido' || c.estado === 'Atendida').length;
                         const firstVisit = citas[citas.length - 1].fecha;
                         const fObj = firstVisit ? new Date(firstVisit + (firstVisit.includes('T') ? '' : 'T12:00:00')) : null;
                         const dStr = fObj ? fObj.toLocaleDateString('es-PE', { day: '2-digit', month: '2-digit', year: '2-digit' }) : '--';
-                        frecuenciaEl.innerHTML = `${completadas} completadas<br><span class="text-outline font-normal">Desde: ${dStr}</span>`;
+                        
+                        // Calculate Months Since First Visit
+                        let monthsDiff = 1;
+                        if (fObj) {
+                            const today = new Date();
+                            monthsDiff = (today.getFullYear() - fObj.getFullYear()) * 12 + (today.getMonth() - fObj.getMonth());
+                            if (monthsDiff < 1) monthsDiff = 1; // Prevent division by 0 and assume at least 1 month if very recent
+                        }
+                        
+                        const freqMonthly = completadas / monthsDiff;
+                        frecuenciaEl.innerHTML = `${completadas} completadas<br><span class="text-outline font-normal">Desde: ${dStr} (${freqMonthly.toFixed(1)}/mes)</span>`;
+                        
+                        // Calculate Monthly Average Spending
+                        const monthlyAvg = totalPagado / monthsDiff;
+                        avgEl.textContent = `S/. ${monthlyAvg.toFixed(2)}`;
                     } else {
                         frecuenciaEl.textContent = '0 citas';
+                        avgEl.textContent = 'S/. 0.00';
                     }
                 }
 
