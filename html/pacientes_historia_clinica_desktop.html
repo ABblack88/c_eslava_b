@@ -639,58 +639,74 @@
                 const badgeClass = esActivo ? 'bg-success/10 text-success' : 'bg-surface-container-high text-outline';
                 
                 // Calculando indicadores
-                const pendingCitas = (paciente.citas || []).filter(c => c.estado === 'Pendiente' || c.estado === 'En Progreso');
-                const pagosPend = (paciente.pagos || []).filter(p => p.estado === 'Pendiente' || p.estado === 'Vencido').length;
-
+                let allCitasPac = paciente.citas || [];
                 let sesionesHTML = '';
-                if (pendingCitas.length > 0) {
+
+                if (allCitasPac.length === 0) {
+                    sesionesHTML = `<span class="text-outline text-xs">-</span>`;
+                } else {
+                    allCitasPac.sort((a,b) => {
+                        if (a.fecha === b.fecha) return (b.hora || '').localeCompare(a.hora || '');
+                        return (b.fecha || '').localeCompare(a.fecha || '');
+                    });
+                    
+                    const pendingCitas = allCitasPac.filter(c => c.estado === 'Pendiente' || c.estado === 'En Progreso' || c.estado === 'Confirmada');
                     pendingCitas.sort((a,b) => {
-                        if (a.fecha === b.fecha) {
-                            return (a.hora || '').localeCompare(b.hora || '');
-                        }
+                        if (a.fecha === b.fecha) return (a.hora || '').localeCompare(b.hora || '');
                         return (a.fecha || '').localeCompare(b.fecha || '');
                     });
                     
-                    const nextCita = pendingCitas[0];
+                    const nextCita = pendingCitas.length > 0 ? pendingCitas[0] : null;
+                    const latestCita = allCitasPac[0];
+                    const targetCita = nextCita || latestCita;
+                    
                     let isPackage = false;
                     let currentSessionNum = 1;
                     let totalSessions = 1;
                     
-                    if (nextCita.tratamiento) {
-                        const baseTrat = nextCita.tratamiento.replace('(Continuación)', '').trim();
+                    if (targetCita.tratamiento) {
+                        const baseTrat = targetCita.tratamiento.replace('(Continuación)', '').trim();
                         const servicioObj = window.serviciosActivos ? window.serviciosActivos.find(s => s.nombre === baseTrat) : null;
                         
                         if (servicioObj && servicioObj.duracion && servicioObj.duracion > 1) {
                             isPackage = true;
                             totalSessions = servicioObj.duracion;
                             
-                            const prevOccurrences = (paciente.citas || []).filter(c => 
+                            const prevOccurrences = allCitasPac.filter(c => 
                                 c.tratamiento && 
                                 c.tratamiento.includes(baseTrat) && 
                                 c.estado !== 'Cancelada' &&
-                                (c.fecha < nextCita.fecha || (c.fecha === nextCita.fecha && (c.hora || '') <= (nextCita.hora || '')))
+                                (c.fecha < targetCita.fecha || (c.fecha === targetCita.fecha && (c.hora || '') <= (targetCita.hora || '')))
                             );
                             
-                            const totalOccurrences = (paciente.citas || []).filter(c => c.tratamiento && c.tratamiento.includes(baseTrat) && c.estado !== 'Cancelada').length;
+                            const totalOccurrences = allCitasPac.filter(c => c.tratamiento && c.tratamiento.includes(baseTrat) && c.estado !== 'Cancelada').length;
                             
-                            if (nextCita.tratamiento.includes('(Continuación)') || totalOccurrences > 1 || prevOccurrences.length > 0) {
+                            if (targetCita.tratamiento.includes('(Continuación)') || totalOccurrences > 1 || prevOccurrences.length > 0) {
                                 currentSessionNum = prevOccurrences.length > 0 ? prevOccurrences.length : 1;
                             }
                         }
                     }
                     
-                    let sessionText = '';
-                    if (isPackage) {
-                        sessionText = `${currentSessionNum} de ${totalSessions} Sesiones`;
-                    } else {
-                        sessionText = pendingCitas.length === 1 ? '1 Cita pdte.' : `${pendingCitas.length} Citas pdtes.`;
+                    function formatDate(dStr) {
+                        if (!dStr) return '';
+                        const [y,m,d] = dStr.split('-');
+                        return `${d}/${m}`;
                     }
                     
-                    sesionesHTML = `<span class="bg-primary/10 text-primary px-2 py-1 rounded-md text-[10px] font-bold" title="Citas/Sesiones pendientes">${sessionText}</span>`;
-                } else {
-                    sesionesHTML = `<span class="text-outline text-xs">Al día</span>`;
+                    let sessionText = '';
+                    let prefix = nextCita ? 'Próx. Cita' : 'Última Cita';
+                    let dateToShow = formatDate(targetCita.fecha);
+                    
+                    if (isPackage) {
+                        sessionText = `${prefix} ${dateToShow} - Sesión ${currentSessionNum} de ${totalSessions}`;
+                    } else {
+                        sessionText = `${prefix}: ${dateToShow}`;
+                    }
+                    
+                    sesionesHTML = `<span class="bg-surface-container-high text-on-surface px-2 py-1 rounded-md text-[10px] font-bold">${sessionText}</span>`;
                 }
 
+                const pagosPend = (paciente.pagos || []).filter(p => p.estado === 'Pendiente' || p.estado === 'Vencido').length;
                 let pagosHTML = '';
                 if (pagosPend > 0) {
                     pagosHTML = `<span class="bg-error/10 text-error px-2 py-1 rounded-md text-[10px] font-bold" title="Cuentas por cobrar">${pagosPend} Deudas</span>`;
