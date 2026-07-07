@@ -184,10 +184,29 @@
 <h2 class="font-display-lg text-display-lg text-on-surface mb-2">Resumen Financiero</h2>
 <p class="text-body-lg font-body-lg text-on-surface-variant">Visualización del rendimiento clínico y estados de cuenta pendientes.</p>
 </div>
-<div class="flex gap-4">
-<button class="bg-surface-white border border-outline-variant px-6 py-2 rounded-full font-bold flex items-center gap-2 hover:bg-surface-container transition-all">
-<span class="material-symbols-outlined">download</span> Exportar PDF
-                </button>
+</div>
+<div class="flex flex-wrap gap-3 items-center">
+    <div class="flex items-center gap-2">
+        <label class="text-xs text-on-surface-variant font-bold">Mes:</label>
+        <input type="month" id="filtro-mes" class="bg-surface-white border border-outline-variant rounded-lg text-sm px-3 py-1">
+    </div>
+    <div class="flex items-center gap-2">
+        <label class="text-xs text-on-surface-variant font-bold">Desde:</label>
+        <input type="date" id="filtro-fecha-inicio" class="bg-surface-white border border-outline-variant rounded-lg text-sm px-3 py-1">
+    </div>
+    <div class="flex items-center gap-2">
+        <label class="text-xs text-on-surface-variant font-bold">Hasta:</label>
+        <input type="date" id="filtro-fecha-fin" class="bg-surface-white border border-outline-variant rounded-lg text-sm px-3 py-1">
+    </div>
+    <div class="flex items-center gap-2">
+        <label class="text-xs text-on-surface-variant font-bold">Paciente:</label>
+        <input type="text" id="filtro-paciente" placeholder="Buscar..." class="bg-surface-white border border-outline-variant rounded-lg text-sm px-3 py-1 w-32">
+    </div>
+    <button onclick="cargarDatosFinancieros()" class="bg-primary text-on-primary px-4 py-1.5 rounded-lg font-bold text-sm hover:bg-primary/90 transition-colors">Filtrar</button>
+    
+    <button onclick="exportarLibroTransacciones()" class="bg-surface-container-high border border-outline-variant px-4 py-1.5 rounded-lg font-bold flex items-center gap-2 hover:bg-surface-container transition-all text-sm ml-2">
+        <span class="material-symbols-outlined text-[18px]">download</span> Exportar Excel
+    </button>
 </div>
 </section>
 <!-- Financial Overview Bento Grid -->
@@ -290,9 +309,9 @@
 <h4 class="font-headline-md text-headline-md text-on-surface">Libro de Transacciones</h4>
 <div class="flex items-center gap-4">
 <button onclick="exportarLibroTransacciones()" class="bg-surface-container-high text-on-surface px-4 py-2 rounded-lg font-bold flex items-center gap-2 hover:bg-surface-container-highest transition-all text-sm">
-    <span class="material-symbols-outlined text-sm">download</span> CSV
+    <span class="material-symbols-outlined text-sm">download</span> Excel
 </button>
-<select id="filtro-tipo-transaccion" class="bg-surface-container-low border-none rounded-lg text-label-sm px-4">
+<select id="filtro-tipo-transaccion" class="bg-surface-container-low border-none rounded-lg text-label-sm px-4 py-2">
 <option value="all">Todos los tipos</option>
 <option value="Pagos">Pagos</option>
 <option value="Facturas">Facturas</option>
@@ -377,10 +396,26 @@
                         metodo,
                         estado,
                         fecha,
+                        descripcion,
                         pacientes ( nombre ),
                         citas ( tratamiento, motivo )
                     `)
                     .order('fecha', { ascending: false });
+
+                const mes = document.getElementById('filtro-mes')?.value;
+                const fechaInicio = document.getElementById('filtro-fecha-inicio')?.value;
+                const fechaFin = document.getElementById('filtro-fecha-fin')?.value;
+
+                if (fechaInicio) {
+                    query = query.gte('fecha', fechaInicio + 'T00:00:00');
+                }
+                if (fechaFin) {
+                    query = query.lte('fecha', fechaFin + 'T23:59:59');
+                } else if (mes && !fechaInicio && !fechaFin) {
+                    const firstDay = new Date(mes + '-01').toISOString();
+                    const nextMonth = new Date(new Date(mes + '-01').setMonth(new Date(mes + '-01').getMonth() + 1)).toISOString();
+                    query = query.gte('fecha', firstDay).lt('fecha', nextMonth);
+                }
 
                 if (pacienteId) {
                     query = query.eq('paciente_id', pacienteId);
@@ -390,8 +425,13 @@
 
                 if (error) throw error;
 
-                // Calcular totales dinámicos
-                const safePagos = pagos || [];
+                // Filter locally by patient name if no patientId but name is typed
+                let safePagos = pagos || [];
+                const busquedaPaciente = document.getElementById('filtro-paciente')?.value?.toLowerCase();
+                if (busquedaPaciente && !pacienteId) {
+                    safePagos = safePagos.filter(p => p.pacientes && p.pacientes.nombre.toLowerCase().includes(busquedaPaciente));
+                }
+
                 const totalIngresos = safePagos.filter(p => p.estado === 'Completado').reduce((sum, p) => sum + Number(p.monto), 0);
                 const pendientes = safePagos.filter(p => p.estado === 'Pendiente');
                 const totalPendientes = pendientes.reduce((sum, p) => sum + Number(p.monto), 0);
@@ -661,57 +701,43 @@
         // Global vars for POS removed
         // POS functions removed as they are in cobrar_desktop.html
 
-        async function exportarLibroTransacciones() {
-            if (!window.supabaseClient) {
-                alert("Error de conexión. Intente recargar la página.");
+        function exportarLibroTransacciones() {
+            if (!window.todosLosPagos || window.todosLosPagos.length === 0) {
+                showToast("No hay transacciones para exportar con los filtros actuales.", "error");
                 return;
             }
-            try {
-                // Obtener todos los pagos, ordenados por fecha
-                const { data, error } = await window.supabaseClient
-                    .from('pagos')
-                    .select('*, pacientes(nombre)')
-                    .order('fecha_emision', { ascending: false });
 
-                if (error) throw error;
-                if (!data || data.length === 0) {
-                    alert("No hay transacciones para exportar.");
-                    return;
-                }
+            let csvContent = "\uFEFF"; // BOM for Excel UTF-8
+            csvContent += "ID Transaccion;Fecha;Paciente;Servicio;Metodo;Estado;Monto\n";
 
-                let csvContent = "data:text/csv;charset=utf-8,";
-                // Añadir cabeceras
-                csvContent += "ID Transaccion,Fecha,Paciente,Servicio,Estado,Monto Subtotal,Descuento,IGV,Total\n";
+            window.todosLosPagos.forEach(pago => {
+                const pacienteNombre = pago.pacientes ? pago.pacientes.nombre : 'Desconocido';
+                const descripcion = pago.descripcion || (pago.citas ? (pago.citas.tratamiento || pago.citas.motivo || '-') : '-');
+                const fechaFormat = new Date(pago.fecha).toLocaleString('es-PE');
+                
+                const row = [
+                    pago.id,
+                    fechaFormat,
+                    `"${pacienteNombre}"`,
+                    `"${descripcion}"`,
+                    pago.metodo || '-',
+                    pago.estado,
+                    Number(pago.monto || 0).toFixed(2)
+                ].join(";");
+                csvContent += row + "\n";
+            });
 
-                // Formatear filas
-                data.forEach(pago => {
-                    const row = [
-                        pago.id,
-                        new Date(pago.fecha_emision).toLocaleString(),
-                        `"${pago.pacientes?.nombre || 'Paciente Desconocido'}"`,
-                        `"${pago.servicio_realizado || '-'}"`,
-                        pago.estado_pago,
-                        pago.monto_subtotal || '0.00',
-                        pago.descuento_aplicado || '0.00',
-                        pago.monto_igv || '0.00',
-                        pago.monto_total || '0.00'
-                    ].join(",");
-                    csvContent += row + "\n";
-                });
-
-                // Crear enlace invisible para forzar descarga
-                const encodedUri = encodeURI(csvContent);
-                const link = document.createElement("a");
-                link.setAttribute("href", encodedUri);
-                link.setAttribute("download", `Libro_Transacciones_Eslava_${new Date().toISOString().split('T')[0]}.csv`);
-                document.body.appendChild(link); // Requerido en Firefox
-                link.click();
-                document.body.removeChild(link);
-            } catch (err) {
-                console.error("Error al exportar libro:", err);
-                alert("Ocurrió un error al intentar exportar el reporte.");
-            }
+            // Create invisible link to force download
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            link.setAttribute("href", url);
+            link.setAttribute("download", `Reporte_Financiero_Eslava_${new Date().toISOString().split('T')[0]}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
         }
+
 
         document.addEventListener("DOMContentLoaded", async () => {
             await cargarDatosFinancieros();

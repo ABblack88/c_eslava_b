@@ -517,7 +517,7 @@
                     .from('pagos')
                     .select('*, citas(tratamiento)')
                     .eq('paciente_id', id)
-                    .eq('estado', 'Pendiente')
+                    .in('estado', ['Pendiente', 'Vencido'])
                     .order('fecha', { ascending: true });
                     
                 if (error) throw error;
@@ -560,11 +560,16 @@
                 if (pendientesDelPaciente.length === 0) {
                     listContainer.innerHTML = '<p class="text-outline text-sm py-2">Este paciente no tiene ítems pendientes de cobro.</p>';
                 } else {
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const pagosIdsStr = urlParams.get('pagos_ids');
+                    const pagosIds = pagosIdsStr ? pagosIdsStr.split(',') : null;
+                    
                     listContainer.innerHTML = pendientesDelPaciente.map((pago) => {
                         const fecha = new Date(pago.fecha).toLocaleDateString('es-PE');
+                        const isChecked = pagosIds ? pagosIds.includes(pago.id.toString()) : true;
                         return `
                         <div class="flex items-start gap-3 p-3 bg-surface-container-lowest rounded-xl border border-surface-container-low mb-2 hover:bg-surface-container transition-colors">
-                            <input type="checkbox" id="pend_${pago.id}" class="mt-1 rounded border-outline-variant text-primary focus:ring-primary h-4 w-4" checked onchange="calcularTotalesFactura()">
+                            <input type="checkbox" id="pend_${pago.id}" class="mt-1 rounded border-outline-variant text-primary focus:ring-primary h-4 w-4" ${isChecked ? 'checked' : ''} onchange="calcularTotalesFactura()">
                             <div class="flex-1">
                                 <label for="pend_${pago.id}" class="font-bold text-sm text-on-surface cursor-pointer block">${pago.descripcion || (pago.citas && pago.citas.tratamiento) || 'Cobro Pendiente'}</label>
                                 <p class="text-xs text-on-surface-variant">${fecha}</p>

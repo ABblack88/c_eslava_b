@@ -487,6 +487,7 @@
         <table class="w-full text-left border-collapse">
             <thead>
                 <tr class="text-label-sm text-on-surface-variant uppercase tracking-widest border-b border-surface-container-highest">
+                    <th class="pb-3 pl-2 font-semibold w-10"></th>
                     <th class="pb-3 font-semibold">Fecha / Hora</th>
                     <th class="pb-3 font-semibold">Descripción</th>
                     <th class="pb-3 font-semibold">Tipo</th>
@@ -495,7 +496,7 @@
                 </tr>
             </thead>
             <tbody class="divide-y divide-surface-container" id="modal-facturacion-tbody">
-                <tr><td colspan="5" class="py-5 text-center text-outline italic">Cargando transacciones...</td></tr>
+                <tr><td colspan="6" class="py-5 text-center text-outline italic">Cargando transacciones...</td></tr>
             </tbody>
         </table>
     </div>
@@ -510,7 +511,11 @@
                 <p class="text-md font-bold text-error" id="modal-fact-pendiente">S/. 0.00</p>
             </div>
         </div>
-        <button onclick="const p = new URLSearchParams(window.location.search); p.set('paciente_id', currentPatientId); window.location.href='pagos_facturacion_desktop.html?' + p.toString();" class="text-primary font-bold hover:underline flex items-center gap-1"><span class="material-symbols-outlined text-sm">open_in_new</span> Administrar en Finanzas</button>
+        <div class="flex gap-3">
+            <button onclick="exportarPacienteExcel()" class="bg-surface-container-high border border-outline-variant text-on-surface px-4 py-2 rounded-xl font-bold hover:bg-surface-container transition-colors flex items-center gap-2"><span class="material-symbols-outlined text-sm">download</span> Exportar</button>
+            <button onclick="cobrarSeleccionados()" class="bg-primary text-white font-bold py-2 px-4 rounded-xl hover:bg-primary/90 transition-colors flex items-center gap-2"><span class="material-symbols-outlined text-sm">point_of_sale</span> Cobrar Seleccionados</button>
+            <button onclick="const p = new URLSearchParams(window.location.search); p.set('paciente_id', currentPatientId); window.location.href='pagos_facturacion_desktop.html?' + p.toString();" class="text-primary font-bold hover:bg-primary/10 py-2 px-4 rounded-xl flex items-center gap-1 transition-colors"><span class="material-symbols-outlined text-sm">open_in_new</span> Ir a Finanzas</button>
+        </div>
     </div>
 </dialog>
 <!-- Modal Editar Registro -->
@@ -739,7 +744,7 @@
                 // Fetch total pending/overdue and paid balances from 'pagos'
                 const { data: pagos } = await supabaseClient
                     .from('pagos')
-                    .select('monto, estado, descripcion, fecha')
+                    .select('id, monto, estado, descripcion, fecha')
                     .eq('paciente_id', pacId)
                     .order('fecha', { ascending: false });
 
@@ -788,8 +793,13 @@
                                 ? '<span class="material-symbols-outlined text-success">check_circle</span>'
                                 : '<span class="material-symbols-outlined text-warning">schedule</span>';
                                 
+                            const checkboxHtml = isCompletado 
+                                ? '' 
+                                : `<input type="checkbox" class="modal-pago-checkbox rounded border-outline-variant text-primary focus:ring-primary h-4 w-4 cursor-pointer" value="${p.id}" onclick="event.stopPropagation()" />`;
+                                
                             return `
-                            <tr class="group hover:bg-surface-bright transition-colors">
+                            <tr class="group hover:bg-surface-bright transition-colors cursor-pointer" onclick="const cb = this.querySelector('.modal-pago-checkbox'); if(cb) cb.checked = !cb.checked;">
+                                <td class="py-4 pl-2">${checkboxHtml}</td>
                                 <td class="py-4"><p class="text-body-md">${dStr}</p></td>
                                 <td class="py-4"><p class="text-body-md font-bold">${p.descripcion || 'Servicio General'}</p></td>
                                 <td class="py-4">${badgeHtml}</td>
@@ -801,7 +811,7 @@
                     }
                 } else {
                     if (transList) transList.innerHTML = '<li class="italic text-outline">Sin transacciones</li>';
-                    if (modalTbody) modalTbody.innerHTML = '<tr><td colspan="5" class="py-5 text-center text-outline italic">No hay registros financieros.</td></tr>';
+                    if (modalTbody) modalTbody.innerHTML = '<tr><td colspan="6" class="py-5 text-center text-outline italic">No hay registros financieros.</td></tr>';
                 }
 
                 // Fetch patient's appointments/evolution notes
@@ -1134,6 +1144,76 @@
                     console.log('SW registration failed: ', registrationError);
                 });
             });
+        }
+        function showToast(message, type = "success") {
+            const toast = document.createElement("div");
+            toast.className = `fixed bottom-6 right-6 px-6 py-3 rounded-xl shadow-lg font-bold text-white transition-all transform translate-y-10 opacity-0 z-[100] ${
+                type === "success" ? "bg-success" : type === "error" ? "bg-error" : "bg-primary"
+            }`;
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.classList.remove("translate-y-10", "opacity-0");
+            }, 100);
+            
+            setTimeout(() => {
+                toast.classList.add("translate-y-10", "opacity-0");
+                setTimeout(() => toast.remove(), 500);
+            }, 3000);
+        }
+
+        function cobrarSeleccionados() {
+            const checkboxes = document.querySelectorAll('.modal-pago-checkbox:checked');
+            if(checkboxes.length === 0) {
+                showToast("Debes seleccionar al menos un ítem pendiente para cobrar.", "error");
+                return;
+            }
+            const ids = Array.from(checkboxes).map(cb => cb.value).join(',');
+            const p = new URLSearchParams();
+            p.set('paciente_id', currentPatientId);
+            p.set('pagos_ids', ids);
+            window.location.href = 'cobrar_desktop.html?' + p.toString();
+        }
+
+        async function exportarPacienteExcel() {
+            try {
+                const { data: pagos } = await supabaseClient
+                    .from('pagos')
+                    .select('id, monto, estado, descripcion, fecha, metodo')
+                    .eq('paciente_id', currentPatientId)
+                    .order('fecha', { ascending: false });
+                    
+                if (!pagos || pagos.length === 0) {
+                    showToast("No hay datos para exportar.", "error");
+                    return;
+                }
+                
+                const pacName = document.getElementById('patient-name-card').textContent || 'Paciente';
+                
+                let csvContent = "\uFEFF"; // BOM for Excel UTF-8
+                csvContent += "ID;Fecha;Descripcion;Metodo;Estado;Monto\n";
+                
+                pagos.forEach(p => {
+                    const f = new Date(p.fecha).toLocaleString('es-PE');
+                    const m = p.metodo || '-';
+                    const desc = p.descripcion || 'Servicio General';
+                    const row = [p.id, f, `"${desc}"`, m, p.estado, Number(p.monto).toFixed(2)].join(";");
+                    csvContent += row + "\n";
+                });
+                
+                const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement("a");
+                link.setAttribute("href", url);
+                link.setAttribute("download", `Estado_Cuenta_${pacName.replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.csv`);
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            } catch (err) {
+                console.error(err);
+                showToast("Error al exportar.", "error");
+            }
         }
     </script>
 </body></html>
