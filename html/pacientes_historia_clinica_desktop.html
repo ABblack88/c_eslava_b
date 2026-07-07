@@ -256,7 +256,6 @@
 <thead class="bg-surface-container-low/50">
 <tr>
 <th class="px-8 py-4 text-xs font-bold uppercase tracking-widest text-outline">Paciente</th>
-<th class="px-8 py-4 text-xs font-bold uppercase tracking-widest text-outline">ID Registro</th>
 <th class="px-8 py-4 text-xs font-bold uppercase tracking-widest text-outline">Estado</th>
 <th class="px-8 py-4 text-xs font-bold uppercase tracking-widest text-outline">Estado Sesiones</th>
 <th class="px-8 py-4 text-xs font-bold uppercase tracking-widest text-outline">Estado Cuentas</th>
@@ -650,7 +649,6 @@
                             <span class="font-bold text-on-surface group-hover:text-primary transition-colors">${paciente.nombre}</span>
                         </div>
                     </td>
-                    <td class="px-8 py-4 text-sm text-on-surface-variant">${paciente.id.substring(0,8)}</td>
                     <td class="px-8 py-4">
                         <span class="px-2.5 py-0.5 ${badgeClass} rounded-full text-xs font-bold whitespace-nowrap">${paciente.estado || 'Activo'}</span>
                     </td>
