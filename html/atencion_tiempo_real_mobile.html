@@ -108,11 +108,11 @@
                 <textarea id="observaciones" required rows="4" class="w-full rounded-xl border border-outline-variant px-3 py-2 text-sm focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all bg-surface-container-lowest" placeholder="Registre la evolución, respuesta al ejercicio y dolor..."></textarea>
                 
                 <div class="space-y-1 mb-4">
-                    <label class="block text-xs font-bold text-on-surface text-primary">Tratamiento Realizado</label>
-                    <p class="text-[10px] text-outline mb-1">Seleccione el servicio principal brindado en esta sesión.</p>
-                    <select id="tratamientoCobrado" class="w-full rounded-xl border border-outline-variant px-3 py-2 text-sm focus:ring-2 focus:ring-primary outline-none bg-surface-container-lowest">
-                        <option value="">Cargando tratamientos...</option>
-                    </select>
+                    <label class="block text-xs font-bold text-on-surface text-primary">Tratamientos Realizados</label>
+                    <p class="text-[10px] text-outline mb-1">Seleccione los servicios brindados. El costo se sumará automáticamente.</p>
+                    <div id="tratamientosContainer" class="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-40 overflow-y-auto p-3 border border-outline-variant rounded-xl bg-surface-container-lowest">
+                        <p class="text-[10px] text-outline italic col-span-full">Cargando tratamientos...</p>
+                    </div>
                 </div>
 
                 <div class="space-y-1">
@@ -193,26 +193,41 @@
 
                 if (error) throw error;
 
-                const select = document.getElementById('tratamientoCobrado');
-                select.innerHTML = '';
-                
-                // Add the current appointment treatment as default if possible, or just options
+                const container = document.getElementById('tratamientosContainer');
+                container.innerHTML = '';
+
+                let tratamientosSeleccionados = [];
+                if (currentCita && currentCita.tratamiento) {
+                    tratamientosSeleccionados = currentCita.tratamiento.split(',').map(t => t.trim());
+                }
+
                 if (servicios && servicios.length > 0) {
                     servicios.forEach(srv => {
-                        const opt = document.createElement('option');
-                        opt.value = srv.nombre;
-                        opt.textContent = srv.nombre;
-                        if (currentCita && currentCita.tratamiento === srv.nombre) {
-                            opt.selected = true;
-                        }
-                        select.appendChild(opt);
+                        const isChecked = tratamientosSeleccionados.includes(srv.nombre) ? 'checked' : '';
+                        
+                        container.innerHTML += `
+                            <label class="flex items-start gap-2 cursor-pointer p-2 rounded-lg hover:bg-surface-container transition-colors border border-transparent hover:border-outline-variant/30">
+                                <input type="checkbox" name="tratamientoCobrado" value="${srv.nombre}" data-precio="${srv.precio}" ${isChecked} class="mt-0.5 rounded border-outline-variant text-primary focus:ring-primary h-3.5 w-3.5">
+                                <div class="flex-1 text-xs leading-tight">
+                                    <span class="block font-bold text-on-surface">${srv.nombre}</span>
+                                    <span class="block text-[10px] text-primary font-semibold mt-0.5">S/. ${parseFloat(srv.precio).toFixed(2)}</span>
+                                </div>
+                            </label>
+                        `;
                     });
                 } else {
-                    select.innerHTML = '<option value="">Sin servicios disponibles</option>';
+                    container.innerHTML = '<p class="text-[10px] text-outline italic col-span-full">Sin servicios disponibles</p>';
                 }
             } catch (err) {
                 console.error("Error cargando servicios:", err);
             }
+        }
+
+        function getTratamientosSeleccionados() {
+            const checkboxes = document.querySelectorAll('input[name="tratamientoCobrado"]:checked');
+            const seleccionados = Array.from(checkboxes).map(cb => cb.value);
+            const montoTotal = Array.from(checkboxes).reduce((sum, cb) => sum + parseFloat(cb.getAttribute('data-precio') || 0), 0);
+            return { tratamientos: seleccionados.join(', '), montoTotal };
         }
 
         async function cargarDatosCita() {
@@ -273,7 +288,7 @@
             const obs = document.getElementById('observaciones').value;
             const rec = document.getElementById('recomendaciones').value;
             const fullObs = rec ? `${obs}\n\nRecomendaciones: ${rec}` : obs;
-            const nuevoTratamiento = document.getElementById('tratamientoCobrado').value;
+            const tratData = getTratamientosSeleccionados();
 
             const btn = document.getElementById('btn-save-draft');
             btn.disabled = true;
@@ -284,11 +299,21 @@
                     .update({ 
                         notas: fullObs,
                         estado: 'En Progreso',
-                        tratamiento: nuevoTratamiento
+                        tratamiento: tratData.tratamientos
                     })
                     .eq('id', citaId);
 
                 if (error) throw error;
+
+                // Actualizar pago pendiente para reflejar el nuevo monto si existe
+                await supabaseClient
+                    .from('pagos')
+                    .update({
+                        monto: tratData.montoTotal,
+                        descripcion: tratData.tratamientos
+                    })
+                    .eq('cita_id', citaId)
+                    .eq('estado', 'Pendiente');
 
                 document.getElementById('save-status').textContent = 'Borrador guardado';
                 showToast("Borrador guardado", "success");
@@ -359,18 +384,28 @@
                     }
                 }
 
-                const nuevoTratamiento = document.getElementById('tratamientoCobrado').value;
+                const tratData = getTratamientosSeleccionados();
 
                 const { error } = await supabaseClient
                     .from('citas')
                     .update({
                         notas: fullObs,
                         estado: 'Completado',
-                        tratamiento: nuevoTratamiento
+                        tratamiento: tratData.tratamientos
                     })
                     .eq('id', citaId);
 
                 if (error) throw error;
+
+                // Actualizar pago pendiente para reflejar el nuevo monto final
+                await supabaseClient
+                    .from('pagos')
+                    .update({
+                        monto: tratData.montoTotal,
+                        descripcion: tratData.tratamientos
+                    })
+                    .eq('cita_id', citaId)
+                    .eq('estado', 'Pendiente');
 
                 showToast("Procedimiento culminado. Redirigiendo...", "success");
                 
@@ -391,7 +426,7 @@
             const obs = document.getElementById('observaciones').value;
             const rec = document.getElementById('recomendaciones').value;
             const fullObs = rec ? `${obs}\n\nRecomendaciones: ${rec}` : obs;
-            const nuevoTratamiento = document.getElementById('tratamientoCobrado').value;
+            const tratData = getTratamientosSeleccionados();
 
             if (!obs) {
                 alert("Ingrese observaciones antes de guardar.");
@@ -407,12 +442,22 @@
                     .from('citas')
                     .update({
                         notas: fullObs,
-                        tratamiento: nuevoTratamiento
+                        tratamiento: tratData.tratamientos
                         // no cambiamos el estado, ya es Completado
                     })
                     .eq('id', citaId);
 
                 if (error) throw error;
+
+                // Actualizar pago pendiente si todavía no fue pagado
+                await supabaseClient
+                    .from('pagos')
+                    .update({
+                        monto: tratData.montoTotal,
+                        descripcion: tratData.tratamientos
+                    })
+                    .eq('cita_id', citaId)
+                    .eq('estado', 'Pendiente');
 
                 showToast("Procedimiento actualizado correctamente.", "success");
                 setTimeout(() => {

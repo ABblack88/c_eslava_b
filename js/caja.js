@@ -529,10 +529,30 @@
 
                 pendientesDelPaciente = (data || []).map(pago => {
                     const tratamientoNombre = pago.descripcion || (pago.citas && pago.citas.tratamiento) || '';
-                    const servicioMatch = globalServicios.find(s => s.nombre.toLowerCase() === tratamientoNombre.toLowerCase());
-                    if (servicioMatch) {
-                        pago.precio_regular = servicioMatch.precio;
-                        pago.precio_convenio = servicioMatch.precio_convenio || servicioMatch.precio;
+                    
+                    const tratamientos = tratamientoNombre.split(',').map(t => t.trim()).filter(t => t);
+                    
+                    let totalRegular = 0;
+                    let totalConvenio = 0;
+                    let allMatched = true;
+
+                    if (tratamientos.length > 0) {
+                        tratamientos.forEach(tName => {
+                            const servicioMatch = globalServicios.find(s => s.nombre.toLowerCase() === tName.toLowerCase());
+                            if (servicioMatch) {
+                                totalRegular += parseFloat(servicioMatch.precio);
+                                totalConvenio += parseFloat(servicioMatch.precio_convenio || servicioMatch.precio);
+                            } else {
+                                allMatched = false;
+                            }
+                        });
+                    } else {
+                        allMatched = false;
+                    }
+
+                    if (allMatched && tratamientos.length > 0) {
+                        pago.precio_regular = totalRegular;
+                        pago.precio_convenio = totalConvenio;
                     }
                     return pago;
                 });
