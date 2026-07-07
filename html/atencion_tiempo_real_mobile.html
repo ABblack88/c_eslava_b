@@ -438,12 +438,11 @@
                     .eq('cita_id', citaId)
                     .eq('estado', 'Pendiente');
 
-                showToast("Procedimiento culminado. Redirigiendo...", "success");
+                showToast("Procedimiento culminado. Redirigiendo al calendario...", "success");
                 
                 setTimeout(() => {
                     const role = new URLSearchParams(window.location.search).get('role') || 'admin';
-                    const pacienteIdStr = currentPaciente ? currentPaciente.id : '';
-                    window.location.href = `pagos_facturacion_mobile.html?paciente_id=${pacienteIdStr}&cita_id=${citaId}&role=${role}`;
+                    window.location.href = `calendario_dashboard_mobile.html?role=${role}`;
                 }, 1500);
 
             } catch (err) {

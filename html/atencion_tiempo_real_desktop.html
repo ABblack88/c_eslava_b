@@ -496,12 +496,11 @@
                     .eq('estado', 'Pendiente');
 
                 // Enviar a facturación redireccionando
-                showToast("Procedimiento culminado. Redirigiendo a facturación...", "success");
+                showToast("Procedimiento culminado. Redirigiendo al calendario...", "success");
                 
                 setTimeout(() => {
                     const role = new URLSearchParams(window.location.search).get('role') || 'admin';
-                    const pacienteIdStr = currentPaciente ? currentPaciente.id : '';
-                    window.location.href = `pagos_facturacion_desktop.html?paciente_id=${pacienteIdStr}&cita_id=${citaId}&role=${role}`;
+                    window.location.href = `calendario_dashboard_desktop.html?role=${role}`;
                 }, 1500);
 
             } catch (err) {
