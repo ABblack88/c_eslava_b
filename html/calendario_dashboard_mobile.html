@@ -533,14 +533,12 @@
         const closeHour = parseInt(closing.split(':')[0]);
         
         selectTime.innerHTML = '';
-        for (let i = openHour; i <= closeHour; i++) {
+        for (let i = openHour; i < closeHour; i++) {
             let h12 = i % 12 || 12;
             let ampm = i >= 12 ? 'PM' : 'AM';
             let formattedH = h12.toString().padStart(2, '0');
             selectTime.innerHTML += `<option value="${formattedH}:00 ${ampm}">${formattedH}:00 ${ampm}</option>`;
-            if (i !== closeHour) {
-                selectTime.innerHTML += `<option value="${formattedH}:30 ${ampm}">${formattedH}:30 ${ampm}</option>`;
-            }
+            selectTime.innerHTML += `<option value="${formattedH}:30 ${ampm}">${formattedH}:30 ${ampm}</option>`;
         }
 
         const timeColumn = document.getElementById('calendar-time-column');
