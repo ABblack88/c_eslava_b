@@ -298,7 +298,7 @@
         <li class="italic text-outline">Cargando...</li>
     </ul>
 </div>
-<button onclick="const p = new URLSearchParams(window.location.search); p.set('paciente_id', currentPatientId); window.location.href='pagos_facturacion_desktop.html?' + p.toString();" class="w-full mt-4 py-2 text-primary font-bold border border-primary/20 rounded-lg hover:bg-primary/5 transition-all">Ver Facturación</button>
+<button onclick="document.getElementById('modalFacturacionPaciente').showModal()" class="w-full mt-4 py-2 text-primary font-bold border border-primary/20 rounded-lg hover:bg-primary/5 transition-all">Ver Facturación</button>
 </div>
 </aside>
 <!-- Center Column: Protocol & Evolution -->
@@ -474,6 +474,45 @@
 </aside>
 </div>
 </main>
+
+<!-- Modal Resumen Económico -->
+<dialog id="modalFacturacionPaciente" class="backdrop:bg-black/50 p-6 rounded-2xl shadow-xl border-none max-w-4xl w-full bg-surface-white">
+    <div class="flex justify-between items-center mb-6">
+        <h3 class="text-xl font-bold text-on-surface flex items-center gap-2"><span class="material-symbols-outlined text-primary">payments</span> Resumen Económico del Paciente</h3>
+        <button onclick="document.getElementById('modalFacturacionPaciente').close()" class="text-on-surface-variant hover:text-error transition-colors">
+            <span class="material-symbols-outlined">close</span>
+        </button>
+    </div>
+    <div class="overflow-y-auto max-h-[60vh] custom-scrollbar pr-2">
+        <table class="w-full text-left border-collapse">
+            <thead>
+                <tr class="text-label-sm text-on-surface-variant uppercase tracking-widest border-b border-surface-container-highest">
+                    <th class="pb-3 font-semibold">Fecha / Hora</th>
+                    <th class="pb-3 font-semibold">Descripción</th>
+                    <th class="pb-3 font-semibold">Tipo</th>
+                    <th class="pb-3 font-semibold text-right">Monto</th>
+                    <th class="pb-3 font-semibold text-right">Estado</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-surface-container" id="modal-facturacion-tbody">
+                <tr><td colspan="5" class="py-5 text-center text-outline italic">Cargando transacciones...</td></tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="mt-6 pt-4 border-t border-surface-container flex justify-between items-center">
+        <div class="flex gap-4">
+            <div class="text-center">
+                <p class="text-[10px] text-outline font-bold uppercase mb-1">Total Pagado</p>
+                <p class="text-md font-bold text-success" id="modal-fact-pagado">S/. 0.00</p>
+            </div>
+            <div class="text-center">
+                <p class="text-[10px] text-outline font-bold uppercase mb-1">Por Pagar</p>
+                <p class="text-md font-bold text-error" id="modal-fact-pendiente">S/. 0.00</p>
+            </div>
+        </div>
+        <button onclick="const p = new URLSearchParams(window.location.search); p.set('paciente_id', currentPatientId); window.location.href='pagos_facturacion_desktop.html?' + p.toString();" class="text-primary font-bold hover:underline flex items-center gap-1"><span class="material-symbols-outlined text-sm">open_in_new</span> Administrar en Finanzas</button>
+    </div>
+</dialog>
 <!-- Modal Editar Registro -->
 <dialog id="modalEditarRegistro" class="backdrop:bg-black/50 p-6 rounded-2xl shadow-xl border-none max-w-lg w-full bg-surface-white">
     <div class="flex justify-between items-center mb-6">
@@ -716,8 +755,13 @@
                 if(inversionEl) inversionEl.textContent = `S/. ${totalInversion.toFixed(2)}`;
 
                 const transList = document.getElementById('patient-recent-transactions');
-                if (transList) {
-                    if (pagos && pagos.length > 0) {
+                const modalTbody = document.getElementById('modal-facturacion-tbody');
+                
+                if(document.getElementById('modal-fact-pagado')) document.getElementById('modal-fact-pagado').textContent = `S/. ${totalPagado.toFixed(2)}`;
+                if(document.getElementById('modal-fact-pendiente')) document.getElementById('modal-fact-pendiente').textContent = `S/. ${totalPendiente.toFixed(2)}`;
+
+                if (pagos && pagos.length > 0) {
+                    if (transList) {
                         transList.innerHTML = pagos.slice(0, 3).map(p => {
                             const dObj = p.fecha ? new Date(p.fecha) : null;
                             const dStr = dObj ? dObj.toLocaleDateString('es-PE', { day: '2-digit', month: '2-digit', year: '2-digit' }) : '--';
@@ -727,9 +771,37 @@
                                 <span class="font-bold ${p.estado === 'Completado' ? 'text-success' : 'text-error'}">S/. ${Number(p.monto).toFixed(2)}</span>
                             </li>
                         `}).join('');
-                    } else {
-                        transList.innerHTML = '<li class="italic text-outline">Sin transacciones</li>';
                     }
+                    
+                    if (modalTbody) {
+                        modalTbody.innerHTML = pagos.map(p => {
+                            const isCompletado = p.estado === 'Completado';
+                            const dObj = p.fecha ? new Date(p.fecha) : null;
+                            const dStr = dObj ? dObj.toLocaleString('es-PE', { day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit' }) : '--';
+                            const badgeHtml = isCompletado 
+                                ? '<span class="bg-success/10 text-success px-3 py-1 rounded-full text-label-sm font-bold">Ingreso</span>'
+                                : '<span class="bg-warning/10 text-warning px-3 py-1 rounded-full text-label-sm font-bold">Pendiente</span>';
+                            const montoHtml = isCompletado 
+                                ? `<p class="text-body-md font-bold text-success">+ S/. ${Number(p.monto).toFixed(2)}</p>`
+                                : `<p class="text-body-md font-bold text-on-surface">S/. ${Number(p.monto).toFixed(2)}</p>`;
+                            const iconHtml = isCompletado
+                                ? '<span class="material-symbols-outlined text-success">check_circle</span>'
+                                : '<span class="material-symbols-outlined text-warning">schedule</span>';
+                                
+                            return `
+                            <tr class="group hover:bg-surface-bright transition-colors">
+                                <td class="py-4"><p class="text-body-md">${dStr}</p></td>
+                                <td class="py-4"><p class="text-body-md font-bold">${p.descripcion || 'Servicio General'}</p></td>
+                                <td class="py-4">${badgeHtml}</td>
+                                <td class="py-4 text-right">${montoHtml}</td>
+                                <td class="py-4 text-right">${iconHtml}</td>
+                            </tr>
+                            `;
+                        }).join('');
+                    }
+                } else {
+                    if (transList) transList.innerHTML = '<li class="italic text-outline">Sin transacciones</li>';
+                    if (modalTbody) modalTbody.innerHTML = '<tr><td colspan="5" class="py-5 text-center text-outline italic">No hay registros financieros.</td></tr>';
                 }
 
                 // Fetch patient's appointments/evolution notes
