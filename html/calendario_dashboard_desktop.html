@@ -642,8 +642,8 @@
     }
 
     function generateGoogleCalendarUrl(appointment) {
-        const title = encodeURIComponent(`Cita Centro Eslava: ${appointment.treatment} - ${appointment.name}`);
-        const details = encodeURIComponent(`Cita médica programada en Centro Eslava.\nPaciente: ${appointment.name}\nTratamiento: ${appointment.treatment}\nTratante: ${appointment.doctor}\nNotas: ${appointment.notes || 'Ninguna'}`);
+        const title = encodeURIComponent(`Cita Centro Eslava - ${appointment.name}`);
+        const details = encodeURIComponent(`Cita médica programada en Centro Eslava.\nPaciente: ${appointment.name}\nTratante: ${appointment.doctor}\nNotas: ${appointment.notes || 'Ninguna'}`);
         const location = encodeURIComponent("Centro Eslava, Lima, Perú");
         
         let time24 = appointment.time;
