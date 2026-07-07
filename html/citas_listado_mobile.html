@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Gestión de Pacientes - Centro Eslava</title>
+<!-- Fonts & Icons -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;700&amp;display=block" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=block" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=block" rel="stylesheet"/>
+<!-- Tailwind Config -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <!-- Supabase SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../js/supabase.js"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-primary": "#ffffff",
+                        "primary-fixed": "#aeecff",
+                        "on-secondary-fixed": "#001f26",
+                        "surface": "#f8fafa",
+                        "tertiary-container": "#a96418",
+                        "surface-white": "#FFFFFF",
+                        "error": "#ba1a1a",
+                        "on-primary-fixed-variant": "#004e5d",
+                        "warning": "#FF9500",
+                        "secondary-container": "#89e4fd",
+                        "secondary-fixed-dim": "#78d3eb",
+                        "surface-tint": "#00687b",
+                        "on-tertiary-fixed": "#2e1600",
+                        "secondary-fixed": "#adecff",
+                        "success": "#34C759",
+                        "surface-container-lowest": "#ffffff",
+                        "text-main": "#1C1C1E",
+                        "on-secondary": "#ffffff",
+                        "outline-variant": "#bdc8cd",
+                        "on-secondary-fixed-variant": "#004e5c",
+                        "surface-container-high": "#e6e8e8",
+                        "surface-container-low": "#f2f4f4",
+                        "outline": "#6d797d",
+                        "on-primary-container": "#f9fdff",
+                        "primary": "#006578",
+                        "on-surface-variant": "#3d494c",
+                        "secondary": "#00687a",
+                        "background": "#f8fafa",
+                        "on-tertiary-container": "#fffbff",
+                        "on-error": "#ffffff",
+                        "tertiary-fixed": "#ffdcc0",
+                        "on-secondary-container": "#006779",
+                        "on-primary-fixed": "#001f26",
+                        "error-container": "#ffdad6",
+                        "inverse-primary": "#66d5f1",
+                        "on-tertiary": "#ffffff",
+                        "on-error-container": "#93000a",
+                        "primary-container": "#008097",
+                        "text-muted": "#636366",
+                        "surface-bright": "#f8fafa",
+                        "primary-fixed-dim": "#66d5f1",
+                        "surface-dim": "#d8dada",
+                        "surface-container": "#eceeee",
+                        "surface-variant": "#e1e3e3",
+                        "surface-container-highest": "#e1e3e3",
+                        "tertiary-fixed-dim": "#ffb877",
+                        "inverse-surface": "#2e3131",
+                        "on-background": "#191c1d",
+                        "inverse-on-surface": "#eff1f1",
+                        "on-tertiary-fixed-variant": "#6b3b00",
+                        "on-surface": "#191c1d",
+                        "tertiary": "#8a4d00"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "base": "8px",
+                        "margin-desktop": "80px",
+                        "margin-mobile": "20px",
+                        "gutter": "24px",
+                        "section-gap": "120px"
+                    },
+                    "fontFamily": {
+                        "body-md": ["Hanken Grotesk"],
+                        "display-lg": ["Hanken Grotesk"],
+                        "display-lg-mobile": ["Hanken Grotesk"],
+                        "label-sm": ["Hanken Grotesk"],
+                        "body-lg": ["Hanken Grotesk"],
+                        "headline-md": ["Hanken Grotesk"]
+                    },
+                    "fontSize": {
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "display-lg-mobile": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "700" }],
+                        "label-sm": ["13px", { "lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        /* Hide scrollbar for cleaner look */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #e1e3e3; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #bdc8cd; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+
+    <script src="../js/app.js"></script>
+    <script src="../js/rbac.js"></script>
+    <link rel="manifest" href="../manifest.json">
+</head>
+<body class="bg-surface text-on-surface font-body-md min-h-screen flex antialiased">
+<!-- DESKTOP NAVIGATION DRAWER (Hidden on mobile) -->
+<nav class="hidden md:flex flex-col bg-surface-white w-72 h-full fixed left-0 top-0 z-40 p-6 shadow-[0px_10px_30px_rgba(0,0,0,0.04)]">
+<!-- Header -->
+<div class="flex items-center gap-4 mb-8">
+<div class="w-12 h-12 rounded-full bg-surface-container overflow-hidden flex items-center justify-center">
+<span class="material-symbols-outlined text-outline" style="font-size: 24px;">person</span>
+</div>
+<div>
+<h2 class="font-headline-md text-[18px] leading-tight text-primary font-bold">Dr. Eslava</h2>
+<p class="font-label-sm text-label-sm text-outline">Director Clínico</p>
+</div>
+</div>
+<!-- Navigation Links -->
+<ul class="flex flex-col gap-2 flex-1">
+<!-- Schedule -->
+<li>
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl font-label-sm text-label-sm text-on-surface-variant hover:bg-surface-container-low transition-all" href="calendario_dashboard_mobile.html" id="nav-link-calendario-desktop">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">calendar_today</span>
+                    Agenda
+                </a>
+</li>
+<!-- Patients (ACTIVE) -->
+<li>
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl font-label-sm text-label-sm bg-secondary-container text-on-secondary-container active:scale-[0.98] transition-transform" href="pacientes_historia_clinica_mobile.html" id="nav-link-pacientes-desktop">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">groups</span>
+                    Pacientes
+                </a>
+</li>
+<!-- Services -->
+<li>
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl font-label-sm text-label-sm text-on-surface-variant hover:bg-surface-container-low transition-all" href="tratamientos_mobile.html" id="nav-link-servicios-desktop">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">medical_services</span>
+                    Servicios
+                </a>
+</li>
+<!-- Payments -->
+<li>
+<a class="flex flex-col items-center justify-center text-outline dark:text-outline-variant w-1/5" href="productos_mobile.html">
+<span class="material-symbols-outlined mb-1" data-icon="inventory_2">inventory_2</span>
+<span>Productos</span>
+</a>
+<a class="flex flex-col items-center justify-center text-outline dark:text-outline-variant min-w-0 flex-1 py-1 px-1 rounded-lg hover:bg-[#f2f4f4] active:scale-90 transition-all duration-150" href="cobrar_mobile.html">
+<span class="material-symbols-outlined mb-1 text-[22px]">point_of_sale</span>
+<span class="text-[10px] font-semibold leading-tight truncate">Caja</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl font-label-sm text-label-sm text-on-surface-variant hover:bg-surface-container-low transition-all" href="pagos_facturacion_mobile.html" id="nav-link-finanzas-desktop">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">payments</span>
+                    Pagos
+                </a>
+</li>
+<!-- Settings -->
+<li>
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl font-label-sm text-label-sm text-on-surface-variant hover:bg-surface-container-low transition-all mt-auto" href="ajustes_mobile.html" id="nav-link-ajustes-desktop">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">settings</span>
+                    Ajustes
+                </a>
+</li>
+</ul>
+</nav>
+<!-- MAIN CONTENT AREA -->
+<div class="flex-1 flex flex-col min-w-0 md:ml-72 relative pb-20 md:pb-0">
+<!-- TOP APP BAR -->
+<header class="w-full top-0 bg-surface flex justify-between items-center px-margin-mobile md:px-margin-desktop py-4 z-30 sticky shadow-[0px_10px_30px_rgba(0,0,0,0.02)]">
+<div class="flex items-center gap-4">
+<button class="md:hidden text-primary p-2 -ml-2 rounded-full hover:bg-surface-container-low transition-colors">
+<span class="material-symbols-outlined">menu</span>
+</button>
+<h1 class="font-headline-md text-headline-md font-bold text-primary tracking-tight">Centro Eslava</h1>
+</div>
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-full bg-surface-container overflow-hidden md:hidden">
+<img alt="Foto de perfil del doctor" class="w-full h-full object-cover" data-alt="Close up portrait of a medical professional in a brightly lit modern clinic. The lighting is soft and flattering, emphasizing a pristine, clean environment. The color palette is composed of crisp whites and subtle cool tones, creating a calm and authoritative mood." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB9dVQqVQpQP3E9p96P8X47ZsFfWdzlh5TjE7JGbm5KPJdmUMMeWT7HsbayVFz8iSv5H9HU9VVuftsrQNOgVvGvikJ8AI24sx3SykyqBDCk82ds04fdkJHPGwtn4-vip03EyQynHQ_Rahf8jy-fGukIN75hgCgT3VOZYfpyp9hzh0GiFam8fvW9YtovBT-4BI7xmSHmmwGFd3y5VWafNuiUlpslSoja7bM5lzdqYCswuzrLPGjhRGH2L7gLdDvpBXf84hZrxA1G6lU"/>
+</div>
+</div>
+</header>
+<!-- PAGE CONTENT CANVAS -->
+<main class="flex-1 px-margin-mobile md:px-margin-desktop py-8 max-w-[1280px] w-full mx-auto flex flex-col gap-8">
+<!-- Page Header & Search -->
+<div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+<div>
+<h2 class="font-display-lg-mobile md:font-display-lg text-display-lg-mobile md:text-display-lg text-on-surface mb-2">Listado de Citas</h2>
+<p class="font-body-md text-body-md text-outline">Gestiona y visualiza todas las citas programadas.</p>
+</div>
+<div class="w-full md:w-auto flex items-center relative">
+<span class="material-symbols-outlined absolute left-4 text-outline z-10 pointer-events-none">search</span>
+<input class="w-full md:w-[320px] pl-12 pr-4 py-3 bg-surface-white border border-transparent rounded-xl font-body-md text-body-md text-on-surface placeholder:text-outline focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 shadow-[0px_4px_20px_rgba(0,0,0,0.03)] transition-all" placeholder="Buscar por nombre, ID o condición..." type="text"/>
+</div>
+</div>
+<!-- Filters & Actions -->
+<div class="flex flex-col gap-4">
+    <div class="flex gap-2 overflow-x-auto pb-2 -mx-margin-mobile px-margin-mobile md:mx-0 md:px-0 hide-scrollbar">
+        <button class="whitespace-nowrap px-4 py-2 rounded-full font-label-sm text-label-sm bg-primary text-on-primary shadow-sm">Todas las Citas</button>
+        
+        
+    </div>
+    
+    <div class="flex gap-2 overflow-x-auto pb-2 -mx-margin-mobile px-margin-mobile md:mx-0 md:px-0 hide-scrollbar">
+        <input type="file" id="csvFileInputMobile" accept=".csv" style="display: none;" onchange="importarPacientesCSV(event)">
+        <button onclick="triggerImportarCSVMobile()" class="flex items-center gap-2 whitespace-nowrap px-4 py-2 rounded-full font-label-sm text-label-sm bg-surface-white text-on-surface hover:bg-surface-container-low transition-colors shadow-[0px_2px_10px_rgba(0,0,0,0.02)] border border-outline-variant/30">
+            <span class="material-symbols-outlined text-[16px]">upload</span> Importar
+        </button>
+        <button onclick="exportarPacientesCSV()" class="flex items-center gap-2 whitespace-nowrap px-4 py-2 rounded-full font-label-sm text-label-sm bg-primary text-on-primary shadow-[0px_2px_10px_rgba(0,0,0,0.02)]">
+            <span class="material-symbols-outlined text-[16px]">download</span> Exportar
+        </button>
+    </div>
+</div>
+<!-- Patient Grid (Bento/Card Layout) -->
+
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-gutter" id="patientsGrid">
+<!-- Contenido dinámico cargado vía Supabase -->
+</div>
+</main>
+</div>
+<!-- MOBILE BOTTOM NAV BAR (Hidden on desktop) -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 py-3 md:hidden bg-surface-white/90 backdrop-blur-md rounded-t-xl shadow-[0px_-10px_30px_rgba(0,0,0,0.04)]">
+<!-- Calendar -->
+<a class="flex flex-col items-center justify-center text-outline gap-1 active:scale-90 transition-all duration-150 w-16" href="calendario_dashboard_mobile.html" id="nav-link-calendario">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">event</span>
+<span class="font-label-sm text-[10px]">Agenda</span>
+</a>
+<!-- Patients (ACTIVE) -->
+<a class="flex flex-col items-center justify-center text-primary font-bold gap-1 active:scale-90 transition-all duration-150 w-16" href="pacientes_historia_clinica_mobile.html" id="nav-link-pacientes">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">person_search</span>
+<span class="font-label-sm text-[10px]">Pacientes</span>
+</a>
+<!-- Treatments -->
+<a class="flex flex-col items-center justify-center text-outline gap-1 active:scale-90 transition-all duration-150 w-16" href="tratamientos_mobile.html" id="nav-link-servicios">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">healing</span>
+<span class="font-label-sm text-[10px]">Tratamientos</span>
+</a>
+<!-- Finance -->
+<a class="flex flex-col items-center justify-center text-outline dark:text-outline-variant w-1/5" href="productos_mobile.html">
+<span class="material-symbols-outlined mb-1" data-icon="inventory_2">inventory_2</span>
+<span>Productos</span>
+</a>
+<a class="flex flex-col items-center justify-center text-outline dark:text-outline-variant min-w-0 flex-1 py-1 px-1 rounded-lg hover:bg-[#f2f4f4] active:scale-90 transition-all duration-150" href="cobrar_mobile.html">
+<span class="material-symbols-outlined mb-1 text-[22px]">point_of_sale</span>
+<span class="text-[10px] font-semibold leading-tight truncate">Caja</span>
+</a>
+<a class="flex flex-col items-center justify-center text-outline gap-1 active:scale-90 transition-all duration-150 w-16" href="pagos_facturacion_mobile.html" id="nav-link-finanzas">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">account_balance_wallet</span>
+<span class="font-label-sm text-[10px]">Finanzas</span>
+</a>
+</nav>
+
+
+
+<script>
+    
+
+
+    
+    let allCitas = [];
+
+    async function cargarCitas() {
+        try {
+            const gridBody = document.getElementById('patientsGrid');
+            if (!gridBody) return;
+
+            gridBody.innerHTML = '<div class="col-span-full text-center py-8"><div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div><p class="text-outline mt-4 font-label-sm">Cargando citas...</p></div>';
+
+            const { data, error } = await window.supabaseClient
+                .from('citas')
+                .select('*, pacientes(nombre)')
+                .order('fecha', { ascending: false })
+                .order('hora', { ascending: false });
+
+            if (error) throw error;
+
+            allCitas = data || [];
+            renderCitas(allCitas);
+        } catch (error) {
+            console.error('Error al cargar citas:', error);
+            const gridBody = document.getElementById('patientsGrid');
+            if (gridBody) {
+                gridBody.innerHTML = `
+                    <div class="col-span-full text-center py-8 text-error">
+                        <span class="material-symbols-outlined mb-2">error</span>
+                        <p>Error al cargar las citas.</p>
+                    </div>`;
+            }
+        }
+    }
+
+    function formatHora(horaStr) {
+        if (!horaStr) return '';
+        const [h, m] = horaStr.split(':');
+        let hInt = parseInt(h);
+        const ampm = hInt >= 12 ? 'PM' : 'AM';
+        hInt = hInt % 12 || 12;
+        return `${hInt}:${m} ${ampm}`;
+    }
+
+    function renderCitas(data) {
+        const gridBody = document.getElementById('patientsGrid');
+        gridBody.innerHTML = '';
+
+        if (data.length === 0) {
+            gridBody.innerHTML = `
+                <div class="col-span-full text-center py-12 bg-surface-white rounded-2xl border border-dashed border-outline-variant">
+                    <span class="material-symbols-outlined text-4xl text-outline mb-3">event_busy</span>
+                    <p class="font-body-md text-on-surface">No hay citas registradas</p>
+                </div>
+            `;
+            return;
+        }
+
+        data.forEach(cita => {
+            const nombrePaciente = cita.pacientes ? cita.pacientes.nombre : 'Desconocido';
+            const initials = nombrePaciente.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+            const colors = ['bg-primary-container text-on-primary-container', 'bg-secondary-container text-on-secondary-container', 'bg-tertiary-fixed text-on-tertiary-fixed'];
+            const randomColor = colors[Math.abs(cita.id.hashCode ? cita.id.hashCode() : nombrePaciente.charCodeAt(0)) % colors.length];
+            
+            const horaFormat = formatHora(cita.hora);
+            const isActivo = ['Pendiente', 'En Progreso', 'Confirmada', 'Confirmado'].includes(cita.estado);
+            const badgeClass = isActivo ? 'bg-warning/10 text-warning-dark' : (cita.estado === 'Completada' ? 'bg-success/10 text-success' : 'bg-surface-container-high text-outline');
+
+            const cardHTML = `
+                <div class="bg-surface-white rounded-2xl p-6 shadow-[0px_10px_30px_rgba(0,0,0,0.04)] flex flex-col gap-5 hover:shadow-[0px_15px_40px_rgba(0,0,0,0.08)] hover:-translate-y-1 transition-all duration-300 group cursor-pointer" onclick="const role = new URLSearchParams(window.location.search).get('role') || 'admin'; window.location.href='atencion_tiempo_real_mobile.html?cita_id=${cita.id}&role=' + role">
+                    <div class="flex justify-between items-start">
+                        <div class="flex gap-4 items-center">
+                            <div class="w-12 h-12 rounded-full ${randomColor} flex items-center justify-center font-headline-md text-headline-md">
+                                ${initials}
+                            </div>
+                            <div>
+                                <h3 class="font-body-lg text-body-lg font-semibold text-on-surface">${nombrePaciente}</h3>
+                                <p class="font-label-sm text-label-sm text-primary">${cita.fecha} • ${horaFormat}</p>
+                                <p class="font-label-sm text-label-sm text-outline mt-0.5">${cita.tratamiento || 'Procedimiento'} - ${cita.consultorio || 'Consultorio'}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-2 flex justify-between items-center">
+                        <span class="px-3 py-1 ${badgeClass} rounded-full font-label-sm text-[10px] flex items-center gap-1 uppercase tracking-wider">
+                            ${cita.estado}
+                        </span>
+                        <span class="text-primary font-bold text-sm flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+                            Ver Cita <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+                        </span>
+                    </div>
+                </div>
+            `;
+            gridBody.insertAdjacentHTML('beforeend', cardHTML);
+        });
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+        cargarCitas();
+        
+        const searchInput = document.querySelector('input[placeholder="Buscar por nombre, ID o condición..."]');
+        if(searchInput) {
+            searchInput.addEventListener('input', (e) => {
+                const query = e.target.value.toLowerCase();
+                const filtrados = allCitas.filter(c => {
+                    const nombre = c.pacientes ? c.pacientes.nombre.toLowerCase() : '';
+                    return nombre.includes(query) || (c.tratamiento && c.tratamiento.toLowerCase().includes(query));
+                });
+                renderCitas(filtrados);
+            });
+        }
+    });
+</script>
+
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('../sw.js').then(registration => {
+                    console.log('SW registered: ', registration);
+                }).catch(registrationError => {
+                    console.log('SW registration failed: ', registrationError);
+                });
+            });
+        }
+    </script>
+</body></html>
