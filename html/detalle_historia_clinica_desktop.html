@@ -773,25 +773,13 @@
                 const data = JSON.parse(storedTrat);
                 if (data.nombre) { document.getElementById('tratamiento-nombre').textContent = data.nombre; document.getElementById('inputNombreProtocolo').value = data.nombre; }
                 if (data.desc) { document.getElementById('tratamiento-desc').textContent = data.desc; document.getElementById('inputDescProtocolo').value = data.desc; }
-                if (data.fase) { 
-                    document.getElementById('tratamiento-fase').textContent = data.fase; 
-                }
                 if (data.fase_num) {
                     document.getElementById('inputFaseProtocolo').value = data.fase_num;
                 }
                 if (data.fase_total) {
                     document.getElementById('inputTotalFases').value = data.fase_total;
                 }
-                if (data.progreso !== undefined) { 
-                    document.getElementById('tratamiento-progreso-texto').textContent = data.progreso + '%'; 
-                    document.getElementById('tratamiento-progreso-barra').style.width = data.progreso + '%';
-                }
                 if (data.estado) {
-                    const badge = document.getElementById('tratamiento-status-badge');
-                    badge.textContent = data.estado;
-                    badge.className = data.estado === 'En curso' ? 'bg-success/10 text-success px-4 py-1 rounded-full font-label-sm text-label-sm font-bold' :
-                                      data.estado === 'Completado' ? 'bg-primary/10 text-primary px-4 py-1 rounded-full font-label-sm text-label-sm font-bold' :
-                                      'bg-error/10 text-error px-4 py-1 rounded-full font-label-sm text-label-sm font-bold';
                     document.getElementById('inputEstadoProtocolo').value = data.estado;
                 }
                 
@@ -888,34 +876,14 @@
         }
 
         function guardarDatosTratamiento(pacId) {
-            const faseVal = document.getElementById('inputFaseProtocolo').value;
-            const faseTotal = document.getElementById('inputTotalFases').value;
-            let faseText = faseVal;
-            if (faseVal !== 'Fase Única' && faseVal !== 'Mantenimiento') {
-                faseText = `Fase ${faseVal} de ${faseTotal}`;
-            }
-
-            const estadoVal = document.getElementById('inputEstadoProtocolo').value;
-            
-            let progresoCalc = 0;
-            if (estadoVal === 'Completado') {
-                progresoCalc = 100;
-            } else if (faseVal === 'Fase Única' || faseVal === 'Mantenimiento') {
-                progresoCalc = estadoVal === 'En curso' ? 50 : 0;
-            } else {
-                const fN = parseInt(faseVal) || 0;
-                const fT = parseInt(faseTotal) || 1;
-                progresoCalc = Math.min(100, Math.round((fN / fT) * 100));
-            }
-
             const data = {
                 nombre: document.getElementById('inputNombreProtocolo').value,
                 desc: document.getElementById('inputDescProtocolo').value,
-                fase: faseText,
-                fase_num: faseVal,
-                fase_total: faseTotal,
-                progreso: progresoCalc,
-                estado: estadoVal,
+                fase: document.getElementById('inputFaseProtocolo').value,
+                fase_num: document.getElementById('inputFaseProtocolo').value,
+                fase_total: document.getElementById('inputTotalFases').value,
+                progreso: 0,
+                estado: document.getElementById('inputEstadoProtocolo').value,
                 anterior: document.getElementById('inputAnteriorProtocolo').value,
                 actual: document.getElementById('inputActualProtocolo').value,
                 siguiente: document.getElementById('inputSiguienteProtocolo').value
