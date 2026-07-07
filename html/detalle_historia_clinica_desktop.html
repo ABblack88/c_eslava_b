@@ -448,27 +448,8 @@
 <span class="material-symbols-outlined text-lg">calendar_add_on</span>
 </button>
 </div>
-<div class="space-y-4">
-<div class="flex items-center space-x-4 p-3 bg-primary/5 rounded-lg border-l-4 border-primary">
-<div class="text-center min-w-[40px]">
-<p class="text-[10px] font-bold text-primary uppercase">Nov</p>
-<p class="text-lg font-bold text-on-surface">02</p>
-</div>
-<div class="flex-1">
-<p class="font-label-sm text-label-sm font-bold text-on-surface">Fisioterapia #15</p>
-<p class="text-[11px] text-on-surface-variant">09:00 - 10:00 AM</p>
-</div>
-</div>
-<div class="flex items-center space-x-4 p-3 bg-surface-container-low rounded-lg border-l-4 border-outline-variant">
-<div class="text-center min-w-[40px]">
-<p class="text-[10px] font-bold text-outline uppercase">Nov</p>
-<p class="text-lg font-bold text-on-surface">05</p>
-</div>
-<div class="flex-1">
-<p class="font-label-sm text-label-sm font-bold text-on-surface">Control Traumatología</p>
-<p class="text-[11px] text-on-surface-variant">11:30 - 12:00 PM</p>
-</div>
-</div>
+<div class="space-y-4" id="proximas-citas-container">
+<div class="text-center py-4 text-outline italic text-sm">Cargando próximas citas...</div>
 </div>
 </div>
 </aside>
@@ -834,6 +815,42 @@
                     }
                 }
 
+                // Render upcoming appointments
+                const proxContainer = document.getElementById('proximas-citas-container');
+                if (proxContainer) {
+                    // Extract local date in YYYY-MM-DD
+                    const todayDate = new Date();
+                    const year = todayDate.getFullYear();
+                    const month = String(todayDate.getMonth() + 1).padStart(2, '0');
+                    const day = String(todayDate.getDate()).padStart(2, '0');
+                    const todayStr = `${year}-${month}-${day}`;
+                    
+                    // Filter citas where fecha > todayStr
+                    const proximasCitas = (citas || []).filter(c => c.fecha > todayStr).sort((a, b) => a.fecha.localeCompare(b.fecha));
+                    
+                    if (proximasCitas.length > 0) {
+                        proxContainer.innerHTML = proximasCitas.map(c => {
+                            const dateObj = new Date(c.fecha + 'T12:00:00');
+                            const mesStr = dateObj.toLocaleDateString('es-PE', { month: 'short' });
+                            const diaStr = dateObj.toLocaleDateString('es-PE', { day: '2-digit' });
+                            return `
+                            <div class="flex items-center space-x-4 p-3 bg-surface-container-low rounded-lg border-l-4 border-outline-variant hover:border-primary transition-colors">
+                                <div class="text-center min-w-[40px]">
+                                    <p class="text-[10px] font-bold text-outline uppercase">${mesStr}</p>
+                                    <p class="text-lg font-bold text-on-surface">${diaStr}</p>
+                                </div>
+                                <div class="flex-1">
+                                    <p class="font-label-sm text-label-sm font-bold text-on-surface">${c.tratamiento || 'Cita médica'}</p>
+                                    <p class="text-[11px] text-on-surface-variant">${c.hora || 'Por confirmar'}</p>
+                                </div>
+                            </div>
+                            `;
+                        }).join('');
+                    } else {
+                        proxContainer.innerHTML = '<div class="text-center py-4 text-outline italic text-sm">No hay citas futuras programadas.</div>';
+                    }
+                }
+
                 // Update evolution timeline with real appointments
                 const timelineContainer = document.querySelector('.relative.space-y-8');
                 if (timelineContainer && citas && citas.length > 0) {
@@ -843,10 +860,14 @@
                             day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit'
                         });
                         
+                        const isCompletada = cita.estado === 'Completada' || cita.estado === 'Atendido' || cita.estado === 'Atendida';
+                        const iconName = isCompletada ? 'task_alt' : 'description';
+                        const bgClass = isCompletada ? 'bg-success text-white border-success' : 'bg-primary-container text-on-primary border-surface-white';
+
                         timelineHtml += `
                         <div class="relative flex items-start group">
-                            <div class="absolute left-0 mt-1.5 w-10 h-10 rounded-full bg-primary-container border-4 border-surface-white flex items-center justify-center text-on-primary z-10 transition-transform group-hover:scale-110">
-                                <span class="material-symbols-outlined text-[20px]">description</span>
+                            <div class="absolute left-0 mt-1.5 w-10 h-10 rounded-full ${bgClass} border-4 flex items-center justify-center z-10 transition-transform group-hover:scale-110">
+                                <span class="material-symbols-outlined text-[20px]">${iconName}</span>
                             </div>
                             <div class="ml-14 bg-surface-container-lowest p-5 rounded-xl border border-surface-container-high w-full">
                                 <div class="flex justify-between mb-2">
