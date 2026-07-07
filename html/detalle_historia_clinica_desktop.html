@@ -817,7 +817,10 @@
                 
                 if(frecuenciaEl && avgEl) {
                     if (citas && citas.length > 0) {
-                        const completadas = citas.filter(c => c.estado === 'Completada' || c.estado === 'Atendido' || c.estado === 'Atendida').length;
+                        const completadas = citas.filter(c => {
+                            const est = (c.estado || '').toLowerCase();
+                            return est === 'completada' || est === 'completado' || est === 'atendido' || est === 'atendida';
+                        }).length;
                         const firstVisit = citas[citas.length - 1].fecha;
                         const fObj = firstVisit ? new Date(firstVisit + (firstVisit.includes('T') ? '' : 'T12:00:00')) : null;
                         const dStr = fObj ? fObj.toLocaleDateString('es-PE', { day: '2-digit', month: '2-digit', year: '2-digit' }) : '--';
@@ -887,7 +890,8 @@
                             day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit'
                         });
                         
-                        const isCompletada = cita.estado === 'Completada' || cita.estado === 'Atendido' || cita.estado === 'Atendida';
+                        const estadoLower = (cita.estado || '').toLowerCase();
+                        const isCompletada = estadoLower === 'completada' || estadoLower === 'completado' || estadoLower === 'atendido' || estadoLower === 'atendida';
                         const iconName = isCompletada ? 'task_alt' : 'description';
                         const bgClass = isCompletada ? 'bg-success text-white border-success' : 'bg-primary-container text-on-primary border-surface-white';
 
