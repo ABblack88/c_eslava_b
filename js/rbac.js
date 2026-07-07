@@ -8,19 +8,18 @@ function getRoleFromURL() {
 function applyRBACRules() {
     const role = getRoleFromURL();
 
-    // 1. Hide tabs/links based on role
-    const linkServicios = document.getElementById("nav-link-servicios");
-    const linkCobrar = document.getElementById("nav-link-cobrar");
-    const linkFinanzas = document.getElementById("nav-link-finanzas");
-    const linkAjustes = document.getElementById("nav-link-ajustes");
-    const resumenCuentaCard = document.getElementById("resumen-cuenta-card");
-
-    if (role === 'tratante' || role === 'asistente') {
-        if (linkServicios) linkServicios.style.display = 'none';
-        if (linkCobrar) linkCobrar.style.display = 'none';
-        if (linkFinanzas) linkFinanzas.style.display = 'none';
+    if (role === 'tratante' || role === 'medico' || role === 'asistente') {
+        // Hide all navigation links to restricted modules (desktop sidebar, mobile drawer, mobile bottom bar)
+        const restrictedHrefs = ['tratamientos_', 'cobrar_', 'pagos_facturacion_'];
+        document.querySelectorAll('a').forEach(link => {
+            const href = link.getAttribute('href') || '';
+            if (restrictedHrefs.some(r => href.includes(r))) {
+                link.style.display = 'none';
+            }
+        });
         
         // Hide summary card for both roles
+        const resumenCuentaCard = document.getElementById("resumen-cuenta-card");
         if (resumenCuentaCard) resumenCuentaCard.style.display = 'none';
 
         // Hide non-account settings in Ajustes
