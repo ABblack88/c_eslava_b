@@ -307,7 +307,10 @@
             <input type="email" name="email" class="w-full rounded-xl border border-outline-variant px-4 py-3 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all">
         </div>
 
-
+        <div>
+            <label class="block text-sm font-bold text-on-surface mb-1">Alergias & Riesgos</label>
+            <input type="text" name="alergias" placeholder="Ej. Ibuprofeno, Asma (separados por coma)" class="w-full rounded-xl border border-outline-variant px-4 py-3 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all">
+        </div>
 
         <div>
             <label class="block text-sm font-bold text-on-surface mb-1">Notas Médicas (Evolución)</label>
@@ -464,6 +467,14 @@
         form.elements['notas_medicas'].value = notas_medicas || '';
         form.elements['estado'].value = estado || 'Activo';
         
+        const stored = localStorage.getItem(`paciente_registro_${id}`);
+        if (stored) {
+            const parsed = JSON.parse(stored);
+            form.elements['alergias'].value = parsed.alergias || '';
+        } else {
+            form.elements['alergias'].value = '';
+        }
+        
         document.getElementById('modalNuevoPaciente').showModal();
     }
 
@@ -530,11 +541,25 @@
                     .update(payload)
                     .eq('id', data.id);
                 error = res.error;
+                if (!error) {
+                    let stored = localStorage.getItem(`paciente_registro_${data.id}`);
+                    let pData = stored ? JSON.parse(stored) : {};
+                    pData.alergias = data.alergias || '';
+                    localStorage.setItem(`paciente_registro_${data.id}`, JSON.stringify(pData));
+                }
             } else {
                 const res = await supabaseClient
                     .from('pacientes')
-                    .insert([payload]);
+                    .insert([payload])
+                    .select();
                 error = res.error;
+                if (!error && res.data && res.data.length > 0) {
+                    const newId = res.data[0].id;
+                    let stored = localStorage.getItem(`paciente_registro_${newId}`);
+                    let pData = stored ? JSON.parse(stored) : {};
+                    pData.alergias = data.alergias || '';
+                    localStorage.setItem(`paciente_registro_${newId}`, JSON.stringify(pData));
+                }
             }
 
             if (error) throw error;
