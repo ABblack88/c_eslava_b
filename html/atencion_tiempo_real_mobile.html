@@ -240,7 +240,7 @@
                         
                         container.innerHTML += `
                             <label class="flex items-start gap-2 cursor-pointer p-2 rounded-lg hover:bg-surface-container transition-colors border border-transparent hover:border-outline-variant/30">
-                                <input type="checkbox" onchange="calcularSesionesPrevias()" name="tratamientoCobrado" value="${srv.nombre}" data-precio="${srv.precio}" ${isChecked} class="mt-0.5 rounded border-outline-variant text-primary focus:ring-primary h-3.5 w-3.5">
+                                <input type="checkbox" onchange="calcularSesionesPrevias()" name="tratamientoCobrado" value="${srv.nombre}" data-precio="${srv.precio}" data-duracion="${srv.duracion || 1}" ${isChecked} class="mt-0.5 rounded border-outline-variant text-primary focus:ring-primary h-3.5 w-3.5">
                                 <div class="flex-1 text-xs leading-tight">
                                     <span class="block font-bold text-on-surface">${srv.nombre}</span>
                                     <span class="block text-[10px] text-primary font-semibold mt-0.5">S/. ${parseFloat(srv.precio).toFixed(2)}</span>
@@ -288,7 +288,9 @@
                 return;
             }
             
-            const tratSeleccionado = checkboxes[0].value;
+            const selectedCb = checkboxes[0];
+            const tratSeleccionado = selectedCb.value;
+            const duracion = parseInt(selectedCb.getAttribute('data-duracion')) || 1;
             
             try {
                 counterText.classList.remove('hidden');
@@ -309,7 +311,26 @@
                     });
                 }
                 
-                counterText.innerHTML = `<span class="material-symbols-outlined text-[12px] align-middle">history</span> <strong>${count} citas registradas</strong>.`;
+                let isAlreadySavedInThisCita = false;
+                if (currentCita && currentCita.tratamiento && currentCita.tratamiento.includes(tratSeleccionado)) {
+                    isAlreadySavedInThisCita = true;
+                }
+
+                let sessionNum = isAlreadySavedInThisCita ? count : count + 1;
+                let cycleSession = sessionNum % duracion;
+                if (cycleSession === 0) cycleSession = duracion;
+
+                let totalText = duracion > 1 ? `/${duracion}` : ``;
+                
+                counterText.innerHTML = `
+                    <div class="mt-2 bg-secondary-container text-on-secondary-container px-2 py-1.5 rounded inline-flex items-center gap-1.5">
+                        <span class="material-symbols-outlined text-sm">history</span>
+                        <span>
+                            Historial: <strong>${count} previas</strong>. 
+                            <strong>Sesión actual: ${cycleSession}${totalText}</strong>.
+                        </span>
+                    </div>
+                `;
             } catch (err) {
                 console.error("Error al contar sesiones previas:", err);
                 counterText.classList.add('hidden');

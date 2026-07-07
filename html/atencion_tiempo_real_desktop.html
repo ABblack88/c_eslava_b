@@ -287,7 +287,7 @@
                         
                         container.innerHTML += `
                             <label class="flex items-start gap-3 cursor-pointer p-3 rounded-lg hover:bg-surface-container transition-colors border border-transparent hover:border-outline-variant/30">
-                                <input type="checkbox" onchange="calcularSesionesPrevias()" name="tratamientoCobrado" value="${srv.nombre}" data-precio="${srv.precio}" ${isChecked} class="mt-0.5 rounded border-outline-variant text-primary focus:ring-primary h-4 w-4">
+                                <input type="checkbox" onchange="calcularSesionesPrevias()" name="tratamientoCobrado" value="${srv.nombre}" data-precio="${srv.precio}" data-duracion="${srv.duracion || 1}" ${isChecked} class="mt-0.5 rounded border-outline-variant text-primary focus:ring-primary h-4 w-4">
                                 <div class="flex-1 text-sm leading-tight">
                                     <span class="block font-bold text-on-surface">${srv.nombre}</span>
                                     <span class="block text-xs text-primary font-semibold mt-1">S/. ${parseFloat(srv.precio).toFixed(2)}</span>
@@ -336,7 +336,9 @@
                 return;
             }
             
-            const tratSeleccionado = checkboxes[0].value;
+            const selectedCb = checkboxes[0];
+            const tratSeleccionado = selectedCb.value;
+            const duracion = parseInt(selectedCb.getAttribute('data-duracion')) || 1;
             
             try {
                 counterText.classList.remove('hidden');
@@ -351,15 +353,40 @@
                 let count = 0;
                 if (pastCitas) {
                     pastCitas.forEach(c => {
+                        // Buscamos ocurrencias del tratamiento en el historial (incluyendo los que tienen '(Continuación)')
                         if (c.tratamiento && c.tratamiento.includes(tratSeleccionado)) {
                             count++;
                         }
                     });
                 }
                 
-                counterText.innerHTML = `<span class="material-symbols-outlined text-[14px] align-middle">history</span> El paciente tiene <strong>${count} citas registradas</strong> que incluyen "${tratSeleccionado}".`;
+                // Si la cita actual ya tiene este tratamiento guardado, no sumamos +1 a la sesión actual porque 'count' ya lo incluye.
+                // Verificamos si en la base actual (currentCita) ya está este tratamiento:
+                let isAlreadySavedInThisCita = false;
+                if (currentCita && currentCita.tratamiento && currentCita.tratamiento.includes(tratSeleccionado)) {
+                    isAlreadySavedInThisCita = true;
+                }
+
+                // La sesión actual es:
+                // Si ya está guardada en esta cita, la sesión actual es (count % duracion) o duracion.
+                // Si NO está guardada, al guardarla será la count + 1.
+                let sessionNum = isAlreadySavedInThisCita ? count : count + 1;
                 
-                // Si ya tiene citas con este tratamiento, autochequear continuación si es mayor a 0 y esta cita no es de hoy recién creada (lógica sugerida, dejamos que doctor lo chequee manual)
+                // Calculamos en qué número de paquete/ciclo vamos
+                let cycleSession = sessionNum % duracion;
+                if (cycleSession === 0) cycleSession = duracion; // si es múltiplo exacto, es la última sesión del paquete
+
+                let totalText = duracion > 1 ? ` de ${duracion}` : ``;
+                
+                counterText.innerHTML = `
+                    <div class="mt-2 bg-secondary-container text-on-secondary-container px-3 py-2 rounded-lg inline-flex items-center gap-2">
+                        <span class="material-symbols-outlined text-lg">history</span>
+                        <span>
+                            Historial: <strong>${count} citas</strong> previas. <br>
+                            Esta es la <strong>Sesión ${cycleSession}${totalText}</strong> de este tratamiento.
+                        </span>
+                    </div>
+                `;
             } catch (err) {
                 console.error("Error al contar sesiones previas:", err);
                 counterText.classList.add('hidden');
