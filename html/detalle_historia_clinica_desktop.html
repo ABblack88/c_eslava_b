@@ -719,8 +719,8 @@
                 if (transList) {
                     if (pagos && pagos.length > 0) {
                         transList.innerHTML = pagos.slice(0, 3).map(p => {
-                            const dParts = p.fecha ? p.fecha.split('-') : [];
-                            const dStr = dParts.length === 3 ? `${dParts[2]}/${dParts[1]}/${dParts[0].substring(2)}` : '--';
+                            const dObj = p.fecha ? new Date(p.fecha) : null;
+                            const dStr = dObj ? dObj.toLocaleDateString('es-PE', { day: '2-digit', month: '2-digit', year: '2-digit' }) : '--';
                             return `
                             <li class="flex justify-between border-b border-outline-variant/10 pb-1">
                                 <span class="truncate pr-2" title="${p.descripcion || ''}">${dStr} - ${p.descripcion || 'Sin descripción'}</span>
@@ -744,8 +744,8 @@
                     if (citas && citas.length > 0) {
                         const completadas = citas.filter(c => c.estado === 'Completada' || c.estado === 'Atendido' || c.estado === 'Atendida').length;
                         const firstVisit = citas[citas.length - 1].fecha;
-                        const dParts = firstVisit ? firstVisit.split('-') : [];
-                        const dStr = dParts.length === 3 ? `${dParts[2]}/${dParts[1]}/${dParts[0].substring(2)}` : '--';
+                        const fObj = firstVisit ? new Date(firstVisit + (firstVisit.includes('T') ? '' : 'T12:00:00')) : null;
+                        const dStr = fObj ? fObj.toLocaleDateString('es-PE', { day: '2-digit', month: '2-digit', year: '2-digit' }) : '--';
                         frecuenciaEl.innerHTML = `${completadas} completadas<br><span class="text-outline font-normal">Desde: ${dStr}</span>`;
                     } else {
                         frecuenciaEl.textContent = '0 citas';
