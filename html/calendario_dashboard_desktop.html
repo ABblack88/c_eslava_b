@@ -454,13 +454,13 @@
             
             <div class="my-2 p-3 bg-surface-container-lowest border border-outline-variant rounded-xl flex items-center gap-3">
                 <label class="text-sm font-bold text-on-surface flex-shrink-0">Cambiar Estado:</label>
-                <select id="select-opt-estado" onchange="cambiarEstadoCitaLocal(this.value)" class="w-full bg-surface-container-low border-none rounded-xl py-2 px-3 text-sm font-bold focus:ring-2 focus:ring-primary text-primary outline-none">
-                    <option value="Pendiente">Por Confirmar</option>
+                <select id="select-opt-estado" onchange="cambiarEstadoCitaLocal(this.value)" class="w-full bg-surface-container-low border-none rounded-xl py-2 px-3 text-sm font-bold focus:ring-2 focus:ring-primary text-primary outline-none cursor-pointer">
+                    <option value="Por Confirmar">Por Confirmar</option>
                     <option value="Confirmada">Confirmada</option>
-                    <option value="En Progreso">En Procedimiento</option>
-                    <option value="Completado">Completada</option>
+                    <option value="En Progreso">En Progreso</option>
                     <option value="Por Reprogramar">Por Reprogramar</option>
                 </select>
+                <p class="text-xs text-outline mt-1">* Modifica el estado desde la lista de citas o atención.</p>
             </div>
 
             <button id="btn-opt-historial" class="w-full bg-surface-container-high text-on-surface-variant py-3 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-surface-container-highest active:scale-95 transition-all">
@@ -559,10 +559,33 @@
             
             const selectEstado = document.getElementById('select-opt-estado');
             if (selectEstado) {
-                // Ensure the value matches the actual select options
                 let estadoNormalized = cita.estado;
-                if (estadoNormalized === 'Cancelado' || estadoNormalized === 'Cancelada') estadoNormalized = 'Pendiente'; // Just a fallback so it doesn't break select
+                if (estadoNormalized === 'Pendiente') estadoNormalized = 'Por Confirmar';
+                if (estadoNormalized === 'Cancelado' || estadoNormalized === 'Cancelada') estadoNormalized = 'Por Confirmar';
+                
+                const hasCompletada = Array.from(selectEstado.options).some(opt => opt.value === 'Completada');
+                if (estadoNormalized === 'Completada' && !hasCompletada) {
+                    const opt = document.createElement('option');
+                    opt.value = 'Completada';
+                    opt.text = 'Completada';
+                    selectEstado.add(opt);
+                } else if (estadoNormalized !== 'Completada' && hasCompletada) {
+                    Array.from(selectEstado.options).forEach(opt => {
+                        if (opt.value === 'Completada') opt.remove();
+                    });
+                }
+
                 selectEstado.value = estadoNormalized;
+                
+                if (estadoNormalized === 'En Progreso' || estadoNormalized === 'Completada') {
+                    selectEstado.disabled = true;
+                    selectEstado.classList.add('opacity-70', 'cursor-not-allowed');
+                    selectEstado.classList.remove('cursor-pointer');
+                } else {
+                    selectEstado.disabled = false;
+                    selectEstado.classList.remove('opacity-70', 'cursor-not-allowed');
+                    selectEstado.classList.add('cursor-pointer');
+                }
             }
             
             // Set up button actions

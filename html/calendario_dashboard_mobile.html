@@ -503,11 +503,10 @@
             
             <div class="my-1 p-2.5 bg-surface-container-lowest border border-outline-variant rounded-xl flex items-center gap-2">
                 <label class="text-[13px] font-bold text-on-surface flex-shrink-0">Estado:</label>
-                <select id="select-opt-estado-mobile" onchange="cambiarEstadoCitaLocal(this.value)" class="w-full bg-surface-container-low border-none rounded-lg py-1.5 px-2 text-[13px] font-bold focus:ring-2 focus:ring-primary text-primary outline-none">
-                    <option value="Pendiente">Por Confirmar</option>
+                <select id="select-opt-estado-mobile" onchange="cambiarEstadoCitaLocal(this.value)" class="w-full bg-surface-container-low border-none rounded-lg py-1.5 px-2 text-[13px] font-bold focus:ring-2 focus:ring-primary text-primary outline-none cursor-pointer">
+                    <option value="Por Confirmar">Por Confirmar</option>
                     <option value="Confirmada">Confirmada</option>
-                    <option value="En Progreso">En Procedimiento</option>
-                    <option value="Completado">Completada</option>
+                    <option value="En Progreso">En Progreso</option>
                     <option value="Por Reprogramar">Por Reprogramar</option>
                 </select>
             </div>
@@ -635,8 +634,32 @@
             const selectEstado = document.getElementById('select-opt-estado-mobile');
             if (selectEstado) {
                 let estadoNormalized = cita.estado;
-                if (estadoNormalized === 'Cancelado' || estadoNormalized === 'Cancelada') estadoNormalized = 'Pendiente';
+                if (estadoNormalized === 'Pendiente') estadoNormalized = 'Por Confirmar';
+                if (estadoNormalized === 'Cancelado' || estadoNormalized === 'Cancelada') estadoNormalized = 'Por Confirmar';
+                
+                const hasCompletada = Array.from(selectEstado.options).some(opt => opt.value === 'Completada');
+                if (estadoNormalized === 'Completada' && !hasCompletada) {
+                    const opt = document.createElement('option');
+                    opt.value = 'Completada';
+                    opt.text = 'Completada';
+                    selectEstado.add(opt);
+                } else if (estadoNormalized !== 'Completada' && hasCompletada) {
+                    Array.from(selectEstado.options).forEach(opt => {
+                        if (opt.value === 'Completada') opt.remove();
+                    });
+                }
+
                 selectEstado.value = estadoNormalized;
+                
+                if (estadoNormalized === 'En Progreso' || estadoNormalized === 'Completada') {
+                    selectEstado.disabled = true;
+                    selectEstado.classList.add('opacity-70', 'cursor-not-allowed');
+                    selectEstado.classList.remove('cursor-pointer');
+                } else {
+                    selectEstado.disabled = false;
+                    selectEstado.classList.remove('opacity-70', 'cursor-not-allowed');
+                    selectEstado.classList.add('cursor-pointer');
+                }
             }
             
             // Set up button actions

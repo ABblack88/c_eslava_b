@@ -381,13 +381,14 @@
                     </div>
                     <div class="mt-2 flex justify-between items-center" onclick="event.stopPropagation()">
                         <select 
-                            class="px-3 py-1 ${badgeClass} rounded-full font-label-sm text-[10px] uppercase tracking-wider focus:outline-none focus:ring-2 focus:ring-primary/30 border-none cursor-pointer"
+                            class="px-3 py-1 ${badgeClass} rounded-full font-label-sm text-[10px] uppercase tracking-wider focus:outline-none focus:ring-2 focus:ring-primary/30 border-none ${cita.estado === 'En Progreso' || cita.estado === 'Completada' ? 'cursor-not-allowed opacity-90' : 'cursor-pointer'}"
                             onchange="actualizarEstado(${cita.id}, this.value)"
+                            ${cita.estado === 'En Progreso' || cita.estado === 'Completada' ? 'disabled' : ''}
                         >
-                            <option value="Pendiente" ${cita.estado === 'Pendiente' ? 'selected' : ''} class="bg-surface-white text-on-surface normal-case text-sm">Pendiente</option>
+                            <option value="Por Confirmar" ${cita.estado === 'Pendiente' || cita.estado === 'Por Confirmar' ? 'selected' : ''} class="bg-surface-white text-on-surface normal-case text-sm">Por Confirmar</option>
                             <option value="Confirmada" ${cita.estado === 'Confirmada' ? 'selected' : ''} class="bg-surface-white text-on-surface normal-case text-sm">Confirmada</option>
                             <option value="En Progreso" ${cita.estado === 'En Progreso' ? 'selected' : ''} class="bg-surface-white text-on-surface normal-case text-sm">En Progreso</option>
-                            <option value="Completada" ${cita.estado === 'Completada' ? 'selected' : ''} class="bg-surface-white text-on-surface normal-case text-sm">Completada</option>
+                            ${cita.estado === 'Completada' ? `<option value="Completada" selected class="bg-surface-white text-on-surface normal-case text-sm">Completada</option>` : ''}
                             <option value="Por Reprogramar" ${cita.estado === 'Por Reprogramar' ? 'selected' : ''} class="bg-surface-white text-on-surface normal-case text-sm">Por Reprogramar</option>
                         </select>
                         <span class="text-primary font-bold text-sm flex items-center gap-1 group-hover:translate-x-1 transition-transform" onclick="const role = new URLSearchParams(window.location.search).get('role') || 'admin'; window.location.href='atencion_tiempo_real_mobile.html?cita_id=${cita.id}&role=' + role">
