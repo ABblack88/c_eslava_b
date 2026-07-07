@@ -181,7 +181,23 @@
         </a>
     </nav>
     <div class="px-4 mt-auto mb-6">
-        </div>
+        <button onclick="openAppointmentModal()" class="w-full bg-primary text-on-primary py-3 px-4 rounded-xl font-bold flex items-center justify-center gap-2 hover:opacity-90 active:scale-95 transition-all">
+            <span class="material-symbols-outlined" data-icon="add_circle">add_circle</span>
+            Nueva Cita
+        </button>
+    </div>
+</aside>
+<!-- Top Navigation Bar -->
+<header class="flex justify-between items-center h-16 ml-64 px-margin-desktop w-[calc(100%-16rem)] sticky top-0 bg-surface-bright/80 backdrop-blur-md z-40">
+<div class="flex items-center flex-1 max-w-xl">
+    <!-- Buscador removido por solicitud -->
+</div>
+<div class="flex items-center gap-6 ml-6">
+<button onclick="verProximaCita()" class="text-on-surface-variant hover:text-primary transition-all relative">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+<span class="absolute top-0 right-0 w-2 h-2 bg-error rounded-full"></span>
+</button>
+</div>
 </header>
 <!-- Main Content Canvas -->
 <main class="ml-64 p-margin-desktop pt-8 min-h-screen">
