@@ -265,17 +265,6 @@
             const email = document.getElementById('login-user').value;
             const pass = document.getElementById('login-pass').value;
 
-            if (email === 'qblackx@gmail.com' && pass === 'Augusto451900') {
-                const submitBtn = event.target.querySelector('button[type="submit"]');
-                submitBtn.disabled = true;
-                submitBtn.innerHTML = 'Ingresando...';
-                
-                setTimeout(() => {
-                    window.location.href = 'html/calendario_dashboard_desktop.html?role=root';
-                }, 500);
-                return;
-            }
-
             const submitBtn = event.target.querySelector('button[type="submit"]');
             submitBtn.disabled = true;
             submitBtn.innerHTML = 'Ingresando...';
