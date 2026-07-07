@@ -253,10 +253,8 @@
 <tr>
 
 <th class="px-8 py-4 text-xs font-bold uppercase tracking-widest text-outline">Paciente</th>
-<th class="px-8 py-4 text-xs font-bold uppercase tracking-widest text-outline">Fecha y Hora</th>
-<th class="px-8 py-4 text-xs font-bold uppercase tracking-widest text-outline">Tratamiento</th>
-<th class="px-8 py-4 text-xs font-bold uppercase tracking-widest text-outline">Consultorio</th>
 <th class="px-8 py-4 text-xs font-bold uppercase tracking-widest text-outline">Estado</th>
+<th class="px-8 py-4 text-xs font-bold uppercase tracking-widest text-outline">Fecha y Hora</th>
 <th class="px-8 py-4 text-xs font-bold uppercase tracking-widest text-outline text-right">Acciones</th>
 </tr>
 </thead>
@@ -395,12 +393,10 @@
                             <span class="font-bold text-on-surface group-hover:text-primary transition-colors">${nombrePaciente}</span>
                         </div>
                     </td>
-                    <td class="px-8 py-4 text-sm text-on-surface-variant">${cita.fecha} <br> <span class="text-xs text-outline">${formatHora(cita.hora)}</span></td>
-                    <td class="px-8 py-4 text-sm text-on-surface-variant">${cita.tratamiento || 'Procedimiento'}</td>
-                    <td class="px-8 py-4 text-sm text-on-surface-variant">${cita.consultorio || 'N/A'}</td>
                     <td class="px-8 py-4">
                         <span class="px-2.5 py-0.5 ${badgeClass} rounded-full text-xs font-bold whitespace-nowrap">${cita.estado}</span>
                     </td>
+                    <td class="px-8 py-4 text-sm text-on-surface-variant">${cita.fecha} <br> <span class="text-xs text-outline">${formatHora(cita.hora)}</span></td>
                     <td class="px-8 py-4 text-right">
                         <span class="material-symbols-outlined text-outline group-hover:text-primary">arrow_forward</span>
                     </td>
