@@ -460,7 +460,7 @@
 </dialog>
 
 <!-- Modal Nuevo/Editar Método de Pago -->
-<dialog id="modalMetodoPago" class="backdrop:bg-black/50 p-6 rounded-2xl shadow-xl border-none max-w-md w-full bg-surface-white">
+<dialog id="modalMetodoPago" class="backdrop:bg-black/50 p-6 rounded-2xl shadow-xl border-none max-w-lg w-full bg-surface-white">
     <div class="flex justify-between items-center mb-6">
         <h3 id="modalMetodoPagoTitle" class="text-xl font-bold text-on-surface">Nuevo Método de Pago</h3>
         <button onclick="document.getElementById('modalMetodoPago').close()" class="text-on-surface-variant hover:text-error transition-colors">
@@ -469,27 +469,24 @@
     </div>
     <form id="formMetodoPago" class="space-y-4">
         <input type="hidden" id="metodoPagoId">
+        <input type="hidden" id="metodoPagoIcono" value="payments">
         <div>
             <label class="block text-sm font-bold text-on-surface mb-1">Nombre del Método</label>
-            <input type="text" id="metodoPagoNombre" required placeholder="ej. Yape / Plin, Efectivo..." class="w-full rounded-xl border-outline-variant px-4 py-2 focus:ring-primary focus:border-primary">
+            <input type="text" id="metodoPagoNombre" required placeholder="ej. Yape / Plin, Efectivo..." class="w-full rounded-xl border border-outline-variant px-4 py-2 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all">
         </div>
         <div>
-            <label class="block text-sm font-bold text-on-surface mb-1">Ícono (Material Symbol)</label>
-            <div class="flex gap-2 items-center">
-                <input type="text" id="metodoPagoIcono" value="payments" placeholder="ej. payments, credit_card, phone_android" class="flex-1 rounded-xl border-outline-variant px-4 py-2 focus:ring-primary focus:border-primary">
-                <span id="metodoPagoIconoPreview" class="material-symbols-outlined text-primary text-3xl">payments</span>
+            <label class="block text-sm font-bold text-on-surface mb-2">Ícono del Método</label>
+            <div id="iconoGrid" class="grid grid-cols-6 gap-2">
+                <!-- Generado por JS -->
             </div>
-            <p class="text-[10px] text-on-surface-variant mt-1">Nombre del ícono de <a href="https://fonts.google.com/icons" target="_blank" class="underline text-primary">Material Symbols</a></p>
         </div>
         <div>
             <label class="block text-sm font-bold text-on-surface mb-1">Aplica Comisión POS (%)</label>
-            <input type="number" id="metodoPagoComision" step="0.01" min="0" value="0" placeholder="0 = sin comisión, 5 = 5%" class="w-full rounded-xl border-outline-variant px-4 py-2 focus:ring-primary focus:border-primary">
+            <input type="number" id="metodoPagoComision" step="0.01" min="0" value="0" placeholder="0 = sin comisión, 5 = 5%" class="w-full rounded-xl border border-outline-variant px-4 py-2 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all">
         </div>
-        <div class="flex items-center justify-between pt-2">
-            <div class="flex items-center gap-2">
-                <label class="text-sm font-bold text-on-surface">Estado Activo</label>
-                <input type="checkbox" id="metodoPagoActivo" checked class="rounded border-outline-variant text-primary w-5 h-5 cursor-pointer">
-            </div>
+        <div class="flex items-center gap-3 pt-1">
+            <label class="text-sm font-bold text-on-surface">Estado Activo</label>
+            <input type="checkbox" id="metodoPagoActivo" checked class="rounded border-outline-variant text-primary w-5 h-5 cursor-pointer">
         </div>
         <div class="pt-4 flex justify-between items-center w-full border-t border-surface-variant">
             <button type="button" id="btnEliminarMetodoPago" onclick="eliminarMetodoPago()" class="hidden px-4 py-2 text-error font-bold hover:bg-error/10 rounded-xl transition-colors flex items-center gap-1">
@@ -1068,15 +1065,67 @@
             `).join('');
         }
 
+        // Lista de íconos disponibles para métodos de pago
+        const ICONOS_DISPONIBLES = [
+            { nombre: 'payments', label: 'Pagos' },
+            { nombre: 'credit_card', label: 'Tarjeta' },
+            { nombre: 'contactless', label: 'Sin contacto' },
+            { nombre: 'phone_android', label: 'Yape/Plin' },
+            { nombre: 'account_balance', label: 'Banco' },
+            { nombre: 'account_balance_wallet', label: 'Billetera' },
+            { nombre: 'attach_money', label: 'Efectivo' },
+            { nombre: 'currency_exchange', label: 'Cambio' },
+            { nombre: 'point_of_sale', label: 'POS' },
+            { nombre: 'receipt_long', label: 'Recibo' },
+            { nombre: 'qr_code_2', label: 'QR' },
+            { nombre: 'send_money', label: 'Envío' },
+            { nombre: 'local_atm', label: 'ATM' },
+            { nombre: 'savings', label: 'Ahorro' },
+            { nombre: 'price_check', label: 'Cheque' },
+            { nombre: 'request_quote', label: 'Factura' },
+            { nombre: 'wallet', label: 'Wallet' },
+            { nombre: 'money', label: 'Dinero' },
+        ];
+
+        function renderIconoGrid(selectedIcono) {
+            const grid = document.getElementById('iconoGrid');
+            if (!grid) return;
+            grid.innerHTML = ICONOS_DISPONIBLES.map(ic => {
+                const isSelected = ic.nombre === selectedIcono;
+                return `
+                <button type="button" onclick="seleccionarIcono('${ic.nombre}')"
+                    id="ico-btn-${ic.nombre}"
+                    title="${ic.label}"
+                    class="flex flex-col items-center gap-1 p-2 rounded-xl border-2 transition-all hover:border-primary hover:bg-primary/5 ${isSelected ? 'border-primary bg-primary/10 text-primary' : 'border-outline-variant/40 text-on-surface-variant'}">
+                    <span class="material-symbols-outlined text-2xl">${ic.nombre}</span>
+                    <span class="text-[9px] font-bold leading-tight text-center truncate w-full">${ic.label}</span>
+                </button>`;
+            }).join('');
+        }
+
+        function seleccionarIcono(nombre) {
+            document.getElementById('metodoPagoIcono').value = nombre;
+            // Actualizar estilos de la grilla
+            ICONOS_DISPONIBLES.forEach(ic => {
+                const btn = document.getElementById(`ico-btn-${ic.nombre}`);
+                if (!btn) return;
+                if (ic.nombre === nombre) {
+                    btn.className = btn.className.replace('border-outline-variant/40 text-on-surface-variant', 'border-primary bg-primary/10 text-primary');
+                } else {
+                    btn.className = btn.className.replace('border-primary bg-primary/10 text-primary', 'border-outline-variant/40 text-on-surface-variant');
+                }
+            });
+        }
+
         function abrirModalNuevoMetodoPago() {
             document.getElementById('metodoPagoId').value = '';
             document.getElementById('metodoPagoNombre').value = '';
             document.getElementById('metodoPagoIcono').value = 'payments';
-            document.getElementById('metodoPagoIconoPreview').textContent = 'payments';
             document.getElementById('metodoPagoComision').value = '0';
             document.getElementById('metodoPagoActivo').checked = true;
             document.getElementById('modalMetodoPagoTitle').textContent = 'Nuevo Método de Pago';
             document.getElementById('btnEliminarMetodoPago').classList.add('hidden');
+            renderIconoGrid('payments');
             document.getElementById('modalMetodoPago').showModal();
         }
 
@@ -1088,11 +1137,11 @@
             document.getElementById('metodoPagoId').value = m.id;
             document.getElementById('metodoPagoNombre').value = m.nombre;
             document.getElementById('metodoPagoIcono').value = m.icono || 'payments';
-            document.getElementById('metodoPagoIconoPreview').textContent = m.icono || 'payments';
             document.getElementById('metodoPagoComision').value = m.comision || 0;
             document.getElementById('metodoPagoActivo').checked = m.activo !== false;
             document.getElementById('modalMetodoPagoTitle').textContent = 'Editar Método de Pago';
             document.getElementById('btnEliminarMetodoPago').classList.remove('hidden');
+            renderIconoGrid(m.icono || 'payments');
             document.getElementById('modalMetodoPago').showModal();
         }
 
@@ -1118,22 +1167,15 @@
             let metodos = JSON.parse(localStorage.getItem(METODOS_PAGO_KEY) || '[]');
 
             if (id) {
-                // Editar
                 const idx = metodos.findIndex(m => m.id === id);
                 if (idx !== -1) metodos[idx] = { id, nombre, icono, comision, activo };
             } else {
-                // Nuevo
                 metodos.push({ id: 'mp_' + Date.now(), nombre, icono, comision, activo });
             }
 
             localStorage.setItem(METODOS_PAGO_KEY, JSON.stringify(metodos));
             document.getElementById('modalMetodoPago').close();
             renderMetodosPago(metodos);
-        });
-
-        // Preview del icono en tiempo real
-        document.getElementById('metodoPagoIcono').addEventListener('input', function() {
-            document.getElementById('metodoPagoIconoPreview').textContent = this.value || 'payments';
         });
 
         // Cargar al inicio
