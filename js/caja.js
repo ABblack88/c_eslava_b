@@ -1072,10 +1072,10 @@
                     }
                 });
 
-                // Convert to array and sort by oldest date
+                // Convert to array and sort by newest date
                 const listaAgrupada = Object.values(agregados)
-                    .sort((a, b) => new Date(a.fechaMasAntigua) - new Date(b.fechaMasAntigua))
-                    .slice(0, 10); // Show top 10 oldest pending users
+                    .sort((a, b) => new Date(b.fechaMasAntigua) - new Date(a.fechaMasAntigua))
+                    .slice(0, 30); // Show top 30 pending users
 
                 container.innerHTML = '';
                 listaAgrupada.forEach(ag => {

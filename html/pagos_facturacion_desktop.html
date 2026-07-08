@@ -431,7 +431,8 @@
                         pacientes ( nombre ),
                         citas ( tratamiento, motivo )
                     `)
-                    .order('fecha', { ascending: false });
+                    .order('fecha', { ascending: false })
+                    .order('created_at', { ascending: false });
 
                 const mes = document.getElementById('filtro-mes')?.value;
                 const fechaInicio = document.getElementById('filtro-fecha-inicio')?.value;
