@@ -491,6 +491,9 @@
                 const igvPorcentaje = parseFloat(localStorage.getItem('igvPorcentaje')) || 18;
                 const comisionPOS = parseFloat(localStorage.getItem('comisionPOSNacional')) || 4.5;
                 
+                const metaMesEl = document.getElementById('meta-mes');
+                if (metaMesEl) metaMesEl.textContent = formatCurrency(metaMes);
+                
                 const porcentajeMeta = Math.min((totalIngresos / metaMes) * 100, 100).toFixed(1);
 
                 if (elIngresos) elIngresos.textContent = formatCurrency(totalIngresos);
