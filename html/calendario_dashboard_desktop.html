@@ -1067,7 +1067,7 @@
                     
                     return {
                         id: c.id,
-                        title: `${c.pacientes?.nombre || 'Desconocido'} - ${c.consultorio}`,
+                        title: c.consultorio ? `${c.pacientes?.nombre || 'Desconocido'} - ${c.consultorio}` : (c.pacientes?.nombre || 'Desconocido'),
                         start: `${c.fecha}T${c.hora}`,
                         backgroundColor: color,
                         borderColor: color,
@@ -1167,7 +1167,7 @@
                             <div class="w-12 h-12 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center font-bold">${iniciales}</div>
                             <div class="flex-1">
                                 <p class="font-bold text-on-surface">${pacienteNombre}</p>
-                                <p class="text-xs text-on-surface-variant">${horaFormat} • ${c.consultorio}</p>
+                                <p class="text-xs text-on-surface-variant">${horaFormat}${c.consultorio ? ' • ' + c.consultorio : ''}</p>
                             </div>
                             <span class="material-symbols-outlined text-outline-variant" data-icon="chevron_right">chevron_right</span>
                         </div>`;
@@ -1183,11 +1183,11 @@
                 tomorrowDate.setDate(tomorrowDate.getDate() + 1);
                 const tomorrow = tomorrowDate.toISOString().split('T')[0];
 
-                // Filtrar citas pendientes de hoy y mañana, y también las 'Por Reprogramar'
-                const tareas = data.filter(c => 
-                    (c.estado === 'Pendiente' && (c.fecha === today || c.fecha === tomorrow)) || 
-                    (c.estado === 'Por Reprogramar')
-                ).sort((a, b) => a.fecha.localeCompare(b.fecha) || a.hora.localeCompare(b.hora));
+                // Filtrar todas las citas pendientes, por confirmar o por reprogramar, sin importar la fecha
+                const tareas = data.filter(c => {
+                    const est = c.estado || '';
+                    return est === 'Pendiente' || est === 'Por Confirmar' || est === 'Por Reprogramar' || est === 'Sin Confirmar';
+                }).sort((a, b) => a.fecha.localeCompare(b.fecha) || a.hora.localeCompare(b.hora));
                 
                 if (tareas.length === 0) {
                     tareasContainer.innerHTML = '<p class="text-outline text-center py-4">No hay tareas pendientes para agendar o confirmar.</p>';
