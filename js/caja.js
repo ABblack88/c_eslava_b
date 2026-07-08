@@ -28,12 +28,23 @@
             try {
                 const { data: pagos, error } = await supabaseClient
                     .from('pagos')
-                    .select(`id, monto, metodo, estado, fecha, pacientes ( nombre ), citas ( tratamiento )`)
+                    .select(`id, monto, metodo, estado, fecha, pacientes ( nombre ), citas ( tratamiento, estado )`)
                     .order('fecha', { ascending: false });
 
                 if (error) throw error;
 
-                const safePagos = pagos || [];
+                let safePagos = pagos || [];
+
+                // Ocultar de pendientes/vencidos los que aún no tienen la cita completada
+                safePagos = safePagos.filter(p => {
+                    if (p.estado === 'Completado') return true;
+                    if (p.citas) {
+                        const estadoCita = (p.citas.estado || '').toLowerCase();
+                        return estadoCita.includes('completad') || estadoCita.includes('atendid');
+                    }
+                    return true;
+                });
+
                 const now = new Date();
                 const mesActual = now.getMonth();
                 const anioActual = now.getFullYear();
@@ -102,15 +113,24 @@
             try {
                 const { data, error } = await supabaseClient
                     .from('pagos')
-                    .select('id, monto, fecha, descripcion, pacientes(nombre), citas(tratamiento)')
+                    .select('id, monto, fecha, descripcion, pacientes(nombre), citas(tratamiento, estado)')
                     .eq('estado', 'Pendiente')
                     .order('fecha', { ascending: true });
 
                 if (error) throw error;
 
+                // Filtrar solo los que ya fueron completados/atendidos en la cita
+                const dataFiltrada = (data || []).filter(p => {
+                    if (p.citas) {
+                        const estadoCita = (p.citas.estado || '').toLowerCase();
+                        return estadoCita.includes('completad') || estadoCita.includes('atendid');
+                    }
+                    return true;
+                });
+
                 // Agrupar por paciente
                 const porPaciente = {};
-                (data || []).forEach(p => {
+                dataFiltrada.forEach(p => {
                     const nombre = p.pacientes?.nombre || 'Sin nombre';
                     if (!porPaciente[nombre]) porPaciente[nombre] = { items: [], total: 0 };
                     porPaciente[nombre].items.push(p);
@@ -524,19 +544,27 @@
             try {
                 const { data, error } = await supabaseClient
                     .from('pagos')
-                    .select('*, citas(tratamiento)')
+                    .select('*, citas(tratamiento, estado)')
                     .eq('paciente_id', id)
                     .in('estado', ['Pendiente', 'Vencido'])
                     .order('fecha', { ascending: true });
                     
                 if (error) throw error;
                 
+                const dataFiltrada = (data || []).filter(p => {
+                    if (p.citas) {
+                        const estadoCita = (p.citas.estado || '').toLowerCase();
+                        return estadoCita.includes('completad') || estadoCita.includes('atendid');
+                    }
+                    return true;
+                });
+                
                 if (globalServicios.length === 0) {
                     const { data: servs } = await supabaseClient.from('servicios').select('*').order('nombre');
                     globalServicios = servs || [];
                 }
 
-                pendientesDelPaciente = (data || []).map(pago => {
+                pendientesDelPaciente = dataFiltrada.map(pago => {
                     const tratamientoNombre = pago.descripcion || (pago.citas && pago.citas.tratamiento) || '';
                     
                     const tratamientos = tratamientoNombre.split(',').map(t => t.trim()).filter(t => t);
@@ -1046,15 +1074,23 @@
             if (!container) return;
 
             try {
-                const { data: pendientes, error } = await supabaseClient
+                const { data, error } = await supabaseClient
                     .from('pagos')
-                    .select('id, monto, fecha, descripcion, pacientes(id, nombre), citas(tratamiento)')
+                    .select('id, monto, fecha, descripcion, pacientes(id, nombre), citas(tratamiento, estado)')
                     .eq('estado', 'Pendiente')
                     .order('fecha', { ascending: false }); // Sort by newest date to get most recent activity
 
                 if (error) throw error;
+                
+                const pendientes = (data || []).filter(p => {
+                    if (p.citas) {
+                        const estadoCita = (p.citas.estado || '').toLowerCase();
+                        return estadoCita.includes('completad') || estadoCita.includes('atendid');
+                    }
+                    return true;
+                });
 
-                if (!pendientes || pendientes.length === 0) {
+                if (pendientes.length === 0) {
                     container.innerHTML = '<div class="col-span-5 w-full text-center py-4 text-on-surface-variant text-sm">No hay cobros pendientes en todo el sistema.</div>';
                     return;
                 }
