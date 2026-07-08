@@ -517,9 +517,16 @@
         function renderTopEstadisticas(pagos) {
             const serviciosStats = {};
             const pacientesStats = {};
-
             pagos.forEach(pago => {
-                if (pago.estado !== 'Completado') return; // Solo contamos ingresos reales
+                let isServiceRendered = false;
+                if (pago.citas) {
+                    const estadoCita = (pago.citas.estado || '').toLowerCase();
+                    isServiceRendered = estadoCita.includes('completad') || estadoCita.includes('atendid');
+                } else {
+                    isServiceRendered = pago.estado === 'Completado';
+                }
+
+                if (!isServiceRendered) return;
                 
                 let motivo = pago.servicio_realizado || (pago.citas ? (pago.citas.tratamiento || 'Consulta') : 'Venta General');
                 if (motivo.includes(' (Continuación)')) {
@@ -541,20 +548,18 @@
             });
 
             const topServicios = Object.entries(serviciosStats)
-                .filter(s => s[1].revenue > 0)
-                .sort((a, b) => b[1].revenue - a[1].revenue)
+                .sort((a, b) => b[1].count - a[1].count || b[1].revenue - a[1].revenue)
                 .slice(0, 5);
 
             const topPacientes = Object.entries(pacientesStats)
-                .filter(p => p[1].revenue > 0)
-                .sort((a, b) => b[1].revenue - a[1].revenue)
+                .sort((a, b) => b[1].count - a[1].count || b[1].revenue - a[1].revenue)
                 .slice(0, 5);
 
             const containerServicios = document.getElementById('top-servicios-container');
             if (topServicios.length === 0) {
                 containerServicios.innerHTML = '<p class="text-outline text-center py-2 text-sm">Sin datos suficientes.</p>';
             } else {
-                containerServicios.innerHTML = topServicios.map(s => \`
+                containerServicios.innerHTML = topServicios.map(s => `
                     <div class="flex justify-between items-center border-b border-surface-container-low pb-2 last:border-0">
                         <div class="overflow-hidden">
                             <p class="font-bold text-on-surface text-sm truncate">\${s[0]}</p>
