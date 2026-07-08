@@ -541,10 +541,12 @@
             });
 
             const topServicios = Object.entries(serviciosStats)
+                .filter(s => s[1].revenue > 0)
                 .sort((a, b) => b[1].revenue - a[1].revenue)
                 .slice(0, 5);
 
             const topPacientes = Object.entries(pacientesStats)
+                .filter(p => p[1].revenue > 0)
                 .sort((a, b) => b[1].revenue - a[1].revenue)
                 .slice(0, 5);
 
