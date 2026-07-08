@@ -1156,14 +1156,14 @@
             }
 
             // Load tratantes
-            if (medicosCargados.length === 0) {
+            if (globalMedicos.length === 0) {
                 try {
                     const { data: meds } = await supabaseClient.from('profiles').select('*').eq('role', 'tratante').order('full_name');
-                    if (meds) medicosCargados = meds;
+                    if (meds) globalMedicos = meds;
                     const selectMed = document.getElementById('invoice-tratante');
                     if (selectMed) {
                         selectMed.innerHTML = '<option value="">Sin Tratante (No aplica comisión)</option>';
-                        medicosCargados.forEach(m => {
+                        globalMedicos.forEach(m => {
                             selectMed.innerHTML += `<option value="${m.id}">${m.full_name || m.email}</option>`;
                         });
                     }
