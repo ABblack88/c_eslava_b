@@ -558,7 +558,7 @@
             const tbody = document.getElementById('pacientes-tbody');
             tbody.innerHTML = '<tr><td colspan="6" class="px-8 py-4 text-center">Cargando pacientes...</td></tr>';
             
-            const { data, error } = await window.supabaseClient.from('pacientes').select('*, citas(id, estado, fecha, hora, tratamiento, consultorio), pagos(id, estado)').order('created_at', { ascending: false });
+            const { data, error } = await window.supabaseClient.from('pacientes').select('*, citas(id, estado, fecha, hora, tratamiento, consultorio), pagos(id, estado, cita_id)').order('created_at', { ascending: false });
             
             if (error) {
                 console.error("Error al cargar pacientes:", error);
@@ -746,7 +746,24 @@
                     sesionesHTML = `<button onclick="event.stopPropagation(); const role = new URLSearchParams(window.location.search).get('role') || 'admin'; window.location.href='atencion_tiempo_real_desktop.html?cita_id=${targetCita.id}&role=' + role" class="bg-primary/10 text-primary px-2 py-1 rounded-md text-[10px] font-bold hover:bg-primary/20 transition-colors cursor-pointer text-left" title="Ir a la cita">${sessionText}</button>`;
                 }
 
-                const pagosPend = (paciente.pagos || []).filter(p => p.estado === 'Pendiente' || p.estado === 'Vencido').length;
+                // Solo cuenta como deuda si el pago es Pendiente/Vencido
+                // y corresponde a una cita ya completada, o si está Vencido sin importar el estado
+                const pagosPend = (paciente.pagos || []).filter(p => {
+                    if (p.estado === 'Vencido') return true;
+                    if (p.estado === 'Pendiente') {
+                        // Si el pago tiene cita_id, verificar si esa cita está completada
+                        if (p.cita_id) {
+                            const citaAsociada = (paciente.citas || []).find(c => c.id === p.cita_id);
+                            if (citaAsociada) {
+                                const st = (citaAsociada.estado || '').toLowerCase();
+                                return st.includes('completad') || st.includes('atendid');
+                            }
+                        }
+                        // Si no tiene cita_id, también es deuda real
+                        return !p.cita_id;
+                    }
+                    return false;
+                }).length;
                 let pagosHTML = '';
                 if (pagosPend > 0) {
                     pagosHTML = `<span class="bg-error/10 text-error px-2 py-1 rounded-md text-[10px] font-bold" title="Cuentas por cobrar">${pagosPend} Deudas</span>`;
