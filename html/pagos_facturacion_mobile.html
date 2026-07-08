@@ -520,8 +520,10 @@
             pagos.forEach(pago => {
                 if (pago.estado !== 'Completado') return; // Solo contamos ingresos reales
                 
-                // Servicios
-                const motivo = pago.servicio_realizado || (pago.citas ? (pago.citas.tratamiento || 'Consulta') : 'Venta General');
+                let motivo = pago.servicio_realizado || (pago.citas ? (pago.citas.tratamiento || 'Consulta') : 'Venta General');
+                if (motivo.includes(' (Continuación)')) {
+                    motivo = motivo.replace(' (Continuación)', '');
+                }
                 if (!serviciosStats[motivo]) {
                     serviciosStats[motivo] = { count: 0, revenue: 0 };
                 }
