@@ -84,8 +84,10 @@
                 renderActividadReciente(safePagos);
             } catch (error) {
                 console.error("Error al cargar datos financieros:", error);
-                document.getElementById('pagos-pendientes-container').innerHTML = '<p class="text-error">Error al cargar pagos pendientes.</p>';
-                document.getElementById('actividad-reciente-container').innerHTML = '<tr><td colspan="5" class="py-5 text-center text-error">Error al cargar actividad.</td></tr>';
+                const pendContainer = document.getElementById('pagos-pendientes-container');
+                if (pendContainer) pendContainer.innerHTML = '<p class="text-error">Error al cargar pagos pendientes.</p>';
+                const actContainer = document.getElementById('actividad-reciente-container');
+                if (actContainer) actContainer.innerHTML = '<tr><td colspan="5" class="py-5 text-center text-error">Error al cargar actividad.</td></tr>';
             }
         }
 
@@ -175,6 +177,7 @@
 
         function renderPagosPendientes(pagos) {
             const container = document.getElementById('pagos-pendientes-container');
+            if (!container) return;
             const pagosPendientes = pagos.filter(p => p.estado === 'Pendiente' || p.estado === 'Vencido');
 
             if (pagosPendientes.length === 0) {
@@ -854,7 +857,7 @@
                     
                     window.history.replaceState({}, document.title, newPath);
                     
-                    if (window.location.pathname.includes('cobrar_desktop.html') || window.location.pathname.includes('cobrar_mobile.html') || window.location.pathname.includes('pagos_facturacion')) {
+                    if (window.location.pathname.includes('cobrar_desktop') || window.location.pathname.includes('cobrar_mobile') || window.location.pathname.includes('pagos_facturacion')) {
                         setTimeout(() => {
                             window.location.reload();
                         }, 1000);
