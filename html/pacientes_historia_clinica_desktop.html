@@ -243,7 +243,7 @@
 <div class="px-8 py-6 flex items-center justify-between border-b border-surface-container-low">
 <h3 class="font-headline-md text-xl font-bold">Listado General</h3>
 <div class="flex items-center gap-4">
-<span class="text-label-sm text-outline">Mostrando 12 de 1,284 pacientes</span>
+<span id="pacientes-count" class="text-label-sm text-outline">Cargando pacientes...</span>
 <div class="flex gap-1">
 <button class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-surface-container-low"><span class="material-symbols-outlined">chevron_left</span></button>
 <button class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-surface-container-low"><span class="material-symbols-outlined">chevron_right</span></button>
@@ -546,6 +546,10 @@
             });
 
             renderPacientes(filtrados);
+            const countSpan = document.getElementById('pacientes-count');
+            if (countSpan) {
+                countSpan.textContent = `Mostrando ${filtrados.length} pacientes`;
+            }
         }
 
         async function cargarPacientes() {
