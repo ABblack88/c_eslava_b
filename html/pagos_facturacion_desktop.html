@@ -591,8 +591,8 @@
                 if (p.estado !== 'Completado') return;
                 let metodo = p.metodo || 'No especificado';
                 
-                // Excluir "Paquete" ya que no es un método de pago real
-                if (metodo.toLowerCase().includes('paquete')) return;
+                // Excluir "Paquete" y "Cortesía" ya que no son métodos de pago que generan ingresos
+                if (metodo.toLowerCase().includes('paquete') || metodo.toLowerCase().includes('cortes')) return;
                 
                 totalCompletados++;
                 const monto = Number(p.monto) || 0;
