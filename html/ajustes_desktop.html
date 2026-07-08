@@ -292,37 +292,33 @@
 </div>
 <!-- Finanzas Settings -->
 <div class="flex flex-col gap-3 pb-4 border-b border-outline-variant/30">
-    <p class="font-bold text-sm">Ajustes Financieros</p>
+    <div class="flex justify-between items-center">
+        <p class="font-bold text-sm">Ajustes Financieros</p>
+        <button type="button" onclick="guardarAjustesFinancieros(event)" class="bg-primary text-white px-4 py-2 rounded-xl font-bold hover:scale-105 transition-transform text-sm shadow-md flex items-center gap-2">
+            <span class="material-symbols-outlined text-sm">save</span>
+            Guardar Cambios
+        </button>
+    </div>
     <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
         <div>
             <label class="block text-xs font-bold text-on-surface-variant mb-1">Meta Mensual (S/.)</label>
-            <input type="number" id="setting-meta-mensual" onchange="guardarAjuste('metaMensual', this.value)" class="w-full rounded-xl border-outline-variant px-3 py-2 focus:ring-primary focus:border-primary text-sm" placeholder="Ej: 50000">
+            <input type="number" id="setting-meta-mensual" class="w-full rounded-xl border-outline-variant px-3 py-2 focus:ring-primary focus:border-primary text-sm" placeholder="Ej: 50000">
         </div>
         <div>
             <label class="block text-xs font-bold text-on-surface-variant mb-1">Comisión POS Nac. (%)</label>
-            <input type="number" id="setting-comision-pos-nacional" onchange="guardarAjuste('comisionPOSNacional', this.value)" step="0.01" class="w-full rounded-xl border-outline-variant px-3 py-2 focus:ring-primary focus:border-primary text-sm" placeholder="Ej: 4.5">
+            <input type="number" id="setting-comision-pos-nacional" step="0.01" class="w-full rounded-xl border-outline-variant px-3 py-2 focus:ring-primary focus:border-primary text-sm" placeholder="Ej: 4.5">
         </div>
         <div>
             <label class="block text-xs font-bold text-on-surface-variant mb-1">Comisión POS Int. (%)</label>
-            <input type="number" id="setting-comision-pos-internacional" onchange="guardarAjuste('comisionPOSInternacional', this.value)" step="0.01" class="w-full rounded-xl border-outline-variant px-3 py-2 focus:ring-primary focus:border-primary text-sm" placeholder="Ej: 5.5">
+            <input type="number" id="setting-comision-pos-internacional" step="0.01" class="w-full rounded-xl border-outline-variant px-3 py-2 focus:ring-primary focus:border-primary text-sm" placeholder="Ej: 5.5">
         </div>
         <div>
             <label class="block text-xs font-bold text-on-surface-variant mb-1">Impuesto IGV (%)</label>
-            <input type="number" id="setting-igv" onchange="guardarAjuste('igvPorcentaje', this.value)" step="0.01" class="w-full rounded-xl border-outline-variant px-3 py-2 focus:ring-primary focus:border-primary text-sm" placeholder="Ej: 18">
+            <input type="number" id="setting-igv" step="0.01" class="w-full rounded-xl border-outline-variant px-3 py-2 focus:ring-primary focus:border-primary text-sm" placeholder="Ej: 18">
         </div>
     </div>
 </div>
-<!-- Staff Management -->
-<div class="flex flex-col gap-4">
-<p class="font-bold text-sm">Gestión de Personal</p>
-<div class="flex -space-x-3 overflow-hidden">
-<img alt="Foto del miembro del personal 1" class="inline-block h-10 w-10 rounded-full ring-2 ring-white" src="https://lh3.googleusercontent.com/aida-public/AB6AXuADeeaumHaXrHfh5UrsXfh_DnejLE_7XGBoxjnpFzU1adzfTOLHD97Mol3XeMBQ5BAu-msPRFGlXi8FoEefSU8Fdlv6UeR3_qjEHitN7k212DSRbvUbiS6bakHF1MYRdoLQe4V6BdvOM--vGrLUxV7ZcXHxHy6ixvz7Yn9m6V0nZd92AXOPjFgiOM0YMMXbJLfU0bf5SeykLYkfcvEzEAkR0A9K6FZhh4AC_-H4HiFmchPoh8Nhtjm0TCHnOELi01rX_986SF3jmy0"/>
-<img alt="Foto del miembro del personal 2" class="inline-block h-10 w-10 rounded-full ring-2 ring-white" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC1B1PBvepVdNwsS72qcnMR0I9mS9S8PIM6eljZSb1vlsagk1NBiSXyBb6KvRDJKc75Ekk-U9RUR6ny3Z1ZW125-LdwyCKQ3BpXVsoGe_Fizr855GAiI9nuYO4B7O4msyppnc7Vn6N7EH8UO45Kc8z-XW-sVNaL9CmcqMNgPaR5ZBN1FlTBLJXH3gU3S-xx8FUvAkuT2jVJX-bOA3YWc_zw9kV2vk_ljxv8yVyrALgxFSNloJrScY8BsFD-YZM7N1lE9o51tRgEiUA"/>
-<img alt="Foto del miembro del personal 3" class="inline-block h-10 w-10 rounded-full ring-2 ring-white" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCJFoFf8jBdKgTz5uxguQeWLa-sHxZu8Ug1ZTTgX5PoNkrhS2BldEkggHeIaEsAserd7CSBmBVwDCOqCmudmw3H_fpXFSM-bE_HMEun3-ppvNlQXdBqnib2MF7hY05l6tx3xGhvdsNWQwmJ7CaCN_edEjMrlBTo2xOtZwb-GCs0XaElknNxDAltjkD7MFY_t01OB0SFRsoy5j_vZ3-ipTlw18FKPUKCaN0EngX5vmhOPxRf2XUidufMl6oSlxeNg7BZYhsR5dHbn5E"/>
-<div class="flex items-center justify-center h-10 w-10 rounded-full ring-2 ring-white bg-surface-container-high text-[10px] font-bold text-on-surface-variant">+4</div>
-</div>
-<button class="w-full py-2 bg-surface-container-low text-primary rounded-xl text-sm font-bold hover:bg-primary/5 transition-colors">Administrar Roles</button>
-</div>
+<!-- Staff Management (Removido) -->
 </div>
 <!-- Productos Terapéuticos Card -->
 <div class="bg-surface-white p-8 rounded-3xl shadow-[0px_10px_30px_rgba(0,0,0,0.04)] flex flex-col gap-6">
@@ -340,35 +336,7 @@
         <p class="text-outline text-xs text-center py-4">Cargando productos...</p>
     </div>
 </div>
-<!-- System Health Card -->
-<div class="p-6 bg-surface-container-low rounded-2xl">
-<h5 class="font-bold text-sm mb-4">Resumen de Canal</h5>
-<div class="space-y-3">
-<div class="flex justify-between items-center text-xs">
-<span class="text-on-surface-variant">Reservas Web</span>
-<span class="font-bold">62%</span>
-</div>
-<div class="w-full bg-outline-variant/30 h-1.5 rounded-full overflow-hidden">
-<div class="bg-primary h-full" style="width: 62%"></div>
-</div>
-<div class="flex justify-between items-center text-xs">
-<span class="text-on-surface-variant">Reservas Directas</span>
-<span class="font-bold">38%</span>
-</div>
-<div class="w-full bg-outline-variant/30 h-1.5 rounded-full overflow-hidden">
-<div class="bg-secondary h-full" style="width: 38%"></div>
-</div>
-</div>
-</div>
-<!-- Emergency Contact -->
-<div class="flex items-start gap-4 p-4 rounded-2xl border-2 border-dashed border-outline-variant/40">
-<span class="material-symbols-outlined text-error p-2 bg-error/10 rounded-full">support_agent</span>
-<div>
-<p class="font-bold text-sm">Soporte Técnico VIP</p>
-<p class="text-xs text-on-surface-variant mb-2">Línea directa para incidencias críticas del sistema.</p>
-<a class="text-xs font-bold text-primary" href="tel:+51900000000">+51 900 000 000</a>
-</div>
-</div>
+<!-- (Removido: Resumen de Canal y Soporte Técnico) -->
 </div>
 </section>
 </div>
@@ -610,6 +578,32 @@
 
         function guardarAjuste(key, value) {
             localStorage.setItem(key, value);
+        }
+
+        function guardarAjustesFinancieros(event) {
+            const btn = event.currentTarget;
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<span class="material-symbols-outlined text-sm animate-spin">progress_activity</span> Guardando...';
+            btn.disabled = true;
+
+            setTimeout(() => {
+                const meta = document.getElementById('setting-meta-mensual').value;
+                const comNac = document.getElementById('setting-comision-pos-nacional').value;
+                const comInt = document.getElementById('setting-comision-pos-internacional').value;
+                const igv = document.getElementById('setting-igv').value;
+
+                if(meta) localStorage.setItem('metaMensual', meta);
+                if(comNac) localStorage.setItem('comisionPOSNacional', comNac);
+                if(comInt) localStorage.setItem('comisionPOSInternacional', comInt);
+                if(igv) localStorage.setItem('igvPorcentaje', igv);
+
+                btn.innerHTML = '<span class="material-symbols-outlined text-sm">check</span> Guardado';
+                
+                setTimeout(() => {
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+                }, 2000);
+            }, 600);
         }
 
         // ==========================================
