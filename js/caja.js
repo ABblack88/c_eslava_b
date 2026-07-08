@@ -46,6 +46,12 @@
                 const totalIngresos = pagosDelMes.filter(p => p.estado === 'Completado').reduce((sum, p) => sum + Number(p.monto), 0);
                 const pendientes = safePagos.filter(p => p.estado === 'Pendiente');
                 const totalPendientes = pendientes.reduce((sum, p) => sum + Number(p.monto), 0);
+                
+                const vencidos = pendientes.filter(p => {
+                    const diffDays = Math.floor((now - new Date(p.fecha)) / (1000 * 60 * 60 * 24));
+                    return diffDays > 15;
+                });
+                const totalVencidos = vencidos.reduce((sum, p) => sum + Number(p.monto), 0);
 
                 // Meta dinámica
                 const meta = parseFloat(localStorage.getItem('metaMensual') || 50000);
@@ -67,9 +73,9 @@
                 if (elProgresoBar) elProgresoBar.style.width = `${progresoPct}%`;
                 if (elReclamos) elReclamos.textContent = formatCurrency(totalPendientes);
                 if (elReclamosCount) elReclamosCount.textContent = `${pendientes.length} expedientes abiertos`;
-                if (elVencidos) elVencidos.textContent = formatCurrency(totalPendientes);
-                if (elVencidosCount) elVencidosCount.textContent = pendientes.length.toString();
-                if (elMontoPromedio) elMontoPromedio.textContent = pendientes.length > 0 ? formatCurrency(totalPendientes / pendientes.length) : 'S/ 0';
+                if (elVencidos) elVencidos.textContent = formatCurrency(totalVencidos);
+                if (elVencidosCount) elVencidosCount.textContent = vencidos.length.toString();
+                if (elMontoPromedio) elMontoPromedio.textContent = vencidos.length > 0 ? formatCurrency(totalVencidos / vencidos.length) : 'S/ 0';
 
                 window.todosLosPagos = safePagos;
                 window.pagosPendientesGlobal = pendientes;
@@ -1041,7 +1047,7 @@
                     .from('pagos')
                     .select('id, monto, fecha, descripcion, pacientes(id, nombre), citas(tratamiento)')
                     .eq('estado', 'Pendiente')
-                    .order('fecha', { ascending: true }); // Removed limit to aggregate all pendings
+                    .order('fecha', { ascending: false }); // Sort by newest date to get most recent activity
 
                 if (error) throw error;
 
@@ -1059,10 +1065,16 @@
                             pacId: pacId,
                             pacName: p.pacientes ? p.pacientes.nombre : 'Desconocido',
                             montoTotal: 0,
-                            fechaMasAntigua: p.fecha,
+                            fechaMasReciente: p.fecha, // Use recent date
                             cantidad: 0,
                             descripciones: []
                         };
+                    } else {
+                        const existingDate = new Date(agregados[pacId].fechaMasReciente);
+                        const newDate = new Date(p.fecha);
+                        if (newDate > existingDate) {
+                            agregados[pacId].fechaMasReciente = p.fecha;
+                        }
                     }
                     agregados[pacId].montoTotal += parseFloat(p.monto || 0);
                     agregados[pacId].cantidad += 1;
@@ -1074,12 +1086,14 @@
 
                 // Convert to array and sort by newest date
                 const listaAgrupada = Object.values(agregados)
-                    .sort((a, b) => new Date(b.fechaMasAntigua) - new Date(a.fechaMasAntigua))
+                    .sort((a, b) => new Date(b.fechaMasReciente) - new Date(a.fechaMasReciente))
                     .slice(0, 30); // Show top 30 pending users
 
                 container.innerHTML = '';
+                container.className = 'flex overflow-x-auto gap-4 pb-2 snap-x'; // Change from grid to flex row
+                
                 listaAgrupada.forEach(ag => {
-                    const dateObj = new Date(ag.fechaMasAntigua);
+                    const dateObj = new Date(ag.fechaMasReciente);
                     const today = new Date();
                     today.setHours(0, 0, 0, 0);
                     const isOverdue = dateObj < today;

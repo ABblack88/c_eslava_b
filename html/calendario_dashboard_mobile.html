@@ -918,6 +918,8 @@
                     let label = s.nombre;
                     if (s.duracion && s.duracion > 1) {
                         label += ` (${s.duracion} Sesiones)`;
+                    } else {
+                        label += ` (Cita Única)`;
                     }
                     
                     option.textContent = label;

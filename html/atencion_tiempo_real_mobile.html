@@ -320,14 +320,14 @@
                 let cycleSession = sessionNum % duracion;
                 if (cycleSession === 0) cycleSession = duracion;
 
-                let totalText = duracion > 1 ? `/${duracion}` : ``;
+                let totalText = duracion > 1 ? `Sesión actual: ${cycleSession}/${duracion}` : `Cita Única`;
                 
                 counterText.innerHTML = `
                     <div class="mt-2 bg-secondary-container text-on-secondary-container px-2 py-1.5 rounded inline-flex items-center gap-1.5">
                         <span class="material-symbols-outlined text-sm">history</span>
                         <span>
                             Historial: <strong>${count} previas</strong>. 
-                            <strong>Sesión actual: ${cycleSession}${totalText}</strong>.
+                            <strong>${totalText}</strong>.
                         </span>
                     </div>
                 `;
@@ -433,15 +433,41 @@
 
                 if (error) throw error;
 
-                // Actualizar pago pendiente para reflejar el nuevo monto si existe
-                await supabaseClient
+                // Verificar si existe un pago para esta cita
+                const { data: pagosExistentes } = await supabaseClient
                     .from('pagos')
-                    .update({
-                        monto: tratData.montoTotal,
-                        descripcion: tratData.tratamientos
-                    })
-                    .eq('cita_id', citaId)
-                    .eq('estado', 'Pendiente');
+                    .select('id, estado')
+                    .eq('cita_id', citaId);
+
+                if (pagosExistentes && pagosExistentes.length > 0) {
+                    const pago = pagosExistentes[0];
+                    if (pago.estado === 'Pendiente') {
+                        const nuevoEstado = tratData.montoTotal === 0 ? 'Completado' : 'Pendiente';
+                        const nuevoMetodo = tratData.montoTotal === 0 ? 'Paquete' : 'Efectivo';
+                        await supabaseClient
+                            .from('pagos')
+                            .update({
+                                monto: tratData.montoTotal,
+                                descripcion: tratData.tratamientos,
+                                estado: nuevoEstado,
+                                metodo: nuevoMetodo
+                            })
+                            .eq('id', pago.id);
+                    }
+                } else if (currentPaciente) {
+                    await supabaseClient
+                        .from('pagos')
+                        .insert([{
+                            paciente_id: currentPaciente.id,
+                            cita_id: citaId,
+                            monto: tratData.montoTotal,
+                            estado: tratData.montoTotal === 0 ? 'Completado' : 'Pendiente',
+                            metodo: tratData.montoTotal === 0 ? 'Paquete' : 'Efectivo',
+                            fecha: new Date().toISOString(),
+                            descripcion: tratData.tratamientos,
+                            medico_id: currentCita ? currentCita.consultorio : null
+                        }]);
+                }
 
                 document.getElementById('save-status').textContent = 'Borrador guardado';
                 showToast("Borrador guardado", "success");
@@ -522,15 +548,41 @@
 
                 if (error) throw error;
 
-                // Actualizar pago pendiente para reflejar el nuevo monto final
-                await supabaseClient
+                // Verificar si existe un pago para esta cita
+                const { data: pagosExistentes } = await supabaseClient
                     .from('pagos')
-                    .update({
-                        monto: tratData.montoTotal,
-                        descripcion: tratData.tratamientos
-                    })
-                    .eq('cita_id', citaId)
-                    .eq('estado', 'Pendiente');
+                    .select('id, estado')
+                    .eq('cita_id', citaId);
+
+                if (pagosExistentes && pagosExistentes.length > 0) {
+                    const pago = pagosExistentes[0];
+                    if (pago.estado === 'Pendiente') {
+                        const nuevoEstado = tratData.montoTotal === 0 ? 'Completado' : 'Pendiente';
+                        const nuevoMetodo = tratData.montoTotal === 0 ? 'Paquete' : 'Efectivo';
+                        await supabaseClient
+                            .from('pagos')
+                            .update({
+                                monto: tratData.montoTotal,
+                                descripcion: tratData.tratamientos,
+                                estado: nuevoEstado,
+                                metodo: nuevoMetodo
+                            })
+                            .eq('id', pago.id);
+                    }
+                } else if (currentPaciente) {
+                    await supabaseClient
+                        .from('pagos')
+                        .insert([{
+                            paciente_id: currentPaciente.id,
+                            cita_id: citaId,
+                            monto: tratData.montoTotal,
+                            estado: tratData.montoTotal === 0 ? 'Completado' : 'Pendiente',
+                            metodo: tratData.montoTotal === 0 ? 'Paquete' : 'Efectivo',
+                            fecha: new Date().toISOString(),
+                            descripcion: tratData.tratamientos,
+                            medico_id: currentCita ? currentCita.consultorio : null
+                        }]);
+                }
 
                 showToast("Procedimiento culminado. Redirigiendo al calendario...", "success");
                 
@@ -576,15 +628,41 @@
 
                 if (error) throw error;
 
-                // Actualizar pago pendiente si todavía no fue pagado
-                await supabaseClient
+                // Verificar si existe un pago para esta cita
+                const { data: pagosExistentes } = await supabaseClient
                     .from('pagos')
-                    .update({
-                        monto: tratData.montoTotal,
-                        descripcion: tratData.tratamientos
-                    })
-                    .eq('cita_id', citaId)
-                    .eq('estado', 'Pendiente');
+                    .select('id, estado')
+                    .eq('cita_id', citaId);
+
+                if (pagosExistentes && pagosExistentes.length > 0) {
+                    const pago = pagosExistentes[0];
+                    if (pago.estado === 'Pendiente') {
+                        const nuevoEstado = tratData.montoTotal === 0 ? 'Completado' : 'Pendiente';
+                        const nuevoMetodo = tratData.montoTotal === 0 ? 'Paquete' : 'Efectivo';
+                        await supabaseClient
+                            .from('pagos')
+                            .update({
+                                monto: tratData.montoTotal,
+                                descripcion: tratData.tratamientos,
+                                estado: nuevoEstado,
+                                metodo: nuevoMetodo
+                            })
+                            .eq('id', pago.id);
+                    }
+                } else if (currentPaciente) {
+                    await supabaseClient
+                        .from('pagos')
+                        .insert([{
+                            paciente_id: currentPaciente.id,
+                            cita_id: citaId,
+                            monto: tratData.montoTotal,
+                            estado: tratData.montoTotal === 0 ? 'Completado' : 'Pendiente',
+                            metodo: tratData.montoTotal === 0 ? 'Paquete' : 'Efectivo',
+                            fecha: new Date().toISOString(),
+                            descripcion: tratData.tratamientos,
+                            medico_id: currentCita ? currentCita.consultorio : null
+                        }]);
+                }
 
                 showToast("Procedimiento actualizado correctamente.", "success");
                 setTimeout(() => {

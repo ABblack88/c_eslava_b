@@ -362,7 +362,7 @@
             const nombrePaciente = cita.pacientes ? cita.pacientes.nombre : 'Desconocido';
             const initials = nombrePaciente.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
             
-            let sessionStr = '-';
+            let sessionStr = '<span class="bg-surface-container text-outline text-[10px] px-2 py-0.5 rounded font-bold">Cita Única</span>';
             if (cita.tratamiento) {
                 const baseTrat = cita.tratamiento.replace('(Continuación)', '').trim();
                 const servicioObj = window.serviciosActivos ? window.serviciosActivos.find(s => s.nombre === baseTrat) : null;
@@ -378,7 +378,7 @@
                     const totalOccurrences = allCitas.filter(c => c.paciente_id === cita.paciente_id && c.tratamiento && c.tratamiento.includes(baseTrat) && c.estado !== 'Cancelada').length;
                     if (cita.tratamiento.includes('(Continuación)') || totalOccurrences > 1 || prevOccurrences.length > 0) {
                         let currentSessionNum = prevOccurrences.length > 0 ? prevOccurrences.length : 1;
-                        sessionStr = `${currentSessionNum} de ${servicioObj.duracion}`;
+                        sessionStr = `<span class="bg-primary/10 text-primary text-[10px] px-2 py-0.5 rounded font-bold">Sesión ${currentSessionNum} de ${servicioObj.duracion}</span>`;
                     }
                 }
             }
@@ -412,7 +412,7 @@
                             <div>
                                 <h3 class="font-body-lg text-body-lg font-semibold text-on-surface">${nombrePaciente}</h3>
                                 <p class="font-label-sm text-label-sm text-primary">${cita.fecha} • ${horaFormat}</p>
-                                <p class="font-label-sm text-[11px] text-outline mt-0.5">Sesión: <span class="font-bold text-on-surface">${sessionStr}</span></p>
+                                <div class="mt-1">${sessionStr}</div>
                             </div>
                         </div>
                     </div>

@@ -204,7 +204,7 @@
 <div class="flex gap-4">
 <div class="bg-surface-white p-4 rounded-2xl shadow-[0px_10px_30px_rgba(0,0,0,0.04)] min-w-[140px]">
 <p class="text-label-sm text-outline">Total Pacientes</p>
-<p class="text-2xl font-bold text-primary">1,284</p>
+<p class="text-2xl font-bold text-primary" id="stat-total-pacientes">Cargando...</p>
 </div>
 </div>
 </div>
@@ -548,7 +548,7 @@
             renderPacientes(filtrados);
             const countSpan = document.getElementById('pacientes-count');
             if (countSpan) {
-                countSpan.textContent = `Mostrando ${filtrados.length} pacientes`;
+                countSpan.textContent = `Mostrando ${filtrados.length} de ${allPacientes.length} pacientes`;
             }
         }
 
@@ -568,7 +568,10 @@
             
             // Actualizar estadísticas simples
             const total = allPacientes.length;
-            document.querySelector('.text-2xl.font-bold.text-primary').textContent = total;
+            const statElement = document.getElementById('stat-total-pacientes');
+            if (statElement) {
+                statElement.textContent = total;
+            }
 
             filtrarPacientes(); // Usamos la función de filtrar para inicializar
             renderPacientesHoy(allPacientes);

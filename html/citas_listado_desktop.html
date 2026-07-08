@@ -405,7 +405,7 @@
                 
                 const nombrePaciente = cita.pacientes ? cita.pacientes.nombre : 'Paciente Desconocido';
                 
-                let sessionStr = '-';
+                let sessionStr = '<span class="bg-surface-container text-outline text-xs px-2 py-1 rounded font-bold">Cita Única</span>';
                 if (cita.tratamiento) {
                     const baseTrat = cita.tratamiento.replace('(Continuación)', '').trim();
                     const servicioObj = window.serviciosActivos ? window.serviciosActivos.find(s => s.nombre === baseTrat) : null;
@@ -423,7 +423,7 @@
                         
                         if (cita.tratamiento.includes('(Continuación)') || totalOccurrences > 1 || prevOccurrences.length > 0) {
                             let currentSessionNum = prevOccurrences.length > 0 ? prevOccurrences.length : 1;
-                            sessionStr = `${currentSessionNum} de ${servicioObj.duracion}`;
+                            sessionStr = `<span class="bg-primary/10 text-primary text-xs px-2 py-1 rounded font-bold">Sesión ${currentSessionNum} de ${servicioObj.duracion}</span>`;
                         }
                     }
                 }
