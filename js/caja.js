@@ -1030,14 +1030,17 @@
             const searchInput = document.getElementById('invoice-paciente-search');
             const dropdown = document.getElementById('invoice-paciente-dropdown');
             if(!searchInput || !dropdown) return;
-            const filter = searchInput.value.toLowerCase();
+            const filter = searchInput.value.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
             
             if (filter.length < 1) {
                 dropdown.classList.add('hidden');
                 return;
             }
             
-            const filtered = globalPacientes.filter(p => (p.nombre || '').toLowerCase().includes(filter));
+            const filtered = globalPacientes.filter(p => {
+                const nombreNormalizado = (p.nombre || '').toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+                return nombreNormalizado.includes(filter);
+            });
             
             if (filtered.length === 0) {
                 dropdown.innerHTML = '<div class="p-3 text-sm text-on-surface-variant">No se encontraron pacientes.</div>';

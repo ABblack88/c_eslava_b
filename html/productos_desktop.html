@@ -431,8 +431,11 @@
             const list = document.getElementById('pos-paciente-list');
             if(!list) return;
             list.classList.remove('hidden');
-            const q = query.toLowerCase();
-            const filtrados = pacientesPOSGlobal.filter(p => p.nombre.toLowerCase().includes(q));
+            const q = query.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+            const filtrados = pacientesPOSGlobal.filter(p => {
+                const nombreNormalizado = p.nombre.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+                return nombreNormalizado.includes(q);
+            });
             renderListaPacientesPOS(filtrados);
             if(query === '') {
                 document.getElementById('pos-paciente-id').value = '';

@@ -533,12 +533,14 @@
         }
 
         function filtrarPacientes() {
-            const query = document.getElementById('searchInput').value.toLowerCase();
+            const query = document.getElementById('searchInput').value.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
             
             const filtrados = allPacientes.filter(p => {
+                const nombreNormalizado = p.nombre.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
                 const matchTexto = 
-                    p.nombre.toLowerCase().includes(query) || 
-                    p.id.toLowerCase().includes(query);
+                    nombreNormalizado.includes(query) || 
+                    (p.id && p.id.toLowerCase().includes(query)) ||
+                    (p.telefono && p.telefono.includes(query));
                 
                 const matchEstado = (estadoFiltro === 'Todos') || (p.estado === estadoFiltro);
                 
