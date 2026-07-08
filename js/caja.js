@@ -1216,7 +1216,7 @@
 
         document.addEventListener("DOMContentLoaded", async () => {
             const path = window.location.pathname;
-            if (path.includes('cobrar_desktop.html') || path.includes('cobrar_mobile.html')) {
+            if (path.includes('cobrar_desktop') || path.includes('cobrar_mobile')) {
                 inicializarPuntoCobro();
             } else {
                 await cargarDatosFinancieros();
