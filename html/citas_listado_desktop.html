@@ -356,8 +356,8 @@
             const { data, error } = await window.supabaseClient
                 .from('citas')
                 .select('*, pacientes(nombre)')
-                .order('fecha', { ascending: false })
-                .order('hora', { ascending: false });
+                .order('fecha', { ascending: true })
+                .order('hora', { ascending: true });
             
             if (error) {
                 console.error("Error al cargar citas:", error);
