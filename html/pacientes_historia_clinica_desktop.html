@@ -233,7 +233,7 @@
 </div>
 
 <!-- Patient Grid (Bento Style) -->
-<h3 class="font-headline-md text-xl font-bold mb-4">Pacientes Programados para Hoy</h3>
+<h3 class="font-headline-md text-xl font-bold mb-4">Próximos Pacientes Programados</h3>
 <div id="pacientes-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 <!-- Las tarjetas se insertarán dinámicamente -->
 </div>
@@ -578,20 +578,42 @@
             const gridContainer = document.getElementById('pacientes-grid');
             gridContainer.innerHTML = '';
             
-            const today = new Date().toISOString().split('T')[0];
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            const today = `${year}-${month}-${day}`;
             
-            const pacientesHoy = [];
+            const pacientesProximos = [];
             data.forEach(p => {
                 if (!p.citas) return;
-                const citasHoy = p.citas.filter(c => c.fecha === today && (c.estado === 'Pendiente' || c.estado === 'Sin confirmar' || c.estado === 'Confirmada' || c.estado === 'Confirmado' || c.estado === 'En Progreso'));
-                if (citasHoy.length > 0) {
-                    const citaToShow = citasHoy.sort((a,b) => a.hora.localeCompare(b.hora))[0];
-                    pacientesHoy.push({ paciente: p, cita: citaToShow });
-                }
+                const citasFuturas = p.citas.filter(c => c.fecha >= today && (c.estado === 'Pendiente' || c.estado === 'Sin confirmar' || c.estado === 'Confirmada' || c.estado === 'Confirmado' || c.estado === 'En Progreso'));
+                
+                citasFuturas.forEach(cita => {
+                    pacientesProximos.push({ paciente: p, cita: cita });
+                });
             });
 
+            pacientesProximos.sort((a, b) => {
+                if (a.cita.fecha === b.cita.fecha) {
+                    return a.cita.hora.localeCompare(b.cita.hora);
+                }
+                return a.cita.fecha.localeCompare(b.cita.fecha);
+            });
+
+            const pacientesHoy = [];
+            for (const item of pacientesProximos) {
+                if (item.cita.fecha === today) {
+                    pacientesHoy.push(item);
+                } else if (pacientesHoy.length < 3) {
+                    pacientesHoy.push(item);
+                } else {
+                    break;
+                }
+            }
+
             if (pacientesHoy.length === 0) {
-                gridContainer.innerHTML = '<p class="text-on-surface-variant col-span-full py-2 italic text-sm">No hay pacientes pendientes de atención para hoy.</p>';
+                gridContainer.innerHTML = '<p class="text-on-surface-variant col-span-full py-2 italic text-sm">No hay citas pendientes de atención próximas.</p>';
                 return;
             }
 
@@ -607,6 +629,14 @@
                     horaFormat = `${h12.toString().padStart(2, '0')}:${m} ${ampm}`;
                 }
                 
+                let dateLabel = '';
+                if (cita.fecha === today) {
+                    dateLabel = `Hoy, ${horaFormat}`;
+                } else {
+                    const [y, m, d] = cita.fecha.split('-');
+                    dateLabel = `${d}/${m}, ${horaFormat}`;
+                }
+
                 const card = document.createElement('div');
                 card.className = 'bg-surface-white p-5 rounded-3xl shadow-sm hover:shadow-md transition-all group cursor-pointer border border-surface-container hover:border-primary/30 flex flex-col';
                 card.onclick = () => {
@@ -621,7 +651,7 @@
                         </div>
                         <div class="overflow-hidden">
                             <h3 class="font-headline-md text-base font-bold text-on-surface truncate pr-2">${paciente.nombre}</h3>
-                            <p class="text-label-sm text-primary">${horaFormat} • ${cita.tratamiento || 'Procedimiento'}</p>
+                            <p class="text-label-sm text-primary">${dateLabel} • ${cita.tratamiento || 'Procedimiento'}</p>
                         </div>
                     </div>
                 </div>

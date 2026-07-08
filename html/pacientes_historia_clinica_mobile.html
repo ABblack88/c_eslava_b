@@ -232,7 +232,7 @@
     </div>
 </div>
 <!-- Patient Grid (Bento/Card Layout) -->
-<h3 class="font-headline-md text-xl font-bold mb-4 px-4 md:px-0">Pacientes Programados para Hoy</h3>
+<h3 class="font-headline-md text-xl font-bold mb-4 px-4 md:px-0">Próximos Pacientes Programados</h3>
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-gutter" id="patientsGrid">
 <!-- Contenido dinámico cargado vía Supabase -->
 </div>
@@ -360,22 +360,44 @@
                 return;
             }
 
-            const today = new Date().toISOString().split('T')[0];
-            const pacientesHoy = [];
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            const today = `${year}-${month}-${day}`;
+            const pacientesProximos = [];
             data.forEach(p => {
                 if (!p.citas) return;
-                const citasHoy = p.citas.filter(c => c.fecha === today && (c.estado === 'Pendiente' || c.estado === 'Sin confirmar' || c.estado === 'Confirmada' || c.estado === 'Confirmado' || c.estado === 'En Progreso'));
-                if (citasHoy.length > 0) {
-                    const citaToShow = citasHoy.sort((a,b) => a.hora.localeCompare(b.hora))[0];
-                    pacientesHoy.push({ paciente: p, cita: citaToShow });
-                }
+                const citasFuturas = p.citas.filter(c => c.fecha >= today && (c.estado === 'Pendiente' || c.estado === 'Sin confirmar' || c.estado === 'Confirmada' || c.estado === 'Confirmado' || c.estado === 'En Progreso'));
+                
+                citasFuturas.forEach(cita => {
+                    pacientesProximos.push({ paciente: p, cita: cita });
+                });
             });
+
+            pacientesProximos.sort((a, b) => {
+                if (a.cita.fecha === b.cita.fecha) {
+                    return a.cita.hora.localeCompare(b.cita.hora);
+                }
+                return a.cita.fecha.localeCompare(b.cita.fecha);
+            });
+
+            const pacientesHoy = [];
+            for (const item of pacientesProximos) {
+                if (item.cita.fecha === today) {
+                    pacientesHoy.push(item);
+                } else if (pacientesHoy.length < 3) {
+                    pacientesHoy.push(item);
+                } else {
+                    break;
+                }
+            }
 
             if (pacientesHoy.length === 0) {
                 gridBody.innerHTML = `
                     <div class="col-span-full text-center py-12 bg-surface-white rounded-2xl border border-dashed border-outline-variant">
                         <span class="material-symbols-outlined text-4xl text-outline mb-3">group_off</span>
-                        <p class="font-body-md text-on-surface">No hay pacientes pendientes de atención para hoy</p>
+                        <p class="font-body-md text-on-surface">No hay citas pendientes de atención próximas</p>
                     </div>
                 `;
                 return;
@@ -396,6 +418,14 @@
                     horaFormat = `${h12.toString().padStart(2, '0')}:${m} ${ampm}`;
                 }
 
+                let dateLabel = '';
+                if (cita.fecha === today) {
+                    dateLabel = `Hoy, ${horaFormat}`;
+                } else {
+                    const [y, m, d] = cita.fecha.split('-');
+                    dateLabel = `${d}/${m}, ${horaFormat}`;
+                }
+
                 const cardHTML = `
                     <div class="bg-surface-white rounded-2xl p-6 shadow-[0px_10px_30px_rgba(0,0,0,0.04)] flex flex-col gap-5 hover:shadow-[0px_15px_40px_rgba(0,0,0,0.08)] hover:-translate-y-1 transition-all duration-300 group cursor-pointer" onclick="const role = new URLSearchParams(window.location.search).get('role') || 'admin'; window.location.href='atencion_tiempo_real_mobile.html?cita_id=${cita.id}&role=' + role">
                         <div class="flex justify-between items-start">
@@ -405,7 +435,7 @@
                                 </div>
                                 <div>
                                     <h3 class="font-body-lg text-body-lg font-semibold text-on-surface">${paciente.nombre}</h3>
-                                    <p class="font-label-sm text-label-sm text-primary">${horaFormat} • ${cita.tratamiento || 'Procedimiento'}</p>
+                                    <p class="font-label-sm text-label-sm text-primary">${dateLabel} • ${cita.tratamiento || 'Procedimiento'}</p>
                                 </div>
                             </div>
                         </div>
