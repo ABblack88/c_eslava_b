@@ -97,15 +97,9 @@
                         <p class="text-[11px] text-outline font-bold uppercase">Procedimiento agendado</p>
                         <p id="appt-treatment" class="font-bold text-on-surface text-base">Cargando...</p>
                     </div>
-                    <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <p class="text-[11px] text-outline font-bold uppercase">Consultorio</p>
-                            <p id="appt-room" class="font-semibold text-on-surface">--</p>
-                        </div>
-                        <div>
-                            <p class="text-[11px] text-outline font-bold uppercase">Hora</p>
-                            <p id="appt-time" class="font-semibold text-on-surface">--</p>
-                        </div>
+                    <div>
+                        <p class="text-[11px] text-outline font-bold uppercase">Hora</p>
+                        <p id="appt-time" class="font-semibold text-on-surface">--</p>
                     </div>
                 </div>
             </div>
@@ -426,7 +420,6 @@
                 }
 
                 document.getElementById('appt-treatment').textContent = cita.tratamiento || 'Procedimiento general';
-                document.getElementById('appt-room').textContent = cita.consultorio || '--';
                 document.getElementById('appt-time').textContent = `${cita.fecha} • ${cita.hora}`;
 
                 if (cita.notas) {
