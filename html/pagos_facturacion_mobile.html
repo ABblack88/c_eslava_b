@@ -408,7 +408,17 @@
                 if (error) throw error;
 
                 // Calcular totales dinámicos
-                const safePagos = pagos || [];
+                let safePagos = pagos || [];
+
+                // Filtrar pagos pendientes/vencidos: Solo se cuentan si la atención ya se completó
+                safePagos = safePagos.filter(p => {
+                    if (p.estado === 'Completado') return true;
+                    if (p.citas) {
+                        const estadoCita = (p.citas.estado || '').toLowerCase();
+                        return estadoCita.includes('completad') || estadoCita.includes('atendid');
+                    }
+                    return true;
+                });
 
                 // Refine sorting locally using citas.created_at if available
                 safePagos.sort((a, b) => {

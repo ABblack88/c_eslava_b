@@ -459,12 +459,21 @@
 
                 if (error) throw error;
 
-                // Filter locally by patient name if no patientId but name is typed
                 let safePagos = pagos || [];
                 const busquedaPaciente = document.getElementById('filtro-paciente')?.value?.toLowerCase();
                 if (busquedaPaciente && !pacienteId) {
                     safePagos = safePagos.filter(p => p.pacientes && p.pacientes.nombre.toLowerCase().includes(busquedaPaciente));
                 }
+
+                // Filtrar pagos pendientes/vencidos: Solo se cuentan si la atención ya se completó
+                safePagos = safePagos.filter(p => {
+                    if (p.estado === 'Completado') return true;
+                    if (p.citas) {
+                        const estadoCita = (p.citas.estado || '').toLowerCase();
+                        return estadoCita.includes('completad') || estadoCita.includes('atendid');
+                    }
+                    return true;
+                });
 
                 // Refine sorting locally using citas.created_at if available
                 safePagos.sort((a, b) => {
