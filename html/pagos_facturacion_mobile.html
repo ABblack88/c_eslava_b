@@ -398,16 +398,41 @@
                     metodo,
                     estado,
                     fecha,
+                    descripcion,
                     pacientes ( nombre ),
-                    citas ( tratamiento, motivo )
+                    citas ( tratamiento, motivo, created_at )
                 `)
-                    .order('fecha', { ascending: false })
-                    .order('created_at', { ascending: false });
+                    .order('fecha', { ascending: false });
 
                 if (error) throw error;
 
                 // Calcular totales dinámicos
                 const safePagos = pagos || [];
+
+                // Refine sorting locally using citas.created_at if available
+                safePagos.sort((a, b) => {
+                    const dateA = new Date(a.fecha).getTime();
+                    const dateB = new Date(b.fecha).getTime();
+                    if (dateA !== dateB) return dateB - dateA;
+                    
+                    const timeA = (a.citas && a.citas.created_at) ? new Date(a.citas.created_at).getTime() : 0;
+                    const timeB = (b.citas && b.citas.created_at) ? new Date(b.citas.created_at).getTime() : 0;
+                    return timeB - timeA;
+                });
+
+                // Convertir a Vencidos los que tengan más de 15 días
+                const now = new Date();
+                safePagos.forEach(p => {
+                    if (p.estado === 'Pendiente' && p.fecha) {
+                        const pDate = new Date(p.fecha);
+                        const diffTime = Math.abs(now - pDate);
+                        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
+                        if (diffDays > 15) {
+                            p.estado = 'Vencido';
+                        }
+                    }
+                });
+
                 const totalIngresos = safePagos.filter(p => p.estado === 'Completado').reduce((sum, p) => sum + Number(p.monto), 0);
                 const pendientes = safePagos.filter(p => p.estado === 'Pendiente');
                 const totalPendientes = pendientes.reduce((sum, p) => sum + Number(p.monto), 0);
