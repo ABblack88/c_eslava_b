@@ -585,17 +585,22 @@
         function renderMediosPago(pagos) {
             const metodos = {};
             let totalCompletados = 0;
+            let totalIngresos = 0;
 
             pagos.forEach(p => {
                 if (p.estado !== 'Completado') return;
                 totalCompletados++;
                 let metodo = p.metodo || 'No especificado';
-                if (!metodos[metodo]) metodos[metodo] = 0;
-                metodos[metodo]++;
+                const monto = Number(p.monto) || 0;
+                totalIngresos += monto;
+                if (!metodos[metodo]) metodos[metodo] = { count: 0, monto: 0 };
+                metodos[metodo].count++;
+                metodos[metodo].monto += monto;
             });
 
             const labels = Object.keys(metodos);
-            const data = Object.values(metodos);
+            const dataCounts = labels.map(l => metodos[l].count);
+            const dataMontos = labels.map(l => metodos[l].monto);
             const backgroundColors = ['#008097', '#89e4fd', '#ffb877', '#8a4d00', '#6d797d', '#bdc8cd'];
 
             const ctx = document.getElementById('mediosPagoChart');
@@ -616,7 +621,7 @@
                 data: {
                     labels: labels,
                     datasets: [{
-                        data: data,
+                        data: dataMontos, // Mostrar proporción de ingresos en el gráfico
                         backgroundColor: backgroundColors,
                         borderWidth: 0
                     }]
@@ -639,12 +644,21 @@
 
             const listContainer = document.getElementById('medios-pago-list');
             if (listContainer) {
-                listContainer.innerHTML = labels.map((l, i) => `
-                    <li class="flex justify-between items-center border-b border-outline-variant/30 pb-1 last:border-0 last:pb-0">
+                listContainer.innerHTML = labels.map((l, i) => {
+                    const count = metodos[l].count;
+                    const monto = metodos[l].monto;
+                    const pctUso = totalCompletados > 0 ? ((count / totalCompletados) * 100).toFixed(1) : 0;
+                    const pctDinero = totalIngresos > 0 ? ((monto / totalIngresos) * 100).toFixed(1) : 0;
+                    return `
+                    <li class="flex justify-between items-center border-b border-outline-variant/30 py-2 last:border-0 last:pb-0">
                         <span class="flex items-center gap-2"><div class="w-2 h-2 rounded-full" style="background:${backgroundColors[i%backgroundColors.length]}"></div>${l}</span>
-                        <span class="font-bold">${data[i]} (${((data[i]/totalCompletados)*100).toFixed(1)}%)</span>
+                        <div class="text-right">
+                            <p class="font-bold text-xs text-on-surface">S/ ${monto.toFixed(2)} <span class="text-primary font-normal">(${pctDinero}%)</span></p>
+                            <p class="text-[10px] text-on-surface-variant">${count} usos (${pctUso}%)</p>
+                        </div>
                     </li>
-                `).join('');
+                    `;
+                }).join('');
             }
         }
 
