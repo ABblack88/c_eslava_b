@@ -463,6 +463,18 @@
                     safePagos = safePagos.filter(p => p.pacientes && p.pacientes.nombre.toLowerCase().includes(busquedaPaciente));
                 }
 
+                // Convertir a Vencidos los que tengan más de 15 días
+                const now = new Date();
+                safePagos.forEach(p => {
+                    if (p.estado === 'Pendiente' && p.fecha) {
+                        const pDate = new Date(p.fecha);
+                        const diffDays = Math.floor((now - pDate) / (1000 * 60 * 60 * 24));
+                        if (diffDays > 15) {
+                            p.estado = 'Vencido';
+                        }
+                    }
+                });
+
                 const totalIngresos = safePagos.filter(p => p.estado === 'Completado').reduce((sum, p) => sum + Number(p.monto), 0);
                 const pendientes = safePagos.filter(p => p.estado === 'Pendiente');
                 const totalPendientes = pendientes.reduce((sum, p) => sum + Number(p.monto), 0);
