@@ -365,12 +365,15 @@
                 return;
             }
 
-            allCitas = data || [];
+            allCitas = (data || []).filter(c => {
+                const estado = (c.estado || '').toLowerCase();
+                return !estado.includes('completad') && !estado.includes('atendid');
+            });
             
             const totalBadge = document.getElementById('total-citas-badge');
             if(totalBadge) totalBadge.textContent = allCitas.length;
             const mostrandoText = document.getElementById('mostrando-citas-text');
-            if(mostrandoText) mostrandoText.textContent = `Mostrando ${allCitas.length} citas`;
+            if(mostrandoText) mostrandoText.textContent = `Mostrando ${allCitas.length} citas activas`;
 
             filtrarCitas();
         }
