@@ -339,6 +339,25 @@
 <!-- (Removido: Resumen de Canal y Soporte Técnico) -->
 </div>
 </section>
+
+<!-- Métodos de Pago Section -->
+<section id="metodos-pago-section" class="w-full space-y-8">
+<div class="bg-surface-white p-8 rounded-3xl shadow-[0px_10px_30px_rgba(0,0,0,0.04)] flex flex-col gap-6">
+    <div class="flex items-center justify-between border-b border-surface-variant pb-4">
+        <h3 class="font-headline-md text-headline-md flex items-center gap-2">
+            <span class="material-symbols-outlined text-primary">payments</span>
+            Métodos de Pago
+        </h3>
+        <button onclick="abrirModalNuevoMetodoPago()" class="bg-primary text-white text-sm font-bold flex items-center gap-1 px-4 py-2 rounded-xl hover:scale-105 transition-transform shadow-sm">
+            <span class="material-symbols-outlined text-sm">add_circle</span> Nuevo Método
+        </button>
+    </div>
+    <p class="text-xs text-on-surface-variant -mt-2">Administra los métodos disponibles en la caja. Activa o desactiva según los medios aceptados en la clínica.</p>
+    <div id="metodos-pago-list" class="space-y-3 max-h-[350px] overflow-y-auto pr-1">
+        <p class="text-outline text-xs text-center py-4">Cargando métodos de pago...</p>
+    </div>
+</div>
+</section>
 </div>
 </div>
 </main>
@@ -435,6 +454,50 @@
             <div class="flex justify-end gap-3 ml-auto">
                 <button type="button" onclick="document.getElementById('modalNuevoProducto').close()" class="px-5 py-2 text-on-surface-variant font-bold hover:bg-surface-container-high rounded-xl transition-colors">Cancelar</button>
                 <button type="submit" class="bg-primary text-white px-8 py-2 rounded-xl font-bold hover:scale-[1.02] active:scale-95 transition-all shadow-md">Guardar</button>
+            </div>
+        </div>
+    </form>
+</dialog>
+
+<!-- Modal Nuevo/Editar Método de Pago -->
+<dialog id="modalMetodoPago" class="backdrop:bg-black/50 p-6 rounded-2xl shadow-xl border-none max-w-md w-full bg-surface-white">
+    <div class="flex justify-between items-center mb-6">
+        <h3 id="modalMetodoPagoTitle" class="text-xl font-bold text-on-surface">Nuevo Método de Pago</h3>
+        <button onclick="document.getElementById('modalMetodoPago').close()" class="text-on-surface-variant hover:text-error transition-colors">
+            <span class="material-symbols-outlined">close</span>
+        </button>
+    </div>
+    <form id="formMetodoPago" class="space-y-4">
+        <input type="hidden" id="metodoPagoId">
+        <div>
+            <label class="block text-sm font-bold text-on-surface mb-1">Nombre del Método</label>
+            <input type="text" id="metodoPagoNombre" required placeholder="ej. Yape / Plin, Efectivo..." class="w-full rounded-xl border-outline-variant px-4 py-2 focus:ring-primary focus:border-primary">
+        </div>
+        <div>
+            <label class="block text-sm font-bold text-on-surface mb-1">Ícono (Material Symbol)</label>
+            <div class="flex gap-2 items-center">
+                <input type="text" id="metodoPagoIcono" value="payments" placeholder="ej. payments, credit_card, phone_android" class="flex-1 rounded-xl border-outline-variant px-4 py-2 focus:ring-primary focus:border-primary">
+                <span id="metodoPagoIconoPreview" class="material-symbols-outlined text-primary text-3xl">payments</span>
+            </div>
+            <p class="text-[10px] text-on-surface-variant mt-1">Nombre del ícono de <a href="https://fonts.google.com/icons" target="_blank" class="underline text-primary">Material Symbols</a></p>
+        </div>
+        <div>
+            <label class="block text-sm font-bold text-on-surface mb-1">Aplica Comisión POS (%)</label>
+            <input type="number" id="metodoPagoComision" step="0.01" min="0" value="0" placeholder="0 = sin comisión, 5 = 5%" class="w-full rounded-xl border-outline-variant px-4 py-2 focus:ring-primary focus:border-primary">
+        </div>
+        <div class="flex items-center justify-between pt-2">
+            <div class="flex items-center gap-2">
+                <label class="text-sm font-bold text-on-surface">Estado Activo</label>
+                <input type="checkbox" id="metodoPagoActivo" checked class="rounded border-outline-variant text-primary w-5 h-5 cursor-pointer">
+            </div>
+        </div>
+        <div class="pt-4 flex justify-between items-center w-full border-t border-surface-variant">
+            <button type="button" id="btnEliminarMetodoPago" onclick="eliminarMetodoPago()" class="hidden px-4 py-2 text-error font-bold hover:bg-error/10 rounded-xl transition-colors flex items-center gap-1">
+                <span class="material-symbols-outlined text-sm">delete</span> Eliminar
+            </button>
+            <div class="flex justify-end gap-3 ml-auto">
+                <button type="button" onclick="document.getElementById('modalMetodoPago').close()" class="px-4 py-2 text-on-surface-variant font-bold hover:bg-surface-container-high rounded-xl transition-colors">Cancelar</button>
+                <button type="submit" class="bg-primary text-white px-6 py-2 rounded-xl font-bold hover:scale-105 transition-transform shadow-md">Guardar</button>
             </div>
         </div>
     </form>
@@ -956,6 +1019,127 @@
                 }
             }
         }
+    </script>
+
+    <!-- ==========================================
+         GESTIÓN DE MÉTODOS DE PAGO
+    =========================================== -->
+    <script>
+        const METODOS_PAGO_KEY = 'metodosPagoConfig';
+
+        // Métodos por defecto que vienen pre-cargados
+        const METODOS_DEFAULT = [
+            { id: 'mp_1', nombre: 'Efectivo', icono: 'payments', comision: 0, activo: true },
+            { id: 'mp_2', nombre: 'Tarjeta Nacional', icono: 'credit_card', comision: 4.5, activo: true },
+            { id: 'mp_3', nombre: 'Yape / Plin', icono: 'phone_android', comision: 0, activo: true },
+            { id: 'mp_4', nombre: 'Transferencia Bancaria', icono: 'account_balance', comision: 0, activo: true },
+        ];
+
+        function cargarMetodosPago() {
+            let metodos = JSON.parse(localStorage.getItem(METODOS_PAGO_KEY) || 'null');
+            if (!metodos) {
+                metodos = METODOS_DEFAULT;
+                localStorage.setItem(METODOS_PAGO_KEY, JSON.stringify(metodos));
+            }
+            renderMetodosPago(metodos);
+        }
+
+        function renderMetodosPago(metodos) {
+            const container = document.getElementById('metodos-pago-list');
+            if (!container) return;
+            if (metodos.length === 0) {
+                container.innerHTML = '<p class="text-outline text-xs text-center py-4">No hay métodos registrados.</p>';
+                return;
+            }
+            container.innerHTML = metodos.map(m => `
+                <div onclick="abrirModalEdicionMetodoPago('${m.id}')" class="flex items-center gap-4 p-4 bg-surface-container-low rounded-2xl cursor-pointer hover:bg-surface-container transition-colors group">
+                    <div class="w-10 h-10 rounded-full ${m.activo ? 'bg-primary/10 text-primary' : 'bg-surface-container-high text-on-surface-variant'} flex items-center justify-center transition-colors">
+                        <span class="material-symbols-outlined text-xl">${m.icono || 'payments'}</span>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <p class="font-bold text-sm text-on-surface">${m.nombre}</p>
+                        <p class="text-[11px] text-on-surface-variant">${m.comision > 0 ? `Comisión: ${m.comision}%` : 'Sin comisión'}</p>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <span class="text-[11px] font-bold px-2 py-1 rounded-full ${m.activo ? 'bg-success/10 text-success' : 'bg-outline-variant/40 text-on-surface-variant'}">${m.activo ? 'Activo' : 'Inactivo'}</span>
+                        <span class="material-symbols-outlined text-outline-variant text-base opacity-0 group-hover:opacity-100 transition-opacity">edit</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function abrirModalNuevoMetodoPago() {
+            document.getElementById('metodoPagoId').value = '';
+            document.getElementById('metodoPagoNombre').value = '';
+            document.getElementById('metodoPagoIcono').value = 'payments';
+            document.getElementById('metodoPagoIconoPreview').textContent = 'payments';
+            document.getElementById('metodoPagoComision').value = '0';
+            document.getElementById('metodoPagoActivo').checked = true;
+            document.getElementById('modalMetodoPagoTitle').textContent = 'Nuevo Método de Pago';
+            document.getElementById('btnEliminarMetodoPago').classList.add('hidden');
+            document.getElementById('modalMetodoPago').showModal();
+        }
+
+        function abrirModalEdicionMetodoPago(id) {
+            const metodos = JSON.parse(localStorage.getItem(METODOS_PAGO_KEY) || '[]');
+            const m = metodos.find(x => x.id === id);
+            if (!m) return;
+
+            document.getElementById('metodoPagoId').value = m.id;
+            document.getElementById('metodoPagoNombre').value = m.nombre;
+            document.getElementById('metodoPagoIcono').value = m.icono || 'payments';
+            document.getElementById('metodoPagoIconoPreview').textContent = m.icono || 'payments';
+            document.getElementById('metodoPagoComision').value = m.comision || 0;
+            document.getElementById('metodoPagoActivo').checked = m.activo !== false;
+            document.getElementById('modalMetodoPagoTitle').textContent = 'Editar Método de Pago';
+            document.getElementById('btnEliminarMetodoPago').classList.remove('hidden');
+            document.getElementById('modalMetodoPago').showModal();
+        }
+
+        function eliminarMetodoPago() {
+            const id = document.getElementById('metodoPagoId').value;
+            if (!id) return;
+            if (!confirm('¿Eliminar este método de pago?')) return;
+            let metodos = JSON.parse(localStorage.getItem(METODOS_PAGO_KEY) || '[]');
+            metodos = metodos.filter(m => m.id !== id);
+            localStorage.setItem(METODOS_PAGO_KEY, JSON.stringify(metodos));
+            document.getElementById('modalMetodoPago').close();
+            renderMetodosPago(metodos);
+        }
+
+        document.getElementById('formMetodoPago').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const id = document.getElementById('metodoPagoId').value;
+            const nombre = document.getElementById('metodoPagoNombre').value.trim();
+            const icono = document.getElementById('metodoPagoIcono').value.trim() || 'payments';
+            const comision = parseFloat(document.getElementById('metodoPagoComision').value) || 0;
+            const activo = document.getElementById('metodoPagoActivo').checked;
+
+            let metodos = JSON.parse(localStorage.getItem(METODOS_PAGO_KEY) || '[]');
+
+            if (id) {
+                // Editar
+                const idx = metodos.findIndex(m => m.id === id);
+                if (idx !== -1) metodos[idx] = { id, nombre, icono, comision, activo };
+            } else {
+                // Nuevo
+                metodos.push({ id: 'mp_' + Date.now(), nombre, icono, comision, activo });
+            }
+
+            localStorage.setItem(METODOS_PAGO_KEY, JSON.stringify(metodos));
+            document.getElementById('modalMetodoPago').close();
+            renderMetodosPago(metodos);
+        });
+
+        // Preview del icono en tiempo real
+        document.getElementById('metodoPagoIcono').addEventListener('input', function() {
+            document.getElementById('metodoPagoIconoPreview').textContent = this.value || 'payments';
+        });
+
+        // Cargar al inicio
+        document.addEventListener('DOMContentLoaded', () => {
+            cargarMetodosPago();
+        });
     </script>
 
     <script>
