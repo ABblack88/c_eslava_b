@@ -304,7 +304,7 @@
 </div>
 </div>
 <!-- Top Services & Top Clients -->
-<div class="col-span-12 grid grid-cols-2 gap-gutter">
+<div class="col-span-12 grid grid-cols-3 gap-gutter">
     <!-- Top Servicios -->
     <div class="bg-surface-white p-8 rounded-xl shadow-[0px_10px_30px_rgba(0,0,0,0.04)]">
         <h4 class="font-headline-md text-headline-md text-on-surface mb-6 flex items-center gap-2"><span class="material-symbols-outlined text-primary">bar_chart</span> Servicios Más Usados</h4>
@@ -317,6 +317,20 @@
         <h4 class="font-headline-md text-headline-md text-on-surface mb-6 flex items-center gap-2"><span class="material-symbols-outlined text-primary">group</span> Clientes Frecuentes</h4>
         <div class="space-y-4" id="top-pacientes-container">
             <div class="flex justify-center items-center p-4"><span class="material-symbols-outlined animate-spin">sync</span></div>
+        </div>
+    </div>
+    <!-- Medios de Pago -->
+    <div class="bg-surface-white p-8 rounded-xl shadow-[0px_10px_30px_rgba(0,0,0,0.04)] relative">
+        <h4 class="font-headline-md text-headline-md text-on-surface mb-6 flex items-center gap-2"><span class="material-symbols-outlined text-primary">pie_chart</span> Medios de Pago</h4>
+        <div class="relative flex justify-center items-center h-40 cursor-pointer" onclick="toggleMediosPagoInfo()">
+            <canvas id="mediosPagoChart"></canvas>
+        </div>
+        <div id="medios-pago-info" class="hidden absolute top-full left-0 mt-2 w-full bg-surface-container-high border border-outline-variant p-4 rounded-xl shadow-lg z-50 text-sm">
+            <div class="flex justify-between items-center mb-2">
+                <h5 class="font-bold">Detalle de Cantidades</h5>
+                <button onclick="event.stopPropagation(); toggleMediosPagoInfo()" class="material-symbols-outlined text-base">close</button>
+            </div>
+            <ul id="medios-pago-list" class="space-y-1"></ul>
         </div>
     </div>
 </div>
