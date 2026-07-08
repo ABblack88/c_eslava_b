@@ -400,7 +400,7 @@
                     fecha,
                     descripcion,
                     pacientes ( nombre ),
-                    citas ( tratamiento, motivo, created_at )
+                    citas ( tratamiento, created_at )
                 `)
                     .order('fecha', { ascending: false });
 
@@ -475,7 +475,7 @@
             pagosPendientes.forEach(pago => {
                 const pacienteNombre = pago.pacientes ? pago.pacientes.nombre : 'Paciente Desconocido';
                 const iniciales = getInitials(pacienteNombre);
-                const motivo = pago.citas ? (pago.citas.tratamiento || pago.citas.motivo || 'Consulta') : 'Consulta';
+                const motivo = pago.citas ? (pago.citas.tratamiento || 'Consulta') : 'Consulta';
 
                 // Color logic based on status
                 let stateClass = pago.estado === 'Vencido' ? 'text-error' : 'text-on-surface-variant';
@@ -521,7 +521,7 @@
                 if (pago.estado !== 'Completado') return; // Solo contamos ingresos reales
                 
                 // Servicios
-                const motivo = pago.servicio_realizado || (pago.citas ? (pago.citas.tratamiento || pago.citas.motivo || 'Consulta') : 'Venta General');
+                const motivo = pago.servicio_realizado || (pago.citas ? (pago.citas.tratamiento || 'Consulta') : 'Venta General');
                 if (!serviciosStats[motivo]) {
                     serviciosStats[motivo] = { count: 0, revenue: 0 };
                 }

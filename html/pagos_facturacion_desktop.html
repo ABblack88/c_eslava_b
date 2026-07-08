@@ -429,7 +429,7 @@
                         fecha,
                         descripcion,
                         pacientes ( nombre ),
-                        citas ( tratamiento, motivo, created_at )
+                        citas ( tratamiento, created_at )
                     `)
                     .order('fecha', { ascending: false });
 
@@ -696,7 +696,7 @@
                 if (pago.estado !== 'Completado') return; // Solo contamos ingresos reales
                 
                 // Servicios
-                const motivo = pago.servicio_realizado || (pago.citas ? (pago.citas.tratamiento || pago.citas.motivo || 'Consulta') : 'Venta General');
+                const motivo = pago.servicio_realizado || (pago.citas ? (pago.citas.tratamiento || 'Consulta') : 'Venta General');
                 if (!serviciosStats[motivo]) {
                     serviciosStats[motivo] = { count: 0, revenue: 0 };
                 }
@@ -792,7 +792,7 @@
 
             window.todosLosPagos.forEach(pago => {
                 const pacienteNombre = pago.pacientes ? pago.pacientes.nombre : 'Desconocido';
-                const descripcion = pago.descripcion || (pago.citas ? (pago.citas.tratamiento || pago.citas.motivo || '-') : '-');
+                const descripcion = pago.descripcion || (pago.citas ? (pago.citas.tratamiento || '-') : '-');
                 const fechaFormat = new Date(pago.fecha).toLocaleString('es-PE');
                 
                 const row = [
