@@ -607,28 +607,28 @@
                     : '<span class="bg-warning/10 text-warning px-3 py-1 rounded-full text-label-sm font-bold">Pendiente</span>';
 
                 let montoHtml = isCompletado 
-                    ? \`<p class="text-body-md font-bold text-success">+ \${formatCurrency(pago.monto)}</p>\`
-                    : \`<p class="text-body-md font-bold">\${formatCurrency(pago.monto)}</p>\`;
+                    ? `<p class="text-body-md font-bold text-success">+ ${formatCurrency(pago.monto)}</p>`
+                    : `<p class="text-body-md font-bold">${formatCurrency(pago.monto)}</p>`;
 
                 let iconHtml = isCompletado
                     ? '<span class="material-symbols-outlined text-success">check_circle</span>'
                     : '<span class="material-symbols-outlined text-warning">schedule</span>';
 
-                html += \`
+                html += `
                 <tr class="group hover:bg-surface-bright transition-colors">
                     <td class="py-5">
-                        <p class="text-body-md font-bold">\${fecha}</p>
-                        <p class="text-label-sm text-on-surface-variant">ID: \${pago.id.substring(0,8).toUpperCase()}</p>
+                        <p class="text-body-md font-bold">${fecha}</p>
+                        <p class="text-label-sm text-on-surface-variant">ID: ${pago.id.substring(0,8).toUpperCase()}</p>
                     </td>
                     <td class="py-5">
-                        <p class="text-body-md font-bold">Pago \${pago.estado} - \${pacienteNombre}</p>
-                        <p class="text-label-sm text-on-surface-variant">\${pago.metodo || 'No especificado'}</p>
+                        <p class="text-body-md font-bold">Pago ${pago.estado} - ${pacienteNombre}</p>
+                        <p class="text-label-sm text-on-surface-variant">${pago.metodo || 'No especificado'}</p>
                     </td>
-                    <td class="py-5">\${badgeHtml}</td>
-                    <td class="py-5 text-right">\${montoHtml}</td>
-                    <td class="py-5 text-right">\${iconHtml}</td>
+                    <td class="py-5">${badgeHtml}</td>
+                    <td class="py-5 text-right">${montoHtml}</td>
+                    <td class="py-5 text-right">${iconHtml}</td>
                 </tr>
-                \`;
+                `;
             });
             container.innerHTML = html;
         }
@@ -701,37 +701,37 @@
             if (topServicios.length === 0) {
                 containerServicios.innerHTML = '<p class="text-outline text-center py-4">No hay datos suficientes.</p>';
             } else {
-                containerServicios.innerHTML = topServicios.map(s => \`
+                containerServicios.innerHTML = topServicios.map(s => `
                     <div class="flex justify-between items-center border-b border-surface-container pb-2 last:border-0">
                         <div>
-                            <p class="font-bold text-on-surface">\${s[0]}</p>
-                            <p class="text-label-sm text-on-surface-variant">\${s[1].count} veces realizado</p>
+                            <p class="font-bold text-on-surface">${s[0]}</p>
+                            <p class="text-label-sm text-on-surface-variant">${s[1].count} veces realizado</p>
                         </div>
                         <div class="text-right">
-                            <p class="font-bold text-success">\${formatCurrency(s[1].revenue)}</p>
+                            <p class="font-bold text-success">${formatCurrency(s[1].revenue)}</p>
                         </div>
                     </div>
-                \`).join('');
+                `).join('');
             }
 
             const containerPacientes = document.getElementById('top-pacientes-container');
             if (topPacientes.length === 0) {
                 containerPacientes.innerHTML = '<p class="text-outline text-center py-4">No hay datos suficientes.</p>';
             } else {
-                containerPacientes.innerHTML = topPacientes.map(p => \`
+                containerPacientes.innerHTML = topPacientes.map(p => `
                     <div class="flex justify-between items-center border-b border-surface-container pb-2 last:border-0">
                         <div class="flex items-center gap-3">
-                            <div class="w-8 h-8 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center font-bold text-xs">\${getInitials(p[0])}</div>
+                            <div class="w-8 h-8 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center font-bold text-xs">${getInitials(p[0])}</div>
                             <div>
-                                <p class="font-bold text-on-surface truncate max-w-[150px]">\${p[0]}</p>
-                                <p class="text-label-sm text-on-surface-variant">\${p[1].count} atenciones</p>
+                                <p class="font-bold text-on-surface truncate max-w-[150px]">${p[0]}</p>
+                                <p class="text-label-sm text-on-surface-variant">${p[1].count} atenciones</p>
                             </div>
                         </div>
                         <div class="text-right">
-                            <p class="font-bold text-success">\${formatCurrency(p[1].revenue)}</p>
+                            <p class="font-bold text-success">${formatCurrency(p[1].revenue)}</p>
                         </div>
                     </div>
-                \`).join('');
+                `).join('');
             }
         }
 
