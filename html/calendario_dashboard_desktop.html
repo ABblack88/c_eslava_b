@@ -1175,7 +1175,7 @@
             
             // Render upcoming patients
             if (proximosContainer) {
-                const proximos = data.filter(c => c.estado === 'Pendiente' && c.fecha === today).sort((a,b) => (a.hora || '').localeCompare(b.hora || ''));
+                const proximos = data.filter(c => ['Agendado', 'Confirmado', 'Pendiente', 'En Sala'].includes(c.estado) && c.fecha === today).sort((a,b) => (a.hora || '').localeCompare(b.hora || ''));
                 window.proximasCitas = proximos;
                 
                 const top3 = proximos.slice(0, 3);
@@ -1197,7 +1197,7 @@
                         }
 
                         html += `
-                        <div class="flex items-center gap-4">
+                        <div class="flex items-center gap-4 mb-4 last:mb-0">
                             <div class="w-12 h-12 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center font-bold">${iniciales}</div>
                             <div class="flex-1">
                                 <p class="font-bold text-on-surface">${pacienteNombre}</p>
@@ -1221,7 +1221,7 @@
                 // Filtrar todas las citas pendientes, por confirmar o por reprogramar, sin importar la fecha
                 const tareas = data.filter(c => {
                     const est = c.estado || '';
-                    return est === 'Pendiente' || est === 'Por Confirmar' || est === 'Por Reprogramar' || est === 'Sin Confirmar';
+                    return est === 'Pendiente' || est === 'Por Confirmar' || est === 'Por Reprogramar' || est === 'Sin Confirmar' || est === 'Agendado';
                 }).sort((a, b) => a.fecha.localeCompare(b.fecha) || a.hora.localeCompare(b.hora));
                 
                 if (tareas.length === 0) {
@@ -1237,7 +1237,7 @@
                         if (c.estado === 'Por Reprogramar') {
                             actionText = "<span class='text-primary font-bold'>Contactar para Reprogramar Cita</span>";
                         } else {
-                            actionText = isTomorrow ? "Pendiente confirmar asistencia para mañana" : "Pendiente confirmar asistencia u ordenar";
+                            actionText = isTomorrow ? "Pendiente confirmar asistencia para mañana" : "Pendiente confirmar asistencia";
                         }
                         
                         html += `
