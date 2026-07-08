@@ -641,6 +641,20 @@
                                 boxWidth: 10,
                                 padding: 10
                             }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const monto = context.parsed;
+                                    const pct = totalIngresos > 0 ? ((monto / totalIngresos) * 100).toFixed(1) : 0;
+                                    const count = dataCounts[context.dataIndex];
+                                    const pctUso = totalCompletados > 0 ? ((count / totalCompletados) * 100).toFixed(1) : 0;
+                                    return [
+                                        `  S/ ${monto.toFixed(2)} (${pct}% ingresos)`,
+                                        `  ${count} uso(s) (${pctUso}% transacciones)`
+                                    ];
+                                }
+                            }
                         }
                     }
                 }
