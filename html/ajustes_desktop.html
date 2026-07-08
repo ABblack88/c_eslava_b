@@ -592,10 +592,10 @@
                 const comInt = document.getElementById('setting-comision-pos-internacional').value;
                 const igv = document.getElementById('setting-igv').value;
 
-                if(meta) localStorage.setItem('metaMensual', meta);
-                if(comNac) localStorage.setItem('comisionPOSNacional', comNac);
-                if(comInt) localStorage.setItem('comisionPOSInternacional', comInt);
-                if(igv) localStorage.setItem('igvPorcentaje', igv);
+                if(meta !== "") localStorage.setItem('metaMensual', meta);
+                if(comNac !== "") localStorage.setItem('comisionPOSNacional', comNac);
+                if(comInt !== "") localStorage.setItem('comisionPOSInternacional', comInt);
+                if(igv !== "") localStorage.setItem('igvPorcentaje', igv);
 
                 btn.innerHTML = '<span class="material-symbols-outlined text-sm">check</span> Guardado';
                 
@@ -605,6 +605,30 @@
                 }, 2000);
             }, 600);
         }
+
+        // Cargar ajustes financieros al inicio
+        function cargarAjustesFinancierosActuales() {
+            const meta = localStorage.getItem('metaMensual');
+            if (meta) document.getElementById('setting-meta-mensual').value = meta;
+            
+            const comNac = localStorage.getItem('comisionPOSNacional');
+            if (comNac) document.getElementById('setting-comision-pos-nacional').value = comNac;
+            
+            const comInt = localStorage.getItem('comisionPOSInternacional');
+            if (comInt) document.getElementById('setting-comision-pos-internacional').value = comInt;
+            
+            const igv = localStorage.getItem('igvPorcentaje');
+            if (igv) document.getElementById('setting-igv').value = igv;
+            
+            const apertura = localStorage.getItem('horaApertura');
+            if (apertura) document.getElementById('setting-hora-apertura').value = apertura;
+            
+            const cierre = localStorage.getItem('horaCierre');
+            if (cierre) document.getElementById('setting-hora-cierre').value = cierre;
+        }
+
+        // Llamamos a la función apenas carga el script
+        cargarAjustesFinancierosActuales();
 
         // ==========================================
         // GESTIÓN DE PRODUCTOS

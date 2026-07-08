@@ -220,7 +220,7 @@
 </div>
 <div class="text-right">
 <p class="text-label-sm font-label-sm text-on-surface-variant">Meta del Mes</p>
-<p id="meta-mes" class="font-headline-md text-headline-md text-on-surface-variant opacity-60">S/ 5,000</p>
+<p id="meta-mes" class="font-headline-md text-headline-md text-on-surface-variant opacity-60"></p>
 </div>
 </div>
 <div class="mt-8 relative z-10">
@@ -408,6 +408,14 @@
 
         async function cargarDatosFinancieros() {
             try {
+                // Fetch settings from localStorage FIRST to ensure UI updates even if DB fails
+                const metaMes = parseFloat(localStorage.getItem('metaMensual')) || 25000;
+                const igvPorcentaje = parseFloat(localStorage.getItem('igvPorcentaje')) || 18;
+                const comisionPOS = parseFloat(localStorage.getItem('comisionPOSNacional')) || 4.5;
+                
+                const metaMesEl = document.getElementById('meta-mes');
+                if (metaMesEl) metaMesEl.textContent = formatCurrency(metaMes);
+
                 const urlParams = new URLSearchParams(window.location.search);
                 const pacienteId = urlParams.get('paciente_id');
                 
@@ -485,14 +493,6 @@
                 const elReclamosCount = document.getElementById('count-reclamos');
                 const elVencidos = document.getElementById('total-vencidos');
                 const elVencidosCount = document.getElementById('count-vencidos');
-                
-                // Fetch settings from localStorage
-                const metaMes = parseFloat(localStorage.getItem('metaMensual')) || 25000;
-                const igvPorcentaje = parseFloat(localStorage.getItem('igvPorcentaje')) || 18;
-                const comisionPOS = parseFloat(localStorage.getItem('comisionPOSNacional')) || 4.5;
-                
-                const metaMesEl = document.getElementById('meta-mes');
-                if (metaMesEl) metaMesEl.textContent = formatCurrency(metaMes);
                 
                 const porcentajeMeta = Math.min((totalIngresos / metaMes) * 100, 100).toFixed(1);
 
