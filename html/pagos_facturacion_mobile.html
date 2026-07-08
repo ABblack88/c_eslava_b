@@ -7,8 +7,9 @@
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <title>Centro Eslava - Pagos y Facturación</title>
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="../js/supabase.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=block"
         rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;700&display=block"
@@ -289,10 +290,23 @@
                     </div>
                 </div>
                 <!-- Top Pacientes -->
-                <div class="flex-1">
+                <div class="flex-1 border-b border-surface-container-low pb-6">
                     <h3 class="font-headline-md text-base text-on-surface mb-4 flex items-center gap-2"><span class="material-symbols-outlined text-primary">group</span> Top Pacientes</h3>
                     <div class="flex flex-col gap-3" id="top-pacientes-container">
                         <div class="flex justify-center"><span class="material-symbols-outlined animate-spin">sync</span></div>
+                    </div>
+                </div>
+                <!-- Medios de Pago -->
+                <div class="flex-1">
+                    <h3 class="font-headline-md text-base text-on-surface mb-4 flex items-center gap-2"><span class="material-symbols-outlined text-primary">pie_chart</span> Medios de Pago</h3>
+                    <div class="relative flex items-center justify-center min-h-[140px] cursor-pointer" onclick="toggleMediosPagoInfo()">
+                        <canvas id="mediosPagoChart"></canvas>
+                    </div>
+                    <div id="medios-pago-info" class="hidden mt-4 bg-surface-container-low border border-outline-variant p-4 rounded-xl shadow-sm text-sm">
+                        <div class="flex justify-between items-center mb-2">
+                            <h5 class="font-bold">Detalle de Cantidades</h5>
+                        </div>
+                        <ul id="medios-pago-list" class="space-y-1"></ul>
                     </div>
                 </div>
             </div>
@@ -465,10 +479,86 @@
                 renderPagosPendientes(safePagos);
                 renderActividadReciente(safePagos);
                 renderTopEstadisticas(safePagos);
+                renderMediosPago(safePagos);
             } catch (error) {
                 console.error("Error al cargar datos financieros:", error);
                 document.getElementById('pagos-pendientes-container').innerHTML = '<p class="text-error">Error al cargar pagos pendientes.</p>';
                 document.getElementById('actividad-reciente-container').innerHTML = '<p class="text-error">Error al cargar actividad.</p>';
+            }
+        }
+
+        let mediosPagoChart = null;
+
+        function renderMediosPago(pagos) {
+            const metodos = {};
+            let totalCompletados = 0;
+
+            pagos.forEach(p => {
+                if (p.estado !== 'Completado') return;
+                totalCompletados++;
+                let metodo = p.metodo || 'No especificado';
+                if (!metodos[metodo]) metodos[metodo] = 0;
+                metodos[metodo]++;
+            });
+
+            const labels = Object.keys(metodos);
+            const data = Object.values(metodos);
+            const backgroundColors = ['#008097', '#89e4fd', '#ffb877', '#8a4d00', '#6d797d', '#bdc8cd'];
+
+            const ctx = document.getElementById('mediosPagoChart');
+            if (!ctx) return;
+
+            if (mediosPagoChart) {
+                mediosPagoChart.destroy();
+            }
+            
+            if (totalCompletados === 0) {
+                const parent = ctx.parentElement;
+                parent.innerHTML = '<p class="text-on-surface-variant text-sm text-center py-4">No hay pagos completados.</p>';
+                return;
+            }
+
+            mediosPagoChart = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: data,
+                        backgroundColor: backgroundColors,
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                            labels: {
+                                font: { size: 10, family: 'Hanken Grotesk' },
+                                boxWidth: 10,
+                                padding: 10
+                            }
+                        }
+                    }
+                }
+            });
+
+            const listContainer = document.getElementById('medios-pago-list');
+            if (listContainer) {
+                listContainer.innerHTML = labels.map((l, i) => `
+                    <li class="flex justify-between items-center border-b border-outline-variant/30 pb-1 last:border-0 last:pb-0">
+                        <span class="flex items-center gap-2"><div class="w-2 h-2 rounded-full" style="background:${backgroundColors[i%backgroundColors.length]}"></div>${l}</span>
+                        <span class="font-bold">${data[i]} (${((data[i]/totalCompletados)*100).toFixed(1)}%)</span>
+                    </li>
+                `).join('');
+            }
+        }
+
+        function toggleMediosPagoInfo() {
+            const infoBox = document.getElementById('medios-pago-info');
+            if (infoBox) {
+                infoBox.classList.toggle('hidden');
             }
         }
 
