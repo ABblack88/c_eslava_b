@@ -432,7 +432,7 @@
                         fecha,
                         descripcion,
                         pacientes ( nombre ),
-                        citas ( tratamiento, created_at )
+                        citas ( tratamiento, created_at, estado )
                     `)
                     .order('fecha', { ascending: false });
 
