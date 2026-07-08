@@ -277,7 +277,7 @@
         <span class="material-symbols-outlined text-2xl text-on-surface-variant">account_balance</span>
     </div>
     <div class="flex-1">
-        <h4 class="font-bold text-on-surface">Impuestos Estimados (IGV 18%)</h4>
+        <h4 id="igv-header-title" class="font-bold text-on-surface">Impuestos Estimados (IGV 18%)</h4>
         <p class="text-sm text-on-surface-variant">Calculado sobre ingresos completados</p>
     </div>
     <div class="text-right">
@@ -486,7 +486,11 @@
                 const elVencidos = document.getElementById('total-vencidos');
                 const elVencidosCount = document.getElementById('count-vencidos');
                 
-                const metaMes = 5000; // Meta fija o configurable en BD
+                // Fetch settings from localStorage
+                const metaMes = parseFloat(localStorage.getItem('metaMensual')) || 25000;
+                const igvPorcentaje = parseFloat(localStorage.getItem('igvPorcentaje')) || 18;
+                const comisionPOS = parseFloat(localStorage.getItem('comisionPOSNacional')) || 4.5;
+                
                 const porcentajeMeta = Math.min((totalIngresos / metaMes) * 100, 100).toFixed(1);
 
                 if (elIngresos) elIngresos.textContent = formatCurrency(totalIngresos);
@@ -501,12 +505,15 @@
                 if (barraEl) barraEl.style.width = `${porcentajeMeta}%`;
                 
                 const elIgv = document.getElementById('total-igv');
-                if (elIgv) elIgv.textContent = formatCurrency(totalIngresos * 0.18);
+                if (elIgv) elIgv.textContent = formatCurrency(totalIngresos * (igvPorcentaje / 100));
+                
+                const igvTitle = document.getElementById('igv-header-title');
+                if (igvTitle) igvTitle.textContent = `Impuestos Estimados (IGV ${igvPorcentaje}%)`;
                 
                 const pagosTarjeta = safePagos.filter(p => p.estado === 'Completado' && (p.metodo === 'Tarjeta' || p.metodo === 'Transferencia'));
                 const totalTarjeta = pagosTarjeta.reduce((sum, p) => sum + Number(p.monto), 0);
                 const elPos = document.getElementById('total-pos');
-                if (elPos) elPos.textContent = formatCurrency(totalTarjeta * 0.05);
+                if (elPos) elPos.textContent = formatCurrency(totalTarjeta * (comisionPOS / 100));
 
                 window.todosLosPagos = safePagos;
 

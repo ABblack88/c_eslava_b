@@ -204,7 +204,7 @@
 <div class="flex gap-4">
 <div class="bg-surface-white p-4 rounded-2xl shadow-[0px_10px_30px_rgba(0,0,0,0.04)] min-w-[140px]">
 <p class="text-label-sm text-outline">Total Citas</p>
-<p class="text-2xl font-bold text-primary">1,284</p>
+<p class="text-2xl font-bold text-primary" id="total-citas-badge">...</p>
 </div>
 </div>
 </div>
@@ -238,7 +238,7 @@
 <div class="px-8 py-6 flex items-center justify-between border-b border-surface-container-low">
 <h3 class="font-headline-md text-xl font-bold">Listado General</h3>
 <div class="flex items-center gap-4">
-<span class="text-label-sm text-outline">Mostrando 12 de 1,284 pacientes</span>
+<span class="text-label-sm text-outline" id="mostrando-citas-text">Mostrando citas</span>
 <div class="flex gap-1">
 <button class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-surface-container-low"><span class="material-symbols-outlined">chevron_left</span></button>
 <button class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-surface-container-low"><span class="material-symbols-outlined">chevron_right</span></button>
@@ -367,7 +367,11 @@
 
             allCitas = data || [];
             
-            document.querySelector('.text-2xl.font-bold.text-primary').textContent = allCitas.length;
+            const totalBadge = document.getElementById('total-citas-badge');
+            if(totalBadge) totalBadge.textContent = allCitas.length;
+            const mostrandoText = document.getElementById('mostrando-citas-text');
+            if(mostrandoText) mostrandoText.textContent = `Mostrando ${allCitas.length} citas`;
+
             filtrarCitas();
         }
 
