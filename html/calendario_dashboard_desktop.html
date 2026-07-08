@@ -1143,10 +1143,20 @@
                     slotEventOverlap: false,
                     allDaySlot: false,
                     height: '100%',
+                    dayMaxEvents: 3, // Ocultar si hay más de 3 en la vista mes
+                    moreLinkText: 'más',
                     eventClick: function(info) {
                         abrirOpcionesCita(info.event.id);
                     },
                     eventContent: function(arg) {
+                        const isMonth = arg.view.type === 'dayGridMonth';
+                        if (isMonth) {
+                            return {
+                                html: `<div class="px-1 py-0.5 overflow-hidden text-xs truncate" style="white-space: nowrap;">
+                                    <span class="font-bold">${arg.timeText}</span> ${arg.event.title}
+                                </div>`
+                            };
+                        }
                         return {
                             html: `<div class="p-1 overflow-y-auto no-scrollbar" style="height: 100%; white-space: normal;">
                                 <div class="text-xs font-bold">${arg.timeText}</div>
