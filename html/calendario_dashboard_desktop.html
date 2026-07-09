@@ -470,6 +470,10 @@
                 <p class="text-xs text-outline mt-1">* Modifica el estado desde la lista de citas o atención.</p>
             </div>
 
+            <button id="btn-opt-editar" class="w-full bg-surface-container-high text-on-surface-variant py-3 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-surface-container-highest active:scale-95 transition-all mb-3">
+                <span class="material-symbols-outlined">edit</span>
+                Editar Cita
+            </button>
             <button id="btn-opt-historial" class="w-full bg-surface-container-high text-on-surface-variant py-3 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-surface-container-highest active:scale-95 transition-all">
                 <span class="material-symbols-outlined">medical_information</span>
                 Ver Historia Clínica
@@ -556,6 +560,13 @@
     // Modal Control Functions
     function openAppointmentModal(fecha = null, hora = null) {
         document.getElementById("new-appointment-modal").classList.remove("hidden");
+
+        window.editingCitaId = null;
+        const modalTitle = document.querySelector('#new-appointment-modal h3');
+        if (modalTitle) modalTitle.textContent = 'Agendar Nueva Cita';
+        const submitBtn = document.querySelector('#new-appointment-form button[type="submit"]');
+        if (submitBtn) submitBtn.textContent = 'Guardar Cita';
+
         if (fecha) document.getElementById('appt-date').value = fecha;
         populateTimeOptions();
         if (hora) document.getElementById('appt-time').value = hora;
@@ -631,6 +642,55 @@
                 btnAtender.innerHTML = `<span class="material-symbols-outlined">edit_document</span> Editar Cita`;
             } else {
                 btnAtender.innerHTML = `<span class="material-symbols-outlined">clinical_notes</span> Atender Cita`;
+            }
+
+            
+            const btnEditar = document.getElementById('btn-opt-editar');
+            if (btnEditar) {
+                btnEditar.onclick = () => {
+                    dialog.close();
+                    document.getElementById('appt-patient-name').value = cita.pacientes?.nombre || '';
+                    document.getElementById('appt-patient-email').value = cita.pacientes?.email || '';
+                    document.getElementById('appt-patient-phone').value = cita.pacientes?.telefono || '';
+                    document.getElementById('appt-date').value = cita.fecha;
+                    
+                    // Tratamiento y doctor
+                    let tr = cita.tratamiento || 'Por Definir en Cita';
+                    if (tr.includes('(Continuación)')) tr = tr.replace(' (Continuación)', '');
+                    document.getElementById('appt-treatment').value = tr;
+                    if (cita.consultorio) document.getElementById('appt-doctor').value = cita.consultorio;
+                    
+                    document.getElementById('appt-notes').value = cita.notas || '';
+                    
+                    // Populate time options first
+                    populateTimeOptions();
+                    
+                    // Match time
+                    let th = cita.hora.split(':');
+                    let h = parseInt(th[0], 10);
+                    let m = th[1];
+                    let ampm = h >= 12 ? 'PM' : 'AM';
+                    let h12 = h % 12 || 12;
+                    let displayTime = `${h12.toString().padStart(2, '0')}:${m} ${ampm}`;
+                    
+                    const timeSelect = document.getElementById('appt-time');
+                    // Ensure the option exists, if not create it
+                    let exists = Array.from(timeSelect.options).some(opt => opt.value === displayTime);
+                    if (!exists) {
+                        timeSelect.innerHTML += `<option value="${displayTime}">${displayTime}</option>`;
+                    }
+                    timeSelect.value = displayTime;
+                    
+                    window.editingCitaId = cita.id;
+                    
+                    // Update Modal Title & Button
+                    const modalTitle = document.querySelector('#new-appointment-modal h3');
+                    if (modalTitle) modalTitle.textContent = 'Editar Cita';
+                    const submitBtn = document.querySelector('#new-appointment-form button[type="submit"]');
+                    if (submitBtn) submitBtn.textContent = 'Actualizar Cita';
+                    
+                    document.getElementById('new-appointment-modal').classList.remove('hidden');
+                };
             }
 
             btnAtender.onclick = () => {
@@ -1020,23 +1080,41 @@
                 }
             }
 
-            // Create appointment
-            const { data: newCita, error: apptError } = await supabaseClient
-                .from('citas')
-                .insert([{
-                    paciente_id: paciente_id,
-                    fecha: date,
-                    hora: time24,
-                    estado: 'Pendiente',
-                    notas: notes,
-                    tratamiento: treatment,
-                    consultorio: doctor
-                }])
-                .select('id');
-            
-            if (apptError) throw apptError;
-            
-            const cita_id = newCita && newCita.length > 0 ? newCita[0].id : null;
+            let cita_id = null;
+
+            if (window.editingCitaId) {
+                const { error: updateError } = await supabaseClient
+                    .from('citas')
+                    .update({
+                        paciente_id: paciente_id,
+                        fecha: date,
+                        hora: time24,
+                        notas: notes,
+                        tratamiento: treatment,
+                        consultorio: doctor
+                    })
+                    .eq('id', window.editingCitaId);
+                
+                if (updateError) throw updateError;
+                cita_id = window.editingCitaId;
+            } else {
+                const { data: newCita, error: apptError } = await supabaseClient
+                    .from('citas')
+                    .insert([{
+                        paciente_id: paciente_id,
+                        fecha: date,
+                        hora: time24,
+                        estado: 'Pendiente',
+                        notas: notes,
+                        tratamiento: treatment,
+                        consultorio: doctor
+                    }])
+                    .select('id');
+                
+                if (apptError) throw apptError;
+                cita_id = newCita && newCita.length > 0 ? newCita[0].id : null;
+            }
+
 
             // Encontrar el precio del tratamiento y si es por sesiones
             const servicioObj = window.serviciosActivos ? window.serviciosActivos.find(s => s.nombre === baseTreatment) : null;
