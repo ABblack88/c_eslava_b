@@ -330,7 +330,7 @@
                                     <th class="pb-2">Segmento</th>
                                     <th class="pb-2">Pacientes</th>
                                     <th class="pb-2 text-right">Ticket Promedio</th>
-                                    <th class="pb-2 text-right" title="Valor de Vida del Cliente">VVC Estimado (Anual)</th>
+                                    <th class="pb-2 text-right" title="Lifetime Value (Valor Vitalicio del Cliente)">LTV Estimado (Anual)</th>
                                 </tr>
                             </thead>
                             <tbody id="tabla-segmentos" class="divide-y divide-surface-container">
@@ -355,7 +355,7 @@
                                 <th class="pb-2">Pacientes Únicos</th>
                                 <th class="pb-2">% del Ingreso</th>
                                 <th class="pb-2 text-right">Ticket Promedio</th>
-                                <th class="pb-2 text-right" title="Valor de Vida del Cliente">VVC Estimado por Servicio</th>
+                                <th class="pb-2 text-right" title="Lifetime Value (Valor Vitalicio del Cliente)">LTV Estimado por Servicio</th>
                             </tr>
                         </thead>
                         <tbody id="tabla-top-servicios" class="divide-y divide-surface-container">
@@ -366,6 +366,19 @@
             </div>
         </div>
     </main>
+
+    <!-- Modal Pacientes -->
+    <dialog id="modalPacientesList" class="backdrop:bg-black/50 p-6 rounded-3xl shadow-2xl border-none max-w-md w-full bg-surface-white z-[60]">
+        <div class="flex justify-between items-center mb-6">
+            <h3 class="text-xl font-extrabold text-on-surface" id="modalPacientesTitle">Pacientes</h3>
+            <button type="button" onclick="document.getElementById('modalPacientesList').close()" class="w-10 h-10 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container-high transition-colors">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+        <div id="modalPacientesContent" class="space-y-3 max-h-96 overflow-y-auto pr-2 custom-scrollbar">
+            <!-- Patient list -->
+        </div>
+    </dialog>
 
     <script>
         const MESES_ES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
@@ -473,6 +486,7 @@
                 const hoy = new Date();
                 const pacientesMap = {};
                 pacientesData.forEach(p => pacientesMap[p.id] = p);
+                window.pacientesMapLocal = pacientesMap;
                 
                 const ultimaCitaPorPaciente = {};
                 citasData.filter(c => c.estado === 'Completada' || c.estado === 'Atendida').forEach(c => {
@@ -535,6 +549,7 @@
                     pagosMap[p.paciente_id] = (pagosMap[p.paciente_id] || 0) + Number(p.monto);
                 });
 
+                window.segmentosDataLocal = segmentos;
                 let tablaHtml = '';
                 const chartLabels = [];
                 const chartData = [];
@@ -560,7 +575,7 @@
                     tablaHtml += `
                         <tr class="text-sm">
                             <td class="py-3 font-semibold">${seg}</td>
-                            <td class="py-3">${segmentos[seg].count}</td>
+                            <td class="py-3"><button class="text-primary hover:underline font-semibold" onclick="verPacientesSegmento('${seg}')" title="Ver pacientes">${segmentos[seg].count}</button></td>
                             <td class="py-3 text-right text-primary">S/ ${ticketPromedio.toFixed(2)}</td>
                             <td class="py-3 text-right font-bold">S/ ${ltv.toFixed(2)}</td>
                         </tr>
@@ -585,6 +600,7 @@
                     totalIngresos3Meses += precioServ;
                 });
 
+                window.statsServiciosLocal = statsServicios;
                 const topServiciosArray = Object.keys(statsServicios).map(k => {
                     const st = statsServicios[k];
                     return {
@@ -602,7 +618,7 @@
                     tablaTopServiciosHtml += `
                         <tr class="text-sm hover:bg-surface-container-low transition-colors">
                             <td class="py-4 font-semibold">${s.nombre}</td>
-                            <td class="py-4">${s.pacientes}</td>
+                            <td class="py-4"><button class="text-primary hover:underline font-semibold" onclick="verPacientesServicio('${s.nombre}')" title="Ver pacientes">${s.pacientes}</button></td>
                             <td class="py-4">
                                 <div class="flex items-center">
                                     <span class="w-10 inline-block">${s.porcentaje.toFixed(1)}%</span>
@@ -645,6 +661,38 @@
             } catch (err) {
                 console.error("Error cargando dashboard:", err);
             }
+        }
+
+        function verPacientesSegmento(segmento) {
+            const data = window.segmentosDataLocal[segmento];
+            if (!data) return;
+            mostrarModalPacientes(`Pacientes: ${segmento}`, data.ids);
+        }
+
+        function verPacientesServicio(servicio) {
+            const data = window.statsServiciosLocal[servicio];
+            if (!data) return;
+            mostrarModalPacientes(`Pacientes de: ${servicio}`, data.pacientes);
+        }
+
+        function mostrarModalPacientes(titulo, idsSet) {
+            document.getElementById('modalPacientesTitle').textContent = titulo;
+            let html = '';
+            if (!idsSet || idsSet.size === 0) {
+                html = '<p class="text-sm text-on-surface-variant">No hay pacientes.</p>';
+            } else {
+                idsSet.forEach(id => {
+                    const pac = window.pacientesMapLocal[id];
+                    const nombre = pac ? pac.nombre : 'Desconocido';
+                    const telefono = pac && pac.telefono ? pac.telefono : '';
+                    html += `<div class="border-b border-surface-container pb-2 flex justify-between items-center">
+                                <span class="font-bold text-sm">${nombre}</span>
+                                <span class="text-xs text-on-surface-variant">${telefono}</span>
+                             </div>`;
+                });
+            }
+            document.getElementById('modalPacientesContent').innerHTML = html;
+            document.getElementById('modalPacientesList').showModal();
         }
 
         document.addEventListener("DOMContentLoaded", () => {
