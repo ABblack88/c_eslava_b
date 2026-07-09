@@ -303,11 +303,7 @@
             Guardar Cambios
         </button>
     </div>
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div>
-            <label class="block text-xs font-bold text-on-surface-variant mb-1">Meta Mensual (S/.)</label>
-            <input type="number" id="setting-meta-mensual" class="w-full rounded-xl border-outline-variant px-3 py-2 focus:ring-primary focus:border-primary text-sm" placeholder="Ej: 50000">
-        </div>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div>
             <label class="block text-xs font-bold text-on-surface-variant mb-1">Comisión POS Nac. (%)</label>
             <input type="number" id="setting-comision-pos-nacional" step="0.01" class="w-full rounded-xl border-outline-variant px-3 py-2 focus:ring-primary focus:border-primary text-sm" placeholder="Ej: 4.5">
@@ -319,6 +315,23 @@
         <div>
             <label class="block text-xs font-bold text-on-surface-variant mb-1">Impuesto IGV (%)</label>
             <input type="number" id="setting-igv" step="0.01" class="w-full rounded-xl border-outline-variant px-3 py-2 focus:ring-primary focus:border-primary text-sm" placeholder="Ej: 18">
+        </div>
+    </div>
+
+    <!-- Metas por mes -->
+    <div class="mt-4 bg-surface-container-low rounded-xl p-4 border border-outline-variant/50">
+        <div class="flex items-center justify-between mb-3">
+            <div class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-primary text-[20px]">calendar_month</span>
+                <p class="font-bold text-sm text-on-surface">Metas Mensuales (<span id="metas-anio-label">2025</span>)</p>
+            </div>
+            <div class="flex items-center gap-1">
+                <button type="button" onclick="cambiarAnioMetas(-1)" class="w-7 h-7 flex items-center justify-center rounded-lg bg-surface-white border border-outline-variant hover:bg-surface-container text-on-surface-variant transition-colors"><span class="material-symbols-outlined text-[18px]">chevron_left</span></button>
+                <button type="button" onclick="cambiarAnioMetas(1)" class="w-7 h-7 flex items-center justify-center rounded-lg bg-surface-white border border-outline-variant hover:bg-surface-container text-on-surface-variant transition-colors"><span class="material-symbols-outlined text-[18px]">chevron_right</span></button>
+            </div>
+        </div>
+        <div class="grid grid-cols-3 md:grid-cols-6 gap-3" id="grid-metas-mensuales">
+            <!-- Rendered by JS -->
         </div>
     </div>
 </div>
@@ -618,21 +631,18 @@
         });
 
         function cargarAjustes() {
-            const meta = localStorage.getItem('metaMensual') || 50000;
             const comisionNacional = localStorage.getItem('comisionPOSNacional') || 4.5;
             const comisionInternacional = localStorage.getItem('comisionPOSInternacional') || 5.5;
             const igv = localStorage.getItem('igvPorcentaje') || 18;
             const horaApertura = localStorage.getItem('horaApertura') || '08:00';
             const horaCierre = localStorage.getItem('horaCierre') || '20:00';
             
-            const inputMeta = document.getElementById('setting-meta-mensual');
             const inputComNacional = document.getElementById('setting-comision-pos-nacional');
             const inputComInternacional = document.getElementById('setting-comision-pos-internacional');
             const inputIgv = document.getElementById('setting-igv');
             const inputApertura = document.getElementById('setting-hora-apertura');
             const inputCierre = document.getElementById('setting-hora-cierre');
             
-            if (inputMeta) inputMeta.value = meta;
             if (inputComNacional) inputComNacional.value = comisionNacional;
             if (inputComInternacional) inputComInternacional.value = comisionInternacional;
             if (inputIgv) inputIgv.value = igv;
@@ -651,15 +661,28 @@
             btn.disabled = true;
 
             setTimeout(() => {
-                const meta = document.getElementById('setting-meta-mensual').value;
                 const comNac = document.getElementById('setting-comision-pos-nacional').value;
                 const comInt = document.getElementById('setting-comision-pos-internacional').value;
                 const igv = document.getElementById('setting-igv').value;
 
-                if(meta !== "") localStorage.setItem('metaMensual', meta);
                 if(comNac !== "") localStorage.setItem('comisionPOSNacional', comNac);
                 if(comInt !== "") localStorage.setItem('comisionPOSInternacional', comInt);
                 if(igv !== "") localStorage.setItem('igvPorcentaje', igv);
+
+                // Guardar las metas mensuales del grid
+                for(let i = 0; i < 12; i++) {
+                    const val = document.getElementById(`input-meta-${i}`).value;
+                    if(val !== "") {
+                        const key = `metaMensual_${anioMetas}-${String(i + 1).padStart(2, '0')}`;
+                        localStorage.setItem(key, val);
+                    }
+                }
+                
+                // Set global meta just in case for fallbacks
+                const currentMonthMeta = document.getElementById(`input-meta-${new Date().getMonth()}`).value;
+                if(currentMonthMeta) {
+                    localStorage.setItem('metaMensual', currentMonthMeta);
+                }
 
                 btn.innerHTML = '<span class="material-symbols-outlined text-sm">check</span> Guardado';
                 
@@ -670,11 +693,40 @@
             }, 600);
         }
 
+        // --- SISTEMA DE METAS POR MES ---
+        let anioMetas = new Date().getFullYear();
+        const MESES_CORTO = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+
+        function renderMetasGrid() {
+            const lbl = document.getElementById('metas-anio-label');
+            if(lbl) lbl.textContent = anioMetas;
+            
+            const container = document.getElementById('grid-metas-mensuales');
+            if(!container) return;
+            container.innerHTML = '';
+            
+            for(let i = 0; i < 12; i++) {
+                const key = `metaMensual_${anioMetas}-${String(i + 1).padStart(2, '0')}`;
+                const globalMeta = parseFloat(localStorage.getItem('metaMensual')) || 25000;
+                let valor = localStorage.getItem(key);
+                if (valor === null) valor = globalMeta;
+
+                container.innerHTML += `
+                    <div class="bg-surface-white border border-outline-variant rounded-xl p-2.5 shadow-sm">
+                        <label class="block text-[11px] font-bold text-on-surface-variant uppercase tracking-wider mb-1.5">${MESES_CORTO[i]}</label>
+                        <input type="number" id="input-meta-${i}" value="${valor}" class="w-full text-sm font-bold text-primary rounded-lg bg-surface-container-lowest border border-outline-variant/50 px-2 py-1.5 focus:ring-2 focus:ring-primary focus:outline-none transition-all">
+                    </div>
+                `;
+            }
+        }
+
+        function cambiarAnioMetas(delta) {
+            anioMetas += delta;
+            renderMetasGrid();
+        }
+
         // Cargar ajustes financieros al inicio
         function cargarAjustesFinancierosActuales() {
-            const meta = localStorage.getItem('metaMensual');
-            if (meta) document.getElementById('setting-meta-mensual').value = meta;
-            
             const comNac = localStorage.getItem('comisionPOSNacional');
             if (comNac) document.getElementById('setting-comision-pos-nacional').value = comNac;
             
@@ -689,6 +741,8 @@
             
             const cierre = localStorage.getItem('horaCierre');
             if (cierre) document.getElementById('setting-hora-cierre').value = cierre;
+
+            renderMetasGrid();
         }
 
         // Llamamos a la función apenas carga el script

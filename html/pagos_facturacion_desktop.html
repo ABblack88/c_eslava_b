@@ -282,18 +282,10 @@
         </button>
     </div>
     <!-- Vista / Agrupación -->
-    <select id="modo-vista-finanzas" onchange="cambiarModoVista()" class="bg-surface-white border border-outline-variant rounded-xl px-4 py-2 text-sm font-bold shadow-sm outline-none text-on-surface hover:bg-surface-container-low transition-all">
-        <option value="mes">Por Mes</option>
-        <option value="t1">Trimestre 1 (Ene-Mar)</option>
-        <option value="t2">Trimestre 2 (Abr-Jun)</option>
-        <option value="t3">Trimestre 3 (Jul-Sep)</option>
-        <option value="t4">Trimestre 4 (Oct-Dic)</option>
-        <option value="anio">Año Completo</option>
-    </select>
-    <!-- Edit meta button -->
-    <button onclick="abrirEditarMeta()" class="flex items-center gap-2 bg-surface-white border border-outline-variant px-4 py-2 rounded-xl font-bold text-sm hover:bg-surface-container-low transition-all shadow-sm">
-        <span class="material-symbols-outlined text-[18px] text-primary">edit</span> Editar Meta
-    </button>
+    <div class="flex items-center gap-2 bg-surface-white border border-outline-variant rounded-xl px-4 py-2 shadow-sm">
+        <input type="checkbox" id="agrupar-meses-check" onchange="toggleAgruparMeses()" class="w-4 h-4 text-primary bg-surface-container border-outline-variant rounded focus:ring-primary focus:ring-2 cursor-pointer">
+        <label for="agrupar-meses-check" class="text-sm font-bold text-on-surface-variant cursor-pointer select-none">Agrupar Meses</label>
+    </div>
     <!-- Paciente filter (hidden, used via URL params) -->
     <input type="hidden" id="filtro-paciente" value="">
     <input type="hidden" id="filtro-fecha-inicio" value="">
@@ -587,7 +579,8 @@
 
         const hoy = new Date();
         let anioActivo = hoy.getFullYear();
-        let mesActivo  = hoy.getMonth(); // 0-indexed
+        let mesesActivos = new Set([hoy.getMonth()]);
+        let modoAgrupar = false;
 
         function getMesKey(anio, mes) {
             return `${anio}-${String(mes + 1).padStart(2, '0')}`;
@@ -595,7 +588,6 @@
 
         function getMetaMes(anio, mes) {
             const key = `metaMensual_${getMesKey(anio, mes)}`;
-            // fallback to global meta
             return parseFloat(localStorage.getItem(key)) || parseFloat(localStorage.getItem('metaMensual')) || 25000;
         }
 
@@ -605,14 +597,25 @@
             localStorage.setItem('metaMensual', valor); // sync global too
         }
 
+        function toggleAgruparMeses() {
+            modoAgrupar = document.getElementById('agrupar-meses-check').checked;
+            if (!modoAgrupar && mesesActivos.size > 1) {
+                const primero = Array.from(mesesActivos).sort((a,b)=>a-b)[0];
+                mesesActivos.clear();
+                mesesActivos.add(primero);
+            }
+            renderBookTabs();
+            cargarDatosFinancieros();
+        }
+
         function cambiarAnio(delta) {
             const nuevoAnio = anioActivo + delta;
-            // No permitir años futuros más allá del actual
             if (nuevoAnio > hoy.getFullYear()) return;
             anioActivo = nuevoAnio;
-            // Si el año nuevo es el actual y el mes activo está en el futuro, ir al mes actual
-            if (anioActivo === hoy.getFullYear() && mesActivo > hoy.getMonth()) {
-                mesActivo = hoy.getMonth();
+            if (anioActivo === hoy.getFullYear()) {
+                const validos = Array.from(mesesActivos).filter(m => m <= hoy.getMonth());
+                mesesActivos = new Set(validos);
+                if (mesesActivos.size === 0) mesesActivos.add(hoy.getMonth());
             }
             document.getElementById('anio-display').textContent = anioActivo;
             renderBookTabs();
@@ -620,23 +623,18 @@
         }
 
         function seleccionarMes(mes) {
-            // No permitir meses futuros en el año actual
             if (anioActivo === hoy.getFullYear() && mes > hoy.getMonth()) return;
-            mesActivo = mes;
-            const selectModo = document.getElementById('modo-vista-finanzas');
-            if (selectModo) selectModo.value = 'mes';
-            renderBookTabs();
-            cargarDatosFinancieros();
-        }
-
-        function cambiarModoVista() {
-            const modo = document.getElementById('modo-vista-finanzas').value;
-            if (modo !== 'mes') {
-                 // Deseleccionar todas las pestañas de mes visualmente
-                 document.querySelectorAll('.book-tab').forEach(b => b.classList.remove('active'));
+            if (modoAgrupar) {
+                if (mesesActivos.has(mes)) {
+                    if (mesesActivos.size > 1) mesesActivos.delete(mes);
+                } else {
+                    mesesActivos.add(mes);
+                }
             } else {
-                 renderBookTabs();
+                mesesActivos.clear();
+                mesesActivos.add(mes);
             }
+            renderBookTabs();
             cargarDatosFinancieros();
         }
 
@@ -648,7 +646,7 @@
 
             for (let m = 0; m < 12; m++) {
                 const esFuturo = esAnioActual && m > hoy.getMonth();
-                const esActivo = m === mesActivo;
+                const esActivo = mesesActivos.has(m);
                 const tieneData = !esFuturo; // podría chekear localStorage en el futuro
 
                 const btn = document.createElement('button');
@@ -660,28 +658,6 @@
                 }
                 container.appendChild(btn);
             }
-        }
-
-        // --- EDITAR META ---
-        function abrirEditarMeta() {
-            const selectModo = document.getElementById('modo-vista-finanzas');
-            if (selectModo && selectModo.value !== 'mes') {
-                alert("La meta solo se puede editar en la vista 'Por Mes'.");
-                return;
-            }
-            const actual = getMetaMes(anioActivo, mesActivo);
-            document.getElementById('input-meta-valor').value = actual;
-            document.getElementById('meta-modal-mes-label').textContent =
-                `${MESES_ES[mesActivo]} ${anioActivo}`;
-            document.getElementById('modalEditarMeta').showModal();
-        }
-
-        function guardarMeta() {
-            const val = parseFloat(document.getElementById('input-meta-valor').value);
-            if (isNaN(val) || val < 0) return;
-            setMetaMes(anioActivo, mesActivo, val);
-            document.getElementById('modalEditarMeta').close();
-            cargarDatosFinancieros();
         }
 
         async function guardarEgreso() {
@@ -718,28 +694,17 @@
 
         async function cargarDatosFinancieros() {
             try {
-                const modoVista = document.getElementById('modo-vista-finanzas')?.value || 'mes';
                 let metaMes = 0;
                 let tituloMes = "";
-                let firstDay, lastDay;
+                const mesesArr = Array.from(mesesActivos).sort((a,b) => a - b);
+                
+                mesesArr.forEach(m => metaMes += getMetaMes(anioActivo, m));
 
-                if (modoVista === 'mes') {
-                    metaMes = getMetaMes(anioActivo, mesActivo);
-                    tituloMes = `${MESES_ES[mesActivo]} ${anioActivo}`;
-                    firstDay = new Date(anioActivo, mesActivo, 1);
-                    lastDay  = new Date(anioActivo, mesActivo + 1, 1);
-                } else if (modoVista.startsWith('t')) {
-                    const t = parseInt(modoVista.charAt(1)); // 1, 2, 3, 4
-                    const startMes = (t - 1) * 3;
-                    firstDay = new Date(anioActivo, startMes, 1);
-                    lastDay = new Date(anioActivo, startMes + 3, 1);
-                    metaMes = getMetaMes(anioActivo, startMes) + getMetaMes(anioActivo, startMes+1) + getMetaMes(anioActivo, startMes+2);
-                    tituloMes = `Trimestre ${t} ${anioActivo}`;
-                } else if (modoVista === 'anio') {
-                    firstDay = new Date(anioActivo, 0, 1);
-                    lastDay = new Date(anioActivo + 1, 0, 1);
-                    for (let m = 0; m < 12; m++) metaMes += getMetaMes(anioActivo, m);
-                    tituloMes = `Año Completo ${anioActivo}`;
+                if (mesesArr.length === 1) {
+                    tituloMes = `${MESES_ES[mesesArr[0]]} ${anioActivo}`;
+                } else {
+                    const nombres = mesesArr.map(m => MESES_CORTO[m]).join(', ');
+                    tituloMes = `Meses: ${nombres} ${anioActivo}`;
                 }
 
                 const igvPorcentaje = parseFloat(localStorage.getItem('igvPorcentaje')) || 18;
@@ -757,8 +722,8 @@
                 const urlParams = new URLSearchParams(window.location.search);
                 const pacienteId = urlParams.get('paciente_id');
 
-                const firstDayISO = firstDay.toISOString();
-                const lastDayISO  = lastDay.toISOString();
+                const firstDayISO = new Date(anioActivo, mesesArr[0], 1).toISOString();
+                const lastDayISO  = new Date(anioActivo, mesesArr[mesesArr.length-1] + 1, 1).toISOString();
 
                 let query = supabaseClient
                     .from('pagos')
@@ -790,6 +755,13 @@
                 if (busquedaPaciente && !pacienteId) {
                     safePagos = safePagos.filter(p => p.pacientes && p.pacientes.nombre.toLowerCase().includes(busquedaPaciente));
                 }
+
+                // Filtrar por meses seleccionados en JS para soportar multiselección
+                safePagos = safePagos.filter(p => {
+                    if (!p.fecha) return false;
+                    const pMes = new Date(p.fecha).getMonth();
+                    return mesesActivos.has(pMes);
+                });
 
                 // Filtrar todos los pagos: Solo se cuentan si la atención ya se completó
                 safePagos = safePagos.filter(p => {
