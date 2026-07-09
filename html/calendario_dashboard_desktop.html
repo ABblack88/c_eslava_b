@@ -1047,7 +1047,7 @@
 
             const { data, error } = await supabaseClient
                 .from('citas')
-                .select('*, pacientes(nombre)');
+                .select('*, pacientes(nombre, telefono)');
                 
             if (error) throw error;
 
@@ -1238,14 +1238,30 @@
                     let html = '';
                     tareas.slice(0, 6).forEach(c => {
                         const pacienteNombre = c.pacientes ? c.pacientes.nombre : 'Desconocido';
+                        const telefono = c.pacientes ? c.pacientes.telefono : '';
                         const iniciales = getInitials(pacienteNombre);
                         const isTomorrow = c.fecha === tomorrow;
                         
                         let actionText = "";
+                        let waMessage = "";
                         if (c.estado === 'Por Reprogramar') {
                             actionText = "<span class='text-primary font-bold'>Contactar para Reprogramar Cita</span>";
+                            waMessage = `Hola ${pacienteNombre}, somos del Centro Eslava. Nos comunicamos para reprogramar su cita. ¿Qué fecha y hora le vendría mejor?`;
                         } else {
                             actionText = isTomorrow ? "Pendiente confirmar asistencia para mañana" : "Pendiente confirmar asistencia";
+                            waMessage = `Hola ${pacienteNombre}, somos del Centro Eslava. Le escribimos para confirmar su cita ${isTomorrow ? 'de mañana' : 'pendiente'}. ¿Podría confirmarnos su asistencia por favor?`;
+                        }
+
+                        let waUrl = "#";
+                        let btnContent = "Gestionar";
+                        let btnOnClick = `abrirOpcionesCita('${c.id}')`;
+                        
+                        if (telefono) {
+                            let cleanPhone = telefono.replace(/\D/g, '');
+                            if (cleanPhone.length === 9) cleanPhone = "51" + cleanPhone; // Perú code by default
+                            waUrl = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(waMessage)}`;
+                            btnOnClick = `window.open('${waUrl}', '_blank')`;
+                            btnContent = `<span class="flex items-center gap-1">Gestionar</span>`;
                         }
                         
                         html += `
@@ -1257,7 +1273,7 @@
                                     <p class="text-xs text-on-surface-variant">${actionText}</p>
                                 </div>
                             </div>
-                            <button onclick="abrirOpcionesCita('${c.id}')" class="px-4 py-2 border border-outline-variant text-on-surface font-bold rounded-xl hover:bg-surface-container-low transition-all text-sm whitespace-nowrap">Gestionar</button>
+                            <button onclick="${btnOnClick}" class="px-4 py-2 border border-outline-variant text-on-surface font-bold rounded-xl hover:bg-surface-container-low transition-all text-sm whitespace-nowrap">${btnContent}</button>
                         </div>`;
                     });
                     tareasContainer.innerHTML = html;
