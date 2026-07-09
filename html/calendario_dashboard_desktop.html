@@ -735,25 +735,27 @@
     async function verificarSesionesPaciente() {
         const nameInput = document.getElementById('appt-patient-name').value;
         const baseTreatment = document.getElementById("appt-treatment").value;
-        const isCont = document.getElementById("appt-continuacion")?.checked;
-        const treatment = isCont ? baseTreatment + ' (Continuación)' : baseTreatment;
+        const chk = document.getElementById("appt-continuacion");
         const alertEl = document.getElementById('info-sesiones-alerta');
         const textEl = document.getElementById('info-sesiones-texto');
 
-        if (!nameInput.trim() || !treatment) {
+        if (!nameInput.trim() || !baseTreatment) {
             alertEl.classList.add('hidden');
+            if (chk) { chk.checked = false; chk.disabled = true; }
             return;
         }
 
         const matched = window.pacientesList.find(p => p.nombre.toLowerCase() === nameInput.trim().toLowerCase());
         if (!matched) {
             alertEl.classList.add('hidden');
+            if (chk) { chk.checked = false; chk.disabled = true; }
             return;
         }
 
         const servicioObj = window.serviciosActivos ? window.serviciosActivos.find(s => s.nombre === baseTreatment) : null;
         if (!servicioObj || !servicioObj.duracion || servicioObj.duracion <= 1) {
             alertEl.classList.add('hidden');
+            if (chk) { chk.checked = false; chk.disabled = true; }
             return;
         }
 
@@ -762,19 +764,33 @@
         try {
             const { data: citas, error } = await supabaseClient
                 .from('citas')
-                .select('id')
+                .select('tratamiento')
                 .eq('paciente_id', matched.id)
-                .eq('tratamiento', treatment)
                 .neq('estado', 'Cancelado');
 
             if (error) throw error;
 
-            const totalConsumidas = citas ? citas.length : 0;
+            let totalConsumidas = 0;
+            if (citas) {
+                citas.forEach(c => {
+                    if (c.tratamiento && c.tratamiento.includes(baseTreatment)) {
+                        totalConsumidas++;
+                    }
+                });
+            }
+
+            if (totalConsumidas === 0) {
+                if (chk) { chk.checked = false; chk.disabled = true; }
+            } else {
+                if (chk) chk.disabled = false;
+            }
+
             const resto = totalConsumidas % totalSesiones;
 
             alertEl.classList.remove('hidden');
             if (resto === 0) {
                 textEl.innerHTML = `<b>Nuevo Paquete:</b> Se iniciará un nuevo paquete de ${totalSesiones} sesiones. Se generará un cobro único de S/. ${parseFloat(servicioObj.precio).toFixed(2)}.`;
+                if (chk) { chk.checked = false; chk.disabled = true; }
             } else {
                 const sesionActual = resto + 1;
                 textEl.innerHTML = `<b>Sesión de Paquete:</b> El paciente consumirá la sesión ${sesionActual} de ${totalSesiones}. <b>No se generará cobro</b> (ya comprado).`;

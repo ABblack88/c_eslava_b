@@ -302,7 +302,7 @@
                         
                         container.innerHTML += `
                             <label class="flex items-start gap-3 cursor-pointer p-3 rounded-lg hover:bg-surface-container transition-colors border border-transparent hover:border-outline-variant/30">
-                                <input type="checkbox" onchange="calcularSesionesPrevias()" name="tratamientoCobrado" onchange="calcularSesionesPrevias(); calcularFraccionamiento();" value="${srv.nombre}" data-precio="${srv.precio}" data-duracion="${srv.duracion || 1}" ${isChecked} class="mt-0.5 rounded border-outline-variant text-primary focus:ring-primary h-4 w-4">
+                                <input type="checkbox" name="tratamientoCobrado" onchange="calcularSesionesPrevias(); calcularFraccionamiento();" value="${srv.nombre}" data-precio="${srv.precio}" data-duracion="${srv.duracion || 1}" ${isChecked} class="mt-0.5 rounded border-outline-variant text-primary focus:ring-primary h-4 w-4">
                                 <div class="flex-1 text-sm leading-tight">
                                     <span class="block font-bold text-on-surface">${srv.nombre}</span>
                                     <span class="block text-xs text-primary font-semibold mt-1">S/. ${parseFloat(srv.precio).toFixed(2)}</span>
@@ -342,7 +342,7 @@
             }
 
             // Get total ignoring fractional UI
-            const checkboxes = document.querySelectorAll('input[name="tratamientoCobrado" onchange="calcularSesionesPrevias(); calcularFraccionamiento();"]:checked');
+            const checkboxes = document.querySelectorAll('input[name="tratamientoCobrado"]:checked');
             const isCont = document.getElementById('esContinuacionCheckbox') ? document.getElementById('esContinuacionCheckbox').checked : false;
             let montoTotal = 0;
             checkboxes.forEach(cb => {
@@ -368,7 +368,7 @@
         }
 
         function getTratamientosSeleccionados() {
-            const checkboxes = document.querySelectorAll('input[name="tratamientoCobrado" onchange="calcularSesionesPrevias(); calcularFraccionamiento();"]:checked');
+            const checkboxes = document.querySelectorAll('input[name="tratamientoCobrado"]:checked');
             const isCont = document.getElementById('esContinuacionCheckbox') ? document.getElementById('esContinuacionCheckbox').checked : false;
             
             let seleccionados = [];
@@ -453,7 +453,7 @@
 
         async function calcularSesionesPrevias() {
             if (!currentPaciente) return;
-            const checkboxes = document.querySelectorAll('input[name="tratamientoCobrado" onchange="calcularSesionesPrevias(); calcularFraccionamiento();"]:checked');
+            const checkboxes = document.querySelectorAll('input[name="tratamientoCobrado"]:checked');
             const counterText = document.getElementById('sesiones-counter-text');
             const chkContinuacion = document.getElementById('esContinuacionCheckbox');
             if (!counterText) return;
