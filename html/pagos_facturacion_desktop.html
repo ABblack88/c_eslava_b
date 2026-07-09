@@ -292,6 +292,9 @@
     <button onclick="exportarLibroTransacciones()" class="flex items-center gap-2 bg-surface-container-high border border-outline-variant px-4 py-2 rounded-xl font-bold text-sm hover:bg-surface-container transition-all shadow-sm">
         <span class="material-symbols-outlined text-[18px]">download</span> Excel
     </button>
+    <button onclick="openModal('modal-egreso')" class="bg-error/10 text-error px-4 py-2 rounded-xl font-bold flex items-center gap-2 hover:bg-error/20 transition-all text-sm">
+        <span class="material-symbols-outlined text-[18px]">remove</span> Nuevo Egreso
+    </button>
 </div>
 </section>
 <!-- Financial Overview Bento Grid -->
@@ -433,13 +436,16 @@
 <div class="flex justify-between items-center mb-8">
 <h4 class="font-headline-md text-headline-md text-on-surface">Libro de Transacciones</h4>
 <div class="flex items-center gap-4">
+<button onclick="openModal('modal-egreso')" class="bg-error/10 text-error px-4 py-2 rounded-lg font-bold flex items-center gap-2 hover:bg-error/20 transition-all text-sm mr-2">
+    <span class="material-symbols-outlined text-sm">remove</span> Nuevo Egreso
+</button>
 <button onclick="exportarLibroTransacciones()" class="bg-surface-container-high text-on-surface px-4 py-2 rounded-lg font-bold flex items-center gap-2 hover:bg-surface-container-highest transition-all text-sm">
     <span class="material-symbols-outlined text-sm">download</span> Excel
 </button>
 <select id="filtro-tipo-transaccion" class="bg-surface-container-low border-none rounded-lg text-label-sm px-4 py-2">
 <option value="all">Todos los tipos</option>
 <option value="Pagos">Pagos</option>
-<option value="Facturas">Facturas</option>
+<option value="Pendientes">Pendientes</option>
 </select>
 </div>
 </div>
@@ -488,12 +494,44 @@
     </div>
 </dialog>
 
-<!-- Modals removed as POS moved to cobrar_desktop.html -->
+<!-- Modal Nuevo Egreso -->
+<div id="modal-egreso" class="hidden fixed inset-0 z-[9999] modal-overlay bg-black/40 flex items-center justify-center p-4">
+    <div class="bg-surface-white rounded-3xl p-8 max-w-md w-full shadow-2xl relative transform transition-all duration-300 scale-95 opacity-0">
+        <h3 class="text-2xl font-bold mb-6 text-on-surface flex items-center gap-2"><span class="material-symbols-outlined text-error">money_off</span> Registrar Egreso</h3>
+        <div class="space-y-4">
+            <div>
+                <label class="block text-sm font-bold text-on-surface-variant mb-1">Descripción / Razón</label>
+                <input type="text" id="egreso-descripcion" class="w-full bg-surface-container-low text-on-surface p-3 rounded-xl border border-outline-variant focus:border-primary outline-none" placeholder="Ej. Pago de luz, Compras...">
+            </div>
+            <div>
+                <label class="block text-sm font-bold text-on-surface-variant mb-1">Monto (S/)</label>
+                <input type="number" id="egreso-monto" min="0" step="0.1" class="w-full bg-surface-container-low text-on-surface p-3 rounded-xl border border-outline-variant focus:border-primary outline-none" placeholder="0.00">
+            </div>
+        </div>
+        <div class="mt-8 flex justify-end gap-3">
+            <button class="px-6 py-3 font-bold text-on-surface-variant hover:bg-surface-container-high rounded-xl" onclick="closeModal('modal-egreso')">Cancelar</button>
+            <button onclick="guardarEgreso()" class="bg-error text-white px-6 py-3 rounded-xl font-bold hover:opacity-90 shadow-lg shadow-error/20 flex items-center gap-2">
+                <span class="material-symbols-outlined">save</span> Guardar
+            </button>
+        </div>
+    </div>
+</div>
 
 <!-- Micro-interaction Scripts -->
 <script>
-        
+        function openModal(id) {
+            const el = document.getElementById(id);
+            el.classList.remove('hidden');
+            setTimeout(() => {
+                el.querySelector('div').classList.remove('scale-95', 'opacity-0');
+            }, 10);
+        }
 
+        function closeModal(id) {
+            const el = document.getElementById(id);
+            el.querySelector('div').classList.add('scale-95', 'opacity-0');
+            setTimeout(() => el.classList.add('hidden'), 300);
+        }
 
         // Subtle scroll behavior for the Top Bar
         window.addEventListener('scroll', () => {
@@ -617,6 +655,38 @@
             setMetaMes(anioActivo, mesActivo, val);
             document.getElementById('modalEditarMeta').close();
             cargarDatosFinancieros();
+        }
+
+        async function guardarEgreso() {
+            const desc = document.getElementById('egreso-descripcion').value.trim();
+            const montoVal = parseFloat(document.getElementById('egreso-monto').value);
+
+            if (!desc || isNaN(montoVal) || montoVal <= 0) {
+                alert('Por favor ingrese una descripción y un monto válido');
+                return;
+            }
+
+            try {
+                // Guardar como monto negativo para registrar egreso
+                const { error } = await supabaseClient.from('pagos').insert([{
+                    descripcion: desc,
+                    monto: -montoVal,
+                    metodo: 'Egreso',
+                    estado: 'Completado',
+                    fecha: new Date().toISOString()
+                }]);
+
+                if (error) throw error;
+
+                closeModal('modal-egreso');
+                document.getElementById('egreso-descripcion').value = '';
+                document.getElementById('egreso-monto').value = '';
+                
+                await cargarDatosFinancieros();
+            } catch (err) {
+                console.error(err);
+                alert('Error al guardar el egreso');
+            }
         }
 
         async function cargarDatosFinancieros() {
@@ -1190,7 +1260,7 @@
                     let pagosFiltrados = window.todosLosPagos || [];
                     if (tipo === 'Pagos') {
                         pagosFiltrados = pagosFiltrados.filter(p => p.estado === 'Completado');
-                    } else if (tipo === 'Facturas') {
+                    } else if (tipo === 'Pendientes') {
                         pagosFiltrados = pagosFiltrados.filter(p => p.estado === 'Pendiente' || p.estado === 'Vencido');
                     }
                     renderActividadReciente(pagosFiltrados);
