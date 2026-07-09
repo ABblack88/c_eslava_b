@@ -222,8 +222,9 @@
 </div>
 <span class="text-on-surface-variant text-label-sm">Hoy</span>
 </div>
-<p class="text-on-surface-variant font-label-sm">Citas para Hoy</p>
+<p class="text-on-surface-variant font-label-sm">Citas Pendientes Hoy</p>
 <h3 id="stat-citas-hoy" class="font-headline-md text-headline-md mt-1">...</h3>
+<p id="stat-citas-hoy-total" class="text-xs text-outline mt-1">Cargando total...</p>
 </div>
 <div class="bg-surface-white p-6 rounded-xl shadow-[0px_10px_30px_rgba(0,0,0,0.04)] border border-surface-container-low">
 <div class="flex justify-between items-start mb-4">
@@ -1009,11 +1010,15 @@
             if (errorCitas || errorCitasM) throw new Error("Error fetching stats");
 
             const countCitasHoy = citasHoy ? citasHoy.length : 0;
+            const countCompletadas = citasHoy ? citasHoy.filter(c => (c.estado || '').toLowerCase().includes('completad')).length : 0;
+            const countCitasPendientesHoy = countCitasHoy - countCompletadas;
             const countPorConfirmar = citasHoy ? citasHoy.filter(c => c.estado === 'Pendiente').length : 0; 
             const countCitasManana = citasManana ? citasManana.length : 0;
 
             const elCitasHoy = document.getElementById('stat-citas-hoy');
-            if (elCitasHoy) elCitasHoy.textContent = countCitasHoy;
+            if (elCitasHoy) elCitasHoy.textContent = countCitasPendientesHoy;
+            const elCitasHoyTotal = document.getElementById('stat-citas-hoy-total');
+            if (elCitasHoyTotal) elCitasHoyTotal.textContent = `De ${countCitasHoy} citas programadas`;
             
             const elCitasConfirmar = document.getElementById('stat-citas-confirmar');
             if (elCitasConfirmar) elCitasConfirmar.textContent = countPorConfirmar;
