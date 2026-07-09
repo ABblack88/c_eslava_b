@@ -322,7 +322,18 @@
                 </div>
             </div>
             <div class="grid grid-cols-2 gap-4">
-                <input type="hidden" id="appt-treatment" value="Por Definir">
+                
+                <div class="col-span-2">
+                    <label class="block text-sm font-semibold text-on-surface-variant mb-1">Tratamiento / Motivo</label>
+                    <select id="appt-treatment" onchange="verificarSesionesPaciente()" required class="w-full bg-surface-container-low border-none rounded-xl py-3 px-4 text-body-md focus:ring-2 focus:ring-primary">
+                        <option value="Procedimiento General">Cargando tratamientos...</option>
+                    </select>
+                    <div class="mt-2 flex items-center gap-2">
+                        <input type="checkbox" id="appt-continuacion" onchange="verificarSesionesPaciente()" class="rounded border-outline-variant text-primary focus:ring-primary h-4 w-4">
+                        <label for="appt-continuacion" class="text-xs font-bold text-on-surface-variant">Es Continuación de Sesión / Paquete</label>
+                    </div>
+                </div>
+
                 <div class="col-span-2">
                     <label class="block text-sm font-semibold text-on-surface-variant mb-1">Tratante</label>
                     <select id="appt-doctor" required class="w-full bg-surface-container-low border-none rounded-xl py-3 px-4 text-body-md focus:ring-2 focus:ring-primary">
@@ -723,7 +734,9 @@
 
     async function verificarSesionesPaciente() {
         const nameInput = document.getElementById('appt-patient-name').value;
-        const treatment = document.getElementById('appt-treatment').value;
+        const baseTreatment = document.getElementById("appt-treatment").value;
+        const isCont = document.getElementById("appt-continuacion")?.checked;
+        const treatment = isCont ? baseTreatment + ' (Continuación)' : baseTreatment;
         const alertEl = document.getElementById('info-sesiones-alerta');
         const textEl = document.getElementById('info-sesiones-texto');
 
@@ -738,7 +751,7 @@
             return;
         }
 
-        const servicioObj = window.serviciosActivos ? window.serviciosActivos.find(s => s.nombre === treatment) : null;
+        const servicioObj = window.serviciosActivos ? window.serviciosActivos.find(s => s.nombre === baseTreatment) : null;
         if (!servicioObj || !servicioObj.duracion || servicioObj.duracion <= 1) {
             alertEl.classList.add('hidden');
             return;
@@ -917,7 +930,9 @@
         const name = document.getElementById("appt-patient-name").value;
         const email = document.getElementById("appt-patient-email").value;
         const phone = document.getElementById("appt-patient-phone").value;
-        const treatment = document.getElementById("appt-treatment").value;
+        const baseTreatment = document.getElementById("appt-treatment").value;
+        const isCont = document.getElementById("appt-continuacion")?.checked;
+        const treatment = isCont ? baseTreatment + ' (Continuación)' : baseTreatment;
         const doctor = document.getElementById("appt-doctor").value;
         const date = document.getElementById("appt-date").value;
         
@@ -977,7 +992,7 @@
             const cita_id = newCita && newCita.length > 0 ? newCita[0].id : null;
 
             // Encontrar el precio del tratamiento y si es por sesiones
-            const servicioObj = window.serviciosActivos ? window.serviciosActivos.find(s => s.nombre === treatment) : null;
+            const servicioObj = window.serviciosActivos ? window.serviciosActivos.find(s => s.nombre === baseTreatment) : null;
             let montoPago = servicioObj ? servicioObj.precio : 0.00;
 
             if (servicioObj && servicioObj.duracion && servicioObj.duracion > 1 && paciente_id) {

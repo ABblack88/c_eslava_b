@@ -411,10 +411,12 @@
             if (!currentPaciente) return;
             const checkboxes = document.querySelectorAll('input[name="tratamientoCobrado" onchange="calcularSesionesPrevias(); calcularFraccionamiento();"]:checked');
             const counterText = document.getElementById('sesiones-counter-text');
+            const chkContinuacion = document.getElementById('esContinuacionCheckbox');
             if (!counterText) return;
 
             if (checkboxes.length === 0) {
                 counterText.classList.add('hidden');
+                if (chkContinuacion) { chkContinuacion.checked = false; chkContinuacion.disabled = true; }
                 return;
             }
             
@@ -451,7 +453,29 @@
                 if (cycleSession === 0) cycleSession = duracion;
 
                 let totalText = duracion > 1 ? `Sesión actual: ${cycleSession}/${duracion}` : `Cita Única`;
+
+                // Logic for Continuación Checkbox
+                if (chkContinuacion) {
+                    if (duracion <= 1) {
+                        // Not a package, cannot be a continuation
+                        chkContinuacion.checked = false;
+                        chkContinuacion.disabled = true;
+                    } else {
+                        // It's a package
+                        if (count === 0 && !isAlreadySavedInThisCita) {
+                            chkContinuacion.checked = false;
+                            chkContinuacion.disabled = true; // First session must be paid
+                        } else {
+                            chkContinuacion.disabled = false;
+                            // Si estamos en sesión > 1 pero no es el inicio de un nuevo paquete, podríamos autocheckear
+                            // Pero para ser seguros, solo habilitamos y dejamos que si ya venía checked o si el usuario quiere, lo marque.
+                        }
+                    }
+                }
                 
+                // Trigger recalculation of totals in case checkbox state changed
+                if (typeof calcularFraccionamiento === 'function') calcularFraccionamiento();
+
                 counterText.innerHTML = `
                     <div class="mt-2 bg-secondary-container text-on-secondary-container px-2 py-1.5 rounded inline-flex items-center gap-1.5">
                         <span class="material-symbols-outlined text-sm">history</span>

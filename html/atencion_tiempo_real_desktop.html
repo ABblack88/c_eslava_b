@@ -455,10 +455,12 @@
             if (!currentPaciente) return;
             const checkboxes = document.querySelectorAll('input[name="tratamientoCobrado" onchange="calcularSesionesPrevias(); calcularFraccionamiento();"]:checked');
             const counterText = document.getElementById('sesiones-counter-text');
+            const chkContinuacion = document.getElementById('esContinuacionCheckbox');
             if (!counterText) return;
 
             if (checkboxes.length === 0) {
                 counterText.classList.add('hidden');
+                if (chkContinuacion) { chkContinuacion.checked = false; chkContinuacion.disabled = true; }
                 return;
             }
             
@@ -504,6 +506,26 @@
 
                 let totalText = duracion > 1 ? `Sesión ${cycleSession} de ${duracion}` : `Cita Única`;
                 
+                // Logic for Continuación Checkbox
+                if (chkContinuacion) {
+                    if (duracion <= 1) {
+                        // Not a package, cannot be a continuation
+                        chkContinuacion.checked = false;
+                        chkContinuacion.disabled = true;
+                    } else {
+                        // It's a package
+                        if (count === 0 && !isAlreadySavedInThisCita) {
+                            chkContinuacion.checked = false;
+                            chkContinuacion.disabled = true; // First session must be paid
+                        } else {
+                            chkContinuacion.disabled = false;
+                        }
+                    }
+                }
+                
+                // Trigger recalculation of totals in case checkbox state changed
+                if (typeof calcularFraccionamiento === 'function') calcularFraccionamiento();
+
                 counterText.innerHTML = `
                     <div class="mt-2 bg-secondary-container text-on-secondary-container px-3 py-2 rounded-lg inline-flex items-center gap-2">
                         <span class="material-symbols-outlined text-lg">history</span>
