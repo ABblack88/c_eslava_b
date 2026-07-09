@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html class="light" lang="es">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Centro Eslava - Gestión Estratégica de Pacientes</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;700;800&display=block" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=block" rel="stylesheet"/>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../js/supabase.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "surface-container": "#eceeee",
+                        "primary-fixed-dim": "#66d5f1",
+                        "tertiary": "#8a4d00",
+                        "outline": "#6d797d",
+                        "on-tertiary-fixed": "#2e1600",
+                        "on-primary-container": "#f9fdff",
+                        "surface-container-low": "#f2f4f4",
+                        "error-container": "#ffdad6",
+                        "surface-bright": "#f8fafa",
+                        "secondary-fixed-dim": "#78d3eb",
+                        "on-primary-fixed": "#001f26",
+                        "text-muted": "#636366",
+                        "tertiary-fixed-dim": "#ffb877",
+                        "on-surface": "#191c1d",
+                        "inverse-on-surface": "#eff1f1",
+                        "outline-variant": "#bdc8cd",
+                        "error": "#ba1a1a",
+                        "tertiary-container": "#a96418",
+                        "on-surface-variant": "#3d494c",
+                        "on-tertiary": "#ffffff",
+                        "on-background": "#191c1d",
+                        "surface-container-lowest": "#ffffff",
+                        "on-secondary-fixed": "#001f26",
+                        "surface-dim": "#d8dada",
+                        "surface-white": "#FFFFFF",
+                        "surface": "#f8fafa",
+                        "inverse-surface": "#2e3131",
+                        "primary-container": "#008097",
+                        "warning": "#FF9500",
+                        "secondary-container": "#89e4fd",
+                        "on-primary-fixed-variant": "#004e5d",
+                        "background": "#f8fafa",
+                        "text-main": "#1C1C1E",
+                        "on-primary": "#ffffff",
+                        "on-error-container": "#93000a",
+                        "success": "#34C759",
+                        "on-secondary": "#ffffff",
+                        "inverse-primary": "#66d5f1",
+                        "primary-fixed": "#aeecff",
+                        "on-error": "#ffffff",
+                        "tertiary-fixed": "#ffdcc0",
+                        "secondary": "#00687a",
+                        "on-tertiary-fixed-variant": "#6b3b00",
+                        "surface-container-highest": "#e1e3e3",
+                        "secondary-fixed": "#adecff",
+                        "primary": "#006578",
+                        "on-secondary-fixed-variant": "#004e5c",
+                        "on-secondary-container": "#006779",
+                        "surface-container-high": "#e6e8e8",
+                        "surface-variant": "#e1e3e3",
+                        "surface-tint": "#00687b",
+                        "on-tertiary-container": "#fffbff"
+                    },
+                    fontFamily: {
+                        "headline-md": ["Hanken Grotesk"],
+                        "display-lg": ["Hanken Grotesk"],
+                        "body-lg": ["Hanken Grotesk"],
+                        "label-sm": ["Hanken Grotesk"],
+                        "body-md": ["Hanken Grotesk"]
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Hanken Grotesk', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            vertical-align: middle;
+        }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        .book-tabs-container {
+            display: flex;
+            flex-direction: row;
+            align-items: flex-end;
+            gap: 3px;
+            padding: 0;
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+        .book-tabs-container::-webkit-scrollbar { display: none; }
+        .book-tab {
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 7px 16px;
+            min-width: 56px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            border-radius: 10px 10px 0 0;
+            border: 1.5px solid transparent;
+            border-bottom: none;
+            transition: all 0.18s ease;
+            white-space: nowrap;
+            flex-shrink: 0;
+            position: relative;
+            bottom: 0;
+        }
+        .book-tab.active {
+            background: #006578;
+            color: #ffffff;
+            border-color: #004e5d;
+            padding-top: 10px;
+            box-shadow: 0 -4px 12px rgba(0,101,120,0.18);
+        }
+        .book-tab.inactive {
+            background: #f2f4f4;
+            color: #3d494c;
+            border-color: #bdc8cd;
+            bottom: -2px;
+        }
+        .book-tab.inactive:hover {
+            background: #e6e8e8;
+            color: #006578;
+            bottom: -1px;
+        }
+        .book-tab.past-data {
+            background: #dff4f8;
+            color: #006578;
+            border-color: #9fd8e8;
+            bottom: -2px;
+        }
+        .book-tab.past-data:hover {
+            background: #c8ecf5;
+            bottom: -1px;
+        }
+        .book-tab.future {
+            background: #f8fafa;
+            color: #b0bec5;
+            border-color: #e1e3e3;
+            bottom: -4px;
+            opacity: 0.55;
+            cursor: not-allowed;
+            font-size: 10px;
+        }
+        .book-tabs-bar {
+            border-bottom: 2px solid #006578;
+            margin-bottom: 0;
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface min-h-screen">
+    <aside class="h-screen w-64 fixed left-0 top-0 bg-surface-white dark:bg-surface-container shadow-[0px_10px_30px_rgba(0,0,0,0.04)] dark:shadow-none flex flex-col py-2 z-50">
+        <div class="px-6 py-6">
+            <h1 class="text-2xl font-bold text-primary dark:text-primary-fixed-dim">Centro Eslava</h1>
+            <p class="text-on-surface-variant text-sm mt-1">Gestión Clínica</p>
+        </div>
+        <nav class="flex-1 px-3 space-y-1">
+            <a class="flex items-center px-4 py-3 text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-colors" href="calendario_dashboard_desktop.html">
+                <span class="material-symbols-outlined mr-3">calendar_today</span>
+                <span>Calendario</span>
+            </a>
+            <a class="flex items-center px-4 py-3 text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-colors" href="citas_listado_desktop.html">
+                <span class="material-symbols-outlined mr-3">list_alt</span>
+                <span>Citas</span>
+            </a>
+            <a class="flex items-center px-4 py-3 text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-colors" href="pacientes_historia_clinica_desktop.html">
+                <span class="material-symbols-outlined mr-3">groups</span>
+                <span>Pacientes</span>
+            </a>
+            <a class="flex items-center px-4 py-3 text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-colors" href="tratamientos_desktop.html">
+                <span class="material-symbols-outlined mr-3">medical_services</span>
+                <span>Tratamientos</span>
+            </a>
+            <a class="flex items-center px-4 py-3 text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-colors" href="productos_desktop.html">
+                <span class="material-symbols-outlined mr-3">inventory_2</span>
+                <span>Productos</span>
+            </a>
+            <a class="flex items-center px-4 py-3 text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-colors" href="cobrar_desktop.html">
+                <span class="material-symbols-outlined mr-3">point_of_sale</span>
+                <span>Cobrar / Caja</span>
+            </a>
+            <a class="flex items-center px-4 py-3 text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-colors" href="pagos_facturacion_desktop.html">
+                <span class="material-symbols-outlined mr-3">payments</span>
+                <span>Finanzas</span>
+            </a>
+            <a class="flex items-center px-4 py-3 text-primary border-r-4 border-primary font-bold bg-surface-container-low transition-colors" href="gestion_pacientes_desktop.html">
+                <span class="material-symbols-outlined mr-3">monitoring</span>
+                <span>Gestión Estratégica</span>
+            </a>
+            <a class="flex items-center px-4 py-3 text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-colors" href="ajustes_desktop.html">
+                <span class="material-symbols-outlined mr-3">settings</span>
+                <span>Ajustes</span>
+            </a>
+        </nav>
+    </aside>
+
+    <header class="flex justify-between items-center h-16 ml-64 px-8 w-[calc(100%-16rem)] bg-surface-bright shadow-sm sticky top-0 z-40">
+        <div class="flex items-center gap-6 ml-auto">
+            <button class="text-on-surface-variant hover:text-primary transition-all">
+                <span class="material-symbols-outlined">help</span>
+            </button>
+        </div>
+    </header>
+
+    <main class="ml-64 p-10 min-h-[calc(100vh-4rem)]">
+        <div class="book-tabs-bar mb-6">
+            <div class="book-tabs-container" id="bookTabs"></div>
+        </div>
+
+        <section class="mb-8 flex justify-between items-start flex-wrap gap-4">
+            <div>
+                <div class="inline-flex items-center gap-1.5 bg-surface-container border border-outline-variant text-on-surface-variant px-3 py-1 rounded-full mb-3">
+                    <span class="material-symbols-outlined text-[14px]">insights</span>
+                    <span class="text-[11px] font-bold tracking-widest uppercase">Inteligencia de Negocio</span>
+                </div>
+                <h2 class="text-3xl font-extrabold text-on-surface mb-1">Gestión Estratégica</h2>
+                <p id="mes-titulo" class="text-on-surface-variant text-base font-medium">Cargando...</p>
+            </div>
+            <div class="flex items-center gap-3">
+                <div class="flex items-center gap-1 bg-surface-white border border-outline-variant rounded-xl px-3 py-2 shadow-sm">
+                    <button onclick="cambiarAnio(-1)" class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-surface-container-low transition-colors text-on-surface-variant">
+                        <span class="material-symbols-outlined text-[20px]">chevron_left</span>
+                    </button>
+                    <span id="anio-display" class="font-bold text-on-surface px-2 text-lg min-w-[60px] text-center">2026</span>
+                    <button onclick="cambiarAnio(1)" class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-surface-container-low transition-colors text-on-surface-variant">
+                        <span class="material-symbols-outlined text-[20px]">chevron_right</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <div class="grid grid-cols-12 gap-6 mb-6">
+            <!-- MÓDULO 1: Ocupación -->
+            <div class="col-span-12 lg:col-span-8 bg-surface-white p-6 rounded-xl shadow-sm border border-outline-variant">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-xl font-bold flex items-center gap-2">
+                        <span class="material-symbols-outlined text-primary">analytics</span>
+                        Ocupación y Capacidad Real
+                    </h3>
+                    <div class="flex items-center gap-2">
+                        <label class="text-sm text-on-surface-variant">Camillas Activas:</label>
+                        <input type="number" id="input-camillas" value="3" min="1" max="10" class="w-16 p-1 border rounded text-center" onchange="cargarDatosEstrategicos()">
+                    </div>
+                </div>
+                <div class="grid grid-cols-3 gap-4 mb-6">
+                    <div class="p-4 bg-surface-container-low rounded-lg">
+                        <p class="text-sm text-on-surface-variant mb-1">Horas Ocupadas Mensuales</p>
+                        <p class="text-2xl font-bold" id="horas-ocupadas">0 h</p>
+                        <p class="text-xs text-on-surface-variant mt-1">Basado en duración real de citas</p>
+                    </div>
+                    <div class="p-4 bg-surface-container-low rounded-lg">
+                        <p class="text-sm text-on-surface-variant mb-1">Capacidad Total Estimada</p>
+                        <p class="text-2xl font-bold" id="capacidad-total">0 h</p>
+                        <p class="text-xs text-on-surface-variant mt-1">Camillas × Horas Laborables</p>
+                    </div>
+                    <div class="p-4 bg-primary text-white rounded-lg">
+                        <p class="text-sm opacity-90 mb-1">% Ocupación Real</p>
+                        <p class="text-2xl font-bold" id="porcentaje-ocupacion">0%</p>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="p-4 border border-outline-variant rounded-lg">
+                        <p class="text-sm text-on-surface-variant mb-1">Costo de Ocupación Vacía</p>
+                        <p class="text-xl font-bold text-warning" id="costo-vacia">S/ 0.00</p>
+                        <p class="text-xs text-on-surface-variant mt-1">Horas no utilizadas × Costo Fijo Estimado</p>
+                    </div>
+                    <div class="p-4 border border-outline-variant rounded-lg">
+                        <p class="text-sm text-on-surface-variant mb-1">Pérdida por No-Show (Estimado)</p>
+                        <p class="text-xl font-bold text-error" id="perdida-noshow">S/ 0.00</p>
+                        <p class="text-xs text-on-surface-variant mt-1">Citas canceladas último minuto</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MÓDULO 3: Recuperación -->
+            <div class="col-span-12 lg:col-span-4 bg-surface-white p-6 rounded-xl shadow-sm border border-outline-variant">
+                <h3 class="text-xl font-bold mb-4 flex items-center gap-2">
+                    <span class="material-symbols-outlined text-error">warning</span>
+                    Pacientes en Riesgo (>45 días)
+                </h3>
+                <div class="bg-error-container text-on-error-container p-3 rounded-lg mb-4 flex justify-between items-center">
+                    <div>
+                        <p class="text-sm opacity-90">Total en Riesgo</p>
+                        <p class="text-2xl font-bold" id="total-riesgo">0</p>
+                    </div>
+                    <span class="material-symbols-outlined text-3xl opacity-50">group_off</span>
+                </div>
+                <div id="lista-riesgo" class="space-y-3 max-h-64 overflow-y-auto pr-2">
+                    <p class="text-sm text-on-surface-variant">Cargando...</p>
+                </div>
+            </div>
+
+            <!-- MÓDULO 2: Segmentación -->
+            <div class="col-span-12 bg-surface-white p-6 rounded-xl shadow-sm border border-outline-variant">
+                <h3 class="text-xl font-bold mb-6 flex items-center gap-2">
+                    <span class="material-symbols-outlined text-secondary">donut_large</span>
+                    Segmentación de Cohortes (Últimos 3 meses)
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                    <div class="h-64 flex justify-center">
+                        <canvas id="segmentacionChart"></canvas>
+                    </div>
+                    <div>
+                        <table class="w-full text-left">
+                            <thead>
+                                <tr class="text-sm text-on-surface-variant border-b">
+                                    <th class="pb-2">Segmento</th>
+                                    <th class="pb-2">Pacientes</th>
+                                    <th class="pb-2 text-right">Ticket Promedio</th>
+                                    <th class="pb-2 text-right">LTV Estimado (Anual)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabla-segmentos" class="divide-y divide-surface-container">
+                                <tr><td colspan="4" class="py-4 text-center">Cargando...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const MESES_ES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+        const MESES_CORTO = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+        
+        let anioActivo = new Date().getFullYear();
+        let mesActivo = new Date().getMonth();
+        let chartInstance = null;
+
+        function cambiarAnio(delta) {
+            anioActivo += delta;
+            document.getElementById('anio-display').textContent = anioActivo;
+            renderBookTabs();
+            cargarDatosEstrategicos();
+        }
+
+        function seleccionarMes(mes) {
+            mesActivo = mes;
+            renderBookTabs();
+            cargarDatosEstrategicos();
+        }
+
+        function renderBookTabs() {
+            const container = document.getElementById('bookTabs');
+            if (!container) return;
+            container.innerHTML = '';
+            for (let m = 0; m < 12; m++) {
+                const btn = document.createElement('button');
+                btn.textContent = MESES_CORTO[m];
+                btn.className = `book-tab ${m === mesActivo ? 'active' : 'inactive'}`;
+                btn.onclick = () => seleccionarMes(m);
+                container.appendChild(btn);
+            }
+            document.getElementById('mes-titulo').textContent = `${MESES_ES[mesActivo]} ${anioActivo}`;
+        }
+
+        async function cargarDatosEstrategicos() {
+            try {
+                // Fechas para el mes actual
+                const startMes = new Date(anioActivo, mesActivo, 1).toISOString();
+                const endMes = new Date(anioActivo, mesActivo + 1, 1).toISOString();
+                
+                // Fechas para segmentación (últimos 3 meses desde el final del mes activo)
+                const endMesDate = new Date(anioActivo, mesActivo + 1, 0);
+                const start3Meses = new Date(anioActivo, mesActivo - 2, 1).toISOString();
+                
+                // 1. Obtener Citas (para ocupación, no-shows, inactividad)
+                const { data: citasData, error: citasError } = await supabaseClient
+                    .from('citas')
+                    .select('id, paciente_id, fecha, estado, tratamiento');
+                
+                // 2. Obtener Servicios (para duración y precio)
+                const { data: serviciosData } = await supabaseClient.from('servicios').select('*');
+                const serviciosMap = {};
+                serviciosData.forEach(s => serviciosMap[s.nombre] = s);
+
+                // 3. Obtener Pagos (para tickets promedio)
+                const { data: pagosData } = await supabaseClient
+                    .from('pagos')
+                    .select('id, paciente_id, monto, estado, fecha')
+                    .eq('estado', 'Completado');
+
+                // 4. Obtener Pacientes
+                const { data: pacientesData } = await supabaseClient.from('pacientes').select('id, nombre, telefono');
+
+                if (citasError) throw citasError;
+
+                // --- MÓDULO 1: Ocupación ---
+                const citasDelMes = citasData.filter(c => c.fecha >= startMes.substring(0,10) && c.fecha <= endMes.substring(0,10));
+                
+                let minutosOcupados = 0;
+                let perdidaNoShow = 0;
+                
+                citasDelMes.forEach(cita => {
+                    const serv = serviciosMap[cita.tratamiento];
+                    const duracion = serv ? (serv.duracion || 60) : 60; // default 60min
+                    const precio = serv ? (Number(serv.precio) || 0) : 0;
+                    
+                    if (cita.estado === 'Completada' || cita.estado === 'Atendida') {
+                        minutosOcupados += duracion;
+                    } else if (cita.estado === 'Cancelada' || cita.estado === 'No Asistió') {
+                        perdidaNoShow += precio;
+                    }
+                });
+
+                const horasOcupadas = minutosOcupados / 60;
+                const camillas = Number(document.getElementById('input-camillas').value) || 3;
+                
+                // Capacidad: Asumimos 22 días hábiles x 8 horas x camillas
+                const capacidadEstimada = 22 * 8 * camillas;
+                const ocupacionPerc = capacidadEstimada > 0 ? (horasOcupadas / capacidadEstimada) * 100 : 0;
+                
+                // Costo vacía: asumimos costo fijo hora de S/ 25
+                const horasVacias = Math.max(0, capacidadEstimada - horasOcupadas);
+                const costoVacia = horasVacias * 25;
+
+                document.getElementById('horas-ocupadas').textContent = horasOcupadas.toFixed(1) + ' h';
+                document.getElementById('capacidad-total').textContent = capacidadEstimada + ' h';
+                document.getElementById('porcentaje-ocupacion').textContent = ocupacionPerc.toFixed(1) + '%';
+                document.getElementById('costo-vacia').textContent = 'S/ ' + costoVacia.toFixed(2);
+                document.getElementById('perdida-noshow').textContent = 'S/ ' + perdidaNoShow.toFixed(2);
+
+                // --- MÓDULO 3: Pacientes en Riesgo (>45 días) ---
+                const hoy = new Date();
+                const pacientesMap = {};
+                pacientesData.forEach(p => pacientesMap[p.id] = p);
+                
+                const ultimaCitaPorPaciente = {};
+                citasData.filter(c => c.estado === 'Completada' || c.estado === 'Atendida').forEach(c => {
+                    const f = new Date(c.fecha);
+                    if (!ultimaCitaPorPaciente[c.paciente_id] || f > ultimaCitaPorPaciente[c.paciente_id].fechaObj) {
+                        ultimaCitaPorPaciente[c.paciente_id] = { fecha: c.fecha, fechaObj: f, tratamiento: c.tratamiento };
+                    }
+                });
+
+                const enRiesgo = [];
+                for (const pid in ultimaCitaPorPaciente) {
+                    const diffDays = (hoy - ultimaCitaPorPaciente[pid].fechaObj) / (1000 * 60 * 60 * 24);
+                    if (diffDays > 45) {
+                        enRiesgo.push({
+                            paciente: pacientesMap[pid],
+                            dias: Math.floor(diffDays),
+                            ultima: ultimaCitaPorPaciente[pid]
+                        });
+                    }
+                }
+                
+                enRiesgo.sort((a,b) => b.dias - a.dias);
+                document.getElementById('total-riesgo').textContent = enRiesgo.length;
+                
+                const listaHtml = enRiesgo.slice(0, 20).map(r => `
+                    <div class="border-b border-surface-container pb-2">
+                        <p class="font-bold text-sm">${r.paciente?.nombre || 'Desconocido'}</p>
+                        <p class="text-xs text-error">Hace ${r.dias} días - ${r.ultima.tratamiento}</p>
+                    </div>
+                `).join('');
+                document.getElementById('lista-riesgo').innerHTML = listaHtml || '<p class="text-sm">No hay pacientes en riesgo.</p>';
+
+                // --- MÓDULO 2: Segmentación (Últimos 3 meses) ---
+                const citas3Meses = citasData.filter(c => c.fecha >= start3Meses.substring(0,10) && c.fecha <= endMesDate.toISOString().substring(0,10) && (c.estado === 'Completada' || c.estado === 'Atendida'));
+                
+                const conteoPorPaciente = {};
+                citas3Meses.forEach(c => {
+                    conteoPorPaciente[c.paciente_id] = (conteoPorPaciente[c.paciente_id] || 0) + 1;
+                });
+
+                const segmentos = {
+                    'Semanal (4+ en 30d)': { count: 0, ids: new Set() },
+                    'Quincenal (2-3 en 30d)': { count: 0, ids: new Set() },
+                    'Mensual (1 en 30d)': { count: 0, ids: new Set() },
+                    'Esporádico': { count: 0, ids: new Set() }
+                };
+
+                for (const pid in conteoPorPaciente) {
+                    const freq = conteoPorPaciente[pid];
+                    // Normalizado a 3 meses: Semanal > 12, Quincenal > 6, Mensual > 3
+                    if (freq >= 12) { segmentos['Semanal (4+ en 30d)'].count++; segmentos['Semanal (4+ en 30d)'].ids.add(pid); }
+                    else if (freq >= 6) { segmentos['Quincenal (2-3 en 30d)'].count++; segmentos['Quincenal (2-3 en 30d)'].ids.add(pid); }
+                    else if (freq >= 3) { segmentos['Mensual (1 en 30d)'].count++; segmentos['Mensual (1 en 30d)'].ids.add(pid); }
+                    else { segmentos['Esporádico'].count++; segmentos['Esporádico'].ids.add(pid); }
+                }
+
+                // Calcular Ticket Promedio por Segmento
+                const pagosMap = {}; // pid -> totalPagado
+                pagosData.forEach(p => {
+                    pagosMap[p.paciente_id] = (pagosMap[p.paciente_id] || 0) + Number(p.monto);
+                });
+
+                let tablaHtml = '';
+                const chartLabels = [];
+                const chartData = [];
+
+                for (const seg in segmentos) {
+                    chartLabels.push(seg);
+                    chartData.push(segmentos[seg].count);
+                    
+                    let totalIngresoSeg = 0;
+                    segmentos[seg].ids.forEach(pid => {
+                        totalIngresoSeg += (pagosMap[pid] || 0);
+                    });
+                    
+                    const ticketPromedio = segmentos[seg].count > 0 ? totalIngresoSeg / segmentos[seg].count : 0;
+                    // LTV anual estimado simplificado: Semanal(x48), Quincenal(x24), Mensual(x12), Espo(x3)
+                    let multiplier = 3;
+                    if(seg.includes('Semanal')) multiplier = 48;
+                    else if(seg.includes('Quincenal')) multiplier = 24;
+                    else if(seg.includes('Mensual')) multiplier = 12;
+                    
+                    const ltv = ticketPromedio * multiplier;
+
+                    tablaHtml += `
+                        <tr class="text-sm">
+                            <td class="py-3 font-semibold">${seg}</td>
+                            <td class="py-3">${segmentos[seg].count}</td>
+                            <td class="py-3 text-right text-primary">S/ ${ticketPromedio.toFixed(2)}</td>
+                            <td class="py-3 text-right font-bold">S/ ${ltv.toFixed(2)}</td>
+                        </tr>
+                    `;
+                }
+                
+                document.getElementById('tabla-segmentos').innerHTML = tablaHtml;
+
+                // Render Chart
+                if (chartInstance) chartInstance.destroy();
+                const ctx = document.getElementById('segmentacionChart').getContext('2d');
+                chartInstance = new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: chartLabels,
+                        datasets: [{
+                            data: chartData,
+                            backgroundColor: ['#006578', '#66d5f1', '#ffb877', '#bdc8cd']
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { position: 'bottom' } }
+                    }
+                });
+
+            } catch (err) {
+                console.error("Error cargando dashboard:", err);
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            document.getElementById('anio-display').textContent = anioActivo;
+            renderBookTabs();
+            cargarDatosEstrategicos();
+        });
+    </script>
+</body>
+</html>
