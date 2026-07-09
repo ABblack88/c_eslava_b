@@ -137,12 +137,31 @@
                     <!-- Panel de Paquetes y Continuación Mobile -->
                     <div class="p-3 bg-surface-container-low border border-outline-variant rounded-xl flex flex-col gap-1">
                         <label class="flex items-center gap-2 cursor-pointer">
-                            <input type="checkbox" id="esContinuacionCheckbox" class="rounded border-outline-variant text-primary focus:ring-primary h-4 w-4">
+                            <input type="checkbox" id="esContinuacionCheckbox" onchange="calcularFraccionamiento()" class="rounded border-outline-variant text-primary focus:ring-primary h-4 w-4">
                             <span class="text-xs font-bold text-on-surface">Marcar como Continuación</span>
                         </label>
                         <div class="ml-6 text-[10px] text-outline flex flex-col gap-0.5">
                             <span>El costo será <strong class="text-primary">S/. 0.00</strong>.</span>
                             <span id="sesiones-counter-text" class="text-secondary font-bold hidden">Calculando...</span>
+                        </div>
+                    </div>
+
+                    <!-- Panel de Fraccionamiento de Pago Mobile -->
+                    <div class="p-3 bg-surface-container-low border border-outline-variant rounded-xl flex flex-col gap-1 mt-2">
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="checkbox" id="fraccionarCheckbox" class="rounded border-outline-variant text-primary focus:ring-primary h-4 w-4" onchange="toggleFraccionamiento()">
+                            <span class="text-xs font-bold text-on-surface">Fraccionar Pago (Cobro Inicial / Cuotas)</span>
+                        </label>
+                        <div id="fraccionamientoContainer" class="hidden ml-6 mt-2 space-y-2">
+                            <div>
+                                <label class="text-[10px] font-bold text-on-surface-variant block mb-1">Cobro Inicial (S/.)</label>
+                                <input type="number" id="cobroInicial" min="0" step="0.01" class="w-full max-w-[200px] rounded-lg border border-outline-variant px-2 py-1 text-xs outline-none focus:border-primary" placeholder="Ej. 100" oninput="calcularFraccionamiento()">
+                            </div>
+                            <div>
+                                <label class="text-[10px] font-bold text-on-surface-variant block mb-1">Número de Cuotas</label>
+                                <input type="number" id="numCuotas" min="1" step="1" value="1" class="w-full max-w-[200px] rounded-lg border border-outline-variant px-2 py-1 text-xs outline-none focus:border-primary" oninput="calcularFraccionamiento()">
+                            </div>
+                            <div id="resumenFraccionamiento" class="text-[10px] text-primary font-bold"></div>
                         </div>
                     </div>
                 </div>
@@ -240,7 +259,7 @@
                         
                         container.innerHTML += `
                             <label class="flex items-start gap-2 cursor-pointer p-2 rounded-lg hover:bg-surface-container transition-colors border border-transparent hover:border-outline-variant/30">
-                                <input type="checkbox" onchange="calcularSesionesPrevias()" name="tratamientoCobrado" value="${srv.nombre}" data-precio="${srv.precio}" data-duracion="${srv.duracion || 1}" ${isChecked} class="mt-0.5 rounded border-outline-variant text-primary focus:ring-primary h-3.5 w-3.5">
+                                <input type="checkbox" onchange="calcularSesionesPrevias()" name="tratamientoCobrado" onchange="calcularSesionesPrevias(); calcularFraccionamiento();" value="${srv.nombre}" data-precio="${srv.precio}" data-duracion="${srv.duracion || 1}" ${isChecked} class="mt-0.5 rounded border-outline-variant text-primary focus:ring-primary h-3.5 w-3.5">
                                 <div class="flex-1 text-xs leading-tight">
                                     <span class="block font-bold text-on-surface">${srv.nombre}</span>
                                     <span class="block text-[10px] text-primary font-semibold mt-0.5">S/. ${parseFloat(srv.precio).toFixed(2)}</span>
@@ -257,8 +276,55 @@
             }
         }
 
+        
+        function toggleFraccionamiento() {
+            const container = document.getElementById('fraccionamientoContainer');
+            const checkbox = document.getElementById('fraccionarCheckbox');
+            if (checkbox && checkbox.checked) {
+                if (container) container.classList.remove('hidden');
+            } else {
+                if (container) container.classList.add('hidden');
+            }
+            calcularFraccionamiento();
+        }
+
+        function calcularFraccionamiento() {
+            const resumen = document.getElementById('resumenFraccionamiento');
+            if (!resumen) return;
+            const checkbox = document.getElementById('fraccionarCheckbox');
+            if (!checkbox || !checkbox.checked) {
+                resumen.innerHTML = '';
+                return;
+            }
+
+            // Get total ignoring fractional UI
+            const checkboxes = document.querySelectorAll('input[name="tratamientoCobrado" onchange="calcularSesionesPrevias(); calcularFraccionamiento();"]:checked');
+            const isCont = document.getElementById('esContinuacionCheckbox') ? document.getElementById('esContinuacionCheckbox').checked : false;
+            let montoTotal = 0;
+            checkboxes.forEach(cb => {
+                if (!isCont) {
+                    montoTotal += parseFloat(cb.getAttribute('data-precio') || 0);
+                }
+            });
+
+            const inicialInput = parseFloat(document.getElementById('cobroInicial').value) || 0;
+            const cuotasInput = parseInt(document.getElementById('numCuotas').value) || 1;
+
+            if (montoTotal <= 0) {
+                resumen.innerHTML = 'El costo de la sesión es S/. 0. No se puede fraccionar.';
+                return;
+            }
+            if (inicialInput > montoTotal) {
+                resumen.innerHTML = 'El cobro inicial no puede ser mayor al total (S/. ' + montoTotal + ').';
+                return;
+            }
+            const restante = montoTotal - inicialInput;
+            const montoPorCuota = restante / cuotasInput;
+            resumen.innerHTML = `Total: S/. ${montoTotal.toFixed(2)} | Inicial: S/. ${inicialInput.toFixed(2)} | Resto: ${cuotasInput} cuota(s) de S/. ${montoPorCuota.toFixed(2)}`;
+        }
+
         function getTratamientosSeleccionados() {
-            const checkboxes = document.querySelectorAll('input[name="tratamientoCobrado"]:checked');
+            const checkboxes = document.querySelectorAll('input[name="tratamientoCobrado" onchange="calcularSesionesPrevias(); calcularFraccionamiento();"]:checked');
             const isCont = document.getElementById('esContinuacionCheckbox') ? document.getElementById('esContinuacionCheckbox').checked : false;
             
             let seleccionados = [];
@@ -274,12 +340,76 @@
                 seleccionados.push(name);
             });
             
-            return { tratamientos: seleccionados.join(', '), montoTotal };
+            let pagosGenerados = [];
+            const fraccCheckbox = document.getElementById('fraccionarCheckbox');
+            if (fraccCheckbox && fraccCheckbox.checked && !isCont && montoTotal > 0) {
+                const inicial = parseFloat(document.getElementById('cobroInicial').value) || 0;
+                const cuotas = parseInt(document.getElementById('numCuotas').value) || 1;
+                
+                if (inicial > 0) {
+                    pagosGenerados.push({
+                        descripcion: seleccionados.join(', ') + ' (Cobro Inicial)',
+                        monto: inicial
+                    });
+                }
+                
+                const restante = montoTotal - inicial;
+                if (restante > 0) {
+                    const montoPorCuota = restante / cuotas;
+                    for (let i = 1; i <= cuotas; i++) {
+                        pagosGenerados.push({
+                            descripcion: seleccionados.join(', ') + ` (Cuota ${i}/${cuotas})`,
+                            monto: montoPorCuota
+                        });
+                    }
+                }
+            } else {
+                pagosGenerados.push({
+                    descripcion: seleccionados.join(', '),
+                    monto: montoTotal
+                });
+            }
+
+            return { tratamientos: seleccionados.join(', '), montoTotal, pagosGenerados };
+        }
+
+        async function syncPagos(citaId, currentPaciente, currentCita, tratData) {
+            if (!currentPaciente) return;
+            const { data: pagosExistentes } = await supabaseClient
+                .from('pagos')
+                .select('id, estado, monto')
+                .eq('cita_id', citaId);
+
+            const hasCompletedPagos = pagosExistentes && pagosExistentes.some(p => p.estado === 'Completado' && p.monto > 0);
+
+            if (!hasCompletedPagos) {
+                if (pagosExistentes && pagosExistentes.length > 0) {
+                    const pendingIds = pagosExistentes.filter(p => p.estado === 'Pendiente' || p.monto === 0).map(p => p.id);
+                    if (pendingIds.length > 0) {
+                        await supabaseClient.from('pagos').delete().in('id', pendingIds);
+                    }
+                }
+                
+                const pagosToInsert = tratData.pagosGenerados.map(pg => ({
+                    paciente_id: currentPaciente.id,
+                    cita_id: citaId,
+                    monto: pg.monto,
+                    estado: pg.monto === 0 ? 'Completado' : 'Pendiente',
+                    metodo: pg.monto === 0 ? 'Paquete' : 'Efectivo',
+                    fecha: new Date().toISOString(),
+                    descripcion: pg.descripcion,
+                    medico_id: currentCita ? currentCita.consultorio : null
+                }));
+                
+                if (pagosToInsert.length > 0) {
+                    await supabaseClient.from('pagos').insert(pagosToInsert);
+                }
+            }
         }
 
         async function calcularSesionesPrevias() {
             if (!currentPaciente) return;
-            const checkboxes = document.querySelectorAll('input[name="tratamientoCobrado"]:checked');
+            const checkboxes = document.querySelectorAll('input[name="tratamientoCobrado" onchange="calcularSesionesPrevias(); calcularFraccionamiento();"]:checked');
             const counterText = document.getElementById('sesiones-counter-text');
             if (!counterText) return;
 
@@ -433,41 +563,7 @@
 
                 if (error) throw error;
 
-                // Verificar si existe un pago para esta cita
-                const { data: pagosExistentes } = await supabaseClient
-                    .from('pagos')
-                    .select('id, estado')
-                    .eq('cita_id', citaId);
-
-                if (pagosExistentes && pagosExistentes.length > 0) {
-                    const pago = pagosExistentes[0];
-                    if (pago.estado === 'Pendiente') {
-                        const nuevoEstado = tratData.montoTotal === 0 ? 'Completado' : 'Pendiente';
-                        const nuevoMetodo = tratData.montoTotal === 0 ? 'Paquete' : 'Efectivo';
-                        await supabaseClient
-                            .from('pagos')
-                            .update({
-                                monto: tratData.montoTotal,
-                                descripcion: tratData.tratamientos,
-                                estado: nuevoEstado,
-                                metodo: nuevoMetodo
-                            })
-                            .eq('id', pago.id);
-                    }
-                } else if (currentPaciente) {
-                    await supabaseClient
-                        .from('pagos')
-                        .insert([{
-                            paciente_id: currentPaciente.id,
-                            cita_id: citaId,
-                            monto: tratData.montoTotal,
-                            estado: tratData.montoTotal === 0 ? 'Completado' : 'Pendiente',
-                            metodo: tratData.montoTotal === 0 ? 'Paquete' : 'Efectivo',
-                            fecha: new Date().toISOString(),
-                            descripcion: tratData.tratamientos,
-                            medico_id: currentCita ? currentCita.consultorio : null
-                        }]);
-                }
+                await syncPagos(citaId, currentPaciente, currentCita, tratData);
 
                 document.getElementById('save-status').textContent = 'Borrador guardado';
                 showToast("Borrador guardado", "success");
@@ -548,121 +644,7 @@
 
                 if (error) throw error;
 
-                // Verificar si existe un pago para esta cita
-                const { data: pagosExistentes } = await supabaseClient
-                    .from('pagos')
-                    .select('id, estado')
-                    .eq('cita_id', citaId);
-
-                if (pagosExistentes && pagosExistentes.length > 0) {
-                    const pago = pagosExistentes[0];
-                    if (pago.estado === 'Pendiente') {
-                        const nuevoEstado = tratData.montoTotal === 0 ? 'Completado' : 'Pendiente';
-                        const nuevoMetodo = tratData.montoTotal === 0 ? 'Paquete' : 'Efectivo';
-                        await supabaseClient
-                            .from('pagos')
-                            .update({
-                                monto: tratData.montoTotal,
-                                descripcion: tratData.tratamientos,
-                                estado: nuevoEstado,
-                                metodo: nuevoMetodo
-                            })
-                            .eq('id', pago.id);
-                    }
-                } else if (currentPaciente) {
-                    await supabaseClient
-                        .from('pagos')
-                        .insert([{
-                            paciente_id: currentPaciente.id,
-                            cita_id: citaId,
-                            monto: tratData.montoTotal,
-                            estado: tratData.montoTotal === 0 ? 'Completado' : 'Pendiente',
-                            metodo: tratData.montoTotal === 0 ? 'Paquete' : 'Efectivo',
-                            fecha: new Date().toISOString(),
-                            descripcion: tratData.tratamientos,
-                            medico_id: currentCita ? currentCita.consultorio : null
-                        }]);
-                }
-
-                showToast("Procedimiento culminado. Redirigiendo al calendario...", "success");
-                
-                setTimeout(() => {
-                    const role = new URLSearchParams(window.location.search).get('role') || 'admin';
-                    window.location.href = `calendario_dashboard_mobile.html?role=${role}`;
-                }, 1500);
-
-            } catch (err) {
-                console.error("Error al culminar procedimiento móvil:", err);
-                alert("Error al culminar el procedimiento.");
-                btn.disabled = false;
-            }
-        }
-
-        async function editarProcedimiento() {
-            const s = document.getElementById('soap_s').value;
-            const o = document.getElementById('soap_o').value;
-            const a = document.getElementById('soap_a').value;
-            const p = document.getElementById('soap_p').value;
-            
-            const fullObs = `[S] Subjetivo:\n${s}\n\n[O] Objetivo:\n${o}\n\n[A] Análisis:\n${a}\n\n[P] Plan:\n${p}`;
-            const tratData = getTratamientosSeleccionados();
-
-            if (!s.trim() || !o.trim() || !a.trim() || !p.trim()) {
-                alert("Ingrese todos los campos SOAP antes de guardar.");
-                return;
-            }
-
-            const btn = document.getElementById('btn-complete');
-            btn.disabled = true;
-            btn.innerHTML = `<span class="material-symbols-outlined text-sm">hourglass_empty</span> Guardando...`;
-
-            try {
-                const { error } = await supabaseClient
-                    .from('citas')
-                    .update({
-                        notas: fullObs,
-                        tratamiento: tratData.tratamientos
-                        // no cambiamos el estado, ya es Completado
-                    })
-                    .eq('id', citaId);
-
-                if (error) throw error;
-
-                // Verificar si existe un pago para esta cita
-                const { data: pagosExistentes } = await supabaseClient
-                    .from('pagos')
-                    .select('id, estado')
-                    .eq('cita_id', citaId);
-
-                if (pagosExistentes && pagosExistentes.length > 0) {
-                    const pago = pagosExistentes[0];
-                    if (pago.estado === 'Pendiente') {
-                        const nuevoEstado = tratData.montoTotal === 0 ? 'Completado' : 'Pendiente';
-                        const nuevoMetodo = tratData.montoTotal === 0 ? 'Paquete' : 'Efectivo';
-                        await supabaseClient
-                            .from('pagos')
-                            .update({
-                                monto: tratData.montoTotal,
-                                descripcion: tratData.tratamientos,
-                                estado: nuevoEstado,
-                                metodo: nuevoMetodo
-                            })
-                            .eq('id', pago.id);
-                    }
-                } else if (currentPaciente) {
-                    await supabaseClient
-                        .from('pagos')
-                        .insert([{
-                            paciente_id: currentPaciente.id,
-                            cita_id: citaId,
-                            monto: tratData.montoTotal,
-                            estado: tratData.montoTotal === 0 ? 'Completado' : 'Pendiente',
-                            metodo: tratData.montoTotal === 0 ? 'Paquete' : 'Efectivo',
-                            fecha: new Date().toISOString(),
-                            descripcion: tratData.tratamientos,
-                            medico_id: currentCita ? currentCita.consultorio : null
-                        }]);
-                }
+                await syncPagos(citaId, currentPaciente, currentCita, tratData);
 
                 showToast("Procedimiento actualizado correctamente.", "success");
                 setTimeout(() => {
