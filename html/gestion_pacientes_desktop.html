@@ -340,6 +340,30 @@
                     </div>
                 </div>
             </div>
+
+            <!-- MÓDULO 4: Top Servicios -->
+            <div class="col-span-12 bg-surface-white p-6 rounded-xl shadow-sm border border-outline-variant">
+                <h3 class="text-xl font-bold mb-6 flex items-center gap-2">
+                    <span class="material-symbols-outlined text-indigo-500">stethoscope</span>
+                    Top Servicios (Servicios Más Usados)
+                </h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left">
+                        <thead>
+                            <tr class="text-sm text-on-surface-variant border-b">
+                                <th class="pb-2">Servicio / Especialidad</th>
+                                <th class="pb-2">Pacientes Únicos</th>
+                                <th class="pb-2">% del Ingreso</th>
+                                <th class="pb-2 text-right">Ticket Promedio</th>
+                                <th class="pb-2 text-right" title="Valor de Vida del Cliente">VVC Estimado por Servicio</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabla-top-servicios" class="divide-y divide-surface-container">
+                            <tr><td colspan="5" class="py-4 text-center">Cargando...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     </main>
 
@@ -544,6 +568,60 @@
                 }
                 
                 document.getElementById('tabla-segmentos').innerHTML = tablaHtml;
+
+                // --- MÓDULO 4: Top Servicios ---
+                const statsServicios = {};
+                let totalIngresos3Meses = 0;
+
+                citas3Meses.forEach(c => {
+                    const serv = c.tratamiento;
+                    if (!statsServicios[serv]) {
+                        statsServicios[serv] = { pacientes: new Set(), ingresos: 0 };
+                    }
+                    statsServicios[serv].pacientes.add(c.paciente_id);
+                    const servInfo = serviciosMap[serv];
+                    const precioServ = servInfo ? Number(servInfo.precio) || 0 : 0;
+                    statsServicios[serv].ingresos += precioServ;
+                    totalIngresos3Meses += precioServ;
+                });
+
+                const topServiciosArray = Object.keys(statsServicios).map(k => {
+                    const st = statsServicios[k];
+                    return {
+                        nombre: k,
+                        pacientes: st.pacientes.size,
+                        ingresos: st.ingresos,
+                        porcentaje: totalIngresos3Meses > 0 ? (st.ingresos / totalIngresos3Meses) * 100 : 0,
+                        ticketPromedio: st.pacientes.size > 0 ? st.ingresos / st.pacientes.size : 0,
+                        vvcEstimado: st.ingresos * 4 // Extrapolado a 1 año
+                    };
+                }).sort((a,b) => b.ingresos - a.ingresos);
+
+                let tablaTopServiciosHtml = '';
+                topServiciosArray.forEach(s => {
+                    tablaTopServiciosHtml += `
+                        <tr class="text-sm hover:bg-surface-container-low transition-colors">
+                            <td class="py-4 font-semibold">${s.nombre}</td>
+                            <td class="py-4">${s.pacientes}</td>
+                            <td class="py-4">
+                                <div class="flex items-center">
+                                    <span class="w-10 inline-block">${s.porcentaje.toFixed(1)}%</span>
+                                    <div class="w-20 h-2 bg-surface-container rounded-full ml-2 overflow-hidden">
+                                        <div class="h-full bg-indigo-500 rounded-full" style="width: ${s.porcentaje}%"></div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="py-4 text-right text-primary">S/ ${s.ticketPromedio.toFixed(2)}</td>
+                            <td class="py-4 text-right font-bold">S/ ${s.vvcEstimado.toFixed(2)}</td>
+                        </tr>
+                    `;
+                });
+                if(topServiciosArray.length === 0) {
+                    tablaTopServiciosHtml = '<tr><td colspan="5" class="py-4 text-center">No hay datos suficientes</td></tr>';
+                }
+                
+                const tableTopServiciosEl = document.getElementById('tabla-top-servicios');
+                if (tableTopServiciosEl) tableTopServiciosEl.innerHTML = tablaTopServiciosHtml;
 
                 // Render Chart
                 if (chartInstance) chartInstance.destroy();
