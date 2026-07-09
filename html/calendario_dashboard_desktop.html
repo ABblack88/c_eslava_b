@@ -597,8 +597,8 @@
             const role = new URLSearchParams(window.location.search).get('role') || 'admin';
             
             const btnAtender = document.getElementById('btn-opt-atender');
-            if (cita.estado === 'Completado') {
-                btnAtender.innerHTML = `<span class="material-symbols-outlined">clinical_notes</span> Ver Atención`;
+            if (cita.estado === 'Completado' || cita.estado === 'Completada') {
+                btnAtender.innerHTML = `<span class="material-symbols-outlined">edit_document</span> Editar Cita`;
             } else {
                 btnAtender.innerHTML = `<span class="material-symbols-outlined">clinical_notes</span> Atender Cita`;
             }
