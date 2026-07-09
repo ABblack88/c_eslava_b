@@ -113,6 +113,79 @@
         }
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        /* ======= BOOK TABS ======= */
+        .book-tabs-container {
+            position: fixed;
+            left: 256px; /* same as aside width */
+            top: 64px;   /* below topbar */
+            bottom: 0;
+            width: 72px;
+            background: transparent;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            z-index: 30;
+            pointer-events: none;
+        }
+        .book-tab {
+            pointer-events: all;
+            writing-mode: vertical-rl;
+            text-orientation: mixed;
+            transform: rotate(180deg);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 10px 0;
+            width: 52px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            border-radius: 0 10px 10px 0;
+            margin-bottom: 3px;
+            border: 1.5px solid transparent;
+            border-left: none;
+            transition: all 0.18s ease;
+            white-space: nowrap;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+        .book-tab.active {
+            background: #006578;
+            color: #ffffff;
+            border-color: #004e5d;
+            width: 62px;
+            box-shadow: 4px 0 12px rgba(0,101,120,0.25);
+        }
+        .book-tab.inactive {
+            background: #f2f4f4;
+            color: #3d494c;
+            border-color: #bdc8cd;
+        }
+        .book-tab.inactive:hover {
+            background: #e6e8e8;
+            color: #006578;
+            width: 58px;
+        }
+        .book-tab.past-data {
+            background: #eff8fa;
+            color: #00687a;
+            border-color: #bdc8cd;
+        }
+        .book-tab.future {
+            background: #f8fafa;
+            color: #6d797d;
+            border-color: #eceeee;
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        /* main content area shifted right to make room for tabs */
+        .main-with-tabs {
+            margin-left: calc(256px + 72px);
+        }
     </style>
 
     <script src="../js/app.js"></script>
@@ -172,41 +245,42 @@
 </button>
 </div>
 </header>
+<!-- Book-style Month Tabs (fixed left, next to sidebar) -->
+<div class="book-tabs-container" id="bookTabs"></div>
+
 <!-- Main Content Canvas -->
-<main class="ml-64 p-margin-desktop min-h-[calc(100vh-4rem)]">
+<main class="main-with-tabs p-10 min-h-[calc(100vh-4rem)]">
 <!-- Header Section -->
-<section class="mb-10 flex justify-between items-end">
+<section class="mb-8 flex justify-between items-start flex-wrap gap-4">
 <div>
-<!-- Badge Identificador de Versión Desktop -->
-<div class="inline-flex items-center gap-1.5 bg-surface-container border border-outline-variant text-on-surface-variant px-3 py-1 rounded-full mb-3">
-    <span class="material-symbols-outlined text-[14px]">desktop_windows</span>
-    <span class="text-[11px] font-bold tracking-widest uppercase">Plataforma Administrativa</span>
+    <div class="inline-flex items-center gap-1.5 bg-surface-container border border-outline-variant text-on-surface-variant px-3 py-1 rounded-full mb-3">
+        <span class="material-symbols-outlined text-[14px]">calendar_month</span>
+        <span class="text-[11px] font-bold tracking-widest uppercase">Historial Financiero Anual</span>
+    </div>
+    <h2 class="font-display-lg text-3xl font-extrabold text-on-surface mb-1">Resumen Financiero</h2>
+    <p id="mes-titulo" class="text-on-surface-variant text-base font-medium">Cargando...</p>
 </div>
-<h2 class="font-display-lg text-display-lg text-on-surface mb-2">Resumen Financiero</h2>
-<p class="text-body-lg font-body-lg text-on-surface-variant">Visualización del rendimiento clínico y estados de cuenta pendientes.</p>
-</div>
-</div>
-<div class="flex flex-wrap gap-3 items-center">
-    <div class="flex items-center gap-2">
-        <label class="text-xs text-on-surface-variant font-bold">Mes:</label>
-        <input type="month" id="filtro-mes" class="bg-surface-white border border-outline-variant rounded-lg text-sm px-3 py-1">
+<div class="flex items-center gap-3">
+    <!-- Year Navigator -->
+    <div class="flex items-center gap-1 bg-surface-white border border-outline-variant rounded-xl px-3 py-2 shadow-sm">
+        <button onclick="cambiarAnio(-1)" class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-surface-container-low transition-colors text-on-surface-variant">
+            <span class="material-symbols-outlined text-[20px]">chevron_left</span>
+        </button>
+        <span id="anio-display" class="font-bold text-on-surface px-2 text-lg min-w-[60px] text-center">2025</span>
+        <button onclick="cambiarAnio(1)" class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-surface-container-low transition-colors text-on-surface-variant">
+            <span class="material-symbols-outlined text-[20px]">chevron_right</span>
+        </button>
     </div>
-    <div class="flex items-center gap-2">
-        <label class="text-xs text-on-surface-variant font-bold">Desde:</label>
-        <input type="date" id="filtro-fecha-inicio" class="bg-surface-white border border-outline-variant rounded-lg text-sm px-3 py-1">
-    </div>
-    <div class="flex items-center gap-2">
-        <label class="text-xs text-on-surface-variant font-bold">Hasta:</label>
-        <input type="date" id="filtro-fecha-fin" class="bg-surface-white border border-outline-variant rounded-lg text-sm px-3 py-1">
-    </div>
-    <div class="flex items-center gap-2">
-        <label class="text-xs text-on-surface-variant font-bold">Paciente:</label>
-        <input type="text" id="filtro-paciente" placeholder="Buscar..." class="bg-surface-white border border-outline-variant rounded-lg text-sm px-3 py-1 w-32">
-    </div>
-    <button onclick="cargarDatosFinancieros()" class="bg-primary text-on-primary px-4 py-1.5 rounded-lg font-bold text-sm hover:bg-primary/90 transition-colors">Filtrar</button>
-    
-    <button onclick="exportarLibroTransacciones()" class="bg-surface-container-high border border-outline-variant px-4 py-1.5 rounded-lg font-bold flex items-center gap-2 hover:bg-surface-container transition-all text-sm ml-2">
-        <span class="material-symbols-outlined text-[18px]">download</span> Exportar Excel
+    <!-- Edit meta button -->
+    <button onclick="abrirEditarMeta()" class="flex items-center gap-2 bg-surface-white border border-outline-variant px-4 py-2 rounded-xl font-bold text-sm hover:bg-surface-container-low transition-all shadow-sm">
+        <span class="material-symbols-outlined text-[18px] text-primary">edit</span> Editar Meta
+    </button>
+    <!-- Paciente filter (hidden, used via URL params) -->
+    <input type="hidden" id="filtro-paciente" value="">
+    <input type="hidden" id="filtro-fecha-inicio" value="">
+    <input type="hidden" id="filtro-fecha-fin" value="">
+    <button onclick="exportarLibroTransacciones()" class="flex items-center gap-2 bg-surface-container-high border border-outline-variant px-4 py-2 rounded-xl font-bold text-sm hover:bg-surface-container transition-all shadow-sm">
+        <span class="material-symbols-outlined text-[18px]">download</span> Excel
     </button>
 </div>
 </section>
@@ -376,8 +450,33 @@
 </table>
 </div>
 </div>
-</div>
 </main>
+
+<!-- Modal Editar Meta Mensual -->
+<dialog id="modalEditarMeta" class="backdrop:bg-black/60 p-0 rounded-2xl shadow-2xl border-none max-w-sm w-full bg-surface-white">
+    <div class="p-6">
+        <div class="flex justify-between items-center mb-5">
+            <div>
+                <h3 class="text-lg font-extrabold text-on-surface">Meta Mensual</h3>
+                <p id="meta-modal-mes-label" class="text-sm text-on-surface-variant"></p>
+            </div>
+            <button onclick="document.getElementById('modalEditarMeta').close()" class="text-on-surface-variant hover:text-error transition-colors">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+        <label class="block text-sm font-bold text-on-surface mb-2">Ingreso meta (S/)</label>
+        <input type="number" id="input-meta-valor" min="0" step="100" placeholder="ej. 25000"
+            class="w-full rounded-xl border border-outline-variant px-4 py-3 text-lg font-bold text-on-surface focus:ring-2 focus:ring-primary outline-none transition-all mb-5">
+        <div class="flex gap-3">
+            <button onclick="guardarMeta()" class="flex-1 bg-primary text-white font-bold py-3 rounded-xl hover:scale-[1.02] active:scale-95 transition-all shadow-md">
+                <span class="material-symbols-outlined text-sm mr-1">check</span>Guardar
+            </button>
+            <button onclick="document.getElementById('modalEditarMeta').close()" class="flex-1 border border-outline-variant font-bold py-3 rounded-xl hover:bg-surface-container-low transition-colors text-on-surface-variant">
+                Cancelar
+            </button>
+        </div>
+    </div>
+</dialog>
 
 <!-- Modals removed as POS moved to cobrar_desktop.html -->
 
@@ -416,27 +515,125 @@
         async function cerrarSesion() {
             const confirmado = confirm('¿Deseas cerrar sesión?');
             if (!confirmado) return;
-            try {
-                await supabaseClient.auth.signOut();
-            } catch(e) {}
-            localStorage.clear();
-            sessionStorage.clear();
+            try { await supabaseClient.auth.signOut(); } catch(e) {}
+            localStorage.clear(); sessionStorage.clear();
             window.location.replace('../index.html');
+        }
+
+        // =========================================
+        // SISTEMA DE MESES (Book Tabs)
+        // =========================================
+        const MESES_ES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio',
+                          'Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+        const MESES_CORTO = ['Ene','Feb','Mar','Abr','May','Jun',
+                             'Jul','Ago','Sep','Oct','Nov','Dic'];
+
+        const hoy = new Date();
+        let anioActivo = hoy.getFullYear();
+        let mesActivo  = hoy.getMonth(); // 0-indexed
+
+        function getMesKey(anio, mes) {
+            return `${anio}-${String(mes + 1).padStart(2, '0')}`;
+        }
+
+        function getMetaMes(anio, mes) {
+            const key = `metaMensual_${getMesKey(anio, mes)}`;
+            // fallback to global meta
+            return parseFloat(localStorage.getItem(key)) || parseFloat(localStorage.getItem('metaMensual')) || 25000;
+        }
+
+        function setMetaMes(anio, mes, valor) {
+            const key = `metaMensual_${getMesKey(anio, mes)}`;
+            localStorage.setItem(key, valor);
+            localStorage.setItem('metaMensual', valor); // sync global too
+        }
+
+        function cambiarAnio(delta) {
+            const nuevoAnio = anioActivo + delta;
+            // No permitir años futuros más allá del actual
+            if (nuevoAnio > hoy.getFullYear()) return;
+            anioActivo = nuevoAnio;
+            // Si el año nuevo es el actual y el mes activo está en el futuro, ir al mes actual
+            if (anioActivo === hoy.getFullYear() && mesActivo > hoy.getMonth()) {
+                mesActivo = hoy.getMonth();
+            }
+            document.getElementById('anio-display').textContent = anioActivo;
+            renderBookTabs();
+            cargarDatosFinancieros();
+        }
+
+        function seleccionarMes(mes) {
+            // No permitir meses futuros en el año actual
+            if (anioActivo === hoy.getFullYear() && mes > hoy.getMonth()) return;
+            mesActivo = mes;
+            renderBookTabs();
+            cargarDatosFinancieros();
+        }
+
+        function renderBookTabs() {
+            const container = document.getElementById('bookTabs');
+            if (!container) return;
+            container.innerHTML = '';
+            const esAnioActual = anioActivo === hoy.getFullYear();
+
+            for (let m = 0; m < 12; m++) {
+                const esFuturo = esAnioActual && m > hoy.getMonth();
+                const esActivo = m === mesActivo;
+                const tieneData = !esFuturo; // podría chekear localStorage en el futuro
+
+                const btn = document.createElement('button');
+                btn.textContent = MESES_CORTO[m];
+                btn.title = MESES_ES[m] + ' ' + anioActivo;
+                btn.className = `book-tab ${esActivo ? 'active' : esFuturo ? 'future' : tieneData ? 'past-data' : 'inactive'}`;
+                if (!esFuturo) {
+                    btn.onclick = () => seleccionarMes(m);
+                }
+                container.appendChild(btn);
+            }
+        }
+
+        // --- EDITAR META ---
+        function abrirEditarMeta() {
+            const actual = getMetaMes(anioActivo, mesActivo);
+            document.getElementById('input-meta-valor').value = actual;
+            document.getElementById('meta-modal-mes-label').textContent =
+                `${MESES_ES[mesActivo]} ${anioActivo}`;
+            document.getElementById('modalEditarMeta').showModal();
+        }
+
+        function guardarMeta() {
+            const val = parseFloat(document.getElementById('input-meta-valor').value);
+            if (isNaN(val) || val < 0) return;
+            setMetaMes(anioActivo, mesActivo, val);
+            document.getElementById('modalEditarMeta').close();
+            cargarDatosFinancieros();
         }
 
         async function cargarDatosFinancieros() {
             try {
-                // Fetch settings from localStorage FIRST to ensure UI updates even if DB fails
-                const metaMes = parseFloat(localStorage.getItem('metaMensual')) || 25000;
+                // Meta del mes activo (por mes/año)
+                const metaMes = getMetaMes(anioActivo, mesActivo);
                 const igvPorcentaje = parseFloat(localStorage.getItem('igvPorcentaje')) || 18;
                 const comisionPOS = parseFloat(localStorage.getItem('comisionPOSNacional')) || 4.5;
-                
+
+                // Actualizar título
+                const tituloEl = document.getElementById('mes-titulo');
+                if (tituloEl) tituloEl.textContent = `${MESES_ES[mesActivo]} ${anioActivo} · Meta: ${formatCurrency(metaMes)}`;
+                const anioEl = document.getElementById('anio-display');
+                if (anioEl) anioEl.textContent = anioActivo;
+
                 const metaMesEl = document.getElementById('meta-mes');
                 if (metaMesEl) metaMesEl.textContent = formatCurrency(metaMes);
 
                 const urlParams = new URLSearchParams(window.location.search);
                 const pacienteId = urlParams.get('paciente_id');
-                
+
+                // Calcular rango del mes seleccionado
+                const firstDay = new Date(anioActivo, mesActivo, 1);
+                const lastDay  = new Date(anioActivo, mesActivo + 1, 1);
+                const firstDayISO = firstDay.toISOString();
+                const lastDayISO  = lastDay.toISOString();
+
                 let query = supabaseClient
                     .from('pagos')
                     .select(`
@@ -449,22 +646,9 @@
                         pacientes ( nombre ),
                         citas ( tratamiento, created_at, estado )
                     `)
+                    .gte('fecha', firstDayISO)
+                    .lt('fecha', lastDayISO)
                     .order('fecha', { ascending: false });
-
-                const mes = document.getElementById('filtro-mes')?.value;
-                const fechaInicio = document.getElementById('filtro-fecha-inicio')?.value;
-                const fechaFin = document.getElementById('filtro-fecha-fin')?.value;
-
-                if (fechaInicio) {
-                    query = query.gte('fecha', fechaInicio + 'T00:00:00');
-                }
-                if (fechaFin) {
-                    query = query.lte('fecha', fechaFin + 'T23:59:59');
-                } else if (mes && !fechaInicio && !fechaFin) {
-                    const firstDay = new Date(mes + '-01').toISOString();
-                    const nextMonth = new Date(new Date(mes + '-01').setMonth(new Date(mes + '-01').getMonth() + 1)).toISOString();
-                    query = query.gte('fecha', firstDay).lt('fecha', nextMonth);
-                }
 
                 if (pacienteId) {
                     query = query.eq('paciente_id', pacienteId);
@@ -473,6 +657,7 @@
                 const { data: pagos, error } = await query;
 
                 if (error) throw error;
+
 
                 let safePagos = pagos || [];
                 const busquedaPaciente = document.getElementById('filtro-paciente')?.value?.toLowerCase();
@@ -979,8 +1164,12 @@
 
 
         document.addEventListener("DOMContentLoaded", async () => {
+            // Inicializar navegación de meses
+            document.getElementById('anio-display').textContent = anioActivo;
+            renderBookTabs();
             await cargarDatosFinancieros();
-            
+
+
             // URL Param handling removed from Finanzas
 
             // Filtrado del Libro de Transacciones
