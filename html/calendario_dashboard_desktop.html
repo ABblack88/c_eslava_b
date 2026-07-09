@@ -521,6 +521,8 @@
         const currentHour = now.getHours();
         const currentMinute = now.getMinutes();
         
+        const isEditMode = !!window.editingCitaId;
+        
         const opening = localStorage.getItem('horaApertura') || '08:00';
         const closing = localStorage.getItem('horaCierre') || '20:00';
         
@@ -539,11 +541,11 @@
             const val00 = `${formattedH}:00 ${ampm}`;
             const val30 = `${formattedH}:30 ${ampm}`;
             
-            if (!isToday || i > currentHour) {
+            if (!isToday || isEditMode || i > currentHour) {
                 selectTime.innerHTML += `<option value="${val00}">${val00}</option>`;
                 hasOptions = true;
             }
-            if (!isToday || i > currentHour || (i === currentHour && currentMinute <= 30)) {
+            if (!isToday || isEditMode || i > currentHour || (i === currentHour && currentMinute <= 30)) {
                 selectTime.innerHTML += `<option value="${val30}">${val30}</option>`;
                 hasOptions = true;
             }
@@ -662,6 +664,7 @@
                     
                     document.getElementById('appt-notes').value = cita.notas || '';
                     
+                    window.editingCitaId = cita.id;
                     // Populate time options first
                     populateTimeOptions();
                     
@@ -674,14 +677,9 @@
                     let displayTime = `${h12.toString().padStart(2, '0')}:${m} ${ampm}`;
                     
                     const timeSelect = document.getElementById('appt-time');
-                    // Ensure the option exists, if not create it
-                    let exists = Array.from(timeSelect.options).some(opt => opt.value === displayTime);
-                    if (!exists) {
-                        timeSelect.innerHTML += `<option value="${displayTime}">${displayTime}</option>`;
-                    }
                     timeSelect.value = displayTime;
                     
-                    window.editingCitaId = cita.id;
+                    
                     
                     // Update Modal Title & Button
                     const modalTitle = document.querySelector('#new-appointment-modal h3');
