@@ -643,7 +643,13 @@
             if (cita.estado === 'Completado' || cita.estado === 'Completada') {
                 btnAtender.innerHTML = `<span class="material-symbols-outlined">edit_document</span> Editar Cita`;
             } else {
-                btnAtender.innerHTML = `<span class="material-symbols-outlined">clinical_notes</span> Atender Cita`;
+                
+            if (cita.estado === 'Completada' || cita.estado === 'Completado') {
+                btnAtender.innerHTML = `<span class="material-symbols-outlined text-lg">edit_document</span> Editar Procedimiento`;
+            } else {
+                btnAtender.innerHTML = `<span class="material-symbols-outlined text-lg">clinical_notes</span> Atender Cita`;
+            }
+
             }
 
             

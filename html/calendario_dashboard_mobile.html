@@ -714,7 +714,13 @@
             if (cita.estado === 'Completado') {
                 btnAtender.innerHTML = `<span class="material-symbols-outlined text-lg">clinical_notes</span> Ver Atención`;
             } else {
+                
+            if (cita.estado === 'Completada' || cita.estado === 'Completado') {
+                btnAtender.innerHTML = `<span class="material-symbols-outlined text-lg">edit_document</span> Editar Procedimiento`;
+            } else {
                 btnAtender.innerHTML = `<span class="material-symbols-outlined text-lg">clinical_notes</span> Atender Cita`;
+            }
+
             }
             
             const btnEditar = document.getElementById('btn-opt-editar');
