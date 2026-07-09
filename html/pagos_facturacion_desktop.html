@@ -114,77 +114,82 @@
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-        /* ======= BOOK TABS ======= */
+        /* ======= BOOK TABS (TOP HORIZONTAL) ======= */
         .book-tabs-container {
-            position: fixed;
-            left: 256px; /* same as aside width */
-            top: 64px;   /* below topbar */
-            bottom: 0;
-            width: 72px;
-            background: transparent;
             display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            z-index: 30;
-            pointer-events: none;
+            flex-direction: row;
+            align-items: flex-end;
+            gap: 3px;
+            padding: 0 0 0 0;
+            overflow-x: auto;
+            scrollbar-width: none;
         }
+        .book-tabs-container::-webkit-scrollbar { display: none; }
         .book-tab {
-            pointer-events: all;
-            writing-mode: vertical-rl;
-            text-orientation: mixed;
-            transform: rotate(180deg);
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 6px;
-            padding: 10px 0;
-            width: 52px;
+            padding: 7px 16px;
+            min-width: 56px;
             font-size: 11px;
             font-weight: 700;
-            letter-spacing: 0.05em;
+            letter-spacing: 0.06em;
             text-transform: uppercase;
-            border-radius: 0 10px 10px 0;
-            margin-bottom: 3px;
+            border-radius: 10px 10px 0 0;
             border: 1.5px solid transparent;
-            border-left: none;
+            border-bottom: none;
             transition: all 0.18s ease;
             white-space: nowrap;
-            overflow: hidden;
             flex-shrink: 0;
+            position: relative;
+            bottom: 0;
         }
         .book-tab.active {
             background: #006578;
             color: #ffffff;
             border-color: #004e5d;
-            width: 62px;
-            box-shadow: 4px 0 12px rgba(0,101,120,0.25);
+            padding-top: 10px;
+            bottom: 0;
+            box-shadow: 0 -4px 12px rgba(0,101,120,0.18);
         }
         .book-tab.inactive {
             background: #f2f4f4;
             color: #3d494c;
             border-color: #bdc8cd;
+            bottom: -2px;
         }
         .book-tab.inactive:hover {
             background: #e6e8e8;
             color: #006578;
-            width: 58px;
+            bottom: -1px;
         }
         .book-tab.past-data {
-            background: #eff8fa;
-            color: #00687a;
-            border-color: #bdc8cd;
+            background: #dff4f8;
+            color: #006578;
+            border-color: #9fd8e8;
+            bottom: -2px;
+        }
+        .book-tab.past-data:hover {
+            background: #c8ecf5;
+            bottom: -1px;
         }
         .book-tab.future {
             background: #f8fafa;
-            color: #6d797d;
-            border-color: #eceeee;
-            opacity: 0.5;
+            color: #b0bec5;
+            border-color: #e1e3e3;
+            bottom: -4px;
+            opacity: 0.55;
             cursor: not-allowed;
+            font-size: 10px;
         }
-        /* main content area shifted right to make room for tabs */
+        .book-tabs-bar {
+            border-bottom: 2px solid #006578;
+            margin-bottom: 0;
+        }
+        /* main content no longer needs left offset for tabs */
         .main-with-tabs {
-            margin-left: calc(256px + 72px);
+            margin-left: 256px;
         }
     </style>
 
@@ -245,11 +250,12 @@
 </button>
 </div>
 </header>
-<!-- Book-style Month Tabs (fixed left, next to sidebar) -->
-<div class="book-tabs-container" id="bookTabs"></div>
-
 <!-- Main Content Canvas -->
 <main class="main-with-tabs p-10 min-h-[calc(100vh-4rem)]">
+<!-- Book Tabs Bar (top of content) -->
+<div class="book-tabs-bar mb-6">
+    <div class="book-tabs-container" id="bookTabs"></div>
+</div>
 <!-- Header Section -->
 <section class="mb-8 flex justify-between items-start flex-wrap gap-4">
 <div>
