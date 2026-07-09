@@ -514,11 +514,12 @@
                         chkContinuacion.disabled = true;
                     } else {
                         // It's a package
-                        if (count === 0 && !isAlreadySavedInThisCita) {
+                        if (sessionNum % duracion === 1) {
                             chkContinuacion.checked = false;
                             chkContinuacion.disabled = true; // First session must be paid
                         } else {
-                            chkContinuacion.disabled = false;
+                            chkContinuacion.checked = true; // Auto-check for sessions 2,3,4,5...
+                            chkContinuacion.disabled = true; // Force it to be a continuation
                         }
                     }
                 }

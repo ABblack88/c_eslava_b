@@ -794,6 +794,7 @@
             } else {
                 const sesionActual = resto + 1;
                 textEl.innerHTML = `<b>Sesión de Paquete:</b> El paciente consumirá la sesión ${sesionActual} de ${totalSesiones}. <b>No se generará cobro</b> (ya comprado).`;
+                if (chk) { chk.checked = true; chk.disabled = true; }
             }
         } catch (err) {
             console.error('Error al verificar sesiones:', err);
