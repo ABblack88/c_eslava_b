@@ -254,9 +254,15 @@
                         <span class="material-symbols-outlined text-primary">analytics</span>
                         Ocupación y Capacidad Real
                     </h3>
-                    <div class="flex items-center gap-2">
-                        <label class="text-sm text-on-surface-variant">Camillas Activas:</label>
-                        <input type="number" id="input-camillas" value="3" min="1" max="10" class="w-16 p-1 border rounded text-center" onchange="cargarDatosEstrategicos()">
+                    <div class="flex items-center gap-4">
+                        <div class="flex items-center gap-2">
+                            <label class="text-sm text-on-surface-variant">Costo Fijo / Hr (S/):</label>
+                            <input type="number" id="input-costo-fijo" value="25" min="0" step="1" class="w-16 p-1 border rounded text-center" onchange="cargarDatosEstrategicos()">
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <label class="text-sm text-on-surface-variant">Camillas Activas:</label>
+                            <input type="number" id="input-camillas" value="3" min="1" max="10" class="w-16 p-1 border rounded text-center" onchange="cargarDatosEstrategicos()">
+                        </div>
                     </div>
                 </div>
                 <div class="grid grid-cols-3 gap-4 mb-6">
@@ -279,12 +285,12 @@
                     <div class="p-4 border border-outline-variant rounded-lg">
                         <p class="text-sm text-on-surface-variant mb-1">Costo de Ocupación Vacía</p>
                         <p class="text-xl font-bold text-warning" id="costo-vacia">S/ 0.00</p>
-                        <p class="text-xs text-on-surface-variant mt-1">Horas no utilizadas × Costo Fijo Estimado</p>
+                        <p class="text-xs text-on-surface-variant mt-1">Horas no utilizadas × Costo Fijo / Hr</p>
                     </div>
                     <div class="p-4 border border-outline-variant rounded-lg">
-                        <p class="text-sm text-on-surface-variant mb-1">Pérdida por No-Show (Estimado)</p>
+                        <p class="text-sm text-on-surface-variant mb-1">Citas canceladas último minuto</p>
                         <p class="text-xl font-bold text-error" id="perdida-noshow">S/ 0.00</p>
-                        <p class="text-xs text-on-surface-variant mt-1">Citas canceladas último minuto</p>
+                        <p class="text-xs text-on-surface-variant mt-1">Ingresos perdidos (aprox)</p>
                     </div>
                 </div>
             </div>
@@ -428,14 +434,15 @@
                 const capacidadEstimada = 22 * 8 * camillas;
                 const ocupacionPerc = capacidadEstimada > 0 ? (horasOcupadas / capacidadEstimada) * 100 : 0;
                 
-                // Costo vacía: asumimos costo fijo hora de S/ 25
+                // Costo fijo estimado (dinámico desde input)
+                const costoFijoHora = Number(document.getElementById('input-costo-fijo').value) || 0;
                 const horasVacias = Math.max(0, capacidadEstimada - horasOcupadas);
-                const costoVacia = horasVacias * 25;
+                const costoOcupacionVacia = horasVacias * costoFijoHora;
 
                 document.getElementById('horas-ocupadas').textContent = horasOcupadas.toFixed(1) + ' h';
                 document.getElementById('capacidad-total').textContent = capacidadEstimada + ' h';
                 document.getElementById('porcentaje-ocupacion').textContent = ocupacionPerc.toFixed(1) + '%';
-                document.getElementById('costo-vacia').textContent = 'S/ ' + costoVacia.toFixed(2);
+                document.getElementById('costo-vacia').textContent = 'S/ ' + costoOcupacionVacia.toFixed(2);
                 document.getElementById('perdida-noshow').textContent = 'S/ ' + perdidaNoShow.toFixed(2);
 
                 // --- MÓDULO 3: Pacientes en Riesgo (>45 días) ---
