@@ -330,7 +330,7 @@
                                     <th class="pb-2">Segmento</th>
                                     <th class="pb-2">Pacientes</th>
                                     <th class="pb-2 text-right">Ticket Promedio</th>
-                                    <th class="pb-2 text-right" title="Lifetime Value (Valor Vitalicio del Cliente)">LTV Estimado (Anual)</th>
+                                    <th class="pb-2 text-right" title="Lifetime Value (Valor Vitalicio del Cliente)">LTV Estimado (Mensual)</th>
                                 </tr>
                             </thead>
                             <tbody id="tabla-segmentos" class="divide-y divide-surface-container">
@@ -564,11 +564,11 @@
                     });
                     
                     const ticketPromedio = segmentos[seg].count > 0 ? totalIngresoSeg / segmentos[seg].count : 0;
-                    // LTV anual estimado simplificado: Semanal(x48), Quincenal(x24), Mensual(x12), Espo(x3)
-                    let multiplier = 3;
-                    if(seg.includes('Semanal')) multiplier = 48;
-                    else if(seg.includes('Quincenal')) multiplier = 24;
-                    else if(seg.includes('Mensual')) multiplier = 12;
+                    // LTV mensual estimado: Semanal(x4), Quincenal(x2), Mensual(x1), Espo(x0.33)
+                    let multiplier = 0.33;
+                    if(seg.includes('Semanal')) multiplier = 4;
+                    else if(seg.includes('Quincenal')) multiplier = 2;
+                    else if(seg.includes('Mensual')) multiplier = 1;
                     
                     const ltv = ticketPromedio * multiplier;
 
@@ -609,7 +609,7 @@
                         ingresos: st.ingresos,
                         porcentaje: totalIngresos3Meses > 0 ? (st.ingresos / totalIngresos3Meses) * 100 : 0,
                         ticketPromedio: st.pacientes.size > 0 ? st.ingresos / st.pacientes.size : 0,
-                        vvcEstimado: st.ingresos * 4 // Extrapolado a 1 año
+                        vvcEstimado: (st.ingresos / 3) // Extrapolado a 1 mes
                     };
                 }).sort((a,b) => b.ingresos - a.ingresos);
 
