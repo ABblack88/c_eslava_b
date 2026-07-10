@@ -716,7 +716,7 @@
                     const serviciosList = Object.entries(p[1].servicios)
                         .sort((a,b) => b[1] - a[1])
                         .slice(0, 3)
-                        .map(s => `<span class="block">• ${s[0]}</span>`)
+                        .map(s => `<span class="block">• ${s[0]} (${s[1]} veces)</span>`)
                         .join('');
                         
                     return `
