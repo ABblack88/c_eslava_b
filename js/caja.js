@@ -611,8 +611,9 @@
                                 <label for="pend_${pago.id}" class="font-bold text-sm text-on-surface cursor-pointer block">${pago.descripcion || (pago.citas && pago.citas.tratamiento) || 'Cobro Pendiente'}</label>
                                 <p class="text-xs text-on-surface-variant">${fecha}</p>
                             </div>
-                            <div class="text-right pend-precio-container" data-id="${pago.id}">
+                            <div class="text-right pend-precio-container flex flex-col items-end justify-center gap-1" data-id="${pago.id}">
                                 <span class="font-bold text-primary text-sm pend-precio">S/. ${parseFloat(pago.monto).toFixed(2)}</span>
+                                <button type="button" class="text-xs text-outline hover:text-primary transition-colors flex items-center gap-1" onclick="editarPrecioPago('${pago.id}')" title="Editar monto"><span class="material-symbols-outlined text-[12px]">edit</span></button>
                             </div>
                         </div>
                         `;
@@ -626,6 +627,22 @@
                 listContainer.innerHTML = '<p class="text-error text-sm py-2">Error al cargar ítems pendientes.</p>';
             }
         }
+
+        window.editarPrecioPago = function(id) {
+            const pago = pendientesDelPaciente.find(p => p.id == id);
+            if (!pago) return;
+            
+            const nuevoPrecio = prompt(`Ingrese el nuevo monto para "${pago.descripcion || 'este cobro'}":`, parseFloat(pago.monto).toFixed(2));
+            if (nuevoPrecio !== null && !isNaN(parseFloat(nuevoPrecio)) && parseFloat(nuevoPrecio) >= 0) {
+                pago.monto = parseFloat(nuevoPrecio);
+                const container = document.querySelector(`.pend-precio-container[data-id="${id}"]`);
+                if (container) {
+                    const precioEl = container.querySelector('.pend-precio');
+                    if (precioEl) precioEl.textContent = `S/. ${parseFloat(pago.monto).toFixed(2)}`;
+                }
+                calcularTotalesFactura();
+            }
+        };
 
         function calcularTotalesFactura() {
             let subtotal = 0;
