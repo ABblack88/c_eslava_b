@@ -219,6 +219,19 @@
 <div class="flex flex-col gap-8 items-start">
 <!-- Management & Settings Side Panel -->
 <section id="admin-settings-section" class="w-full flex flex-col gap-6">
+
+<!-- Aprobación de Usuarios -->
+<div class="bg-surface-white rounded-xl p-6 shadow-[0px_10px_30px_rgba(0,0,0,0.04)] flex flex-col gap-6">
+    <div class="flex items-center gap-3 border-b border-surface-variant pb-4">
+        <span class="material-symbols-outlined text-primary">how_to_reg</span>
+        <h2 class="font-headline-md text-headline-md text-on-background">Aprobación de Usuarios</h2>
+    </div>
+    <p class="text-xs text-on-surface-variant -mt-2">Administra cuentas pendientes.</p>
+    <div id="usuarios-pendientes-list-mobile" class="space-y-3 max-h-[350px] overflow-y-auto pr-1">
+        <p class="text-outline text-xs text-center py-4">Cargando...</p>
+    </div>
+</div>
+
 <!-- Ajustes (Settings) Card -->
 <div class="bg-surface-white rounded-xl p-6 shadow-[0px_10px_30px_rgba(0,0,0,0.04)] flex flex-col gap-6">
 <div class="flex items-center gap-3 border-b border-surface-variant pb-4">
@@ -606,7 +619,77 @@
             cargarProductos();
             cargarAjustes();
             cargarDatosCuenta();
+            cargarUsuariosPendientesMobile();
         });
+
+        async function cargarUsuariosPendientesMobile() {
+            try {
+                const { data: usuarios, error } = await supabaseClient
+                    .from('profiles')
+                    .select('*')
+                    .eq('status', 'pendiente')
+                    .order('created_at', { ascending: false });
+
+                if (error) throw error;
+
+                const container = document.getElementById('usuarios-pendientes-list-mobile');
+                if(!container) return;
+                
+                if (usuarios.length === 0) {
+                    container.innerHTML = '<p class="text-outline text-xs text-center py-4">No hay usuarios pendientes.</p>';
+                    return;
+                }
+
+                let html = '';
+                usuarios.forEach(u => {
+                    html += `
+                    <div class="flex flex-col gap-2 p-3 bg-surface-container-low rounded-xl border border-surface-variant/50">
+                        <div class="flex-1 min-w-0">
+                            <p class="font-bold text-sm text-on-surface truncate">${u.full_name || 'Sin nombre'}</p>
+                            <p class="text-[11px] text-outline truncate">${u.role || 'Desconocido'} • ${new Date(u.created_at).toLocaleDateString()}</p>
+                        </div>
+                        <div class="flex items-center gap-2 mt-1">
+                            <button onclick="rechazarUsuarioMobile('${u.id}')" class="flex-1 py-1.5 text-error border border-error/20 hover:bg-error/10 rounded-lg transition-colors text-xs font-bold text-center">
+                                Rechazar
+                            </button>
+                            <button onclick="aprobarUsuarioMobile('${u.id}')" class="flex-1 py-1.5 text-success bg-success/10 hover:bg-success/20 rounded-lg transition-colors text-xs font-bold text-center">
+                                Aprobar
+                            </button>
+                        </div>
+                    </div>
+                    `;
+                });
+                container.innerHTML = html;
+            } catch (err) {
+                console.error("Error cargando usuarios pendientes:", err);
+                const container = document.getElementById('usuarios-pendientes-list-mobile');
+                if(container) container.innerHTML = '<p class="text-error text-[11px] text-center">Error al cargar datos.</p>';
+            }
+        }
+
+        async function aprobarUsuarioMobile(id) {
+            if(!confirm("¿Aprobar el acceso de este usuario?")) return;
+            try {
+                const { error } = await supabaseClient.from('profiles').update({ status: 'aprobado' }).eq('id', id);
+                if (error) throw error;
+                cargarUsuariosPendientesMobile();
+            } catch (err) {
+                console.error(err);
+                alert("Error al aprobar usuario.");
+            }
+        }
+
+        async function rechazarUsuarioMobile(id) {
+            if(!confirm("¿Rechazar y eliminar a este usuario?")) return;
+            try {
+                const { error } = await supabaseClient.from('profiles').delete().eq('id', id);
+                if (error) throw error;
+                cargarUsuariosPendientesMobile();
+            } catch (err) {
+                console.error(err);
+                alert("Error al rechazar usuario.");
+            }
+        }
 
         function cargarAjustes() {
             const meta = localStorage.getItem('metaMensual') || 50000;
