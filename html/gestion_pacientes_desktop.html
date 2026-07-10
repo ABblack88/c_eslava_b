@@ -263,6 +263,10 @@
                             <label class="text-sm text-on-surface-variant">Camillas Activas:</label>
                             <input type="number" id="input-camillas" value="3" min="1" max="10" class="w-16 p-1 border rounded text-center" onchange="cargarDatosEstrategicos()">
                         </div>
+                        <div class="flex items-center gap-2">
+                            <label class="text-sm text-on-surface-variant" title="Días no laborables en el mes a restar de los 22 hábiles por defecto">Feriados (Días):</label>
+                            <input type="number" id="input-feriados" value="0" min="0" max="15" class="w-16 p-1 border rounded text-center" onchange="cargarDatosEstrategicos()">
+                        </div>
                     </div>
                 </div>
                 <div class="grid grid-cols-3 gap-4 mb-6">
@@ -466,9 +470,11 @@
 
                 const horasOcupadas = minutosOcupados / 60;
                 const camillas = Number(document.getElementById('input-camillas').value) || 3;
+                const feriados = Number(document.getElementById('input-feriados').value) || 0;
                 
-                // Capacidad: Asumimos 22 días hábiles x 8 horas x camillas
-                const capacidadEstimada = 22 * 8 * camillas;
+                // Capacidad: Asumimos (22 - feriados) días hábiles x 8 horas x camillas
+                const diasHabiles = Math.max(0, 22 - feriados);
+                const capacidadEstimada = diasHabiles * 8 * camillas;
                 const ocupacionPerc = capacidadEstimada > 0 ? (horasOcupadas / capacidadEstimada) * 100 : 0;
                 
                 // Costo fijo estimado (dinámico desde input)
