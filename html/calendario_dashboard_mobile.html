@@ -1,73 +1,119 @@
 <!DOCTYPE html>
-
-<html lang="es"><head>
+<html class="light" lang="es">
+<head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Centro Eslava - Panel de Calendario</title>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=block" rel="stylesheet"/>
+    <!-- FullCalendar SDK -->
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js'></script>
+    <!-- Supabase SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../js/supabase.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;700&amp;display=block" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=block" rel="stylesheet"/>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="../js/supabase.js"></script>
+<style>
+        body {
+            font-family: 'Hanken Grotesk', sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        .fc-timegrid-event .fc-event-main, .fc-daygrid-event .fc-event-main {
+            white-space: normal !important;
+            overflow: visible !important;
+            color: #ffffff !important;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+            font-size: 0.85rem !important;
+            font-weight: 600 !important;
+            padding: 2px 4px !important;
+        }
+        .fc-list-event td, .fc-list-event-title, .fc-list-event-title a, .fc-list-event-time, .fc-list-event-time * {
+            font-weight: 600 !important;
+            color: #191c1d !important;
+            text-shadow: none !important;
+        }
+        .fc-event {
+            overflow: visible !important;
+            height: auto !important;
+            cursor: pointer !important;
+        }
+        .fc-timegrid-event-short .fc-event-main-frame {
+            flex-direction: column !important;
+        }
+    </style>
 <script id="tailwind-config">
         tailwind.config = {
             darkMode: "class",
             theme: {
                 extend: {
                     "colors": {
-                        "on-primary": "#ffffff",
-                        "primary-fixed": "#aeecff",
-                        "on-secondary-fixed": "#001f26",
-                        "surface": "#f8fafa",
-                        "tertiary-container": "#a96418",
-                        "surface-white": "#FFFFFF",
+                        "surface-container": "#eceeee",
+                        "primary-fixed-dim": "#66d5f1",
+                        "tertiary": "#8a4d00",
+                        "outline": "#6d797d",
+                        "on-tertiary-fixed": "#2e1600",
+                        "on-primary-container": "#f9fdff",
+                        "surface-container-low": "#f2f4f4",
+                        "error-container": "#ffdad6",
+                        "surface-bright": "#f8fafa",
+                        "secondary-fixed-dim": "#78d3eb",
+                        "on-primary-fixed": "#001f26",
+                        "text-muted": "#636366",
+                        "tertiary-fixed-dim": "#ffb877",
+                        "on-surface": "#191c1d",
+                        "inverse-on-surface": "#eff1f1",
+                        "outline-variant": "#bdc8cd",
                         "error": "#ba1a1a",
-                        "on-primary-fixed-variant": "#004e5d",
+                        "tertiary-container": "#a96418",
+                        "on-surface-variant": "#3d494c",
+                        "on-tertiary": "#ffffff",
+                        "on-background": "#191c1d",
+                        "surface-container-lowest": "#ffffff",
+                        "on-secondary-fixed": "#001f26",
+                        "surface-dim": "#d8dada",
+                        "surface-white": "#FFFFFF",
+                        "surface": "#f8fafa",
+                        "inverse-surface": "#2e3131",
+                        "primary-container": "#008097",
                         "warning": "#FF9500",
                         "secondary-container": "#89e4fd",
-                        "secondary-fixed-dim": "#78d3eb",
-                        "surface-tint": "#00687b",
-                        "on-tertiary-fixed": "#2e1600",
-                        "secondary-fixed": "#adecff",
-                        "success": "#34C759",
-                        "surface-container-lowest": "#ffffff",
-                        "text-main": "#1C1C1E",
-                        "on-secondary": "#ffffff",
-                        "outline-variant": "#bdc8cd",
-                        "on-secondary-fixed-variant": "#004e5c",
-                        "surface-container-high": "#e6e8e8",
-                        "surface-container-low": "#f2f4f4",
-                        "outline": "#6d797d",
-                        "on-primary-container": "#f9fdff",
-                        "primary": "#006578",
-                        "on-surface-variant": "#3d494c",
-                        "secondary": "#00687a",
+                        "on-primary-fixed-variant": "#004e5d",
                         "background": "#f8fafa",
-                        "on-tertiary-container": "#fffbff",
+                        "text-main": "#1C1C1E",
+                        "on-primary": "#ffffff",
+                        "on-error-container": "#93000a",
+                        "success": "#34C759",
+                        "on-secondary": "#ffffff",
+                        "inverse-primary": "#66d5f1",
+                        "primary-fixed": "#aeecff",
                         "on-error": "#ffffff",
                         "tertiary-fixed": "#ffdcc0",
-                        "on-secondary-container": "#006779",
-                        "on-primary-fixed": "#001f26",
-                        "error-container": "#ffdad6",
-                        "inverse-primary": "#66d5f1",
-                        "on-tertiary": "#ffffff",
-                        "on-error-container": "#93000a",
-                        "primary-container": "#008097",
-                        "text-muted": "#636366",
-                        "surface-bright": "#f8fafa",
-                        "primary-fixed-dim": "#66d5f1",
-                        "surface-dim": "#d8dada",
-                        "surface-container": "#eceeee",
-                        "surface-variant": "#e1e3e3",
-                        "surface-container-highest": "#e1e3e3",
-                        "tertiary-fixed-dim": "#ffb877",
-                        "inverse-surface": "#2e3131",
-                        "on-background": "#191c1d",
-                        "inverse-on-surface": "#eff1f1",
+                        "secondary": "#00687a",
                         "on-tertiary-fixed-variant": "#6b3b00",
-                        "on-surface": "#191c1d",
-                        "tertiary": "#8a4d00"
+                        "surface-container-highest": "#e1e3e3",
+                        "secondary-fixed": "#adecff",
+                        "primary": "#006578",
+                        "on-secondary-fixed-variant": "#004e5c",
+                        "on-secondary-container": "#006779",
+                        "surface-container-high": "#e6e8e8",
+                        "surface-variant": "#e1e3e3",
+                        "surface-tint": "#00687b",
+                        "on-tertiary-container": "#fffbff"
                     },
                     "borderRadius": {
                         "DEFAULT": "0.25rem",
@@ -76,1432 +122,211 @@
                         "full": "9999px"
                     },
                     "spacing": {
-                        "base": "8px",
                         "margin-desktop": "80px",
                         "margin-mobile": "20px",
-                        "gutter": "24px",
-                        "section-gap": "120px"
+                        "section-gap": "120px",
+                        "base": "8px",
+                        "gutter": "24px"
                     },
                     "fontFamily": {
-                        "body-md": ["Hanken Grotesk"],
+                        "headline-md": ["Hanken Grotesk"],
                         "display-lg": ["Hanken Grotesk"],
-                        "display-lg-mobile": ["Hanken Grotesk"],
-                        "label-sm": ["Hanken Grotesk"],
                         "body-lg": ["Hanken Grotesk"],
-                        "headline-md": ["Hanken Grotesk"]
+                        "label-sm": ["Hanken Grotesk"],
+                        "body-md": ["Hanken Grotesk"]
                     },
                     "fontSize": {
-                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
-                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
-                        "display-lg-mobile": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "700" }],
-                        "label-sm": ["13px", { "lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "600" }],
-                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
-                        "headline-md": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }]
+                        "headline-md": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                        "label-sm": ["13px", {"lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "600"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}]
                     }
                 }
             }
         }
     </script>
-<style>
-        body {
-            font-family: 'Hanken Grotesk', sans-serif;
-            background-color: #f8fafa; /* surface */
-        }
-        
-        /* Smooth scrolling and transitions */
-        html { scroll-behavior: smooth; }
-        
-        /* Drag-and-drop visual hints */
-        .draggable-card {
-            cursor: grab;
-            transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease;
-        }
-        .draggable-card:active {
-            cursor: grabbing;
-            transform: scale(1.02) rotate(-1deg);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.08);
-            z-index: 50;
-        }
-        
-        /* Calendar grid lines */
-        .calendar-grid {
-            background-image: linear-gradient(to bottom, #eceeee 1px, transparent 1px);
-            background-size: 100% 60px; /* Represents 1 hour slots */
-        }
-        
-        /* Hide scrollbar for clean look */
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #d8dada; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #bdc8cd; }
-    </style>
-<style>
-    body {
-      min-height: max(884px, 100dvh);
-    }
-  </style>
-
-    <script src="../js/app.js"></script>
     <script src="../js/rbac.js"></script>
     <link rel="manifest" href="../manifest.json">
 </head>
-<body class="text-on-surface antialiased bg-surface selection:bg-primary-container selection:text-on-primary-container">
-<!-- TopAppBar (Mobile & Desktop) -->
-<header class="bg-surface dark:bg-surface-dim shadow-[0px_10px_30px_rgba(0,0,0,0.04)] w-full top-0 flex justify-between items-center px-margin-mobile md:px-margin-desktop py-4 z-50 sticky">
-<div class="flex items-center gap-4">
-<button aria-label="Menu" class="md:hidden text-primary dark:text-primary-fixed hover:bg-surface-container-low dark:hover:bg-surface-container-high transition-colors active:scale-95 transition-transform duration-200 p-2 rounded-full">
-<span class="material-symbols-outlined" data-icon="menu">menu</span>
-</button>
-<h1 class="font-headline-md text-headline-md font-bold text-primary dark:text-primary-fixed">Centro Eslava</h1>
-</div>
-<!-- Desktop Nav -->
-<nav class="hidden md:flex gap-8 items-center">
-<a class="text-primary dark:text-primary-fixed font-semibold hover:bg-surface-container-low dark:hover:bg-surface-container-high transition-colors px-4 py-2 rounded-lg active:scale-95 transition-transform duration-200" href="calendario_dashboard_mobile.html">Agenda</a>
-<a class="text-on-surface-variant dark:text-outline hover:bg-surface-container-low dark:hover:bg-surface-container-high transition-colors px-4 py-2 rounded-lg active:scale-95 transition-transform duration-200" href="pacientes_historia_clinica_mobile.html">Pacientes</a>
-<a id="nav-link-servicios" class="text-on-surface-variant dark:text-outline hover:bg-surface-container-low dark:hover:bg-surface-container-high transition-colors px-4 py-2 rounded-lg active:scale-95 transition-transform duration-200" href="tratamientos_mobile.html">Servicios</a>
-</nav>
-<div class="flex items-center gap-4">
-<button onclick="openAppointmentModal()" class="bg-primary text-on-primary font-label-sm text-label-sm px-4 py-2 rounded-full hover:bg-secondary transition-colors shadow-sm hidden md:flex items-center gap-2">
-<span class="material-symbols-outlined text-[18px]">add</span>
-                Nueva Sesión
-            </button>
-<div class="h-10 w-10 rounded-full bg-surface-container-high overflow-hidden border-2 border-surface-white shadow-sm flex-shrink-0 cursor-pointer hover:ring-2 hover:ring-primary transition-all">
-<img alt="Foto de perfil del doctor" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDsNpwEcwdTkPT4FC8ZJXGU7sG7gtOoRkORMlToeG_901MuVsyDSxOxiGNzoHH2UwiSHegguoJqCKz-fe15ztRKfOW_4nlggJ_pPSL8Z0MQKQLz0ET53UPuXzk2Swt3W3i-y5XIgeq3EAQoT7Sa6ei2fdhVzhGwI-VtRHC4MdY611AmyVQfvhk4W9EWoNNE4SNLtsMlGbhign61k1AMWRLYBznw4d_u5eMnf6HRY4eTR4mQzTIRIF-QFoTSlOn2LLKN6k0aAlvM8wE"/>
-</div>
-</div>
+<body class="bg-background font-body-md text-on-surface">
+
+<header class="flex justify-between items-center h-18 px-4 bg-surface-white dark:bg-surface-container-lowest border-b border-surface-container sticky top-0 z-50 md:hidden">
+    <div class="flex items-center gap-2">
+        <span class="material-symbols-outlined text-primary text-2xl">health_and_safety</span>
+        <span class="font-headline-md text-label-sm font-bold text-primary">Centro Eslava</span>
+    </div>
+    <button aria-label="Menu" class="md:hidden text-primary dark:text-primary-fixed hover:bg-surface-container-low dark:hover:bg-surface-container-high transition-colors active:scale-95 transition-transform duration-200 p-2 rounded-full">
+        <span class="material-symbols-outlined">menu</span>
+    </button>
 </header>
-<!-- NavigationDrawer (Desktop SideNav) -->
+
 <aside class="fixed left-0 top-18 h-[calc(100vh-72px)] w-72 bg-surface-white dark:bg-surface-container-lowest shadow-[0px_10px_30px_rgba(0,0,0,0.04)] z-40 hidden md:flex flex-col p-6 overflow-y-auto">
-<!-- Profile Header -->
-<div class="flex items-center gap-4 mb-8 pb-6 border-b border-surface-container">
-<div class="h-12 w-12 rounded-full bg-surface-container-high overflow-hidden flex-shrink-0">
-<img alt="Foto de perfil del administrador clínico" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBjMEh4SemiD9nurmauOrO4D1bIGoLuAlXsA0ZxZkEppy0rs19b0XNcul5AosYSCfc84y3fN0xMAUZvNXMXCLEUC9-avUrzGOzYgDC6RoP8d02bvCHdps_YsVf97hMIR7GBhUGqsoFNd83QoWTdrk9XbJXrVKq4Lu1NsjXItx9Uo1f6JMY75zbdQsLXqmeQKIhj_bYPAxdilnTGOAz5I6WC8MxXSwsKDCfFt9_k7ko9A5RY-TTq-BR4WneOmB_HRZeMebslNzM022E"/>
-</div>
-<div>
-<h2 id="drawer-profile-name" class="font-body-md text-body-md font-semibold text-primary">Dr. Eslava</h2>
-<p id="drawer-profile-role" class="font-label-sm text-label-sm text-outline">Director Clínico</p>
-<span id="drawer-profile-badge" class="inline-block mt-1 px-2 py-0.5 bg-secondary-container/30 text-on-secondary-container rounded font-label-sm text-[10px]">Acceso Admin</span>
-</div>
-</div>
-<!-- Navigation Links -->
-<nav class="flex flex-col gap-2 flex-grow">
-<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant dark:text-outline hover:bg-surface-container-low transition-all active:scale-[0.98] transition-transform rounded-xl font-body-md text-body-md" href="calendario_dashboard_mobile.html">
-<span class="material-symbols-outlined">calendar_today</span>
-                Calendario
-            </a>
-<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant dark:text-outline hover:bg-surface-container-low transition-all active:scale-[0.98] transition-transform rounded-xl font-body-md text-body-md" href="citas_listado_mobile.html">
-<span class="material-symbols-outlined">list_alt</span>
-                Citas
-            </a>
-<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant dark:text-outline hover:bg-surface-container-low transition-all active:scale-[0.98] transition-transform rounded-xl font-body-md text-body-md" href="pacientes_historia_clinica_mobile.html">
-<span class="material-symbols-outlined">groups</span>
-                Pacientes
-            </a>
-<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant dark:text-outline hover:bg-surface-container-low transition-all active:scale-[0.98] transition-transform rounded-xl font-body-md text-body-md" href="tratamientos_mobile.html">
-<span class="material-symbols-outlined">medical_services</span>
-                Tratamientos
-            </a>
-<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant dark:text-outline hover:bg-surface-container-low transition-all active:scale-[0.98] transition-transform rounded-xl font-body-md text-body-md" href="productos_mobile.html">
-<span class="material-symbols-outlined">inventory_2</span>
-                Productos
-            </a>
-<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant dark:text-outline hover:bg-surface-container-low transition-all active:scale-[0.98] transition-transform rounded-xl font-body-md text-body-md" href="cobrar_mobile.html">
-<span class="material-symbols-outlined">point_of_sale</span>
-                Caja
-            </a>
-<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant dark:text-outline hover:bg-surface-container-low transition-all active:scale-[0.98] transition-transform rounded-xl font-body-md text-body-md" href="pagos_facturacion_mobile.html">
-<span class="material-symbols-outlined">payments</span>
-                Finanzas
-            </a>
-<a id="nav-link-gestion-mobile" class="flex items-center gap-3 px-4 py-3 text-on-surface-variant dark:text-outline hover:bg-surface-container-low transition-all active:scale-[0.98] transition-transform rounded-xl font-body-md text-body-md" href="gestion_pacientes_mobile.html">
-<span class="material-symbols-outlined">monitoring</span>
-                Gestión Estratégica
-            </a>
-</nav>
-<div class="mt-auto pt-6 border-t border-surface-container">
-<a id="drawer-link-ajustes" class="flex items-center gap-3 px-4 py-3 text-on-surface-variant dark:text-outline hover:bg-surface-container-low transition-all active:scale-[0.98] transition-transform rounded-xl font-body-md text-body-md" href="ajustes_mobile.html">
-<span class="material-symbols-outlined" data-icon="settings">settings</span>
-                Ajustes
-            </a>
-</div>
+    <div class="flex items-center gap-4 mb-8 pb-6 border-b border-surface-container">
+        <div class="h-12 w-12 rounded-full bg-surface-container-high overflow-hidden flex-shrink-0">
+            <span class="material-symbols-outlined m-3">person</span>
+        </div>
+        <div>
+            <h2 id="drawer-profile-name" class="font-body-md text-body-md font-semibold text-primary">Dr. Eslava</h2>
+            <p id="drawer-profile-role" class="font-label-sm text-label-sm text-outline">Director Clínico</p>
+            <span id="drawer-profile-badge" class="inline-block mt-1 px-2 py-0.5 bg-secondary-container/30 text-on-secondary-container rounded font-label-sm text-[10px]">Acceso Admin</span>
+        </div>
+    </div>
+    <nav class="flex flex-col gap-2 flex-grow">
+        <a id="nav-link-agenda-drawer" class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-low transition-all rounded-xl font-body-md" href="calendario_dashboard_mobile.html">
+            <span class="material-symbols-outlined">calendar_today</span> Calendario
+        </a>
+        <a id="nav-link-citas-drawer" class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-low transition-all rounded-xl font-body-md" href="citas_listado_mobile.html">
+            <span class="material-symbols-outlined">list_alt</span> Citas
+        </a>
+        <a id="nav-link-pacientes-drawer" class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-low transition-all rounded-xl font-body-md" href="pacientes_historia_clinica_mobile.html">
+            <span class="material-symbols-outlined">groups</span> Pacientes
+        </a>
+        <a id="nav-link-tratamientos-drawer" class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-low transition-all rounded-xl font-body-md" href="tratamientos_mobile.html">
+            <span class="material-symbols-outlined">medical_services</span> Tratamientos
+        </a>
+        <a id="nav-link-productos-drawer" class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-low transition-all rounded-xl font-body-md" href="productos_mobile.html">
+            <span class="material-symbols-outlined">inventory_2</span> Productos
+        </a>
+        <a id="nav-link-cobrar-drawer" class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-low transition-all rounded-xl font-body-md" href="cobrar_mobile.html">
+            <span class="material-symbols-outlined">point_of_sale</span> Caja
+        </a>
+        <a id="nav-link-finanzas-drawer" class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-low transition-all rounded-xl font-body-md" href="pagos_facturacion_mobile.html">
+            <span class="material-symbols-outlined">payments</span> Finanzas
+        </a>
+        <a id="nav-link-gestion-drawer" class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-low transition-all rounded-xl font-body-md" href="gestion_pacientes_mobile.html">
+            <span class="material-symbols-outlined">monitoring</span> Gestión Estratégica
+        </a>
+    </nav>
+    <div class="mt-auto pt-6 border-t border-surface-container">
+        <a id="nav-link-ajustes-drawer" class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-low transition-all rounded-xl font-body-md" href="ajustes_mobile.html">
+            <span class="material-symbols-outlined">settings</span> Ajustes
+        </a>
+    </div>
 </aside>
-<!-- Main Content Area -->
-<main class="md:ml-72 min-h-screen px-margin-mobile md:px-margin-desktop py-8 pb-24 md:pb-8">
-<!-- Dashboard Header -->
-<div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 mb-8">
+
+<main class="md:ml-72 min-h-screen px-4 py-8 pb-24 md:pb-8">
+
+<!-- Dashboard Summary Grid -->
+<section class="grid grid-cols-1 md:grid-cols-3 gap-gutter mb-section-gap">
+<div class="bg-surface-white p-6 rounded-xl shadow-[0px_10px_30px_rgba(0,0,0,0.04)] border border-surface-container-low">
+<div class="flex justify-between items-start mb-4">
+<div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary" data-icon="event">event</span>
+</div>
+<span class="text-on-surface-variant text-label-sm">Hoy</span>
+</div>
+<p class="text-on-surface-variant font-label-sm">Citas Pendientes Hoy</p>
+<h3 id="stat-citas-hoy" class="font-headline-md text-headline-md mt-1">...</h3>
+<p id="stat-citas-hoy-total" class="text-xs text-outline mt-1">Cargando total...</p>
+</div>
+<div class="bg-surface-white p-6 rounded-xl shadow-[0px_10px_30px_rgba(0,0,0,0.04)] border border-surface-container-low">
+<div class="flex justify-between items-start mb-4">
+<div class="w-12 h-12 rounded-full bg-warning/10 flex items-center justify-center">
+<span class="material-symbols-outlined text-warning" data-icon="pending_actions">pending_actions</span>
+</div>
+<span class="text-on-surface-variant text-label-sm">Atención requerida</span>
+</div>
+<p class="text-on-surface-variant font-label-sm">Citas por Confirmar</p>
+<h3 id="stat-citas-confirmar" class="font-headline-md text-headline-md mt-1">...</h3>
+</div>
+<div class="bg-surface-white p-6 rounded-xl shadow-[0px_10px_30px_rgba(0,0,0,0.04)] border border-surface-container-low">
+<div class="flex justify-between items-start mb-4">
+<div class="w-12 h-12 rounded-full bg-secondary-container/30 flex items-center justify-center">
+<span class="material-symbols-outlined text-secondary" data-icon="event_upcoming">event_upcoming</span>
+</div>
+<span class="text-on-surface-variant text-label-sm">Mañana</span>
+</div>
+<p class="text-on-surface-variant font-label-sm">Citas para Mañana</p>
+<h3 id="stat-citas-manana" class="font-headline-md text-headline-md mt-1">...</h3>
+</div>
+</section>
+<!-- Agenda Section -->
+<section class="mb-section-gap">
+<div class="flex justify-between items-end mb-8">
 <div>
-<p class="font-label-sm text-label-sm text-outline uppercase tracking-wider mb-1">Agenda de Hoy</p>
-<h2 class="font-display-lg-mobile md:font-display-lg text-display-lg-mobile md:text-display-lg text-on-surface">Jueves, 26 Oct</h2>
+<h2 class="font-display-lg text-[32px] text-on-surface">Calendario</h2>
+<p class="text-on-surface-variant font-body-md mt-1">Lunes, 24 de Julio</p>
 </div>
-<div class="flex items-center bg-surface-white rounded-lg shadow-sm border border-surface-container p-1 w-full md:w-auto">
-<button class="flex-1 md:flex-none px-4 py-2 bg-surface-container-low text-primary rounded-md font-label-sm text-label-sm transition-colors">Día</button>
-<button class="flex-1 md:flex-none px-4 py-2 text-outline hover:bg-surface hover:text-on-surface transition-colors rounded-md font-label-sm text-label-sm">Semana</button>
-<button class="flex-1 md:flex-none px-4 py-2 text-outline hover:bg-surface hover:text-on-surface transition-colors rounded-md font-label-sm text-label-sm">Mes</button>
-</div>
-</div>
-<!-- Quick Stats / Bento Top -->
-<div class="grid grid-cols-2 md:grid-cols-3 gap-4 mb-8">
-<div class="bg-surface-white rounded-xl p-4 shadow-[0px_10px_30px_rgba(0,0,0,0.04)] border border-surface-container/50">
-<div class="flex items-center gap-2 text-outline mb-2">
-<span class="material-symbols-outlined text-[20px] text-primary">event</span>
-<span class="font-label-sm text-label-sm">Hoy</span>
-</div>
-<p class="font-label-sm text-xs text-on-surface-variant mb-1">Citas para Hoy</p>
-<p id="stat-citas-hoy" class="font-headline-md text-headline-md text-primary">...</p>
-</div>
-<div class="bg-surface-white rounded-xl p-4 shadow-[0px_10px_30px_rgba(0,0,0,0.04)] border border-surface-container/50">
-<div class="flex items-center gap-2 text-outline mb-2">
-<span class="material-symbols-outlined text-[20px] text-warning">pending_actions</span>
-<span class="font-label-sm text-label-sm">Atención</span>
-</div>
-<p class="font-label-sm text-xs text-on-surface-variant mb-1">Por Confirmar</p>
-<p id="stat-citas-confirmar" class="font-headline-md text-headline-md text-warning">...</p>
-</div>
-<div class="bg-surface-white rounded-xl p-4 shadow-[0px_10px_30px_rgba(0,0,0,0.04)] border border-surface-container/50 col-span-2 md:col-span-1">
-<div class="flex items-center gap-2 text-outline mb-2">
-<span class="material-symbols-outlined text-[20px] text-secondary">event_upcoming</span>
-<span class="font-label-sm text-label-sm">Mañana</span>
-</div>
-<p class="font-label-sm text-xs text-on-surface-variant mb-1">Citas para Mañana</p>
-<p id="stat-citas-manana" class="font-headline-md text-headline-md text-secondary">...</p>
+<div class="flex gap-2 p-1 bg-surface-container-low rounded-xl">
+<button onclick="if(fullCalendarInstance) { document.querySelector('#btn-view-day').className='px-6 py-2 bg-surface-white rounded-lg shadow-sm font-bold text-primary hover:bg-surface-container-low transition-colors'; document.querySelector('#btn-view-week').className='px-6 py-2 text-on-surface-variant hover:text-on-surface transition-colors hover:bg-surface-white hover:rounded-lg hover:shadow-sm hover:font-bold hover:text-primary'; fullCalendarInstance.changeView('timeGridDay'); }" id="btn-view-day" class="px-6 py-2 text-on-surface-variant hover:text-on-surface transition-colors hover:bg-surface-white hover:rounded-lg hover:shadow-sm hover:font-bold hover:text-primary">Diario</button>
+<button onclick="if(fullCalendarInstance) { document.querySelector('#btn-view-week').className='px-6 py-2 bg-surface-white rounded-lg shadow-sm font-bold text-primary hover:bg-surface-container-low transition-colors'; document.querySelector('#btn-view-day').className='px-6 py-2 text-on-surface-variant hover:text-on-surface transition-colors hover:bg-surface-white hover:rounded-lg hover:shadow-sm hover:font-bold hover:text-primary'; fullCalendarInstance.changeView('timeGridWeek'); }" id="btn-view-week" class="px-6 py-2 bg-surface-white rounded-lg shadow-sm font-bold text-primary hover:bg-surface-container-low transition-colors">Semanal</button>
 </div>
 </div>
-<!-- Tareas Pendientes Mobile -->
-<div class="bg-surface-white rounded-2xl p-5 shadow-[0px_10px_30px_rgba(0,0,0,0.04)] border border-surface-container mb-8">
-<h3 class="font-headline-md text-lg text-on-surface mb-1">Tareas Pendientes</h3>
-<p class="text-xs text-on-surface-variant mb-4">Pacientes por agendar/confirmar.</p>
-<div class="space-y-3" id="tareas-pendientes-list">
-    <p class="text-outline text-center py-4 text-sm">Cargando tareas...</p>
+<!-- Calendar Wide Grid -->
+<div class="bg-surface-white rounded-3xl shadow-[0px_10px_30px_rgba(0,0,0,0.04)] overflow-hidden border border-surface-container-low p-4">
+    <div class="flex gap-4 items-center justify-end mb-4 flex-wrap">
+        <div class="flex items-center gap-1"><span class="w-3 h-3 rounded-full bg-warning"></span><span class="text-xs text-outline font-bold">Por Confirmar</span></div>
+        <div class="flex items-center gap-1"><span class="w-3 h-3 rounded-full bg-success"></span><span class="text-xs text-outline font-bold">Confirmada</span></div>
+        <div class="flex items-center gap-1"><span class="w-3 h-3 rounded-full bg-primary"></span><span class="text-xs text-outline font-bold">En Procedimiento</span></div>
+        <div class="flex items-center gap-1"><span class="w-3 h-3 rounded-full bg-outline-variant"></span><span class="text-xs text-outline font-bold">Completada</span></div>
+        <div class="flex items-center gap-1"><span class="w-3 h-3 rounded-full" style="background-color: #8b5cf6;"></span><span class="text-xs text-outline font-bold">Reprogramar</span></div>
+    </div>
+    <div id="calendar" style="min-height: 600px;"></div>
+</div>
+</section>
+<!-- Secondary Insights / Bento Elements -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-gutter mb-section-gap">
+<div class="lg:col-span-2 bg-surface-white rounded-3xl p-8 shadow-[0px_10px_30px_rgba(0,0,0,0.04)] border border-surface-container-low flex flex-col h-[600px]">
+<h3 class="font-headline-md text-headline-md text-on-surface mb-2">Tareas Pendientes (Por Agendar/Confirmar)</h3>
+<p class="text-on-surface-variant font-body-md mb-6">Pacientes que requieren seguimiento para agendar citas o confirmar asistencia.</p>
+<div id="tareas-pendientes-list" class="space-y-4 overflow-y-auto custom-scrollbar flex-1 pr-2">
+    <!-- Se poblará dinámicamente con JS -->
+    <p class="text-outline text-center py-4">Cargando tareas...</p>
 </div>
 </div>
-<!-- Calendar Board -->
-<div class="bg-surface-white rounded-2xl shadow-[0px_10px_30px_rgba(0,0,0,0.04)] border border-surface-container overflow-hidden flex flex-col h-[700px]">
-<div class="p-3 border-b border-surface-container flex gap-3 items-center justify-start overflow-x-auto no-scrollbar whitespace-nowrap">
-    <div class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-warning"></span><span class="text-[10px] text-outline font-bold">Por Confirmar</span></div>
-    <div class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-success"></span><span class="text-[10px] text-outline font-bold">Confirmada</span></div>
-    <div class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-primary"></span><span class="text-[10px] text-outline font-bold">En Procedimiento</span></div>
-    <div class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-outline-variant"></span><span class="text-[10px] text-outline font-bold">Completada</span></div>
-    <div class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-[#8b5cf6]"></span><span class="text-[10px] text-outline font-bold">Reprogramar</span></div>
+<div class="bg-surface-white rounded-3xl p-8 shadow-[0px_10px_30px_rgba(0,0,0,0.04)] border border-surface-container-low flex flex-col h-[600px]">
+<h3 class="font-headline-md text-headline-md text-on-surface mb-6">Próximos Hoy</h3>
+<div id="proximos-pacientes-list" class="space-y-6 overflow-y-auto custom-scrollbar flex-1 pr-2">
+    <!-- Próximos pacientes renderizados aquí -->
 </div>
-<!-- Room Headers -->
-<div class="flex border-b border-surface-container bg-surface/50">
-<div class="w-20 flex-shrink-0 border-r border-surface-container p-4"></div> <!-- Time column spacer -->
-<div class="flex-1 grid grid-cols-2 md:grid-cols-3 divide-x divide-surface-container">
-<div class="p-4 text-center">
-<h3 class="font-label-sm text-label-sm text-on-surface font-semibold">Sala 1 - Principal</h3>
-</div>
-<div class="p-4 text-center">
-<h3 class="font-label-sm text-label-sm text-on-surface font-semibold">Sala 2 - Ondas de Choque</h3>
-</div>
-<div class="p-4 text-center hidden md:block">
-<h3 class="font-label-sm text-label-sm text-on-surface font-semibold">Sala 3 - Rehab</h3>
+<button onclick="if(fullCalendarInstance) { document.querySelector('#calendar').scrollIntoView({behavior: 'smooth'}); fullCalendarInstance.changeView('listWeek'); }" class="mt-4 w-full py-3 text-primary font-bold hover:bg-primary/5 rounded-xl transition-all border border-transparent hover:border-primary/20">Ver Agenda Semanal</button>
 </div>
 </div>
-</div>
-<!-- Calendar Grid Container -->
-<div class="flex flex-1 overflow-y-auto relative calendar-grid" style="background-color: #fafbfb;">
-<!-- Current Time Line Indicator (e.g. 10:30 AM) -->
-<div class="absolute left-20 right-0 h-0 border-t-2 border-warning z-20 pointer-events-none flex items-center" style="top: 150px;">
-<div class="absolute -left-20 w-20 text-right pr-2 font-label-sm text-[11px] text-warning font-bold">10:30 AM</div>
-<div class="w-2 h-2 rounded-full bg-warning -ml-1"></div>
-</div>
-<!-- Time Column -->
-<div id="calendar-time-column" class="w-20 flex-shrink-0 border-r border-surface-container flex flex-col pt-3 bg-surface-white/80 backdrop-blur z-10 sticky left-0">
-<!-- Dynamic content injected via JS -->
-</div>
-<!-- Appointments Grid -->
-<div class="flex-1 grid grid-cols-2 md:grid-cols-3 divide-x divide-surface-container relative" id="calendar-grid-content" onclick="handleGridClick(event)">
-    <!-- Dynamic content will be injected here -->
-</div>
-</div>
-</div>
+
 </main>
-<!-- Floating Action Button (Mobile) -->
-<button onclick="openAppointmentModal()" class="md:hidden fixed bottom-20 right-4 h-14 w-14 bg-primary text-on-primary rounded-full shadow-lg flex items-center justify-center z-50 active:scale-90 transition-transform">
-<span class="material-symbols-outlined text-[24px]">add</span>
-</button>
-<!-- BottomNavBar (Mobile Only) -->
-<nav class="bg-surface-white/80 dark:bg-surface-container/80 backdrop-blur-md shadow-[0px_-10px_30px_rgba(0,0,0,0.04)] fixed bottom-0 w-full rounded-t-xl z-50 flex justify-around items-center px-4 py-3 md:hidden">
-<a class="flex flex-col items-center justify-center text-primary dark:text-primary-fixed font-bold hover:bg-surface-container-high/50 active:scale-90 transition-all duration-150 p-2 rounded-lg" href="calendario_dashboard_mobile.html">
-<span class="material-symbols-outlined" data-icon="event" style="font-variation-settings: 'FILL' 1;">event</span>
-<span class="font-label-sm text-label-sm mt-1">Calendario</span>
-</a>
-<a class="flex flex-col items-center justify-center text-outline dark:text-outline-variant hover:bg-surface-container-high/50 active:scale-90 transition-all duration-150 p-2 rounded-lg" href="pacientes_historia_clinica_mobile.html">
-<span class="material-symbols-outlined" data-icon="person_search">person_search</span>
-<span class="font-label-sm text-label-sm mt-1">Pacientes</span>
-</a>
-<a id="bottom-link-servicios" class="flex flex-col items-center justify-center text-outline dark:text-outline-variant hover:bg-surface-container-high/50 active:scale-90 transition-all duration-150 p-2 rounded-lg" href="tratamientos_mobile.html">
-<span class="material-symbols-outlined" data-icon="healing">healing</span>
-<span class="font-label-sm text-label-sm mt-1">Tratamientos</span>
-</a>
-<a class="flex flex-col items-center justify-center text-outline dark:text-outline-variant hover:bg-surface-container-high/50 active:scale-90 transition-all duration-150 p-2 rounded-lg" href="productos_mobile.html">
-<span class="material-symbols-outlined" data-icon="inventory_2">inventory_2</span>
-<span class="font-label-sm text-label-sm mt-1">Productos</span>
-</a>
-<a class="flex flex-col items-center justify-center text-outline dark:text-outline-variant min-w-0 flex-1 py-1 px-1 rounded-lg hover:bg-[#f2f4f4] active:scale-90 transition-all duration-150" href="cobrar_mobile.html">
-<span class="material-symbols-outlined mb-1 text-[22px]">point_of_sale</span>
-<span class="text-[10px] font-semibold leading-tight truncate">Caja</span>
-</a>
-<a id="bottom-link-finanzas" class="flex flex-col items-center justify-center text-outline dark:text-outline-variant hover:bg-surface-container-high/50 active:scale-90 transition-all duration-150 p-2 rounded-lg" href="pagos_facturacion_mobile.html">
-<span class="material-symbols-outlined" data-icon="account_balance_wallet">account_balance_wallet</span>
-<span class="font-label-sm text-label-sm mt-1">Finanzas</span>
-</a>
+
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-2 py-3 md:hidden bg-surface-white/90 backdrop-blur-md shadow-[0px_-10px_30px_rgba(0,0,0,0.04)] rounded-t-xl border-t border-surface-container-highest overflow-x-auto no-scrollbar gap-2">
+    <a id="nav-bottom-agenda" class="flex flex-col items-center justify-center text-outline hover:text-primary transition-all p-2 rounded-lg min-w-[60px]" href="calendario_dashboard_mobile.html">
+        <span class="material-symbols-outlined">calendar_today</span><span class="font-label-sm text-[10px] mt-1">Agenda</span>
+    </a>
+    <a id="nav-bottom-citas" class="flex flex-col items-center justify-center text-outline hover:text-primary transition-all p-2 rounded-lg min-w-[60px]" href="citas_listado_mobile.html">
+        <span class="material-symbols-outlined">list_alt</span><span class="font-label-sm text-[10px] mt-1">Citas</span>
+    </a>
+    <a id="nav-bottom-pacientes" class="flex flex-col items-center justify-center text-outline hover:text-primary transition-all p-2 rounded-lg min-w-[60px]" href="pacientes_historia_clinica_mobile.html">
+        <span class="material-symbols-outlined">groups</span><span class="font-label-sm text-[10px] mt-1">Pacientes</span>
+    </a>
+    <a id="nav-bottom-tratamientos" class="flex flex-col items-center justify-center text-outline hover:text-primary transition-all p-2 rounded-lg min-w-[60px]" href="tratamientos_mobile.html">
+        <span class="material-symbols-outlined">medical_services</span><span class="font-label-sm text-[10px] mt-1">Servicios</span>
+    </a>
+    <a id="nav-bottom-productos" class="flex flex-col items-center justify-center text-outline hover:text-primary transition-all p-2 rounded-lg min-w-[60px]" href="productos_mobile.html">
+        <span class="material-symbols-outlined">inventory_2</span><span class="font-label-sm text-[10px] mt-1">Productos</span>
+    </a>
+    <a id="nav-bottom-caja" class="flex flex-col items-center justify-center text-outline hover:text-primary transition-all p-2 rounded-lg min-w-[60px]" href="cobrar_mobile.html">
+        <span class="material-symbols-outlined">point_of_sale</span><span class="font-label-sm text-[10px] mt-1">Caja</span>
+    </a>
+    <a id="nav-bottom-finanzas" class="flex flex-col items-center justify-center text-outline hover:text-primary transition-all p-2 rounded-lg min-w-[60px]" href="pagos_facturacion_mobile.html">
+        <span class="material-symbols-outlined">payments</span><span class="font-label-sm text-[10px] mt-1">Finanzas</span>
+    </a>
+    <a id="nav-bottom-gestion" class="flex flex-col items-center justify-center text-outline hover:text-primary transition-all p-2 rounded-lg min-w-[60px]" href="gestion_pacientes_mobile.html">
+        <span class="material-symbols-outlined">monitoring</span><span class="font-label-sm text-[10px] mt-1">Gestión</span>
+    </a>
 </nav>
-
-<!-- Modal Nueva Cita -->
-<div id="new-appointment-modal" class="fixed inset-0 bg-on-surface/50 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
-    <div class="bg-surface-white rounded-3xl p-6 w-full max-w-lg shadow-2xl border border-surface-container-high transition-all transform scale-95 duration-200">
-        <div class="flex justify-between items-center mb-4">
-            <h3 class="text-lg font-bold text-on-surface">Agendar Nueva Cita</h3>
-            <button onclick="closeAppointmentModal()" class="text-outline hover:text-primary">
-                <span class="material-symbols-outlined">close</span>
-            </button>
-        </div>
-        <form id="new-appointment-form" onsubmit="saveAppointment(event)" class="space-y-3">
-            <div>
-                <label class="block text-xs font-semibold text-on-surface-variant mb-1">Nombre del Paciente</label>
-                <input type="text" id="appt-patient-name" list="pacientes-list-mobile" oninput="autofillPatientInfoMobile()" required class="w-full bg-surface-container-low border-none rounded-xl py-2.5 px-4 text-body-md focus:ring-2 focus:ring-primary" placeholder="ej. Juan Pérez">
-                <datalist id="pacientes-list-mobile"></datalist>
-                <div id="patient-status" class="mt-2 text-xs hidden"></div>
-            </div>
-            <div class="grid grid-cols-2 gap-3">
-                <div>
-                    <label class="block text-xs font-semibold text-on-surface-variant mb-1">Correo Electrónico</label>
-                    <input type="email" id="appt-patient-email" class="w-full bg-surface-container-low border-none rounded-xl py-2.5 px-3 text-body-md focus:ring-2 focus:ring-primary" placeholder="ej. juan@gmail.com">
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold text-on-surface-variant mb-1">Número de Teléfono</label>
-                    <input type="tel" id="appt-patient-phone" class="w-full bg-surface-container-low border-none rounded-xl py-2.5 px-3 text-body-md focus:ring-2 focus:ring-primary" placeholder="ej. 987654321">
-                </div>
-            </div>
-            <div class="grid grid-cols-2 gap-3">
-                
-                <div class="col-span-2 hidden">
-                    <label class="block text-sm font-semibold text-on-surface-variant mb-1">Tratamiento / Motivo</label>
-                    <select id="appt-treatment" onchange="verificarSesionesPaciente()" class="w-full bg-surface-container-low border-none rounded-xl py-3 px-4 text-body-md focus:ring-2 focus:ring-primary">
-                        <option value="Por Definir en Cita">Por Definir en Cita</option>
-                    </select>
-                    <div class="mt-2 flex items-center gap-2">
-                        <input type="checkbox" id="appt-continuacion" onchange="verificarSesionesPaciente()" class="rounded border-outline-variant text-primary focus:ring-primary h-4 w-4">
-                        <label for="appt-continuacion" class="text-xs font-bold text-on-surface-variant">Es Continuación de Sesión / Paquete</label>
-                    </div>
-                </div>
-
-                <div class="col-span-2">
-                    <label class="block text-xs font-semibold text-on-surface-variant mb-1">Tratante</label>
-                    <select id="appt-doctor" required class="w-full bg-surface-container-low border-none rounded-xl py-2.5 px-3 text-body-md focus:ring-2 focus:ring-primary">
-                        <option value="Dr. Eslava">Dr. Eslava</option>
-                        <option value="Dra. Principal">Dra. Principal</option>
-                        <option value="Lic. Fisioterapia">Lic. Fisioterapia</option>
-                    </select>
-                </div>
-            </div>
-            <div id="info-sesiones-alerta" class="hidden p-3 bg-primary/5 border border-primary/20 rounded-2xl text-xs text-primary flex items-start gap-2">
-                <span class="material-symbols-outlined text-[16px] mt-0.5">info</span>
-                <span id="info-sesiones-texto">Cargando info de sesiones...</span>
-            </div>
-            <div class="grid grid-cols-2 gap-3">
-                <div>
-                    <label class="block text-xs font-semibold text-on-surface-variant mb-1">Fecha</label>
-                    <input type="date" id="appt-date" onchange="populateTimeOptions()" required class="w-full bg-surface-container-low border-none rounded-xl py-2.5 px-3 text-body-md focus:ring-2 focus:ring-primary">
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold text-on-surface-variant mb-1">Hora</label>
-                    <select id="appt-time" required class="w-full bg-surface-container-low border-none rounded-xl py-2.5 px-3 text-body-md focus:ring-2 focus:ring-primary">
-                        <!-- Dynamic via JS -->
-                    </select>
-                </div>
-            </div>
-            <div>
-                <label class="block text-xs font-semibold text-on-surface-variant mb-1">Notas</label>
-                <textarea id="appt-notes" rows="2" class="w-full bg-surface-container-low border-none rounded-xl py-2.5 px-4 text-body-md focus:ring-2 focus:ring-primary" placeholder="Observaciones de la cita..."></textarea>
-            </div>
-            <div class="flex gap-3 pt-2">
-                <button type="button" onclick="closeAppointmentModal()" class="flex-1 py-3 border border-outline rounded-xl font-bold text-on-surface-variant hover:bg-surface-container-low transition-all">Cancelar</button>
-                <button type="submit" class="flex-1 py-3 bg-primary text-on-primary rounded-xl font-bold hover:opacity-90 transition-all">Guardar Cita</button>
-            </div>
-        </form>
-    </div>
-</div>
-
-<!-- Success Confirmation Modal -->
-<div id="success-confirmation-modal" class="fixed inset-0 bg-on-surface/50 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
-    <div class="bg-surface-white rounded-3xl p-6 w-full max-w-md shadow-2xl border border-surface-container-high text-center">
-        <div class="w-14 h-14 bg-emerald-500/10 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-3">
-            <span class="material-symbols-outlined text-3xl">check_circle</span>
-        </div>
-        <h3 class="text-lg font-bold text-on-surface mb-1">¡Cita Guardada Exitosamente!</h3>
-        <p class="text-on-surface-variant text-xs mb-4">La cita ha sido registrada en el sistema del Centro Eslava.</p>
-        <div class="space-y-2">
-            <a id="sync-gcal-btn" href="#" target="_blank" class="w-full bg-primary text-on-primary py-3 px-4 rounded-xl font-bold flex items-center justify-center gap-2 hover:opacity-90 active:scale-95 transition-all text-sm">
-                <span class="material-symbols-outlined text-lg">sync</span>
-                Sincronizar a Google Calendar
-            </a>
-            <button onclick="closeSuccessModal()" class="w-full py-3 border border-outline rounded-xl font-bold text-on-surface-variant hover:bg-surface-container-low transition-all text-sm">
-                Listo
-            </button>
-        </div>
-    </div>
-</div>
-
-<!-- Modal for Full Patient Registration (Called from Appointment) -->
-<dialog id="modalNuevoPaciente" class="backdrop:bg-black/50 p-6 rounded-3xl shadow-2xl border-none w-[90%] max-w-sm bg-surface-white z-[60]">
-    <div class="flex justify-between items-center mb-5">
-        <h3 class="text-xl font-extrabold text-on-surface">Registrar Ficha</h3>
-        <button type="button" onclick="document.getElementById('modalNuevoPaciente').close()" class="w-8 h-8 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container-high transition-colors">
-            <span class="material-symbols-outlined text-lg">close</span>
-        </button>
-    </div>
-    <form id="formNuevoPaciente" onsubmit="saveFullPatientMobile(event)" class="space-y-4">
-        <div>
-            <label class="block text-xs font-bold text-on-surface mb-1">Nombre Completo</label>
-            <input type="text" id="full-patient-name" required class="w-full rounded-xl border border-outline-variant px-3 py-2.5 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all text-sm">
-        </div>
-        
-        <div class="grid grid-cols-2 gap-3">
-            <div>
-                <label class="block text-xs font-bold text-on-surface mb-1">Teléfono</label>
-                <input type="tel" id="full-patient-phone" class="w-full rounded-xl border border-outline-variant px-3 py-2.5 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all text-sm">
-            </div>
-            <div>
-                <label class="block text-xs font-bold text-on-surface mb-1">F. Nacimiento</label>
-                <input type="date" id="full-patient-dob" class="w-full rounded-xl border border-outline-variant px-3 py-2.5 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all text-sm">
-            </div>
-        </div>
-        
-        <div>
-            <label class="block text-xs font-bold text-on-surface mb-1">Email</label>
-            <input type="email" id="full-patient-email" class="w-full rounded-xl border border-outline-variant px-3 py-2.5 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all text-sm">
-        </div>
-
-        <div class="pt-4 flex gap-2 w-full border-t border-surface-variant">
-            <button type="button" onclick="document.getElementById('modalNuevoPaciente').close()" class="flex-1 py-2.5 text-on-surface-variant font-bold hover:bg-surface-container-high rounded-xl transition-colors text-sm border border-outline">Cancelar</button>
-            <button type="submit" id="btnSubmitFullPaciente" class="flex-1 bg-primary text-white py-2.5 rounded-xl font-bold hover:scale-[1.02] active:scale-95 transition-all flex justify-center items-center gap-1 shadow-md text-sm">
-                Guardar
-            </button>
-        </div>
-    </form>
-</dialog>
-
-<!-- Modal de Opciones de Cita -->
-<dialog id="modalOpcionesCita" class="backdrop:bg-black/50 p-6 rounded-3xl shadow-2xl border-none w-[90%] max-w-sm bg-surface-white z-[60]">
-    <div class="flex justify-between items-center mb-5">
-        <h3 class="text-lg font-extrabold text-on-surface">Detalle y Opciones</h3>
-        <button onclick="document.getElementById('modalOpcionesCita').close()" class="w-10 h-10 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container-high transition-colors">
-            <span class="material-symbols-outlined">close</span>
-        </button>
-    </div>
-    <div class="space-y-4">
-        <div class="p-4 bg-surface-container-low rounded-2xl">
-            <h4 id="opt-paciente-nombre" class="font-bold text-base text-primary">Cargando...</h4>
-            <p id="opt-tratamiento" class="text-xs font-semibold text-on-surface-variant">--</p>
-            <div class="mt-2 text-[11px] text-outline space-y-0.5">
-                <p id="opt-fecha-hora">--</p>
-                <p id="opt-consultorio">--</p>
-                <p id="opt-estado">Estado: --</p>
-            </div>
-        </div>
-
-        <div class="flex flex-col gap-2.5">
-            <button id="btn-opt-atender" class="w-full bg-primary text-white py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-1 hover:scale-[1.02] active:scale-95 transition-all shadow-md">
-                <span class="material-symbols-outlined text-lg">clinical_notes</span>
-                Atender Cita
-            </button>
-            <button id="btn-opt-facturar" class="w-full bg-success text-white py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-1 hover:scale-[1.02] active:scale-95 transition-all shadow-md">
-                <span class="material-symbols-outlined text-lg">receipt_long</span>
-                Facturar Servicio
-            </button>
-            
-            <div class="my-1 p-2.5 bg-surface-container-lowest border border-outline-variant rounded-xl flex items-center gap-2">
-                <label class="text-[13px] font-bold text-on-surface flex-shrink-0">Estado:</label>
-                <select id="select-opt-estado-mobile" onchange="cambiarEstadoCitaLocal(this.value)" class="w-full bg-surface-container-low border-none rounded-lg py-1.5 px-2 text-[13px] font-bold focus:ring-2 focus:ring-primary text-primary outline-none cursor-pointer">
-                    <option value="Por Confirmar">Por Confirmar</option>
-                    <option value="Confirmada">Confirmada</option>
-                    <option value="En Progreso">En Progreso</option>
-                    <option value="Por Reprogramar">Por Reprogramar</option>
-                </select>
-            </div>
-            
-            <button id="btn-opt-editar" class="w-full bg-surface-container-high text-on-surface-variant py-3 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-surface-container-highest active:scale-95 transition-all mb-3 text-sm">
-                <span class="material-symbols-outlined text-lg">edit</span>
-                Editar Cita
-            </button>
-            <button id="btn-opt-historial" class="w-full bg-surface-container-high text-on-surface-variant py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-1 hover:bg-surface-container-highest active:scale-95 transition-all">
-                <span class="material-symbols-outlined text-lg">medical_information</span>
-                Ver Historia Clínica
-            </button>
-            <button id="btn-opt-cancelar" class="w-full border border-error text-error py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-1 hover:bg-error/5 active:scale-95 transition-all">
-                <span class="material-symbols-outlined text-lg">cancel</span>
-                Cancelar Cita
-            </button>
-        </div>
-    </div>
-</dialog>
 
 <script>
-    
-
-    // Set today's date as default in date input
-    document.getElementById('appt-date').value = new Date().toISOString().split('T')[0];
-
-    // Enforce role-based element locking/hiding inside the page
-
-    function populateTimeOptions() {
-        const selectTime = document.getElementById('appt-time');
-        if (!selectTime) return;
-        
-        const dateInput = document.getElementById('appt-date')?.value;
-        const todayStr = new Date().toISOString().split('T')[0];
-        const isToday = (dateInput === todayStr) || (!dateInput); // Fallback to today
-        
-        const now = new Date();
-        const currentHour = now.getHours();
-        const currentMinute = now.getMinutes();
-        
-        const isEditMode = !!window.editingCitaId;
-        
-        const opening = localStorage.getItem('horaApertura') || '08:00';
-        const closing = localStorage.getItem('horaCierre') || '20:00';
-        
-        const openHour = parseInt(opening.split(':')[0]);
-        const closeHour = parseInt(closing.split(':')[0]);
-        
-        const prevValue = selectTime.value;
-        selectTime.innerHTML = '';
-        let hasOptions = false;
-        
-        for (let i = openHour; i < closeHour; i++) {
-            let h12 = i % 12 || 12;
-            let ampm = i >= 12 ? 'PM' : 'AM';
-            let formattedH = h12.toString().padStart(2, '0');
-            
-            const val00 = `${formattedH}:00 ${ampm}`;
-            const val30 = `${formattedH}:30 ${ampm}`;
-            
-            if (!isToday || isEditMode || i > currentHour) {
-                selectTime.innerHTML += `<option value="${val00}">${val00}</option>`;
-                hasOptions = true;
-            }
-            if (!isToday || isEditMode || i > currentHour || (i === currentHour && currentMinute <= 30)) {
-                selectTime.innerHTML += `<option value="${val30}">${val30}</option>`;
-                hasOptions = true;
-            }
-        }
-        
-        if (!hasOptions) {
-             selectTime.innerHTML = `<option value="">No hay horarios disponibles hoy</option>`;
-        } else if (prevValue) {
-             selectTime.value = prevValue;
-             if (selectTime.selectedIndex === -1) selectTime.selectedIndex = 0;
-        }
-
-        const timeColumn = document.getElementById('calendar-time-column');
-        if (timeColumn) {
-            timeColumn.innerHTML = '';
-            for (let i = openHour; i <= closeHour; i++) {
-                timeColumn.innerHTML += `<div class="h-[60px] text-right pr-4 font-label-sm text-label-sm text-outline">${i.toString().padStart(2, '0')}:00</div>`;
-            }
-        }
+    // Add active state to drawer
+    const drawerLink = document.getElementById('nav-link-agenda-drawer');
+    if(drawerLink) {
+        drawerLink.classList.remove('text-on-surface-variant');
+        drawerLink.classList.add('bg-secondary-container', 'text-on-secondary-container');
     }
-
-    // Modal Control Functions
-    function openAppointmentModal(fecha = null, hora = null, room = null) {
-        document.getElementById("new-appointment-modal").classList.remove("hidden");
-
-        window.editingCitaId = null;
-        const modalTitle = document.querySelector('#new-appointment-modal h3');
-        if (modalTitle) modalTitle.textContent = 'Agendar Nueva Cita';
-        const submitBtn = document.querySelector('#new-appointment-form button[type="submit"]');
-        if (submitBtn) submitBtn.textContent = 'Guardar Cita';
-
-        if (fecha) document.getElementById('appt-date').value = fecha;
-        populateTimeOptions();
-        if (hora) document.getElementById('appt-time').value = hora;
-        if (room) document.getElementById('appt-room').value = room;
+    // Add active state to bottom nav
+    const bottomLink = document.getElementById('nav-bottom-agenda');
+    if(bottomLink) {
+        bottomLink.classList.remove('text-outline');
+        bottomLink.classList.add('text-primary');
     }
-
-    // Direct click in slot scheduling helper
-    window.openSlotSchedule = function(time, room) {
-        openAppointmentModal(null, time, room);
-    }
-    
-    window.handleGridClick = function(event) {
-        const column = event.target.closest('[id^="col-sala-"]');
-        if (!column) return;
-        
-        // Only trigger if clicking directly on the column background, not on an existing event
-        if (event.target !== column && !event.target.classList.contains('border-dashed')) return;
-
-        let room = 'Consultorio 1';
-        if (column.id === 'col-sala-2') room = 'Consultorio 2';
-        if (column.id === 'col-sala-3') room = 'Consultorio 3';
-
-        const rect = column.getBoundingClientRect();
-        const clickY = event.clientY - rect.top;
-        
-        const opening = localStorage.getItem('horaApertura') || '08:00';
-        const openHour = parseInt(opening.split(':')[0]);
-        
-        // 60px per hour
-        const totalMinutes = Math.floor(clickY); // 1px = 1 min
-        const slotMinutes = Math.floor(totalMinutes / 30) * 30; // Snap to 30 min slots
-        
-        let hours = openHour + Math.floor(slotMinutes / 60);
-        let mins = slotMinutes % 60;
-        
-        let ampm = hours >= 12 ? 'PM' : 'AM';
-        let h12 = hours % 12 || 12;
-        let horaSelect = `${String(h12).padStart(2, '0')}:${String(mins).padStart(2, '0')} ${ampm}`;
-        
-        let fechaStr = window.currentDate ? window.currentDate.toISOString().split('T')[0] : new Date().toISOString().split('T')[0];
-        openAppointmentModal(fechaStr, horaSelect, room);
-    }
-
-    function closeAppointmentModal() {
-        document.getElementById("new-appointment-modal").classList.add("hidden");
-        document.getElementById("new-appointment-form").reset();
-        document.getElementById('appt-date').value = new Date().toISOString().split('T')[0];
-        populateTimeOptions();
-    }
-
-    async function abrirOpcionesCita(citaId) {
-        const dialog = document.getElementById('modalOpcionesCita');
-        dialog.showModal();
-        
-        try {
-            const { data: cita, error } = await supabaseClient
-                .from('citas')
-                .select('*, pacientes(*)')
-                .eq('id', citaId)
-                .single();
-                
-            if (error) throw error;
-            
-            window.currentCitaId = citaId;
-            document.getElementById('opt-paciente-nombre').textContent = cita.pacientes?.nombre || 'Desconocido';
-            document.getElementById('opt-tratamiento').textContent = cita.tratamiento || 'Procedimiento general';
-            document.getElementById('opt-fecha-hora').textContent = `Fecha: ${cita.fecha} • ${cita.hora}`;
-            document.getElementById('opt-consultorio').textContent = `Tratante: ${cita.consultorio}`;
-            document.getElementById('opt-estado').textContent = `Estado: ${cita.estado}`;
-            
-            const selectEstado = document.getElementById('select-opt-estado-mobile');
-            if (selectEstado) {
-                let estadoNormalized = cita.estado;
-                if (estadoNormalized === 'Pendiente') estadoNormalized = 'Por Confirmar';
-                if (estadoNormalized === 'Cancelado' || estadoNormalized === 'Cancelada') estadoNormalized = 'Por Confirmar';
-                
-                const hasCompletada = Array.from(selectEstado.options).some(opt => opt.value === 'Completada');
-                if (estadoNormalized === 'Completada' && !hasCompletada) {
-                    const opt = document.createElement('option');
-                    opt.value = 'Completada';
-                    opt.text = 'Completada';
-                    selectEstado.add(opt);
-                } else if (estadoNormalized !== 'Completada' && hasCompletada) {
-                    Array.from(selectEstado.options).forEach(opt => {
-                        if (opt.value === 'Completada') opt.remove();
-                    });
-                }
-
-                selectEstado.value = estadoNormalized;
-                
-                if (estadoNormalized === 'En Progreso' || estadoNormalized === 'Completada') {
-                    selectEstado.disabled = true;
-                    selectEstado.classList.add('opacity-70', 'cursor-not-allowed');
-                    selectEstado.classList.remove('cursor-pointer');
-                } else {
-                    selectEstado.disabled = false;
-                    selectEstado.classList.remove('opacity-70', 'cursor-not-allowed');
-                    selectEstado.classList.add('cursor-pointer');
-                }
-            }
-            
-            // Set up button actions
-            const role = new URLSearchParams(window.location.search).get('role') || 'admin';
-            
-            const btnAtender = document.getElementById('btn-opt-atender');
-            if (cita.estado === 'Completado') {
-                btnAtender.innerHTML = `<span class="material-symbols-outlined text-lg">clinical_notes</span> Ver Atención`;
-            } else {
-                
-            if (cita.estado === 'Completada' || cita.estado === 'Completado') {
-                btnAtender.innerHTML = `<span class="material-symbols-outlined text-lg">edit_document</span> Editar Procedimiento`;
-            } else {
-                btnAtender.innerHTML = `<span class="material-symbols-outlined text-lg">clinical_notes</span> Atender Cita`;
-            }
-
-            }
-            
-            const btnEditar = document.getElementById('btn-opt-editar');
-            if (btnEditar) {
-                btnEditar.onclick = () => {
-                    dialog.close();
-                    document.getElementById('appt-patient-name').value = cita.pacientes?.nombre || '';
-                    document.getElementById('appt-patient-email').value = cita.pacientes?.email || '';
-                    document.getElementById('appt-patient-phone').value = cita.pacientes?.telefono || '';
-                    document.getElementById('appt-date').value = cita.fecha;
-                    
-                    // Tratamiento y doctor
-                    let tr = cita.tratamiento || 'Por Definir en Cita';
-                    if (tr.includes('(Continuación)')) tr = tr.replace(' (Continuación)', '');
-                    document.getElementById('appt-treatment').value = tr;
-                    if (cita.consultorio) document.getElementById('appt-doctor').value = cita.consultorio;
-                    
-                    document.getElementById('appt-notes').value = cita.notas || '';
-                    
-                    window.editingCitaId = cita.id;
-                    // Populate time options first
-                    populateTimeOptions();
-                    
-                    // Match time
-                    let th = cita.hora.split(':');
-                    let h = parseInt(th[0], 10);
-                    let m = th[1];
-                    let ampm = h >= 12 ? 'PM' : 'AM';
-                    let h12 = h % 12 || 12;
-                    let displayTime = `${h12.toString().padStart(2, '0')}:${m} ${ampm}`;
-                    
-                    const timeSelect = document.getElementById('appt-time');
-                    timeSelect.value = displayTime;
-                    
-                    
-                    
-                    // Update Modal Title & Button
-                    const modalTitle = document.querySelector('#new-appointment-modal h3');
-                    if (modalTitle) modalTitle.textContent = 'Editar Cita';
-                    const submitBtn = document.querySelector('#new-appointment-form button[type="submit"]');
-                    if (submitBtn) submitBtn.textContent = 'Actualizar Cita';
-                    
-                    document.getElementById('new-appointment-modal').classList.remove('hidden');
-                };
-            }
-
-            btnAtender.onclick = () => {
-                window.location.href = `atencion_tiempo_real_mobile.html?cita_id=${cita.id}&role=${role}`;
-            };
-            
-            document.getElementById('btn-opt-facturar').onclick = () => {
-                window.location.href = `pagos_facturacion_mobile.html?paciente_id=${cita.pacientes?.id}&cita_id=${cita.id}&role=${role}`;
-            };
-            
-            document.getElementById('btn-opt-historial').onclick = () => {
-                window.location.href = `detalle_historia_clinica_mobile.html?id=${cita.pacientes?.id}&role=${role}`;
-            };
-            
-            document.getElementById('btn-opt-cancelar').onclick = async () => {
-                if (confirm('¿Estás seguro de que deseas cancelar esta cita?')) {
-                    const { error: cancelError } = await supabaseClient
-                        .from('citas')
-                        .update({ estado: 'Cancelado' })
-                        .eq('id', cita.id);
-                        
-                    if (cancelError) {
-                        alert('Error al cancelar la cita.');
-                    } else {
-                        dialog.close();
-                        await cargarCitas();
-                    }
-                }
-            };
-            
-        } catch (err) {
-            console.error("Error al abrir opciones de cita móvil:", err);
-            dialog.close();
-        }
-    }
-
-    async function cambiarEstadoCitaLocal(nuevoEstado) {
-        if (!window.currentCitaId) return;
-        try {
-            const { error } = await supabaseClient
-                .from('citas')
-                .update({ estado: nuevoEstado })
-                .eq('id', window.currentCitaId);
-            
-            if (error) throw error;
-            document.getElementById('opt-estado').textContent = `Estado: ${nuevoEstado}`;
-            await cargarCitas();
-        } catch (err) {
-            console.error('Error al cambiar estado:', err);
-            alert('Hubo un problema al cambiar el estado.');
-        }
-    }
-
-    function closeSuccessModal() {
-        document.getElementById("success-confirmation-modal").classList.add("hidden");
-    }
-
-    function generateGoogleCalendarUrl(appointment) {
-        const title = encodeURIComponent(`Cita Centro Eslava - ${appointment.name}`);
-        const details = encodeURIComponent(`Cita médica programada en Centro Eslava.\nPaciente: ${appointment.name}\nTratante: ${appointment.doctor}\nNotas: ${appointment.notes || 'Ninguna'}`);
-        const location = encodeURIComponent("Centro Eslava, Lima, Perú");
-        
-        let time24 = appointment.time;
-        if (appointment.time.includes('AM') || appointment.time.includes('PM')) {
-            const [timeStr, modifier] = appointment.time.split(' ');
-            let [hours, minutes] = timeStr.split(':');
-            if (hours === '12') hours = '00';
-            if (modifier === 'PM') hours = parseInt(hours, 10) + 12;
-            time24 = `${hours.toString().padStart(2, '0')}:${minutes}`;
-        }
-        
-        const dateStr = appointment.date.replace(/-/g, '');
-        const timeStr = time24.replace(/:/g, '') + '00';
-        const startDateTime = `${dateStr}T${timeStr}`;
-        
-        const endHours = (parseInt(time24.split(':')[0], 10) + 1).toString().padStart(2, '0');
-        const endMinutes = time24.split(':')[1];
-        const endDateTime = `${dateStr}T${endHours}${endMinutes}00`;
-        
-        let url = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${startDateTime}/${endDateTime}&details=${details}&location=${location}`;
-        if (appointment.email) {
-            url += `&add=${encodeURIComponent(appointment.email)}`;
-        }
-        return url;
-    }
-
-    window.serviciosActivos = [];
-    window.pacientesList = [];
-
-    async function cargarPacientesSelect() {
-        try {
-            const { data, error } = await supabaseClient.from('pacientes').select('*');
-            if (error) throw error;
-            window.pacientesList = data || [];
-            
-            const datalist = document.getElementById('pacientes-list-mobile');
-            if (datalist) {
-                datalist.innerHTML = data.map(p => `<option value="${p.nombre}">${p.email || ''}</option>`).join('');
-            }
-        } catch(error) {
-            console.error('Error al cargar pacientes para el select:', error);
-        }
-    }
-
-    function autofillPatientInfoMobile() {
-        const nameInput = document.getElementById('appt-patient-name').value;
-        const emailInput = document.getElementById('appt-patient-email');
-        const statusEl = document.getElementById('patient-status');
-        
-        if (!nameInput.trim()) {
-            statusEl.classList.add('hidden');
-            return;
-        }
-
-        const matched = window.pacientesList.find(p => p.nombre.toLowerCase() === nameInput.trim().toLowerCase());
-        statusEl.classList.remove('hidden');
-
-        if (matched) {
-            if (matched.email) emailInput.value = matched.email;
-            statusEl.innerHTML = `<span class="text-success font-semibold flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">check_circle</span> Paciente Existente seleccionado</span>`;
-            verificarSesionesPacienteMobile();
-        } else {
-            statusEl.innerHTML = `
-            <div class="flex items-center justify-between w-full">
-                <span class="text-warning font-semibold flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">person_add</span> Se registrará rápido</span>
-                <button type="button" onclick="abrirModalFichaPacienteMobile()" class="text-[11px] bg-primary text-on-primary px-2.5 py-1 rounded-md hover:opacity-90 transition-all font-bold shadow-sm">Abrir Ficha</button>
-            </div>`;
-            if(emailInput.value && !document.activeElement.isEqualNode(emailInput)) {
-                emailInput.value = '';
-            }
-            document.getElementById('info-sesiones-alerta').classList.add('hidden');
-        }
-    }
-
-    async function verificarSesionesPacienteMobile() {
-        const nameInput = document.getElementById('appt-patient-name').value;
-        const baseTreatment = document.getElementById("appt-treatment").value;
-        const isCont = document.getElementById("appt-continuacion")?.checked;
-        const treatment = isCont ? baseTreatment + ' (Continuación)' : baseTreatment;
-        const alertEl = document.getElementById('info-sesiones-alerta');
-        const textEl = document.getElementById('info-sesiones-texto');
-
-        if (!nameInput.trim() || !treatment) {
-            alertEl.classList.add('hidden');
-            return;
-        }
-
-        const matched = window.pacientesList.find(p => p.nombre.toLowerCase() === nameInput.trim().toLowerCase());
-        if (!matched) {
-            alertEl.classList.add('hidden');
-            return;
-        }
-
-        const servicioObj = window.serviciosActivos ? window.serviciosActivos.find(s => s.nombre === baseTreatment) : null;
-        if (!servicioObj || !servicioObj.duracion || servicioObj.duracion <= 1) {
-            alertEl.classList.add('hidden');
-            return;
-        }
-
-        const totalSesiones = servicioObj.duracion;
-
-        try {
-            const { data: citas, error } = await supabaseClient
-                .from('citas')
-                .select('id')
-                .eq('paciente_id', matched.id)
-                .eq('tratamiento', treatment)
-                .neq('estado', 'Cancelado');
-
-            if (error) throw error;
-
-            const totalConsumidas = citas ? citas.length : 0;
-            const resto = totalConsumidas % totalSesiones;
-
-            alertEl.classList.remove('hidden');
-            if (resto === 0) {
-                textEl.innerHTML = `<b>Nuevo Paquete:</b> Se iniciará un nuevo paquete de ${totalSesiones} sesiones. Cobro único de S/. ${parseFloat(servicioObj.precio).toFixed(2)}.`;
-            } else {
-                const sesionActual = resto + 1;
-                textEl.innerHTML = `<b>Sesión de Paquete:</b> Sesión ${sesionActual} de ${totalSesiones}. <b>Sin cobro</b> (ya comprado).`;
-            }
-        } catch (err) {
-            console.error('Error al verificar sesiones:', err);
-            alertEl.classList.add('hidden');
-        }
-    }
-
-    function abrirModalFichaPacienteMobile() {
-        const currentName = document.getElementById('appt-patient-name').value;
-        const currentEmail = document.getElementById('appt-patient-email').value;
-        
-        document.getElementById('full-patient-name').value = currentName;
-        document.getElementById('full-patient-email').value = currentEmail;
-        document.getElementById('full-patient-phone').value = '';
-        document.getElementById('full-patient-dob').value = '';
-        
-        document.getElementById('modalNuevoPaciente').showModal();
-    }
-
-    async function saveFullPatientMobile(event) {
-        event.preventDefault();
-        
-        const btn = document.getElementById('btnSubmitFullPaciente');
-        const originalText = btn.innerHTML;
-        btn.innerHTML = '<span class="material-symbols-outlined animate-spin text-sm">progress_activity</span>...';
-        btn.disabled = true;
-
-        const nombre = document.getElementById('full-patient-name').value;
-        const telefono = document.getElementById('full-patient-phone').value;
-        const fecha_nacimiento = document.getElementById('full-patient-dob').value || null;
-        const email = document.getElementById('full-patient-email').value;
-        
-        try {
-            const { data, error } = await supabaseClient
-                .from('pacientes')
-                .insert([{ 
-                    nombre, 
-                    telefono, 
-                    fecha_nacimiento, 
-                    email, 
-                    estado: 'Activo' 
-                }])
-                .select();
-                
-            if (error) throw error;
-            
-            await cargarPacientesSelect();
-            
-            document.getElementById('appt-patient-name').value = nombre;
-            document.getElementById('appt-patient-email').value = email;
-            autofillPatientInfoMobile(); 
-            
-            document.getElementById('modalNuevoPaciente').close();
-        } catch (error) {
-            console.error('Error guardando paciente completo:', error);
-            alert('Hubo un error al guardar el paciente.');
-        } finally {
-            btn.innerHTML = originalText;
-            btn.disabled = false;
-        }
-    }
-
-    async function cargarServicios() {
-        try {
-            const { data, error } = await supabaseClient
-                .from('servicios')
-                .select('*')
-                .eq('estado', 'Activo');
-            if (error) throw error;
-            window.serviciosActivos = data;
-            
-            const selectTratamiento = document.getElementById('appt-treatment');
-            if (selectTratamiento && selectTratamiento.tagName === 'SELECT') {
-                selectTratamiento.innerHTML = '<option value="Por Definir en Cita">Por Definir en Cita</option>';
-                data.forEach(s => {
-                    const option = document.createElement('option');
-                    option.value = s.nombre;
-                    
-                    let label = s.nombre;
-                    if (s.duracion && s.duracion > 1) {
-                        label += ` (${s.duracion} Sesiones)`;
-                    } else {
-                        label += ` (Cita Única)`;
-                    }
-                    
-                    option.textContent = label;
-                    selectTratamiento.appendChild(option);
-                });
-            }
-        } catch (error) {
-            console.error('Error al cargar servicios:', error);
-        }
-    }
-
-    async function cargarEstadisticas() {
-        try {
-            const d = new Date();
-            const today = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
-            const tomorrowDate = new Date();
-            tomorrowDate.setDate(tomorrowDate.getDate() + 1);
-            const tomorrow = tomorrowDate.getFullYear() + '-' + String(tomorrowDate.getMonth() + 1).padStart(2, '0') + '-' + String(tomorrowDate.getDate()).padStart(2, '0');
-            
-            // Citas for today
-            const { data: citasHoy, error: errorCitas } = await supabaseClient
-                .from('citas')
-                .select('estado')
-                .eq('fecha', today)
-                .neq('estado', 'Cancelado');
-                
-            // Citas for tomorrow
-            const { data: citasManana, error: errorCitasM } = await supabaseClient
-                .from('citas')
-                .select('id')
-                .eq('fecha', tomorrow)
-                .neq('estado', 'Cancelado');
-
-            if (errorCitas || errorCitasM) throw new Error("Error fetching stats");
-
-            const countCitasHoy = citasHoy ? citasHoy.length : 0;
-            const countCompletadas = citasHoy ? citasHoy.filter(c => (c.estado || '').toLowerCase().includes('completad')).length : 0;
-            const countCitasPendientesHoy = countCitasHoy - countCompletadas;
-            const countPorConfirmar = citasHoy ? citasHoy.filter(c => c.estado === 'Pendiente').length : 0; 
-            const countCitasManana = citasManana ? citasManana.length : 0;
-
-            const elCitasHoy = document.getElementById('stat-citas-hoy');
-            if (elCitasHoy) elCitasHoy.textContent = countCitasPendientesHoy;
-            const elCitasHoyTotal = document.getElementById('stat-citas-hoy-total');
-            if (elCitasHoyTotal) elCitasHoyTotal.textContent = `De ${countCitasHoy} citas programadas`;
-            
-            const elCitasConfirmar = document.getElementById('stat-citas-confirmar');
-            if (elCitasConfirmar) elCitasConfirmar.textContent = countPorConfirmar;
-            
-            const elCitasManana = document.getElementById('stat-citas-manana');
-            if (elCitasManana) elCitasManana.textContent = countCitasManana;
-
-        } catch (error) {
-            console.error('Error al cargar estadísticas:', error);
-        }
-    }
-
-    async function cargarTareasPendientes() {
-        try {
-            const d = new Date();
-            const today = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
-            const tomorrowDate = new Date();
-            tomorrowDate.setDate(tomorrowDate.getDate() + 1);
-            const tomorrow = tomorrowDate.getFullYear() + '-' + String(tomorrowDate.getMonth() + 1).padStart(2, '0') + '-' + String(tomorrowDate.getDate()).padStart(2, '0');
-
-            const { data, error } = await supabaseClient
-                .from('citas')
-                .select('id, fecha, hora, estado, pacientes(nombre)')
-                .in('fecha', [today, tomorrow])
-                .in('estado', ['Pendiente', 'Por Reprogramar']);
-
-            if (error) throw error;
-
-            const tareasContainer = document.getElementById('tareas-pendientes-list');
-            if (tareasContainer) {
-                const tareas = data.sort((a, b) => a.fecha.localeCompare(b.fecha) || a.hora.localeCompare(b.hora));
-                
-                if (tareas.length === 0) {
-                    tareasContainer.innerHTML = '<p class="text-outline text-center py-4 text-sm">No hay tareas pendientes para agendar o confirmar.</p>';
-                } else {
-                    let html = '';
-                    tareas.slice(0, 5).forEach(c => {
-                        const pacienteNombre = c.pacientes ? c.pacientes.nombre : 'Desconocido';
-                        const iniciales = getInitials(pacienteNombre);
-                        const isTomorrow = c.fecha === tomorrow;
-                        
-                        let actionText = "";
-                        if (c.estado === 'Por Reprogramar') {
-                            actionText = "<span class='text-primary font-bold'>Contactar para Reprogramar</span>";
-                        } else {
-                            actionText = isTomorrow ? "Confirmar asistencia mañana" : "Confirmar asistencia u ordenar";
-                        }
-                        
-                        html += `
-                        <div class="flex justify-between items-center p-3 bg-surface-container-lowest border border-outline-variant rounded-xl group">
-                            <div class="flex items-center gap-3">
-                                <div class="w-8 h-8 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center font-bold text-xs">${iniciales}</div>
-                                <div>
-                                    <p class="font-bold text-sm text-on-surface">${pacienteNombre}</p>
-                                    <p class="text-[10px] text-on-surface-variant">${actionText}</p>
-                                </div>
-                            </div>
-                            <button onclick="abrirOpcionesCita('${c.id}')" class="px-3 py-1.5 border border-outline-variant text-on-surface font-bold rounded-lg text-xs hover:bg-surface-container-low transition-all">Gestionar</button>
-                        </div>`;
-                    });
-                    tareasContainer.innerHTML = html;
-                }
-            }
-        } catch (error) {
-            console.error('Error al cargar tareas pendientes:', error);
-            const tareasContainer = document.getElementById('tareas-pendientes-list');
-            if (tareasContainer) tareasContainer.innerHTML = '<p class="text-error text-center py-4 text-sm">Error al cargar tareas.</p>';
-        }
-    }
-
-    async function saveAppointment(event) {
-        event.preventDefault();
-        
-        const submitBtn = event.target.querySelector('button[type="submit"]');
-        submitBtn.disabled = true;
-        submitBtn.innerHTML = '<span class="material-symbols-outlined animate-spin text-sm">sync</span> Guardando...';
-
-        const rawTime = document.getElementById("appt-time").value;
-        const apptDate = document.getElementById("appt-date").value;
-        const name = document.getElementById("appt-patient-name").value;
-        const email = document.getElementById("appt-patient-email").value;
-        const phone = document.getElementById("appt-patient-phone").value;
-        const baseTreatment = document.getElementById("appt-treatment").value;
-        const isCont = document.getElementById("appt-continuacion")?.checked;
-        const treatment = isCont ? baseTreatment + ' (Continuación)' : baseTreatment;
-        const doctor = document.getElementById("appt-doctor").value;
-        const notes = document.getElementById("appt-notes").value;
-
-        // Convert rawTime (e.g. 08:00 AM) to 24h format for database
-        let time24 = rawTime;
-        if (rawTime.includes('AM') || rawTime.includes('PM')) {
-            const [timeStr, modifier] = rawTime.split(' ');
-            let [hours, minutes] = timeStr.split(':');
-            if (hours === '12') hours = '00';
-            if (modifier === 'PM') hours = (parseInt(hours, 10) + 12).toString();
-            time24 = `${hours.padStart(2, '0')}:${minutes}:00`;
-        }
-
-        const appt = { name, email, phone, treatment, doctor, date: apptDate, time: rawTime, notes };
-
-        try {
-            // 1. Check if patient exists or create new
-            let pacienteId = null;
-            const { data: existingPacientes, error: searchError } = await supabaseClient
-                .from('pacientes')
-                .select('id')
-                .ilike('nombre', name)
-                .limit(1);
-
-            if (searchError) throw searchError;
-
-            if (existingPacientes && existingPacientes.length > 0) {
-                pacienteId = existingPacientes[0].id;
-            } else {
-                const { data: newPaciente, error: insertError } = await supabaseClient
-                    .from('pacientes')
-                    .insert([{ nombre: name, email: email, telefono: phone, estado: 'Activo' }])
-                    .select();
-                if (insertError) throw insertError;
-                if (newPaciente && newPaciente.length > 0) {
-                    pacienteId = newPaciente[0].id;
-                }
-            }
-
-            if (!pacienteId) throw new Error("No se pudo obtener o crear el paciente.");
-
-            // 2. Insert appointment
-            const { data: newCita, error: apptError } = await supabaseClient
-                .from('citas')
-                .insert([{
-                    paciente_id: pacienteId,
-                    fecha: apptDate,
-                    hora: time24,
-                    motivo: notes || treatment,
-                    estado: 'Pendiente',
-                    tratamiento: treatment,
-                    consultorio: doctor
-                }])
-                .select('id');
-
-            if (apptError) throw apptError;
-            
-            const citaId = newCita && newCita.length > 0 ? newCita[0].id : null;
-
-            // 3. Crear pago pendiente
-            const servicioObj = window.serviciosActivos ? window.serviciosActivos.find(s => s.nombre === baseTreatment) : null;
-            let montoPago = servicioObj ? servicioObj.precio : 0.00;
-
-            if (servicioObj && servicioObj.duracion && servicioObj.duracion > 1 && pacienteId) {
-                const totalSesiones = servicioObj.duracion;
-                // Contamos las citas anteriores para ver si es una sesión gratuita (de consumo de paquete)
-                const { data: citasPrevias, error: countError } = await supabaseClient
-                    .from('citas')
-                    .select('id')
-                    .eq('paciente_id', pacienteId)
-                    .eq('tratamiento', treatment)
-                    .neq('estado', 'Cancelado');
-
-                if (!countError && citasPrevias) {
-                    const totalConsumidas = citasPrevias.length; // Incluye la recién creada
-                    if ((totalConsumidas - 1) % totalSesiones !== 0) {
-                        montoPago = 0.00;
-                    }
-                }
-            }
-
-            if (citaId) {
-                const { error: pagoError } = await supabaseClient
-                    .from('pagos')
-                    .insert([{
-                        paciente_id: pacienteId,
-                        cita_id: citaId,
-                        monto: montoPago,
-                        estado: montoPago === 0 ? 'Completado' : 'Pendiente',
-                        metodo: montoPago === 0 ? 'Paquete' : 'Efectivo', // 'Paquete' para identificar que no requiere cobro
-                        fecha: apptDate,
-                        descripcion: treatment
-                    }]);
-                if (pagoError) console.error("Error creating payment:", pagoError);
-            }
-
-            // Generate sync link and set it on the success modal button
-            const appt = { name, email, treatment, doctor, date: apptDate, time, notes };
-            const gcalUrl = generateGoogleCalendarUrl(appt);
-            const gcalBtn = document.getElementById("sync-gcal-btn");
-            gcalBtn.setAttribute("href", gcalUrl);
-
-            // Hide form modal and open success modal
-            closeAppointmentModal();
-            document.getElementById("success-confirmation-modal").classList.remove("hidden");
-            
-            // Recargar citas y estadísticas
-            cargarCitas();
-            cargarEstadisticas();
-
-        } catch (error) {
-            console.error("Error al guardar cita:", error);
-            alert("Ocurrió un error al guardar la cita.");
-        } finally {
-            submitBtn.disabled = false;
-            submitBtn.textContent = 'Guardar Cita';
-        }
-    }
-
-    async function cargarCitas() {
-        try {
-            const d = new Date();
-            const today = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
-            const { data, error } = await supabaseClient
-                .from('citas')
-                .select(`
-                    id,
-                    fecha,
-                    hora,
-                    estado,
-                    tratamiento,
-                    consultorio,
-                    pacientes ( nombre )
-                `)
-                .eq('fecha', today);
-                
-            if (error) throw error;
-            
-            renderCitas(data || []);
-        } catch (error) {
-            console.error("Error cargando citas:", error);
-            document.getElementById('calendar-grid-content').innerHTML = `
-                <div class="col-span-full flex items-center justify-center h-full text-error">
-                    <p>Error al cargar las citas de hoy.</p>
-                </div>
-            `;
-        }
-    }
-
-    function renderCitas(citas) {
-        const grid = document.getElementById('calendar-grid-content');
-        
-        // Structure for the 3 columns
-        let html = \`
-            <div class="relative" id="col-sala-1"></div>
-            <div class="relative" id="col-sala-2"></div>
-            <div class="relative hidden md:block" id="col-sala-3">
-                <div class="absolute top-[60px] left-2 right-2 h-[56px] border-2 border-dashed border-surface-container/50 rounded-lg p-2 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
-                    <span class="font-label-sm text-outline text-[11px]">Soltar cita aquí</span>
-                </div>
-            </div>
-        `;
-        grid.innerHTML = html;
-
-        const col1 = document.getElementById('col-sala-1');
-        const col2 = document.getElementById('col-sala-2');
-        const col3 = document.getElementById('col-sala-3');
-
-        citas.forEach(cita => {
-            const estadoLower = (cita.estado || '').toLowerCase();
-            if (estadoLower.includes('cancelad')) return;
-
-            let hours = 8;
-            let minutes = 0;
-            if (cita.hora) {
-                const timeMatch = cita.hora.match(/(\d+):(\d+)\s*(AM|PM)/i);
-                if (timeMatch) {
-                    let h = parseInt(timeMatch[1]);
-                    const m = parseInt(timeMatch[2]);
-                    const modifier = timeMatch[3].toUpperCase();
-                    if (h === 12) h = 0;
-                    if (modifier === 'PM') h += 12;
-                    hours = h;
-                    minutes = m;
-                } else {
-                    const timeMatch24 = cita.hora.match(/(\d+):(\d+)/);
-                    if (timeMatch24) {
-                        hours = parseInt(timeMatch24[1]);
-                        minutes = parseInt(timeMatch24[2]);
-                    }
-                }
-            }
-            
-            const opening = localStorage.getItem('horaApertura') || '08:00';
-            const closing = localStorage.getItem('horaCierre') || '20:00';
-            const openHour = parseInt(opening.split(':')[0]);
-            const closeHour = parseInt(closing.split(':')[0]);
-            
-            const topPx = ((hours - openHour) * 60) + minutes;
-            if (topPx < 0 || topPx > (closeHour - openHour) * 60) return;
-
-            let bgClass = "bg-primary/10 border-primary/20";
-            let textClass = "text-primary";
-            let extraClass = "";
-
-            if (estadoLower.includes('pendiente') || estadoLower.includes('sin confirmar') || estadoLower.includes('por confirmar')) {
-                bgClass = "bg-warning/10 border-warning/20";
-                textClass = "text-warning-dark"; // Note: might not exist in tailwind default, text-warning is fine
-            } else if (estadoLower.includes('confirmad')) {
-                bgClass = "bg-success/10 border-success/20";
-                textClass = "text-success";
-            } else if (estadoLower.includes('completad') || estadoLower.includes('atendid') || estadoLower.includes('progreso')) {
-                bgClass = "bg-surface-variant border-outline/20";
-                textClass = "text-on-surface-variant";
-                extraClass = "opacity-50 grayscale";
-            } else if (estadoLower.includes('reprogramar')) {
-                bgClass = "bg-[#8b5cf6]/10 border-[#8b5cf6]/20";
-                textClass = "text-[#8b5cf6]";
-            }
-
-            const pacienteNombre = cita.pacientes ? cita.pacientes.nombre : 'Paciente Desconocido';
-            
-            // Format end time
-            let endH = hours + 1;
-            let endM = minutes;
-            let endAmPm = endH >= 12 ? 'PM' : 'AM';
-            let endH12 = endH > 12 ? endH - 12 : (endH === 0 ? 12 : endH);
-            const endHourStr = `${endH12.toString().padStart(2, '0')}:${endM.toString().padStart(2, '0')} ${endAmPm}`;
-
-            const cardHtml = `
-                <div onclick="abrirOpcionesCita('${cita.id}')" class="absolute left-2 right-2 min-h-[56px] h-auto ${bgClass} ${extraClass} border rounded-lg p-2 draggable-card flex flex-col justify-between group shadow-sm cursor-pointer z-10 hover:z-20" style="top: ${topPx}px;">
-                    <div class="absolute top-0 right-0 p-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <span class="material-symbols-outlined text-[16px] text-outline">drag_indicator</span>
-                    </div>
-                    <div class="flex justify-between items-start mb-1">
-                        <span class="font-label-sm text-[11px] ${textClass} font-bold">${cita.hora} - ${endHourStr}</span>
-                    </div>
-                    <div>
-                        <h4 class="font-body-md text-[13px] font-semibold text-on-surface leading-tight">${pacienteNombre}</h4>
-                        <p class="font-label-sm text-[11px] text-outline leading-tight mt-0.5">${cita.tratamiento || cita.motivo}</p>
-                    </div>
-                </div>
-            `;
-
-            if (cita.consultorio === 'Consultorio 1') {
-                col1.innerHTML += cardHtml;
-            } else if (cita.consultorio === 'Consultorio 2') {
-                col2.innerHTML += cardHtml;
-            } else {
-                col3.innerHTML += cardHtml;
-            }
-        });
-        
-        updateNowIndicator();
-    }
-
-    function updateNowIndicator() {
-        const grid = document.getElementById('calendar-grid-content');
-        if (!grid) return;
-
-        const inputDate = document.getElementById('appt-date').value;
-        const now = new Date();
-        const year = now.getFullYear();
-        const month = String(now.getMonth() + 1).padStart(2, '0');
-        const day = String(now.getDate()).padStart(2, '0');
-        const todayStr = `${year}-${month}-${day}`;
-        
-        let existingIndicator = document.getElementById('now-indicator');
-        if (inputDate !== todayStr) {
-            if (existingIndicator) existingIndicator.remove();
-            return;
-        }
-
-        const hours = now.getHours();
-        const minutes = now.getMinutes();
-
-        const opening = localStorage.getItem('horaApertura') || '08:00';
-        const closing = localStorage.getItem('horaCierre') || '20:00';
-        const openHour = parseInt(opening.split(':')[0]);
-        const closeHour = parseInt(closing.split(':')[0]);
-
-        if (hours < openHour || hours > closeHour) {
-            if (existingIndicator) existingIndicator.remove();
-            return;
-        }
-
-        const topPx = ((hours - openHour) * 60) + minutes;
-
-        if (!existingIndicator) {
-            existingIndicator = document.createElement('div');
-            existingIndicator.id = 'now-indicator';
-            existingIndicator.className = 'absolute left-0 right-0 z-[100] pointer-events-none flex items-center';
-            existingIndicator.innerHTML = `
-                <div class="w-3 h-3 rounded-full bg-error -ml-1.5 shadow-sm"></div>
-                <div class="flex-1 border-t-2 border-error shadow-sm shadow-error/20"></div>
-            `;
-            grid.appendChild(existingIndicator);
-        }
-
-        existingIndicator.style.top = topPx + 'px';
-    }
-
-    // Initialize logic
-    document.addEventListener("DOMContentLoaded", async () => {
-        populateTimeOptions();
-        await cargarServicios();
-        await cargarPacientesSelect();
-        cargarCitas();
-        cargarEstadisticas();
-        cargarTareasPendientes();
-
-        // Simple drag-drop feedback and slot click interactions
-        const draggables = document.querySelectorAll('.draggable-card');
-        draggables.forEach(card => {
-            card.addEventListener('mousedown', () => {
-                card.style.opacity = '0.8';
-            });
-            document.addEventListener('mouseup', () => {
-                card.style.opacity = '1';
-            });
-        });
-
-        // Update the time indicator every minute
-        setInterval(updateNowIndicator, 60000);
-    });
 </script>
 
-    <script>
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('../sw.js').then(registration => {
-                    console.log('SW registered: ', registration);
-                }).catch(registrationError => {
-                    console.log('SW registration failed: ', registrationError);
-                });
-            });
-        }
-    </script>
-</body></html>
+</body>
+</html>
