@@ -210,7 +210,7 @@
 <h1 class="text-xl font-bold font-headline-md text-on-background">Productos</h1>
 <p class="font-body-lg text-body-lg text-on-surface-variant text-sm">Inventario de cremas, vendas y ortopedia.</p>
 </div>
-<button onclick="abrirModalNuevoProductoMobile()" class="bg-surface-white text-primary font-bold text-sm px-6 py-3 rounded-full flex items-center justify-center gap-2 shadow-sm border border-outline-variant/30 active:scale-95 transition-transform w-full">
+<button id="btn-add-producto-mobile" style="display: none;" onclick="abrirModalNuevoProductoMobile()" class="bg-surface-white text-primary font-bold text-sm px-6 py-3 rounded-full flex items-center justify-center gap-2 shadow-sm border border-outline-variant/30 active:scale-95 transition-transform w-full">
 <span class="material-symbols-outlined text-[20px]">add</span>
     Nuevo Producto
 </button>
@@ -515,13 +515,16 @@
             }
 
             let html = '';
+            const role = getRoleFromURL();
+            const isAdmin = role === 'admin' || role === 'root';
+            
             productos.forEach(p => {
                 const stockWarning = p.stock < 5 ? '<span class="text-error font-bold material-symbols-outlined text-[14px] align-middle">warning</span>' : '';
                 html += `
                 <div onclick="agregarAlCarritoMobile('${p.id}')" class="bg-surface-white rounded-2xl p-4 shadow-sm border border-outline-variant/30 flex items-center gap-4 active:scale-[0.98] transition-transform relative">
-                    <button onclick="event.stopPropagation(); abrirModalEdicionProductoMobile('${p.id}')" class="absolute top-2 right-2 p-2 bg-surface-container-low rounded-full text-on-surface-variant active:bg-surface-container-high">
+                    ${isAdmin ? `<button onclick="event.stopPropagation(); abrirModalEdicionProductoMobile('${p.id}')" class="absolute top-2 right-2 p-2 bg-surface-container-low rounded-full text-on-surface-variant active:bg-surface-container-high">
                         <span class="material-symbols-outlined text-[16px]">edit</span>
-                    </button>
+                    </button>` : ''}
                     <div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary shrink-0">
                         <span class="material-symbols-outlined">vaccines</span>
                     </div>
@@ -529,7 +532,7 @@
                         <h4 class="font-bold text-sm text-on-surface leading-tight mb-1 line-clamp-1">${p.nombre}</h4>
                         <div class="flex items-center justify-between">
                             <div class="flex flex-col">
-                                <span class="text-[10px] text-on-surface-variant line-through">Costo: S/ ${p.valor_compra || 0}</span>
+                                ${isAdmin ? `<span class="text-[10px] text-on-surface-variant line-through">Costo: S/ ${p.valor_compra || 0}</span>` : ''}
                                 <span class="font-bold text-primary">S/ ${parseFloat(p.precio).toFixed(2)}</span>
                             </div>
                             <span class="text-[10px] bg-surface-container-high px-2 py-0.5 rounded text-on-surface-variant font-medium">${stockWarning} Stock: ${p.stock}</span>
@@ -539,6 +542,11 @@
                 `;
             });
             container.innerHTML = html;
+            
+            const btnAdd = document.getElementById('btn-add-producto-mobile');
+            if (btnAdd) {
+                btnAdd.style.display = isAdmin ? 'block' : 'none';
+            }
         }
 
         function abrirModalNuevoProductoMobile() {

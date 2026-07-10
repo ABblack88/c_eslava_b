@@ -217,7 +217,7 @@
 <span class="material-symbols-outlined text-primary">inventory_2</span>
                             Inventario
                         </h3>
-<button onclick="abrirModalNuevoProducto()" class="flex items-center gap-1 text-primary font-bold hover:underline bg-surface-white px-4 py-2 rounded-full border border-outline-variant shadow-sm">
+<button id="btn-add-producto" style="display: none;" onclick="abrirModalNuevoProducto()" class="flex items-center gap-1 text-primary font-bold hover:underline bg-surface-white px-4 py-2 rounded-full border border-outline-variant shadow-sm">
 <span class="material-symbols-outlined text-sm">add</span>
                             Añadir Producto
                         </button>
@@ -499,15 +499,19 @@
             }
 
             let html = '';
+            const role = getRoleFromURL();
+            const isAdmin = role === 'admin' || role === 'root';
+            
             productos.forEach(p => {
                 const stockWarning = p.stock < 5 ? '<span class="text-error font-bold material-symbols-outlined text-[14px]">warning</span>' : '';
                 html += `
                 <div onclick="agregarAlCarrito('${p.id}')" class="cursor-pointer bg-surface-white p-5 rounded-2xl shadow-sm border border-outline-variant/30 hover:border-primary/50 hover:shadow-md transition-all group relative flex flex-col h-full">
+                    ${isAdmin ? `
                     <div class="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity z-10">
                         <button onclick="event.stopPropagation(); abrirModalEdicionProducto('${p.id}')" class="bg-surface-container text-on-surface-variant hover:text-primary p-1.5 rounded-full flex items-center justify-center">
                             <span class="material-symbols-outlined text-[18px]">edit</span>
                         </button>
-                    </div>
+                    </div>` : ''}
                     <div class="flex justify-between items-start mb-3">
                         <div class="p-2.5 bg-primary/5 rounded-xl text-primary">
                             <span class="material-symbols-outlined">vaccines</span>
@@ -517,7 +521,7 @@
                     <p class="text-[12px] text-on-surface-variant mb-4 flex-grow line-clamp-2">${p.descripcion || 'Sin descripción'}</p>
                     <div class="flex items-end justify-between mt-auto pt-2 border-t border-outline-variant/20">
                         <div>
-                            <p class="text-xs text-on-surface-variant line-through mb-0.5">Costo: S/ ${p.valor_compra || 0}</p>
+                            ${isAdmin ? `<p class="text-xs text-on-surface-variant line-through mb-0.5">Costo: S/ ${p.valor_compra || 0}</p>` : ''}
                             <span class="text-headline-md font-bold text-primary">S/ ${parseFloat(p.precio).toFixed(2)}</span>
                         </div>
                         <div class="flex items-center gap-1 bg-surface-container-low px-2 py-1 rounded text-[11px] text-on-surface-variant font-medium">
@@ -529,6 +533,11 @@
                 `;
             });
             container.innerHTML = html;
+            
+            const btnAdd = document.getElementById('btn-add-producto');
+            if (btnAdd) {
+                btnAdd.style.display = isAdmin ? 'flex' : 'none';
+            }
         }
 
         function abrirModalNuevoProducto() {
