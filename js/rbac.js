@@ -56,9 +56,13 @@ function applyRBACRules() {
     }
 
     // Hide non-account settings in Ajustes for Level 3 and 4 (if they somehow get there)
+    // Also prevent Level 3-4 from directly charging in Point of Sale (can only charge to patient account)
     if (level >= 3) {
         const adminSettings = document.getElementById("admin-settings-section");
         if (adminSettings) adminSettings.style.display = 'none';
+
+        const btnCobrarInmediato = document.getElementById("btn-cobrar-inmediato");
+        if (btnCobrarInmediato) btnCobrarInmediato.style.display = 'none';
     }
 
     // 2. Inject Panel Master button in SideNavBar for Level 1
