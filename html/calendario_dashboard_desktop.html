@@ -988,10 +988,11 @@
 
     async function cargarEstadisticas() {
         try {
-            const today = new Date().toISOString().split('T')[0];
+            const d = new Date();
+            const today = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
             const tomorrowDate = new Date();
             tomorrowDate.setDate(tomorrowDate.getDate() + 1);
-            const tomorrow = tomorrowDate.toISOString().split('T')[0];
+            const tomorrow = tomorrowDate.getFullYear() + '-' + String(tomorrowDate.getMonth() + 1).padStart(2, '0') + '-' + String(tomorrowDate.getDate()).padStart(2, '0');
             
             // Citas for today
             const { data: citasHoy, error: errorCitas } = await supabaseClient
@@ -1192,7 +1193,8 @@
             const proximosContainer = document.getElementById('proximos-pacientes-list');
             if (!calendarEl) return;
             
-            const today = new Date().toISOString().split('T')[0];
+            const d = new Date();
+            const today = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
 
             const { data, error } = await supabaseClient
                 .from('citas')
@@ -1354,7 +1356,7 @@
                         }
 
                         html += `
-                        <div class="flex items-center gap-4 mb-4 last:mb-0">
+                        <div class="flex items-center gap-4 mb-4 last:mb-0 cursor-pointer hover:bg-surface-container-lowest p-2 -mx-2 rounded-xl transition-colors" onclick="abrirOpcionesCita('${c.id}')">
                             <div class="w-12 h-12 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center font-bold">${iniciales}</div>
                             <div class="flex-1">
                                 <p class="font-bold text-on-surface">${pacienteNombre}</p>
@@ -1373,7 +1375,7 @@
             if (tareasContainer) {
                 const tomorrowDate = new Date();
                 tomorrowDate.setDate(tomorrowDate.getDate() + 1);
-                const tomorrow = tomorrowDate.toISOString().split('T')[0];
+                const tomorrow = tomorrowDate.getFullYear() + '-' + String(tomorrowDate.getMonth() + 1).padStart(2, '0') + '-' + String(tomorrowDate.getDate()).padStart(2, '0');
 
                 // Filtrar todas las citas pendientes, por confirmar o por reprogramar, sin importar la fecha
                 const tareas = data.filter(c => {

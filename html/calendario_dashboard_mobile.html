@@ -1041,10 +1041,11 @@
 
     async function cargarEstadisticas() {
         try {
-            const today = new Date().toISOString().split('T')[0];
+            const d = new Date();
+            const today = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
             const tomorrowDate = new Date();
             tomorrowDate.setDate(tomorrowDate.getDate() + 1);
-            const tomorrow = tomorrowDate.toISOString().split('T')[0];
+            const tomorrow = tomorrowDate.getFullYear() + '-' + String(tomorrowDate.getMonth() + 1).padStart(2, '0') + '-' + String(tomorrowDate.getDate()).padStart(2, '0');
             
             // Citas for today
             const { data: citasHoy, error: errorCitas } = await supabaseClient
@@ -1086,10 +1087,11 @@
 
     async function cargarTareasPendientes() {
         try {
-            const today = new Date().toISOString().split('T')[0];
+            const d = new Date();
+            const today = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
             const tomorrowDate = new Date();
             tomorrowDate.setDate(tomorrowDate.getDate() + 1);
-            const tomorrow = tomorrowDate.toISOString().split('T')[0];
+            const tomorrow = tomorrowDate.getFullYear() + '-' + String(tomorrowDate.getMonth() + 1).padStart(2, '0') + '-' + String(tomorrowDate.getDate()).padStart(2, '0');
 
             const { data, error } = await supabaseClient
                 .from('citas')
@@ -1277,7 +1279,8 @@
 
     async function cargarCitas() {
         try {
-            const today = new Date().toISOString().split('T')[0];
+            const d = new Date();
+            const today = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
             const { data, error } = await supabaseClient
                 .from('citas')
                 .select(`
