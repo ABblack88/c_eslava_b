@@ -41,10 +41,12 @@
 
 <header class="flex justify-between items-center h-18 px-4 bg-surface-white dark:bg-surface-container-lowest border-b border-surface-container sticky top-0 z-50 md:hidden">
     <div class="flex items-center gap-2">
-        <span class="material-symbols-outlined text-primary text-2xl">health_and_safety</span>
-        <span class="font-headline-md text-label-sm font-bold text-primary">Centro Eslava</span>
+        <div class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
+            <span class="material-symbols-outlined text-primary text-xl">medical_services</span>
+        </div>
+        <h1 class="font-display font-bold text-lg text-primary tracking-tight">Centro Eslava</h1>
     </div>
-    <button aria-label="Menu" class="md:hidden text-primary dark:text-primary-fixed hover:bg-surface-container-low dark:hover:bg-surface-container-high transition-colors active:scale-95 transition-transform duration-200 p-2 rounded-full">
+    <button id="mobile-menu-btn" class="text-on-surface-variant hover:text-primary transition-colors p-2">
         <span class="material-symbols-outlined">menu</span>
     </button>
 </header>
@@ -105,12 +107,12 @@
         <h3 class="font-bold text-lg text-primary flex items-center gap-2 border-b border-surface-container pb-3 mb-4">
             <span class="material-symbols-outlined text-warning">schedule</span> Próximos a Cobrar (Recientes)
         </h3>
-        <div id="dashboard-cobros-pendientes" class="grid grid-cols-1 md:grid-cols-5 gap-4">
-            <div class="col-span-5 text-center py-4 text-on-surface-variant"><span class="material-symbols-outlined animate-spin inline-block">sync</span> Cargando...</div>
+        <div id="dashboard-cobros-pendientes" class="grid grid-cols-1 lg:grid-cols-1 md:grid-cols-5 gap-4">
+            <div class="col-span-12 lg:col-span-5 text-center py-4 text-on-surface-variant"><span class="material-symbols-outlined animate-spin inline-block">sync</span> Cargando...</div>
         </div>
     </div>
 
-    <form id="formNuevaFactura" class="grid grid-cols-12 gap-8 items-start">
+    <form id="formNuevaFactura" class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         
         <!-- Izquierda: Formulario de Registro -->
         <section class="col-span-12 lg:col-span-8 space-y-6">
@@ -119,8 +121,8 @@
                 <h3 class="font-bold text-lg text-primary flex items-center gap-2 border-b border-surface-container pb-3">
                     <span class="material-symbols-outlined">person</span> 1. Identificación del Paciente
                 </h3>
-                <div class="grid grid-cols-2 gap-4">
-                <div class="grid grid-cols-1 gap-4">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                <div class="grid grid-cols-1 lg:grid-cols-1 gap-4">
                     <div class="relative">
                         <label class="block text-xs font-bold text-on-surface-variant mb-1">Paciente</label>
                         <input type="text" id="invoice-paciente-search" placeholder="Escribe el nombre del paciente..." autocomplete="off" oninput="filtrarPacientesFactura()" onfocus="filtrarPacientesFactura()" onkeydown="if(event.key==='Enter') event.preventDefault();" class="w-full bg-surface-container-low border-none rounded-xl py-3 px-4 focus:ring-2 focus:ring-primary text-sm">
@@ -144,7 +146,7 @@
                     <span class="material-symbols-outlined">payments</span> 3. Detalles de Pago
                 </h3>
 
-                <div class="grid grid-cols-2 gap-4">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
                     <div>
                         <label class="block text-xs font-bold text-on-surface-variant mb-1">Método de Pago</label>
                         <select id="invoice-metodo" required onchange="onMetodoPagoChange()" class="w-full bg-surface-container-low border-none rounded-xl py-3 px-4 focus:ring-2 focus:ring-primary">
@@ -277,7 +279,20 @@
         bottomLink.classList.remove('text-outline');
         bottomLink.classList.add('text-primary');
     }
+    
+    // Toggle menu
+    const menuBtn = document.getElementById('mobile-menu-btn');
+    const drawer = document.querySelector('aside');
+    if(menuBtn && drawer) {
+        menuBtn.addEventListener('click', () => {
+            drawer.classList.toggle('hidden');
+        });
+    }
 </script>
 
+
+
 <script src="../js/caja.js?v=3"></script>
+
 </body>
+</html>

@@ -132,10 +132,12 @@
 
 <header class="flex justify-between items-center h-18 px-4 bg-surface-white dark:bg-surface-container-lowest border-b border-surface-container sticky top-0 z-50 md:hidden">
     <div class="flex items-center gap-2">
-        <span class="material-symbols-outlined text-primary text-2xl">health_and_safety</span>
-        <span class="font-headline-md text-label-sm font-bold text-primary">Centro Eslava</span>
+        <div class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
+            <span class="material-symbols-outlined text-primary text-xl">medical_services</span>
+        </div>
+        <h1 class="font-display font-bold text-lg text-primary tracking-tight">Centro Eslava</h1>
     </div>
-    <button aria-label="Menu" class="md:hidden text-primary dark:text-primary-fixed hover:bg-surface-container-low dark:hover:bg-surface-container-high transition-colors active:scale-95 transition-transform duration-200 p-2 rounded-full">
+    <button id="mobile-menu-btn" class="text-on-surface-variant hover:text-primary transition-colors p-2">
         <span class="material-symbols-outlined">menu</span>
     </button>
 </header>
@@ -303,7 +305,18 @@
         bottomLink.classList.remove('text-outline');
         bottomLink.classList.add('text-primary');
     }
+    
+    // Toggle menu
+    const menuBtn = document.getElementById('mobile-menu-btn');
+    const drawer = document.querySelector('aside');
+    if(menuBtn && drawer) {
+        menuBtn.addEventListener('click', () => {
+            drawer.classList.toggle('hidden');
+        });
+    }
 </script>
+
+
 
 <script>
         // Micro-interaction: Active tab logic
@@ -550,4 +563,6 @@
             });
         }
     </script>
+
 </body>
+</html>
