@@ -1,501 +1,542 @@
 <!DOCTYPE html>
-
-<html class="light" lang="es"><head>
+<html class="light" lang="es">
+<head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Gestión de Pacientes - Centro Eslava</title>
-<!-- Fonts & Icons -->
-<link href="https://fonts.googleapis.com" rel="preconnect"/>
-<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
-<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;700&amp;display=block" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=block" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=block" rel="stylesheet"/>
-<!-- Tailwind Config -->
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <!-- Supabase SDK -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="../js/supabase.js"></script>
-<script id="tailwind-config">
-        tailwind.config = {
-            darkMode: "class",
-            theme: {
-                extend: {
-                    "colors": {
-                        "on-primary": "#ffffff",
-                        "primary-fixed": "#aeecff",
-                        "on-secondary-fixed": "#001f26",
-                        "surface": "#f8fafa",
-                        "tertiary-container": "#a96418",
-                        "surface-white": "#FFFFFF",
-                        "error": "#ba1a1a",
-                        "on-primary-fixed-variant": "#004e5d",
-                        "warning": "#FF9500",
-                        "secondary-container": "#89e4fd",
-                        "secondary-fixed-dim": "#78d3eb",
-                        "surface-tint": "#00687b",
-                        "on-tertiary-fixed": "#2e1600",
-                        "secondary-fixed": "#adecff",
-                        "success": "#34C759",
-                        "surface-container-lowest": "#ffffff",
-                        "text-main": "#1C1C1E",
-                        "on-secondary": "#ffffff",
-                        "outline-variant": "#bdc8cd",
-                        "on-secondary-fixed-variant": "#004e5c",
-                        "surface-container-high": "#e6e8e8",
-                        "surface-container-low": "#f2f4f4",
-                        "outline": "#6d797d",
-                        "on-primary-container": "#f9fdff",
-                        "primary": "#006578",
-                        "on-surface-variant": "#3d494c",
-                        "secondary": "#00687a",
-                        "background": "#f8fafa",
-                        "on-tertiary-container": "#fffbff",
-                        "on-error": "#ffffff",
-                        "tertiary-fixed": "#ffdcc0",
-                        "on-secondary-container": "#006779",
-                        "on-primary-fixed": "#001f26",
-                        "error-container": "#ffdad6",
-                        "inverse-primary": "#66d5f1",
-                        "on-tertiary": "#ffffff",
-                        "on-error-container": "#93000a",
-                        "primary-container": "#008097",
-                        "text-muted": "#636366",
-                        "surface-bright": "#f8fafa",
-                        "primary-fixed-dim": "#66d5f1",
-                        "surface-dim": "#d8dada",
-                        "surface-container": "#eceeee",
-                        "surface-variant": "#e1e3e3",
-                        "surface-container-highest": "#e1e3e3",
-                        "tertiary-fixed-dim": "#ffb877",
-                        "inverse-surface": "#2e3131",
-                        "on-background": "#191c1d",
-                        "inverse-on-surface": "#eff1f1",
-                        "on-tertiary-fixed-variant": "#6b3b00",
-                        "on-surface": "#191c1d",
-                        "tertiary": "#8a4d00"
-                    },
-                    "borderRadius": {
-                        "DEFAULT": "0.25rem",
-                        "lg": "0.5rem",
-                        "xl": "0.75rem",
-                        "full": "9999px"
-                    },
-                    "spacing": {
-                        "base": "8px",
-                        "margin-desktop": "80px",
-                        "margin-mobile": "20px",
-                        "gutter": "24px",
-                        "section-gap": "120px"
-                    },
-                    "fontFamily": {
-                        "body-md": ["Hanken Grotesk"],
-                        "display-lg": ["Hanken Grotesk"],
-                        "display-lg-mobile": ["Hanken Grotesk"],
-                        "label-sm": ["Hanken Grotesk"],
-                        "body-lg": ["Hanken Grotesk"],
-                        "headline-md": ["Hanken Grotesk"]
-                    },
-                    "fontSize": {
-                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
-                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
-                        "display-lg-mobile": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "700" }],
-                        "label-sm": ["13px", { "lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "600" }],
-                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
-                        "headline-md": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }]
-                    }
-                }
-            }
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@300;400;500;600;700;800&amp;display=block" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=block" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=block" rel="stylesheet"/>
+<!-- Supabase -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../js/supabase.js"></script>
+<style>
+        body {
+            font-family: 'Hanken Grotesk', sans-serif;
+            background-color: #f8fafa;
         }
-    </script>
-<style>
-        /* Hide scrollbar for cleaner look */
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #e1e3e3; border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: #bdc8cd; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(8px);
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #bdc8cd;
+            border-radius: 10px;
+        }
     </style>
-<style>
-    body {
-      min-height: max(884px, 100dvh);
-    }
-  </style>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-container": "#eceeee",
+                    "primary-fixed-dim": "#66d5f1",
+                    "tertiary": "#8a4d00",
+                    "outline": "#6d797d",
+                    "on-tertiary-fixed": "#2e1600",
+                    "on-primary-container": "#f9fdff",
+                    "surface-container-low": "#f2f4f4",
+                    "error-container": "#ffdad6",
+                    "surface-bright": "#f8fafa",
+                    "secondary-fixed-dim": "#78d3eb",
+                    "on-primary-fixed": "#001f26",
+                    "text-muted": "#636366",
+                    "tertiary-fixed-dim": "#ffb877",
+                    "on-surface": "#191c1d",
+                    "inverse-on-surface": "#eff1f1",
+                    "outline-variant": "#bdc8cd",
+                    "error": "#ba1a1a",
+                    "tertiary-container": "#a96418",
+                    "on-surface-variant": "#3d494c",
+                    "on-tertiary": "#ffffff",
+                    "on-background": "#191c1d",
+                    "surface-container-lowest": "#ffffff",
+                    "on-secondary-fixed": "#001f26",
+                    "surface-dim": "#d8dada",
+                    "surface-white": "#FFFFFF",
+                    "surface": "#f8fafa",
+                    "inverse-surface": "#2e3131",
+                    "primary-container": "#008097",
+                    "warning": "#FF9500",
+                    "secondary-container": "#89e4fd",
+                    "on-primary-fixed-variant": "#004e5d",
+                    "background": "#f8fafa",
+                    "text-main": "#1C1C1E",
+                    "on-primary": "#ffffff",
+                    "on-error-container": "#93000a",
+                    "success": "#34C759",
+                    "on-secondary": "#ffffff",
+                    "inverse-primary": "#66d5f1",
+                    "primary-fixed": "#aeecff",
+                    "on-error": "#ffffff",
+                    "tertiary-fixed": "#ffdcc0",
+                    "secondary": "#00687a",
+                    "on-tertiary-fixed-variant": "#6b3b00",
+                    "surface-container-highest": "#e1e3e3",
+                    "secondary-fixed": "#adecff",
+                    "primary": "#006578",
+                    "on-secondary-fixed-variant": "#004e5c",
+                    "on-secondary-container": "#006779",
+                    "surface-container-high": "#e6e8e8",
+                    "surface-variant": "#e1e3e3",
+                    "surface-tint": "#00687b",
+                    "on-tertiary-container": "#fffbff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "margin-desktop": "80px",
+                    "margin-mobile": "20px",
+                    "section-gap": "120px",
+                    "base": "8px",
+                    "gutter": "24px"
+            },
+            "fontFamily": {
+                    "headline-md": ["Hanken Grotesk"],
+                    "display-lg": ["Hanken Grotesk"],
+                    "body-lg": ["Hanken Grotesk"],
+                    "label-sm": ["Hanken Grotesk"],
+                    "body-md": ["Hanken Grotesk"]
+            },
+            "fontSize": {
+                    "headline-md": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                    "label-sm": ["13px", {"lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "600"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
 
     <script src="../js/app.js"></script>
     <script src="../js/rbac.js"></script>
     <link rel="manifest" href="../manifest.json">
 </head>
-<body class="bg-surface text-on-surface font-body-md min-h-screen flex antialiased">
-<!-- DESKTOP NAVIGATION DRAWER (Hidden on mobile) -->
-<nav class="hidden md:flex flex-col bg-surface-white w-72 h-full fixed left-0 top-0 z-40 p-6 shadow-[0px_10px_30px_rgba(0,0,0,0.04)]">
-<!-- Header -->
-<div class="flex items-center gap-4 mb-8">
-<div class="w-12 h-12 rounded-full bg-surface-container overflow-hidden flex items-center justify-center">
-<span class="material-symbols-outlined text-outline" style="font-size: 24px;">person</span>
-</div>
-<div>
-<h2 class="font-headline-md text-[18px] leading-tight text-primary font-bold">Dr. Eslava</h2>
-<p class="font-label-sm text-label-sm text-outline">Director Clínico</p>
-</div>
-</div>
-<!-- Navigation Links -->
-<ul class="flex flex-col gap-2 flex-1">
-<!-- Schedule -->
-<li>
-<a class="flex items-center gap-3 px-4 py-3 rounded-xl font-label-sm text-label-sm text-on-surface-variant hover:bg-surface-container-low transition-all" href="calendario_dashboard_mobile.html" id="nav-link-calendario-desktop">
-<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">calendar_today</span>
-                    Agenda
-                </a>
-</li>
-<!-- Citas (ACTIVE) -->
-<li>
-<a class="flex items-center gap-3 px-4 py-3 rounded-xl font-label-sm text-label-sm bg-secondary-container text-on-secondary-container active:scale-[0.98] transition-transform" href="citas_listado_mobile.html" id="nav-link-citas-desktop">
-<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">list_alt</span>
-                    Citas
-                </a>
-</li>
-<!-- Patients -->
-<li>
-<a class="flex items-center gap-3 px-4 py-3 rounded-xl font-label-sm text-label-sm text-on-surface-variant hover:bg-surface-container-low transition-all" href="pacientes_historia_clinica_mobile.html" id="nav-link-pacientes-desktop">
-<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">groups</span>
-                    Pacientes
-                </a>
-</li>
-<!-- Services -->
-<li>
-<a class="flex items-center gap-3 px-4 py-3 rounded-xl font-label-sm text-label-sm text-on-surface-variant hover:bg-surface-container-low transition-all" href="tratamientos_mobile.html" id="nav-link-servicios-desktop">
-<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">medical_services</span>
-                    Servicios
-                </a>
-</li>
-<!-- Payments -->
-<li>
-<a class="flex flex-col items-center justify-center text-outline dark:text-outline-variant w-1/5" href="productos_mobile.html">
-<span class="material-symbols-outlined mb-1" data-icon="inventory_2">inventory_2</span>
-<span>Productos</span>
-</a>
-<a class="flex flex-col items-center justify-center text-outline dark:text-outline-variant min-w-0 flex-1 py-1 px-1 rounded-lg hover:bg-[#f2f4f4] active:scale-90 transition-all duration-150" href="cobrar_mobile.html">
-<span class="material-symbols-outlined mb-1 text-[22px]">point_of_sale</span>
-<span class="text-[10px] font-semibold leading-tight truncate">Caja</span>
-</a>
-<a class="flex items-center gap-3 px-4 py-3 rounded-xl font-label-sm text-label-sm text-on-surface-variant hover:bg-surface-container-low transition-all" href="pagos_facturacion_mobile.html" id="nav-link-finanzas-desktop">
-<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">payments</span>
-                    Pagos
-                </a>
-</li>
-<!-- Settings -->
-<li>
-<a class="flex items-center gap-3 px-4 py-3 rounded-xl font-label-sm text-label-sm text-on-surface-variant hover:bg-surface-container-low transition-all mt-auto" href="ajustes_mobile.html" id="nav-link-ajustes-desktop">
-<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">settings</span>
-                    Ajustes
-                </a>
-</li>
-</ul>
-</nav>
-<!-- MAIN CONTENT AREA -->
-<div class="flex-1 flex flex-col min-w-0 md:ml-72 relative pb-20 md:pb-0">
-<!-- TOP APP BAR -->
-<header class="w-full top-0 bg-surface flex justify-between items-center px-margin-mobile md:px-margin-desktop py-4 z-30 sticky shadow-[0px_10px_30px_rgba(0,0,0,0.02)]">
-<div class="flex items-center gap-4">
-<button class="md:hidden text-primary p-2 -ml-2 rounded-full hover:bg-surface-container-low transition-colors">
-<span class="material-symbols-outlined">menu</span>
-</button>
-<h1 class="font-headline-md text-headline-md font-bold text-primary tracking-tight">Centro Eslava</h1>
-</div>
-<div class="flex items-center gap-4">
-<div class="w-10 h-10 rounded-full bg-surface-container overflow-hidden md:hidden">
-<img alt="Foto de perfil del doctor" class="w-full h-full object-cover" data-alt="Close up portrait of a medical professional in a brightly lit modern clinic. The lighting is soft and flattering, emphasizing a pristine, clean environment. The color palette is composed of crisp whites and subtle cool tones, creating a calm and authoritative mood." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB9dVQqVQpQP3E9p96P8X47ZsFfWdzlh5TjE7JGbm5KPJdmUMMeWT7HsbayVFz8iSv5H9HU9VVuftsrQNOgVvGvikJ8AI24sx3SykyqBDCk82ds04fdkJHPGwtn4-vip03EyQynHQ_Rahf8jy-fGukIN75hgCgT3VOZYfpyp9hzh0GiFam8fvW9YtovBT-4BI7xmSHmmwGFd3y5VWafNuiUlpslSoja7bM5lzdqYCswuzrLPGjhRGH2L7gLdDvpBXf84hZrxA1G6lU"/>
-</div>
-</div>
+<body class="bg-background font-body-md text-on-surface">
+
+<header class="flex justify-between items-center h-18 px-4 bg-surface-white dark:bg-surface-container-lowest border-b border-surface-container sticky top-0 z-50 md:hidden">
+    <div class="flex items-center gap-2">
+        <span class="material-symbols-outlined text-primary text-2xl">health_and_safety</span>
+        <span class="font-headline-md text-label-sm font-bold text-primary">Centro Eslava</span>
+    </div>
+    <button aria-label="Menu" class="md:hidden text-primary dark:text-primary-fixed hover:bg-surface-container-low dark:hover:bg-surface-container-high transition-colors active:scale-95 transition-transform duration-200 p-2 rounded-full">
+        <span class="material-symbols-outlined">menu</span>
+    </button>
 </header>
-<!-- PAGE CONTENT CANVAS -->
-<main class="flex-1 px-margin-mobile md:px-margin-desktop py-8 max-w-[1280px] w-full mx-auto flex flex-col gap-8">
-<!-- Page Header & Search -->
-<div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+
+<aside class="fixed left-0 top-18 h-[calc(100vh-72px)] w-72 bg-surface-white dark:bg-surface-container-lowest shadow-[0px_10px_30px_rgba(0,0,0,0.04)] z-40 hidden md:flex flex-col p-6 overflow-y-auto">
+    <div class="flex items-center gap-4 mb-8 pb-6 border-b border-surface-container">
+        <div class="h-12 w-12 rounded-full bg-surface-container-high overflow-hidden flex-shrink-0">
+            <span class="material-symbols-outlined m-3">person</span>
+        </div>
+        <div>
+            <h2 id="drawer-profile-name" class="font-body-md text-body-md font-semibold text-primary">Dr. Eslava</h2>
+            <p id="drawer-profile-role" class="font-label-sm text-label-sm text-outline">Director Clínico</p>
+            <span id="drawer-profile-badge" class="inline-block mt-1 px-2 py-0.5 bg-secondary-container/30 text-on-secondary-container rounded font-label-sm text-[10px]">Acceso Admin</span>
+        </div>
+    </div>
+    <nav class="flex flex-col gap-2 flex-grow">
+        <a id="nav-link-agenda-drawer" class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-low transition-all rounded-xl font-body-md" href="calendario_dashboard_mobile.html">
+            <span class="material-symbols-outlined">calendar_today</span> Calendario
+        </a>
+        <a id="nav-link-citas-drawer" class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-low transition-all rounded-xl font-body-md" href="citas_listado_mobile.html">
+            <span class="material-symbols-outlined">list_alt</span> Citas
+        </a>
+        <a id="nav-link-pacientes-drawer" class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-low transition-all rounded-xl font-body-md" href="pacientes_historia_clinica_mobile.html">
+            <span class="material-symbols-outlined">groups</span> Pacientes
+        </a>
+        <a id="nav-link-tratamientos-drawer" class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-low transition-all rounded-xl font-body-md" href="tratamientos_mobile.html">
+            <span class="material-symbols-outlined">medical_services</span> Tratamientos
+        </a>
+        <a id="nav-link-productos-drawer" class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-low transition-all rounded-xl font-body-md" href="productos_mobile.html">
+            <span class="material-symbols-outlined">inventory_2</span> Productos
+        </a>
+        <a id="nav-link-cobrar-drawer" class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-low transition-all rounded-xl font-body-md" href="cobrar_mobile.html">
+            <span class="material-symbols-outlined">point_of_sale</span> Caja
+        </a>
+        <a id="nav-link-finanzas-drawer" class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-low transition-all rounded-xl font-body-md" href="pagos_facturacion_mobile.html">
+            <span class="material-symbols-outlined">payments</span> Finanzas
+        </a>
+        <a id="nav-link-gestion-drawer" class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-low transition-all rounded-xl font-body-md" href="gestion_pacientes_mobile.html">
+            <span class="material-symbols-outlined">monitoring</span> Gestión Estratégica
+        </a>
+    </nav>
+    <div class="mt-auto pt-6 border-t border-surface-container">
+        <a id="nav-link-ajustes-drawer" class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-low transition-all rounded-xl font-body-md" href="ajustes_mobile.html">
+            <span class="material-symbols-outlined">settings</span> Ajustes
+        </a>
+    </div>
+</aside>
+
+<main class="md:ml-72 min-h-screen px-4 py-8 pb-24 md:pb-8">
+
+<!-- Page Header & Stats -->
+<div class="flex justify-between items-end mb-10">
 <div>
-<h2 class="font-display-lg-mobile md:font-display-lg text-display-lg-mobile md:text-display-lg text-on-surface mb-2">Listado de Citas</h2>
-<p class="font-body-md text-body-md text-outline">Gestiona y visualiza todas las citas programadas.</p>
-</div>
-<div class="w-full md:w-auto flex items-center relative">
-<span class="material-symbols-outlined absolute left-4 text-outline z-10 pointer-events-none">search</span>
-<input class="w-full md:w-[320px] pl-12 pr-4 py-3 bg-surface-white border border-transparent rounded-xl font-body-md text-body-md text-on-surface placeholder:text-outline focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 shadow-[0px_4px_20px_rgba(0,0,0,0.03)] transition-all" placeholder="Buscar por nombre, ID o condición..." type="text"/>
-</div>
-</div>
-<!-- Filters & Actions -->
-<div class="flex flex-col gap-4">
-    <div class="flex gap-2 overflow-x-auto pb-2 -mx-margin-mobile px-margin-mobile md:mx-0 md:px-0 hide-scrollbar">
-        <button class="whitespace-nowrap px-4 py-2 rounded-full font-label-sm text-label-sm bg-primary text-on-primary shadow-sm">Todas las Citas</button>
-        
-        
-    </div>
-    
-    <div class="flex gap-2 overflow-x-auto pb-2 -mx-margin-mobile px-margin-mobile md:mx-0 md:px-0 hide-scrollbar">
-        <input type="file" id="csvFileInputMobile" accept=".csv" style="display: none;" onchange="importarPacientesCSV(event)">
-        <button onclick="triggerImportarCSVMobile()" class="flex items-center gap-2 whitespace-nowrap px-4 py-2 rounded-full font-label-sm text-label-sm bg-surface-white text-on-surface hover:bg-surface-container-low transition-colors shadow-[0px_2px_10px_rgba(0,0,0,0.02)] border border-outline-variant/30">
-            <span class="material-symbols-outlined text-[16px]">upload</span> Importar
-        </button>
-        <button onclick="exportarPacientesCSV()" class="flex items-center gap-2 whitespace-nowrap px-4 py-2 rounded-full font-label-sm text-label-sm bg-primary text-on-primary shadow-[0px_2px_10px_rgba(0,0,0,0.02)]">
-            <span class="material-symbols-outlined text-[16px]">download</span> Exportar
-        </button>
-    </div>
-</div>
-<!-- Patient Grid (Bento/Card Layout) -->
-
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-gutter" id="patientsGrid">
-<!-- Contenido dinámico cargado vía Supabase -->
-</div>
-</main>
-</div>
-<!-- MOBILE BOTTOM NAV BAR (Hidden on desktop) -->
-<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 py-3 md:hidden bg-surface-white/90 backdrop-blur-md rounded-t-xl shadow-[0px_-10px_30px_rgba(0,0,0,0.04)]">
-<!-- Calendar -->
-<a class="flex flex-col items-center justify-center text-outline gap-1 active:scale-90 transition-all duration-150 w-16" href="calendario_dashboard_mobile.html" id="nav-link-calendario">
-<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">event</span>
-<span class="font-label-sm text-[10px]">Agenda</span>
-</a>
-<!-- Citas (ACTIVE) -->
-<a class="flex flex-col items-center justify-center text-primary font-bold gap-1 active:scale-90 transition-all duration-150 w-16" href="citas_listado_mobile.html" id="nav-link-citas">
-<div class="px-4 py-1 bg-secondary-container rounded-full mb-1"><span class="material-symbols-outlined text-on-secondary-container" style="font-variation-settings: 'FILL' 1;">list_alt</span></div>
-<span class="font-label-sm text-[10px]">Citas</span>
-</a>
-<!-- Patients -->
-<a class="flex flex-col items-center justify-center text-outline gap-1 active:scale-90 transition-all duration-150 w-16" href="pacientes_historia_clinica_mobile.html" id="nav-link-pacientes">
-<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">person_search</span>
-<span class="font-label-sm text-[10px]">Pacientes</span>
-</a>
-<!-- Treatments -->
-<a class="flex flex-col items-center justify-center text-outline gap-1 active:scale-90 transition-all duration-150 w-16" href="tratamientos_mobile.html" id="nav-link-servicios">
-<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">healing</span>
-<span class="font-label-sm text-[10px]">Tratamientos</span>
-</a>
-<!-- Finance -->
-<a class="flex flex-col items-center justify-center text-outline dark:text-outline-variant w-1/5" href="productos_mobile.html">
-<span class="material-symbols-outlined mb-1" data-icon="inventory_2">inventory_2</span>
-<span>Productos</span>
-</a>
-<a class="flex flex-col items-center justify-center text-outline dark:text-outline-variant min-w-0 flex-1 py-1 px-1 rounded-lg hover:bg-[#f2f4f4] active:scale-90 transition-all duration-150" href="cobrar_mobile.html">
-<span class="material-symbols-outlined mb-1 text-[22px]">point_of_sale</span>
-<span class="text-[10px] font-semibold leading-tight truncate">Caja</span>
-</a>
-<a class="flex flex-col items-center justify-center text-outline gap-1 active:scale-90 transition-all duration-150 w-16" href="pagos_facturacion_mobile.html" id="nav-link-finanzas">
-<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">account_balance_wallet</span>
-<span class="font-label-sm text-[10px]">Finanzas</span>
-</a>
+<nav class="flex gap-2 text-label-sm text-outline mb-2">
+<span>Inicio</span>
+<span>/</span>
+<span class="text-primary font-bold">Listado de Citas</span>
 </nav>
+<h2 class="font-display-lg text-4xl font-extrabold text-on-surface tracking-tight">Listado de Citas</h2>
+<p class="text-on-surface-variant mt-2 font-body-md">Gestiona y visualiza todas las citas programadas.</p>
+</div>
+<div class="flex gap-4">
+<div class="bg-surface-white p-4 rounded-2xl shadow-[0px_10px_30px_rgba(0,0,0,0.04)] min-w-[140px]">
+<p class="text-label-sm text-outline">Total Citas</p>
+<p class="text-2xl font-bold text-primary" id="total-citas-badge">...</p>
+</div>
+</div>
+</div>
+<!-- Filters Section -->
+<div class="flex items-center justify-between mb-8">
+<div class="flex gap-2 bg-surface-container-low p-1.5 rounded-xl">
+<button onclick="filtrarPorEstado('Todos', this)" class="px-6 py-2 rounded-lg font-bold transition-all bg-surface-white shadow-sm text-primary">Todos</button>
+<button onclick="filtrarPorEstado('Activo', this)" class="px-6 py-2 rounded-lg font-bold transition-all text-on-surface-variant hover:bg-surface-container-high">Activos</button>
+<button onclick="filtrarPorEstado('Inactivo', this)" class="px-6 py-2 rounded-lg font-bold transition-all text-on-surface-variant hover:bg-surface-container-high">Inactivos</button>
+</div>
+<div class="flex gap-3 items-center">
+<button onclick="alert('Próximamente: Panel de filtros avanzados.')" class="flex items-center gap-2 px-5 py-2.5 bg-surface-white border border-outline-variant rounded-xl font-bold text-on-surface-variant hover:bg-surface-container-low transition-all">
+<span class="material-symbols-outlined text-[20px]">filter_list</span>
+                    Filtrar
+                </button>
+<input type="file" id="csvFileInput" accept=".csv" style="display: none;" onchange="importarPacientesCSV(event)">
+<button onclick="triggerImportarCSV()" class="flex items-center gap-2 px-5 py-2.5 bg-surface-white border border-outline-variant rounded-xl font-bold text-on-surface-variant hover:bg-surface-container-low transition-all">
+<span class="material-symbols-outlined text-[20px]">upload</span>
+                    Importar
+                </button>
+<button onclick="exportarPacientesCSV()" class="flex items-center gap-2 px-5 py-2.5 bg-primary text-white rounded-xl font-bold hover:bg-primary-fixed-dim transition-all shadow-md">
+<span class="material-symbols-outlined text-[20px] text-white">download</span>
+                    Exportar
+                </button>
+</div>
+<!-- Patient Grid (Bento Style) -->
+</div>
+</div>
+<!-- Patient Table Section (Minimalist Table) -->
+<div class="col-span-full mt-8 bg-surface-white rounded-3xl shadow-[0px_10px_30px_rgba(0,0,0,0.04)] overflow-hidden">
+<div class="px-8 py-6 flex items-center justify-between border-b border-surface-container-low">
+<h3 class="font-headline-md text-xl font-bold">Listado General</h3>
+<div class="flex items-center gap-4">
+<span class="text-label-sm text-outline" id="mostrando-citas-text">Mostrando citas</span>
+<div class="flex gap-1">
+<button class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-surface-container-low"><span class="material-symbols-outlined">chevron_left</span></button>
+<button class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-surface-container-low"><span class="material-symbols-outlined">chevron_right</span></button>
+</div>
+</div>
+</div>
+<table class="w-full text-left">
+<thead class="bg-surface-container-low/50">
+<tr>
 
+<th class="px-8 py-4 text-xs font-bold uppercase tracking-widest text-outline">Paciente</th>
+<th class="px-8 py-4 text-xs font-bold uppercase tracking-widest text-outline">Estado</th>
+<th class="px-8 py-4 text-xs font-bold uppercase tracking-widest text-outline">Sesión</th>
+<th class="px-8 py-4 text-xs font-bold uppercase tracking-widest text-outline">Fecha y Hora</th>
+<th class="px-8 py-4 text-xs font-bold uppercase tracking-widest text-outline text-right">Acciones</th>
+</tr>
+</thead>
+<tbody id="pacientes-tbody" class="divide-y divide-surface-container-low">
+<!-- Contenido dinámico desde Supabase -->
+</tbody>
+</table>
+</div>
+</div>
+<!-- Section Gap for breathing room -->
+<div class="h-section-gap"></div>
 
+</main>
+
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-2 py-3 md:hidden bg-surface-white/90 backdrop-blur-md shadow-[0px_-10px_30px_rgba(0,0,0,0.04)] rounded-t-xl border-t border-surface-container-highest overflow-x-auto no-scrollbar gap-2">
+    <a id="nav-bottom-agenda" class="flex flex-col items-center justify-center text-outline hover:text-primary transition-all p-2 rounded-lg min-w-[60px]" href="calendario_dashboard_mobile.html">
+        <span class="material-symbols-outlined">calendar_today</span><span class="font-label-sm text-[10px] mt-1">Agenda</span>
+    </a>
+    <a id="nav-bottom-citas" class="flex flex-col items-center justify-center text-outline hover:text-primary transition-all p-2 rounded-lg min-w-[60px]" href="citas_listado_mobile.html">
+        <span class="material-symbols-outlined">list_alt</span><span class="font-label-sm text-[10px] mt-1">Citas</span>
+    </a>
+    <a id="nav-bottom-pacientes" class="flex flex-col items-center justify-center text-outline hover:text-primary transition-all p-2 rounded-lg min-w-[60px]" href="pacientes_historia_clinica_mobile.html">
+        <span class="material-symbols-outlined">groups</span><span class="font-label-sm text-[10px] mt-1">Pacientes</span>
+    </a>
+    <a id="nav-bottom-tratamientos" class="flex flex-col items-center justify-center text-outline hover:text-primary transition-all p-2 rounded-lg min-w-[60px]" href="tratamientos_mobile.html">
+        <span class="material-symbols-outlined">medical_services</span><span class="font-label-sm text-[10px] mt-1">Servicios</span>
+    </a>
+    <a id="nav-bottom-productos" class="flex flex-col items-center justify-center text-outline hover:text-primary transition-all p-2 rounded-lg min-w-[60px]" href="productos_mobile.html">
+        <span class="material-symbols-outlined">inventory_2</span><span class="font-label-sm text-[10px] mt-1">Productos</span>
+    </a>
+    <a id="nav-bottom-caja" class="flex flex-col items-center justify-center text-outline hover:text-primary transition-all p-2 rounded-lg min-w-[60px]" href="cobrar_mobile.html">
+        <span class="material-symbols-outlined">point_of_sale</span><span class="font-label-sm text-[10px] mt-1">Caja</span>
+    </a>
+    <a id="nav-bottom-finanzas" class="flex flex-col items-center justify-center text-outline hover:text-primary transition-all p-2 rounded-lg min-w-[60px]" href="pagos_facturacion_mobile.html">
+        <span class="material-symbols-outlined">payments</span><span class="font-label-sm text-[10px] mt-1">Finanzas</span>
+    </a>
+    <a id="nav-bottom-gestion" class="flex flex-col items-center justify-center text-outline hover:text-primary transition-all p-2 rounded-lg min-w-[60px]" href="gestion_pacientes_mobile.html">
+        <span class="material-symbols-outlined">monitoring</span><span class="font-label-sm text-[10px] mt-1">Gestión</span>
+    </a>
+</nav>
 
 <script>
-    
-
-
-    
-    let allCitas = [];
-
-    async function cargarServicios() {
-        try {
-            const { data, error } = await window.supabaseClient
-                .from('servicios')
-                .select('*')
-                .eq('estado', 'Activo');
-            if (!error && data) {
-                window.serviciosActivos = data;
-            }
-        } catch (err) {
-            console.error("Error al cargar servicios:", err);
-        }
+    // Add active state to drawer
+    const drawerLink = document.getElementById('nav-link-citas-drawer');
+    if(drawerLink) {
+        drawerLink.classList.remove('text-on-surface-variant');
+        drawerLink.classList.add('bg-secondary-container', 'text-on-secondary-container');
     }
+    // Add active state to bottom nav
+    const bottomLink = document.getElementById('nav-bottom-citas');
+    if(bottomLink) {
+        bottomLink.classList.remove('text-outline');
+        bottomLink.classList.add('text-primary');
+    }
+</script>
 
-    async function cargarCitas() {
-        try {
-            const gridBody = document.getElementById('patientsGrid');
-            if (!gridBody) return;
+<script>
+        // Micro-interaction: Active tab logic
+        const navLinks = document.querySelectorAll('aside nav a');
+        navLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                navLinks.forEach(l => {
+                    l.classList.remove('text-primary', 'border-r-4', 'border-primary', 'font-bold', 'bg-surface-container-low');
+                    l.classList.add('text-on-surface-variant', 'hover:bg-surface-container-low');
+                });
+                link.classList.add('text-primary', 'border-r-4', 'border-primary', 'font-bold', 'bg-surface-container-low');
+                link.classList.remove('text-on-surface-variant', 'hover:bg-surface-container-low');
+            });
+        });
 
-            gridBody.innerHTML = '<div class="col-span-full text-center py-8"><div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div><p class="text-outline mt-4 font-label-sm">Cargando citas...</p></div>';
+        // Filter button interaction
+        const filterBtns = document.querySelectorAll('.bg-surface-container-low button');
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                filterBtns.forEach(b => {
+                    b.classList.remove('bg-surface-white', 'shadow-sm', 'text-primary');
+                    b.classList.add('text-on-surface-variant', 'hover:bg-surface-container-high');
+                });
+                btn.classList.add('bg-surface-white', 'shadow-sm', 'text-primary');
+                btn.classList.remove('text-on-surface-variant', 'hover:bg-surface-container-high');
+            });
+        });
 
+        
+
+
+        document.addEventListener("DOMContentLoaded", async () => {
+            await cargarServicios();
+            cargarCitas();
+        });
+
+        let allCitas = [];
+        let estadoFiltro = 'Todos';
+
+        async function cargarServicios() {
+            try {
+                const { data, error } = await window.supabaseClient
+                    .from('servicios')
+                    .select('*')
+                    .eq('estado', 'Activo');
+                if (!error && data) {
+                    window.serviciosActivos = data;
+                }
+            } catch (err) {
+                console.error("Error al cargar servicios:", err);
+            }
+        }
+
+        function filtrarPorEstado(estado, btnElement) {
+            estadoFiltro = estado;
+            const filterBtns = document.querySelectorAll('.bg-surface-container-low button');
+            filterBtns.forEach(b => {
+                b.classList.remove('bg-surface-white', 'shadow-sm', 'text-primary');
+                b.classList.add('text-on-surface-variant', 'hover:bg-surface-container-high');
+            });
+            btnElement.classList.add('bg-surface-white', 'shadow-sm', 'text-primary');
+            btnElement.classList.remove('text-on-surface-variant', 'hover:bg-surface-container-high');
+            
+            filtrarCitas();
+        }
+
+        function filtrarCitas() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            
+            const filtrados = allCitas.filter(c => {
+                const nombrePaciente = c.pacientes ? c.pacientes.nombre.toLowerCase() : '';
+                const matchTexto = nombrePaciente.includes(query) || (c.tratamiento && c.tratamiento.toLowerCase().includes(query));
+                
+                let matchEstado = false;
+                if (estadoFiltro === 'Todos') matchEstado = true;
+                else if (estadoFiltro === 'Activo' && (c.estado === 'Pendiente' || c.estado === 'En Progreso' || c.estado === 'Confirmada' || c.estado === 'Confirmado')) matchEstado = true;
+                else if (estadoFiltro === 'Inactivo' && (c.estado === 'Completada' || c.estado === 'Cancelada')) matchEstado = true;
+                
+                return matchTexto && matchEstado;
+            });
+
+            renderCitas(filtrados);
+        }
+
+        async function cargarCitas() {
+            const tbody = document.getElementById('pacientes-tbody');
+            tbody.innerHTML = '<tr><td colspan="6" class="px-8 py-4 text-center">Cargando citas...</td></tr>';
+            
             const { data, error } = await window.supabaseClient
                 .from('citas')
                 .select('*, pacientes(nombre)')
                 .order('fecha', { ascending: true })
                 .order('hora', { ascending: true });
-
-            if (error) throw error;
+            
+            if (error) {
+                console.error("Error al cargar citas:", error);
+                tbody.innerHTML = '<tr><td colspan="6" class="px-8 py-4 text-center text-error">Error al cargar datos</td></tr>';
+                return;
+            }
 
             allCitas = (data || []).filter(c => {
                 const estado = (c.estado || '').toLowerCase();
                 return !estado.includes('completad') && !estado.includes('atendid');
             });
-            renderCitas(allCitas);
-        } catch (error) {
-            console.error('Error al cargar citas:', error);
-            const gridBody = document.getElementById('patientsGrid');
-            if (gridBody) {
-                gridBody.innerHTML = `
-                    <div class="col-span-full text-center py-8 text-error">
-                        <span class="material-symbols-outlined mb-2">error</span>
-                        <p>Error al cargar las citas.</p>
-                    </div>`;
-            }
-        }
-    }
-
-    function formatHora(horaStr) {
-        if (!horaStr) return '';
-        const [h, m] = horaStr.split(':');
-        let hInt = parseInt(h);
-        const ampm = hInt >= 12 ? 'PM' : 'AM';
-        hInt = hInt % 12 || 12;
-        return `${hInt}:${m} ${ampm}`;
-    }
-
-    function renderCitas(data) {
-        const gridBody = document.getElementById('patientsGrid');
-        gridBody.innerHTML = '';
-
-        if (data.length === 0) {
-            gridBody.innerHTML = `
-                <div class="col-span-full text-center py-12 bg-surface-white rounded-2xl border border-dashed border-outline-variant">
-                    <span class="material-symbols-outlined text-4xl text-outline mb-3">event_busy</span>
-                    <p class="font-body-md text-on-surface">No hay citas registradas</p>
-                </div>
-            `;
-            return;
-        }
-
-        data.forEach(cita => {
-            const nombrePaciente = cita.pacientes ? cita.pacientes.nombre : 'Desconocido';
-            const initials = nombrePaciente.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
             
-            let sessionStr = '<span class="bg-surface-container text-outline text-[10px] px-2 py-0.5 rounded font-bold">Cita Única</span>';
-            if (cita.tratamiento) {
-                const baseTrat = cita.tratamiento.replace('(Continuación)', '').trim();
-                const servicioObj = window.serviciosActivos ? window.serviciosActivos.find(s => s.nombre === baseTrat) : null;
+            const totalBadge = document.getElementById('total-citas-badge');
+            if(totalBadge) totalBadge.textContent = allCitas.length;
+            const mostrandoText = document.getElementById('mostrando-citas-text');
+            if(mostrandoText) mostrandoText.textContent = `Mostrando ${allCitas.length} citas activas`;
+
+            filtrarCitas();
+        }
+
+        function formatHora(horaStr) {
+            if (!horaStr) return '';
+            const [h, m] = horaStr.split(':');
+            let hInt = parseInt(h);
+            const ampm = hInt >= 12 ? 'PM' : 'AM';
+            hInt = hInt % 12 || 12;
+            return `${hInt}:${m} ${ampm}`;
+        }
+
+        function renderCitas(data) {
+            const tbody = document.getElementById('pacientes-tbody');
+            tbody.innerHTML = '';
+
+            data.forEach(cita => {
+                let badgeClass = 'bg-surface-container-high text-outline';
+                const estadoLower = (cita.estado || '').toLowerCase();
+                if (estadoLower.includes('pendiente') || estadoLower.includes('sin confirmar') || estadoLower.includes('por confirmar')) {
+                    badgeClass = 'bg-warning/10 text-warning-dark';
+                } else if (estadoLower.includes('confirmad')) {
+                    badgeClass = 'bg-success/10 text-success';
+                } else if (estadoLower.includes('progreso')) {
+                    badgeClass = 'bg-primary/10 text-primary';
+                } else if (estadoLower.includes('completad') || estadoLower.includes('atendid')) {
+                    badgeClass = 'bg-surface-variant text-on-surface-variant';
+                } else if (estadoLower.includes('reprogramar')) {
+                    badgeClass = 'bg-[#8b5cf6]/10 text-[#8b5cf6]';
+                }
                 
-                if (servicioObj && servicioObj.duracion && servicioObj.duracion > 1) {
-                    const prevOccurrences = allCitas.filter(c => 
-                        c.paciente_id === cita.paciente_id && 
-                        c.tratamiento && 
-                        c.tratamiento.includes(baseTrat) && 
-                        c.estado !== 'Cancelada' &&
-                        (c.fecha < cita.fecha || (c.fecha === cita.fecha && (c.hora || '') <= (cita.hora || '')))
-                    );
-                    const totalOccurrences = allCitas.filter(c => c.paciente_id === cita.paciente_id && c.tratamiento && c.tratamiento.includes(baseTrat) && c.estado !== 'Cancelada').length;
-                    if (cita.tratamiento.includes('(Continuación)') || totalOccurrences > 1 || prevOccurrences.length > 0) {
-                        let currentSessionNum = prevOccurrences.length > 0 ? prevOccurrences.length : 1;
-                        sessionStr = `<span class="bg-primary/10 text-primary text-[10px] px-2 py-0.5 rounded font-bold">Sesión ${currentSessionNum} de ${servicioObj.duracion}</span>`;
+                const nombrePaciente = cita.pacientes ? cita.pacientes.nombre : 'Paciente Desconocido';
+                
+                let sessionStr = '<span class="bg-surface-container text-outline text-xs px-2 py-1 rounded font-bold">Cita Única</span>';
+                if (cita.tratamiento) {
+                    const baseTrat = cita.tratamiento.replace('(Continuación)', '').trim();
+                    const servicioObj = window.serviciosActivos ? window.serviciosActivos.find(s => s.nombre === baseTrat) : null;
+                    
+                    if (servicioObj && servicioObj.duracion && servicioObj.duracion > 1) {
+                        const prevOccurrences = allCitas.filter(c => 
+                            c.paciente_id === cita.paciente_id && 
+                            c.tratamiento && 
+                            c.tratamiento.includes(baseTrat) && 
+                            c.estado !== 'Cancelada' &&
+                            (c.fecha < cita.fecha || (c.fecha === cita.fecha && (c.hora || '') <= (cita.hora || '')))
+                        );
+                        
+                        const totalOccurrences = allCitas.filter(c => c.paciente_id === cita.paciente_id && c.tratamiento && c.tratamiento.includes(baseTrat) && c.estado !== 'Cancelada').length;
+                        
+                        if (cita.tratamiento.includes('(Continuación)') || totalOccurrences > 1 || prevOccurrences.length > 0) {
+                            let currentSessionNum = prevOccurrences.length > 0 ? prevOccurrences.length : 1;
+                            sessionStr = `<span class="bg-primary/10 text-primary text-xs px-2 py-1 rounded font-bold">Sesión ${currentSessionNum} de ${servicioObj.duracion}</span>`;
+                        }
                     }
                 }
-            }
-            
-            const colors = ['bg-primary-container text-on-primary-container', 'bg-secondary-container text-on-secondary-container', 'bg-tertiary-fixed text-on-tertiary-fixed'];
-            const randomColor = colors[Math.abs(cita.id.hashCode ? cita.id.hashCode() : nombrePaciente.charCodeAt(0)) % colors.length];
-            
-            const horaFormat = formatHora(cita.hora);
-            
-            let badgeClass = 'bg-surface-container-high text-outline';
-            const estadoLower = (cita.estado || '').toLowerCase();
-            if (estadoLower.includes('pendiente') || estadoLower.includes('sin confirmar') || estadoLower.includes('por confirmar')) {
-                badgeClass = 'bg-warning/10 text-warning-dark border-warning/20';
-            } else if (estadoLower.includes('confirmad')) {
-                badgeClass = 'bg-success/10 text-success';
-            } else if (estadoLower.includes('progreso')) {
-                badgeClass = 'bg-primary/10 text-primary';
-            } else if (estadoLower.includes('completad') || estadoLower.includes('atendid')) {
-                badgeClass = 'bg-surface-variant text-on-surface-variant';
-            } else if (estadoLower.includes('reprogramar')) {
-                badgeClass = 'bg-[#8b5cf6]/10 text-[#8b5cf6]';
-            }
-
-            const cardHTML = `
-                <div class="bg-surface-white rounded-2xl p-6 shadow-[0px_10px_30px_rgba(0,0,0,0.04)] flex flex-col gap-5 hover:shadow-[0px_15px_40px_rgba(0,0,0,0.08)] hover:-translate-y-1 transition-all duration-300 group cursor-pointer" onclick="const role = new URLSearchParams(window.location.search).get('role') || 'admin'; window.location.href='atencion_tiempo_real_mobile.html?cita_id=${cita.id}&role=' + role">
-                    <div class="flex justify-between items-start">
-                        <div class="flex gap-4 items-center">
-                            <div class="w-12 h-12 rounded-full ${randomColor} flex items-center justify-center font-headline-md text-headline-md">
-                                ${initials}
+                
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-surface-bright transition-colors cursor-pointer group';
+                tr.onclick = () => {
+                    const role = new URLSearchParams(window.location.search).get('role') || 'admin';
+                    window.location.href = `atencion_tiempo_real_desktop.html?cita_id=${cita.id}&role=${role}`;
+                };
+                
+                tr.innerHTML = `
+                    <td class="px-8 py-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-9 h-9 rounded-full bg-primary flex items-center justify-center text-white font-bold">
+                                ${nombrePaciente.charAt(0)}
                             </div>
-                            <div>
-                                <h3 class="font-body-lg text-body-lg font-semibold text-on-surface">${nombrePaciente}</h3>
-                                <p class="font-label-sm text-label-sm text-primary">${cita.fecha} • ${horaFormat}</p>
-                                <div class="mt-1">${sessionStr}</div>
-                            </div>
+                            <span class="font-bold text-on-surface group-hover:text-primary transition-colors">${nombrePaciente}</span>
                         </div>
-                    </div>
-                    <div class="mt-2 flex justify-between items-center" onclick="event.stopPropagation()">
+                    </td>
+                    <td class="px-8 py-4" onclick="event.stopPropagation()">
                         <select 
-                            class="px-3 py-1 ${badgeClass} rounded-full font-label-sm text-[10px] uppercase tracking-wider focus:outline-none focus:ring-2 focus:ring-primary/30 border-none ${cita.estado === 'En Progreso' || cita.estado === 'Completada' ? 'cursor-not-allowed opacity-90' : 'cursor-pointer'}"
+                            class="px-2.5 py-1 ${badgeClass} rounded-full text-xs font-bold focus:outline-none focus:ring-2 focus:ring-primary/30 ${cita.estado === 'En Progreso' || cita.estado === 'Completada' ? 'cursor-not-allowed opacity-90' : 'cursor-pointer'} border-none"
                             onchange="actualizarEstado(${cita.id}, this.value)"
                             ${cita.estado === 'En Progreso' || cita.estado === 'Completada' ? 'disabled' : ''}
                         >
-                            <option value="Por Confirmar" ${cita.estado === 'Pendiente' || cita.estado === 'Por Confirmar' ? 'selected' : ''} class="bg-surface-white text-on-surface normal-case text-sm">Por Confirmar</option>
-                            <option value="Confirmada" ${cita.estado === 'Confirmada' ? 'selected' : ''} class="bg-surface-white text-on-surface normal-case text-sm">Confirmada</option>
-                            <option value="En Progreso" ${cita.estado === 'En Progreso' ? 'selected' : ''} class="bg-surface-white text-on-surface normal-case text-sm">En Progreso</option>
-                            ${cita.estado === 'Completada' ? `<option value="Completada" selected class="bg-surface-white text-on-surface normal-case text-sm">Completada</option>` : ''}
-                            <option value="Por Reprogramar" ${cita.estado === 'Por Reprogramar' ? 'selected' : ''} class="bg-surface-white text-on-surface normal-case text-sm">Por Reprogramar</option>
+                            <option value="Por Confirmar" ${cita.estado === 'Pendiente' || cita.estado === 'Por Confirmar' ? 'selected' : ''} class="bg-surface-white text-on-surface">Por Confirmar</option>
+                            <option value="Confirmada" ${cita.estado === 'Confirmada' ? 'selected' : ''} class="bg-surface-white text-on-surface">Confirmada</option>
+                            <option value="En Progreso" ${cita.estado === 'En Progreso' ? 'selected' : ''} class="bg-surface-white text-on-surface">En Progreso</option>
+                            ${cita.estado === 'Completada' ? `<option value="Completada" selected class="bg-surface-white text-on-surface">Completada</option>` : ''}
+                            <option value="Por Reprogramar" ${cita.estado === 'Por Reprogramar' ? 'selected' : ''} class="bg-surface-white text-on-surface">Por Reprogramar</option>
                         </select>
-                        <span class="text-primary font-bold text-sm flex items-center gap-1 group-hover:translate-x-1 transition-transform" onclick="const role = new URLSearchParams(window.location.search).get('role') || 'admin'; window.location.href='atencion_tiempo_real_mobile.html?cita_id=${cita.id}&role=' + role">
-                            Ver Cita <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
-                        </span>
-                    </div>
-                </div>
-            `;
-            gridBody.insertAdjacentHTML('beforeend', cardHTML);
-        });
-    }
-
-    async function actualizarEstado(citaId, nuevoEstado) {
-        try {
-            // Notificación visual de carga (opcional)
-            const cardElement = document.querySelector(`select[onchange="actualizarEstado(${citaId}, this.value)"]`).closest('div.bg-surface-white');
-            cardElement.style.opacity = '0.5';
-
-            const { error } = await window.supabaseClient
-                .from('citas')
-                .update({ estado: nuevoEstado })
-                .eq('id', citaId);
-
-            if (error) throw error;
-            
-            // Actualizar array local
-            const index = allCitas.findIndex(c => c.id === citaId);
-            if (index !== -1) {
-                allCitas[index].estado = nuevoEstado;
-            }
-            
-            // Re-renderizar lista para actualizar colores
-            const searchInput = document.querySelector('input[placeholder="Buscar por nombre, ID o condición..."]');
-            if (searchInput && searchInput.value) {
-                const query = searchInput.value.toLowerCase();
-                const filtrados = allCitas.filter(c => {
-                    const nombre = c.pacientes ? c.pacientes.nombre.toLowerCase() : '';
-                    return nombre.includes(query) || (c.tratamiento && c.tratamiento.toLowerCase().includes(query));
-                });
-                renderCitas(filtrados);
-            } else {
-                renderCitas(allCitas);
-            }
-        } catch (error) {
-            console.error("Error actualizando estado:", error);
-            alert("Hubo un error al actualizar el estado de la cita.");
-            // Revertir a la vista original si falla
-            renderCitas(allCitas);
-        }
-    }
-
-    document.addEventListener("DOMContentLoaded", async () => {
-        await cargarServicios();
-        cargarCitas();
-        
-        const searchInput = document.querySelector('input[placeholder="Buscar por nombre, ID o condición..."]');
-        if(searchInput) {
-            searchInput.addEventListener('input', (e) => {
-                const query = e.target.value.toLowerCase();
-                const filtrados = allCitas.filter(c => {
-                    const nombre = c.pacientes ? c.pacientes.nombre.toLowerCase() : '';
-                    return nombre.includes(query) || (c.tratamiento && c.tratamiento.toLowerCase().includes(query));
-                });
-                renderCitas(filtrados);
+                    </td>
+                    <td class="px-8 py-4 text-sm font-bold text-on-surface">${sessionStr}</td>
+                    <td class="px-8 py-4 text-sm text-on-surface-variant">${cita.fecha} <br> <span class="text-xs text-outline">${formatHora(cita.hora)}</span></td>
+                    <td class="px-8 py-4 text-right">
+                        <span class="material-symbols-outlined text-outline group-hover:text-primary">arrow_forward</span>
+                    </td>
+                `;
+                tbody.appendChild(tr);
             });
         }
-    });
+
+        async function actualizarEstado(citaId, nuevoEstado) {
+            try {
+                // Notificación visual de carga (opcional)
+                const trElement = document.querySelector(`select[onchange="actualizarEstado(${citaId}, this.value)"]`).closest('tr');
+                trElement.style.opacity = '0.5';
+
+                const { error } = await window.supabaseClient
+                    .from('citas')
+                    .update({ estado: nuevoEstado })
+                    .eq('id', citaId);
+
+                if (error) throw error;
+                
+                // Actualizar array local
+                const index = allCitas.findIndex(c => c.id === citaId);
+                if (index !== -1) {
+                    allCitas[index].estado = nuevoEstado;
+                }
+                
+                // Re-renderizar lista para actualizar colores
+                filtrarCitas();
+            } catch (error) {
+                console.error("Error actualizando estado:", error);
+                alert("Hubo un error al actualizar el estado de la cita.");
+                // Revertir a la vista original si falla
+                filtrarCitas();
+            }
+        }
 </script>
 
     <script>
@@ -509,4 +550,4 @@
             });
         }
     </script>
-</body></html>
+</body>

@@ -1,719 +1,313 @@
 <!DOCTYPE html>
-
-<html class="light" lang="es"><head>
+<html class="light" lang="es">
+<head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Gestión de Pacientes - Centro Eslava</title>
-<!-- Fonts & Icons -->
-<link href="https://fonts.googleapis.com" rel="preconnect"/>
-<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
-<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;700&amp;display=block" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=block" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=block" rel="stylesheet"/>
-<!-- Tailwind Config -->
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <!-- Supabase SDK -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="../js/supabase.js"></script>
-<script id="tailwind-config">
-        tailwind.config = {
-            darkMode: "class",
-            theme: {
-                extend: {
-                    "colors": {
-                        "on-primary": "#ffffff",
-                        "primary-fixed": "#aeecff",
-                        "on-secondary-fixed": "#001f26",
-                        "surface": "#f8fafa",
-                        "tertiary-container": "#a96418",
-                        "surface-white": "#FFFFFF",
-                        "error": "#ba1a1a",
-                        "on-primary-fixed-variant": "#004e5d",
-                        "warning": "#FF9500",
-                        "secondary-container": "#89e4fd",
-                        "secondary-fixed-dim": "#78d3eb",
-                        "surface-tint": "#00687b",
-                        "on-tertiary-fixed": "#2e1600",
-                        "secondary-fixed": "#adecff",
-                        "success": "#34C759",
-                        "surface-container-lowest": "#ffffff",
-                        "text-main": "#1C1C1E",
-                        "on-secondary": "#ffffff",
-                        "outline-variant": "#bdc8cd",
-                        "on-secondary-fixed-variant": "#004e5c",
-                        "surface-container-high": "#e6e8e8",
-                        "surface-container-low": "#f2f4f4",
-                        "outline": "#6d797d",
-                        "on-primary-container": "#f9fdff",
-                        "primary": "#006578",
-                        "on-surface-variant": "#3d494c",
-                        "secondary": "#00687a",
-                        "background": "#f8fafa",
-                        "on-tertiary-container": "#fffbff",
-                        "on-error": "#ffffff",
-                        "tertiary-fixed": "#ffdcc0",
-                        "on-secondary-container": "#006779",
-                        "on-primary-fixed": "#001f26",
-                        "error-container": "#ffdad6",
-                        "inverse-primary": "#66d5f1",
-                        "on-tertiary": "#ffffff",
-                        "on-error-container": "#93000a",
-                        "primary-container": "#008097",
-                        "text-muted": "#636366",
-                        "surface-bright": "#f8fafa",
-                        "primary-fixed-dim": "#66d5f1",
-                        "surface-dim": "#d8dada",
-                        "surface-container": "#eceeee",
-                        "surface-variant": "#e1e3e3",
-                        "surface-container-highest": "#e1e3e3",
-                        "tertiary-fixed-dim": "#ffb877",
-                        "inverse-surface": "#2e3131",
-                        "on-background": "#191c1d",
-                        "inverse-on-surface": "#eff1f1",
-                        "on-tertiary-fixed-variant": "#6b3b00",
-                        "on-surface": "#191c1d",
-                        "tertiary": "#8a4d00"
-                    },
-                    "borderRadius": {
-                        "DEFAULT": "0.25rem",
-                        "lg": "0.5rem",
-                        "xl": "0.75rem",
-                        "full": "9999px"
-                    },
-                    "spacing": {
-                        "base": "8px",
-                        "margin-desktop": "80px",
-                        "margin-mobile": "20px",
-                        "gutter": "24px",
-                        "section-gap": "120px"
-                    },
-                    "fontFamily": {
-                        "body-md": ["Hanken Grotesk"],
-                        "display-lg": ["Hanken Grotesk"],
-                        "display-lg-mobile": ["Hanken Grotesk"],
-                        "label-sm": ["Hanken Grotesk"],
-                        "body-lg": ["Hanken Grotesk"],
-                        "headline-md": ["Hanken Grotesk"]
-                    },
-                    "fontSize": {
-                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
-                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
-                        "display-lg-mobile": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "700" }],
-                        "label-sm": ["13px", { "lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "600" }],
-                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
-                        "headline-md": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }]
-                    }
-                }
-            }
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@300;400;500;600;700;800&amp;display=block" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=block" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=block" rel="stylesheet"/>
+<!-- Supabase -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../js/supabase.js"></script>
+<style>
+        body {
+            font-family: 'Hanken Grotesk', sans-serif;
+            background-color: #f8fafa;
         }
-    </script>
-<style>
-        /* Hide scrollbar for cleaner look */
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #e1e3e3; border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: #bdc8cd; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(8px);
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #bdc8cd;
+            border-radius: 10px;
+        }
     </style>
-<style>
-    body {
-      min-height: max(884px, 100dvh);
-    }
-  </style>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-container": "#eceeee",
+                    "primary-fixed-dim": "#66d5f1",
+                    "tertiary": "#8a4d00",
+                    "outline": "#6d797d",
+                    "on-tertiary-fixed": "#2e1600",
+                    "on-primary-container": "#f9fdff",
+                    "surface-container-low": "#f2f4f4",
+                    "error-container": "#ffdad6",
+                    "surface-bright": "#f8fafa",
+                    "secondary-fixed-dim": "#78d3eb",
+                    "on-primary-fixed": "#001f26",
+                    "text-muted": "#636366",
+                    "tertiary-fixed-dim": "#ffb877",
+                    "on-surface": "#191c1d",
+                    "inverse-on-surface": "#eff1f1",
+                    "outline-variant": "#bdc8cd",
+                    "error": "#ba1a1a",
+                    "tertiary-container": "#a96418",
+                    "on-surface-variant": "#3d494c",
+                    "on-tertiary": "#ffffff",
+                    "on-background": "#191c1d",
+                    "surface-container-lowest": "#ffffff",
+                    "on-secondary-fixed": "#001f26",
+                    "surface-dim": "#d8dada",
+                    "surface-white": "#FFFFFF",
+                    "surface": "#f8fafa",
+                    "inverse-surface": "#2e3131",
+                    "primary-container": "#008097",
+                    "warning": "#FF9500",
+                    "secondary-container": "#89e4fd",
+                    "on-primary-fixed-variant": "#004e5d",
+                    "background": "#f8fafa",
+                    "text-main": "#1C1C1E",
+                    "on-primary": "#ffffff",
+                    "on-error-container": "#93000a",
+                    "success": "#34C759",
+                    "on-secondary": "#ffffff",
+                    "inverse-primary": "#66d5f1",
+                    "primary-fixed": "#aeecff",
+                    "on-error": "#ffffff",
+                    "tertiary-fixed": "#ffdcc0",
+                    "secondary": "#00687a",
+                    "on-tertiary-fixed-variant": "#6b3b00",
+                    "surface-container-highest": "#e1e3e3",
+                    "secondary-fixed": "#adecff",
+                    "primary": "#006578",
+                    "on-secondary-fixed-variant": "#004e5c",
+                    "on-secondary-container": "#006779",
+                    "surface-container-high": "#e6e8e8",
+                    "surface-variant": "#e1e3e3",
+                    "surface-tint": "#00687b",
+                    "on-tertiary-container": "#fffbff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "margin-desktop": "80px",
+                    "margin-mobile": "20px",
+                    "section-gap": "120px",
+                    "base": "8px",
+                    "gutter": "24px"
+            },
+            "fontFamily": {
+                    "headline-md": ["Hanken Grotesk"],
+                    "display-lg": ["Hanken Grotesk"],
+                    "body-lg": ["Hanken Grotesk"],
+                    "label-sm": ["Hanken Grotesk"],
+                    "body-md": ["Hanken Grotesk"]
+            },
+            "fontSize": {
+                    "headline-md": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                    "label-sm": ["13px", {"lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "600"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
 
     <script src="../js/app.js"></script>
     <script src="../js/rbac.js"></script>
     <link rel="manifest" href="../manifest.json">
 </head>
-<body class="bg-surface text-on-surface font-body-md min-h-screen flex antialiased">
-<!-- DESKTOP NAVIGATION DRAWER (Hidden on mobile) -->
-<nav class="hidden md:flex flex-col bg-surface-white w-72 h-full fixed left-0 top-0 z-40 p-6 shadow-[0px_10px_30px_rgba(0,0,0,0.04)]">
-<!-- Header -->
-<div class="flex items-center gap-4 mb-8">
-<div class="w-12 h-12 rounded-full bg-surface-container overflow-hidden flex items-center justify-center">
-<span class="material-symbols-outlined text-outline" style="font-size: 24px;">person</span>
-</div>
-<div>
-<h2 class="font-headline-md text-[18px] leading-tight text-primary font-bold">Dr. Eslava</h2>
-<p class="font-label-sm text-label-sm text-outline">Director Clínico</p>
-</div>
-</div>
-<!-- Navigation Links -->
-<ul class="flex flex-col gap-2 flex-1">
-<!-- Schedule -->
-<li>
-<a class="flex items-center gap-3 px-4 py-3 rounded-xl font-label-sm text-label-sm text-on-surface-variant hover:bg-surface-container-low transition-all" href="calendario_dashboard_mobile.html" id="nav-link-calendario-desktop">
-<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">calendar_today</span>
-                    Agenda
-                </a>
-</li>
-<!-- Patients (ACTIVE) -->
-<li>
-<a class="flex items-center gap-3 px-4 py-3 rounded-xl font-label-sm text-label-sm bg-secondary-container text-on-secondary-container active:scale-[0.98] transition-transform" href="pacientes_historia_clinica_mobile.html" id="nav-link-pacientes-desktop">
-<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">groups</span>
-                    Pacientes
-                </a>
-</li>
-<!-- Services -->
-<li>
-<a class="flex items-center gap-3 px-4 py-3 rounded-xl font-label-sm text-label-sm text-on-surface-variant hover:bg-surface-container-low transition-all" href="tratamientos_mobile.html" id="nav-link-servicios-desktop">
-<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">medical_services</span>
-                    Servicios
-                </a>
-</li>
-<!-- Payments -->
-<li>
-<a class="flex flex-col items-center justify-center text-outline dark:text-outline-variant w-1/5" href="productos_mobile.html">
-<span class="material-symbols-outlined mb-1" data-icon="inventory_2">inventory_2</span>
-<span>Productos</span>
-</a>
-<a class="flex flex-col items-center justify-center text-outline dark:text-outline-variant min-w-0 flex-1 py-1 px-1 rounded-lg hover:bg-[#f2f4f4] active:scale-90 transition-all duration-150" href="cobrar_mobile.html">
-<span class="material-symbols-outlined mb-1 text-[22px]">point_of_sale</span>
-<span class="text-[10px] font-semibold leading-tight truncate">Caja</span>
-</a>
-<a class="flex items-center gap-3 px-4 py-3 rounded-xl font-label-sm text-label-sm text-on-surface-variant hover:bg-surface-container-low transition-all" href="pagos_facturacion_mobile.html" id="nav-link-finanzas-desktop">
-<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">payments</span>
-                    Pagos
-                </a>
-</li>
-<!-- Settings -->
-<li>
-<a class="flex items-center gap-3 px-4 py-3 rounded-xl font-label-sm text-label-sm text-on-surface-variant hover:bg-surface-container-low transition-all mt-auto" href="ajustes_mobile.html" id="nav-link-ajustes-desktop">
-<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">settings</span>
-                    Ajustes
-                </a>
-</li>
-</ul>
-</nav>
-<!-- MAIN CONTENT AREA -->
-<div class="flex-1 flex flex-col min-w-0 md:ml-72 relative pb-20 md:pb-0">
-<!-- TOP APP BAR -->
-<header class="w-full top-0 bg-surface flex justify-between items-center px-margin-mobile md:px-margin-desktop py-4 z-30 sticky shadow-[0px_10px_30px_rgba(0,0,0,0.02)]">
-<div class="flex items-center gap-4">
-<button class="md:hidden text-primary p-2 -ml-2 rounded-full hover:bg-surface-container-low transition-colors">
-<span class="material-symbols-outlined">menu</span>
-</button>
-<h1 class="font-headline-md text-headline-md font-bold text-primary tracking-tight">Centro Eslava</h1>
-</div>
-<div class="flex items-center gap-4">
-<div class="w-10 h-10 rounded-full bg-surface-container overflow-hidden md:hidden">
-<img alt="Foto de perfil del doctor" class="w-full h-full object-cover" data-alt="Close up portrait of a medical professional in a brightly lit modern clinic. The lighting is soft and flattering, emphasizing a pristine, clean environment. The color palette is composed of crisp whites and subtle cool tones, creating a calm and authoritative mood." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB9dVQqVQpQP3E9p96P8X47ZsFfWdzlh5TjE7JGbm5KPJdmUMMeWT7HsbayVFz8iSv5H9HU9VVuftsrQNOgVvGvikJ8AI24sx3SykyqBDCk82ds04fdkJHPGwtn4-vip03EyQynHQ_Rahf8jy-fGukIN75hgCgT3VOZYfpyp9hzh0GiFam8fvW9YtovBT-4BI7xmSHmmwGFd3y5VWafNuiUlpslSoja7bM5lzdqYCswuzrLPGjhRGH2L7gLdDvpBXf84hZrxA1G6lU"/>
-</div>
-</div>
+<body class="bg-background font-body-md text-on-surface">
+
+<header class="flex justify-between items-center h-18 px-4 bg-surface-white dark:bg-surface-container-lowest border-b border-surface-container sticky top-0 z-50 md:hidden">
+    <div class="flex items-center gap-2">
+        <span class="material-symbols-outlined text-primary text-2xl">health_and_safety</span>
+        <span class="font-headline-md text-label-sm font-bold text-primary">Centro Eslava</span>
+    </div>
+    <button aria-label="Menu" class="md:hidden text-primary dark:text-primary-fixed hover:bg-surface-container-low dark:hover:bg-surface-container-high transition-colors active:scale-95 transition-transform duration-200 p-2 rounded-full">
+        <span class="material-symbols-outlined">menu</span>
+    </button>
 </header>
-<!-- PAGE CONTENT CANVAS -->
-<main class="flex-1 px-margin-mobile md:px-margin-desktop py-8 max-w-[1280px] w-full mx-auto flex flex-col gap-8">
-<!-- Page Header & Search -->
-<div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+
+<aside class="fixed left-0 top-18 h-[calc(100vh-72px)] w-72 bg-surface-white dark:bg-surface-container-lowest shadow-[0px_10px_30px_rgba(0,0,0,0.04)] z-40 hidden md:flex flex-col p-6 overflow-y-auto">
+    <div class="flex items-center gap-4 mb-8 pb-6 border-b border-surface-container">
+        <div class="h-12 w-12 rounded-full bg-surface-container-high overflow-hidden flex-shrink-0">
+            <span class="material-symbols-outlined m-3">person</span>
+        </div>
+        <div>
+            <h2 id="drawer-profile-name" class="font-body-md text-body-md font-semibold text-primary">Dr. Eslava</h2>
+            <p id="drawer-profile-role" class="font-label-sm text-label-sm text-outline">Director Clínico</p>
+            <span id="drawer-profile-badge" class="inline-block mt-1 px-2 py-0.5 bg-secondary-container/30 text-on-secondary-container rounded font-label-sm text-[10px]">Acceso Admin</span>
+        </div>
+    </div>
+    <nav class="flex flex-col gap-2 flex-grow">
+        <a id="nav-link-agenda-drawer" class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-low transition-all rounded-xl font-body-md" href="calendario_dashboard_mobile.html">
+            <span class="material-symbols-outlined">calendar_today</span> Calendario
+        </a>
+        <a id="nav-link-citas-drawer" class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-low transition-all rounded-xl font-body-md" href="citas_listado_mobile.html">
+            <span class="material-symbols-outlined">list_alt</span> Citas
+        </a>
+        <a id="nav-link-pacientes-drawer" class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-low transition-all rounded-xl font-body-md" href="pacientes_historia_clinica_mobile.html">
+            <span class="material-symbols-outlined">groups</span> Pacientes
+        </a>
+        <a id="nav-link-tratamientos-drawer" class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-low transition-all rounded-xl font-body-md" href="tratamientos_mobile.html">
+            <span class="material-symbols-outlined">medical_services</span> Tratamientos
+        </a>
+        <a id="nav-link-productos-drawer" class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-low transition-all rounded-xl font-body-md" href="productos_mobile.html">
+            <span class="material-symbols-outlined">inventory_2</span> Productos
+        </a>
+        <a id="nav-link-cobrar-drawer" class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-low transition-all rounded-xl font-body-md" href="cobrar_mobile.html">
+            <span class="material-symbols-outlined">point_of_sale</span> Caja
+        </a>
+        <a id="nav-link-finanzas-drawer" class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-low transition-all rounded-xl font-body-md" href="pagos_facturacion_mobile.html">
+            <span class="material-symbols-outlined">payments</span> Finanzas
+        </a>
+        <a id="nav-link-gestion-drawer" class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-low transition-all rounded-xl font-body-md" href="gestion_pacientes_mobile.html">
+            <span class="material-symbols-outlined">monitoring</span> Gestión Estratégica
+        </a>
+    </nav>
+    <div class="mt-auto pt-6 border-t border-surface-container">
+        <a id="nav-link-ajustes-drawer" class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-low transition-all rounded-xl font-body-md" href="ajustes_mobile.html">
+            <span class="material-symbols-outlined">settings</span> Ajustes
+        </a>
+    </div>
+</aside>
+
+<main class="md:ml-72 min-h-screen px-4 py-8 pb-24 md:pb-8">
+
+<!-- Page Header & Stats -->
+<div class="flex justify-between items-end mb-10">
 <div>
-<h2 class="font-display-lg-mobile md:font-display-lg text-display-lg-mobile md:text-display-lg text-on-surface mb-2">Registros de Pacientes</h2>
-<p class="font-body-md text-body-md text-outline">Gestionar historias clínicas y tratamientos activos.</p>
-</div>
-<div class="w-full md:w-auto flex items-center relative">
-<span class="material-symbols-outlined absolute left-4 text-outline z-10 pointer-events-none">search</span>
-<input class="w-full md:w-[320px] pl-12 pr-4 py-3 bg-surface-white border border-transparent rounded-xl font-body-md text-body-md text-on-surface placeholder:text-outline focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 shadow-[0px_4px_20px_rgba(0,0,0,0.03)] transition-all" placeholder="Buscar por nombre, ID o condición..." type="text"/>
-</div>
-</div>
-<!-- Filters & Actions -->
-<div class="flex flex-col gap-4">
-    <div class="flex gap-2 overflow-x-auto pb-2 -mx-margin-mobile px-margin-mobile md:mx-0 md:px-0 hide-scrollbar">
-        <button class="whitespace-nowrap px-4 py-2 rounded-full font-label-sm text-label-sm bg-primary text-on-primary shadow-sm">Todos los Pacientes</button>
-        <button class="whitespace-nowrap px-4 py-2 rounded-full font-label-sm text-label-sm bg-surface-white text-on-surface hover:bg-surface-container-low transition-colors shadow-[0px_2px_10px_rgba(0,0,0,0.02)]">Tratamiento Activo</button>
-        <button class="whitespace-nowrap px-4 py-2 rounded-full font-label-sm text-label-sm bg-surface-white text-on-surface hover:bg-surface-container-low transition-colors shadow-[0px_2px_10px_rgba(0,0,0,0.02)]">Alta</button>
-    </div>
-    
-    <div class="flex gap-2 overflow-x-auto pb-2 -mx-margin-mobile px-margin-mobile md:mx-0 md:px-0 hide-scrollbar">
-        <input type="file" id="csvFileInputMobile" accept=".csv" style="display: none;" onchange="importarPacientesCSV(event)">
-        <button onclick="triggerImportarCSVMobile()" class="flex items-center gap-2 whitespace-nowrap px-4 py-2 rounded-full font-label-sm text-label-sm bg-surface-white text-on-surface hover:bg-surface-container-low transition-colors shadow-[0px_2px_10px_rgba(0,0,0,0.02)] border border-outline-variant/30">
-            <span class="material-symbols-outlined text-[16px]">upload</span> Importar
-        </button>
-        <button onclick="exportarPacientesCSV()" class="flex items-center gap-2 whitespace-nowrap px-4 py-2 rounded-full font-label-sm text-label-sm bg-primary text-on-primary shadow-[0px_2px_10px_rgba(0,0,0,0.02)]">
-            <span class="material-symbols-outlined text-[16px]">download</span> Exportar
-        </button>
-    </div>
-</div>
-<!-- Patient Grid (Bento/Card Layout) -->
-<h3 class="font-headline-md text-xl font-bold mb-4 px-4 md:px-0">Próximos Pacientes Programados</h3>
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-gutter" id="patientsGrid">
-<!-- Contenido dinámico cargado vía Supabase -->
-</div>
-</main>
-</div>
-<!-- MOBILE BOTTOM NAV BAR (Hidden on desktop) -->
-<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 py-3 md:hidden bg-surface-white/90 backdrop-blur-md rounded-t-xl shadow-[0px_-10px_30px_rgba(0,0,0,0.04)]">
-<!-- Calendar -->
-<a class="flex flex-col items-center justify-center text-outline gap-1 active:scale-90 transition-all duration-150 w-16" href="calendario_dashboard_mobile.html" id="nav-link-calendario">
-<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">event</span>
-<span class="font-label-sm text-[10px]">Agenda</span>
-</a>
-<!-- Patients (ACTIVE) -->
-<a class="flex flex-col items-center justify-center text-primary font-bold gap-1 active:scale-90 transition-all duration-150 w-16" href="pacientes_historia_clinica_mobile.html" id="nav-link-pacientes">
-<div class="px-4 py-1 bg-secondary-container rounded-full mb-1">
-<span class="material-symbols-outlined text-on-secondary-container" style="font-variation-settings: 'FILL' 1;">person_search</span>
-</div>
-<span class="font-label-sm text-[10px]">Pacientes</span>
-</a>
-<!-- Treatments -->
-<a class="flex flex-col items-center justify-center text-outline gap-1 active:scale-90 transition-all duration-150 w-16" href="tratamientos_mobile.html" id="nav-link-servicios">
-<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">healing</span>
-<span class="font-label-sm text-[10px]">Tratamientos</span>
-</a>
-<!-- Finance -->
-<a class="flex flex-col items-center justify-center text-outline dark:text-outline-variant w-1/5" href="productos_mobile.html">
-<span class="material-symbols-outlined mb-1" data-icon="inventory_2">inventory_2</span>
-<span>Productos</span>
-</a>
-<a class="flex flex-col items-center justify-center text-outline dark:text-outline-variant min-w-0 flex-1 py-1 px-1 rounded-lg hover:bg-[#f2f4f4] active:scale-90 transition-all duration-150" href="cobrar_mobile.html">
-<span class="material-symbols-outlined mb-1 text-[22px]">point_of_sale</span>
-<span class="text-[10px] font-semibold leading-tight truncate">Caja</span>
-</a>
-<a class="flex flex-col items-center justify-center text-outline gap-1 active:scale-90 transition-all duration-150 w-16" href="pagos_facturacion_mobile.html" id="nav-link-finanzas">
-<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">account_balance_wallet</span>
-<span class="font-label-sm text-[10px]">Finanzas</span>
-</a>
+<nav class="flex gap-2 text-label-sm text-outline mb-2">
+<span>Inicio</span>
+<span>/</span>
+<span class="text-primary font-bold">Registros de Pacientes</span>
 </nav>
+<h2 class="font-display-lg text-4xl font-extrabold text-on-surface tracking-tight">Registros de Pacientes</h2>
+<p class="text-on-surface-variant mt-2 font-body-md">Gestiona el historial clínico y el progreso de recuperación de tu clínica.</p>
+</div>
+<div class="flex gap-4">
+<div class="bg-surface-white p-4 rounded-2xl shadow-[0px_10px_30px_rgba(0,0,0,0.04)] min-w-[140px]">
+<p class="text-label-sm text-outline">Total Pacientes</p>
+<p class="text-2xl font-bold text-primary" id="stat-total-pacientes">Cargando...</p>
+</div>
+</div>
+</div>
+<!-- Filters Section -->
+<div class="flex items-center justify-between mb-8">
+<div class="flex gap-2 bg-surface-container-low p-1.5 rounded-xl">
+<button onclick="filtrarPorEstado('Todos', this)" class="px-6 py-2 rounded-lg font-bold transition-all bg-surface-white shadow-sm text-primary">Todos</button>
+<button onclick="filtrarPorEstado('Activo', this)" class="px-6 py-2 rounded-lg font-bold transition-all text-on-surface-variant hover:bg-surface-container-high">Activos</button>
+<button onclick="filtrarPorEstado('Inactivo', this)" class="px-6 py-2 rounded-lg font-bold transition-all text-on-surface-variant hover:bg-surface-container-high">Inactivos</button>
+</div>
+<div class="flex gap-3 items-center">
+<button onclick="alert('Próximamente: Panel de filtros avanzados.')" class="flex items-center gap-2 px-5 py-2.5 bg-surface-white border border-outline-variant rounded-xl font-bold text-on-surface-variant hover:bg-surface-container-low transition-all">
+<span class="material-symbols-outlined text-[20px]">filter_list</span>
+                    Filtrar
+                </button>
+<input type="file" id="csvFileInput" accept=".csv" style="display: none;" onchange="importarPacientesCSV(event)">
+<button onclick="triggerImportarCSV()" class="flex items-center gap-2 px-5 py-2.5 bg-surface-white border border-outline-variant rounded-xl font-bold text-on-surface-variant hover:bg-surface-container-low transition-all">
+<span class="material-symbols-outlined text-[20px]">upload</span>
+                    Importar
+                </button>
+<button onclick="exportarPacientesCSV()" class="flex items-center gap-2 px-5 py-2.5 bg-primary text-white rounded-xl font-bold hover:bg-primary-fixed-dim transition-all shadow-md">
+<span class="material-symbols-outlined text-[20px] text-white">download</span>
+                    Exportar
+                </button>
+</div>
+</div>
 
-<!-- Floating Action Button for Mobile -->
-<button onclick="abrirModalNuevoPaciente()" class="fixed bottom-24 right-6 w-14 h-14 bg-primary text-on-primary rounded-full shadow-[0px_10px_20px_rgba(0,101,120,0.3)] flex items-center justify-center hover:scale-110 active:scale-95 transition-all z-40">
-    <span class="material-symbols-outlined text-2xl">person_add</span>
-</button>
+<!-- Patient Grid (Bento Style) -->
+<h3 class="font-headline-md text-xl font-bold mb-4">Próximos Pacientes Programados</h3>
+<div id="pacientes-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+<!-- Las tarjetas se insertarán dinámicamente -->
+</div>
 
-<!-- Modal for New/Edit Patient -->
-<dialog id="modalNuevoPaciente" class="backdrop:bg-black/50 p-6 rounded-3xl shadow-2xl border-none max-w-sm w-full bg-surface-white fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 m-0">
-    <div class="flex justify-between items-center mb-6">
-        <h3 id="modalTitlePaciente" class="text-xl font-extrabold text-on-surface">Registrar Paciente</h3>
-        <button onclick="document.getElementById('modalNuevoPaciente').close()" class="w-10 h-10 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container-high transition-colors">
-            <span class="material-symbols-outlined">close</span>
-        </button>
-    </div>
-    <form id="formNuevoPaciente" class="space-y-4">
-        <input type="hidden" name="id" id="pacienteId">
-        
-        <div>
-            <label class="block text-sm font-bold text-on-surface mb-1">Nombre Completo</label>
-            <input type="text" name="nombre" required class="w-full rounded-xl border border-outline-variant px-4 py-3 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all">
-        </div>
-        
-        <div>
-            <label class="block text-sm font-bold text-on-surface mb-1">Teléfono</label>
-            <input type="tel" name="telefono" class="w-full rounded-xl border border-outline-variant px-4 py-3 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all">
-        </div>
-        <div>
-            <label class="block text-sm font-bold text-on-surface mb-1">Fecha Nacimiento</label>
-            <input type="date" name="fecha_nacimiento" class="w-full rounded-xl border border-outline-variant px-4 py-3 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all">
-        </div>
-        
-        <div>
-            <label class="block text-sm font-bold text-on-surface mb-1">Email</label>
-            <input type="email" name="email" class="w-full rounded-xl border border-outline-variant px-4 py-3 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all">
-        </div>
+<!-- Patient Table Section (Minimalist Table) -->
+<div class="col-span-full mt-8 bg-surface-white rounded-3xl shadow-[0px_10px_30px_rgba(0,0,0,0.04)] overflow-hidden">
+<div class="px-8 py-6 flex items-center justify-between border-b border-surface-container-low">
+<h3 class="font-headline-md text-xl font-bold">Listado General</h3>
+<div class="flex items-center gap-4">
+<span id="pacientes-count" class="text-label-sm text-outline">Cargando pacientes...</span>
+<div class="flex gap-1">
+<button class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-surface-container-low"><span class="material-symbols-outlined">chevron_left</span></button>
+<button class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-surface-container-low"><span class="material-symbols-outlined">chevron_right</span></button>
+</div>
+</div>
+</div>
+<table class="w-full text-left">
+<thead class="bg-surface-container-low/50">
+<tr>
+<th class="px-8 py-4 text-xs font-bold uppercase tracking-widest text-outline">Paciente</th>
+<th class="px-8 py-4 text-xs font-bold uppercase tracking-widest text-outline">Estado</th>
+<th class="px-8 py-4 text-xs font-bold uppercase tracking-widest text-outline">Estado Sesiones</th>
+<th class="px-8 py-4 text-xs font-bold uppercase tracking-widest text-outline">Estado Cuentas</th>
+<th class="px-8 py-4 text-xs font-bold uppercase tracking-widest text-outline text-right">Acciones</th>
+</tr>
+</thead>
+<tbody id="pacientes-tbody" class="divide-y divide-surface-container-low">
+<!-- Contenido dinámico desde Supabase -->
+</tbody>
+</table>
+</div>
+</div>
+<!-- Section Gap for breathing room -->
+<div class="h-section-gap"></div>
 
-        <div>
-            <label class="block text-sm font-bold text-on-surface mb-1">Alergias & Riesgos</label>
-            <input type="text" name="alergias" placeholder="Ej. Ibuprofeno, Asma (separados por coma)" class="w-full rounded-xl border border-outline-variant px-4 py-3 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all">
-        </div>
+</main>
 
-        <div>
-            <label class="block text-sm font-bold text-on-surface mb-1">Estado</label>
-            <select name="estado" class="w-full rounded-xl border border-outline-variant px-4 py-3 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all bg-surface-white">
-                <option value="Activo">Activo</option>
-                <option value="Inactivo">Inactivo</option>
-            </select>
-        </div>
-
-        <div class="pt-6 flex flex-col gap-3 w-full border-t border-surface-variant">
-            <button type="submit" id="btnSubmitPaciente" class="w-full bg-primary text-white px-8 py-3 rounded-xl font-bold hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-2 shadow-md">
-                <span class="material-symbols-outlined text-[20px] hidden animate-spin" id="spinnerSubmitPaciente">progress_activity</span>
-                Guardar
-            </button>
-            <button type="button" id="btnEliminarPaciente" onclick="eliminarPaciente()" class="hidden w-full px-5 py-3 text-error font-bold hover:bg-error/10 rounded-xl transition-colors flex items-center justify-center gap-2">
-                <span class="material-symbols-outlined text-[20px]">delete</span> Eliminar Paciente
-            </button>
-            <button type="button" onclick="document.getElementById('modalNuevoPaciente').close()" class="w-full px-5 py-3 text-on-surface-variant font-bold hover:bg-surface-container-high rounded-xl transition-colors">Cancelar</button>
-        </div>
-    </form>
-</dialog>
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-2 py-3 md:hidden bg-surface-white/90 backdrop-blur-md shadow-[0px_-10px_30px_rgba(0,0,0,0.04)] rounded-t-xl border-t border-surface-container-highest overflow-x-auto no-scrollbar gap-2">
+    <a id="nav-bottom-agenda" class="flex flex-col items-center justify-center text-outline hover:text-primary transition-all p-2 rounded-lg min-w-[60px]" href="calendario_dashboard_mobile.html">
+        <span class="material-symbols-outlined">calendar_today</span><span class="font-label-sm text-[10px] mt-1">Agenda</span>
+    </a>
+    <a id="nav-bottom-citas" class="flex flex-col items-center justify-center text-outline hover:text-primary transition-all p-2 rounded-lg min-w-[60px]" href="citas_listado_mobile.html">
+        <span class="material-symbols-outlined">list_alt</span><span class="font-label-sm text-[10px] mt-1">Citas</span>
+    </a>
+    <a id="nav-bottom-pacientes" class="flex flex-col items-center justify-center text-outline hover:text-primary transition-all p-2 rounded-lg min-w-[60px]" href="pacientes_historia_clinica_mobile.html">
+        <span class="material-symbols-outlined">groups</span><span class="font-label-sm text-[10px] mt-1">Pacientes</span>
+    </a>
+    <a id="nav-bottom-tratamientos" class="flex flex-col items-center justify-center text-outline hover:text-primary transition-all p-2 rounded-lg min-w-[60px]" href="tratamientos_mobile.html">
+        <span class="material-symbols-outlined">medical_services</span><span class="font-label-sm text-[10px] mt-1">Servicios</span>
+    </a>
+    <a id="nav-bottom-productos" class="flex flex-col items-center justify-center text-outline hover:text-primary transition-all p-2 rounded-lg min-w-[60px]" href="productos_mobile.html">
+        <span class="material-symbols-outlined">inventory_2</span><span class="font-label-sm text-[10px] mt-1">Productos</span>
+    </a>
+    <a id="nav-bottom-caja" class="flex flex-col items-center justify-center text-outline hover:text-primary transition-all p-2 rounded-lg min-w-[60px]" href="cobrar_mobile.html">
+        <span class="material-symbols-outlined">point_of_sale</span><span class="font-label-sm text-[10px] mt-1">Caja</span>
+    </a>
+    <a id="nav-bottom-finanzas" class="flex flex-col items-center justify-center text-outline hover:text-primary transition-all p-2 rounded-lg min-w-[60px]" href="pagos_facturacion_mobile.html">
+        <span class="material-symbols-outlined">payments</span><span class="font-label-sm text-[10px] mt-1">Finanzas</span>
+    </a>
+    <a id="nav-bottom-gestion" class="flex flex-col items-center justify-center text-outline hover:text-primary transition-all p-2 rounded-lg min-w-[60px]" href="gestion_pacientes_mobile.html">
+        <span class="material-symbols-outlined">monitoring</span><span class="font-label-sm text-[10px] mt-1">Gestión</span>
+    </a>
+</nav>
 
 <script>
-    
-
-
-    async function cargarPacientes() {
-        try {
-            const gridBody = document.getElementById('patientsGrid');
-            if (!gridBody) return;
-
-            gridBody.innerHTML = '<div class="col-span-full text-center py-8"><div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div><p class="text-outline mt-4 font-label-sm">Cargando pacientes...</p></div>';
-
-            const { data, error } = await window.supabaseClient.from('pacientes').select('*, citas(id, estado, fecha, hora, tratamiento, consultorio), pagos(id, estado)').order('created_at', { ascending: false });
-
-            if (error) throw error;
-
-            gridBody.innerHTML = '';
-
-            if (data.length === 0) {
-                gridBody.innerHTML = `
-                    <div class="col-span-full text-center py-12 bg-surface-white rounded-2xl border border-dashed border-outline-variant">
-                        <span class="material-symbols-outlined text-4xl text-outline mb-3">group_off</span>
-                        <p class="font-body-md text-on-surface">No hay pacientes registrados</p>
-                    </div>
-                `;
-                return;
-            }
-
-            const now = new Date();
-            const year = now.getFullYear();
-            const month = String(now.getMonth() + 1).padStart(2, '0');
-            const day = String(now.getDate()).padStart(2, '0');
-            const today = `${year}-${month}-${day}`;
-            const pacientesProximos = [];
-            data.forEach(p => {
-                if (!p.citas) return;
-                const citasFuturas = p.citas.filter(c => c.fecha >= today && (c.estado === 'Pendiente' || c.estado === 'Sin confirmar' || c.estado === 'Confirmada' || c.estado === 'Confirmado' || c.estado === 'En Progreso'));
-                
-                citasFuturas.forEach(cita => {
-                    pacientesProximos.push({ paciente: p, cita: cita });
-                });
-            });
-
-            pacientesProximos.sort((a, b) => {
-                if (a.cita.fecha === b.cita.fecha) {
-                    return a.cita.hora.localeCompare(b.cita.hora);
-                }
-                return a.cita.fecha.localeCompare(b.cita.fecha);
-            });
-
-            const pacientesHoy = [];
-            for (const item of pacientesProximos) {
-                if (item.cita.fecha === today) {
-                    pacientesHoy.push(item);
-                } else if (pacientesHoy.length < 3) {
-                    pacientesHoy.push(item);
-                } else {
-                    break;
-                }
-            }
-
-            if (pacientesHoy.length === 0) {
-                gridBody.innerHTML = `
-                    <div class="col-span-full text-center py-12 bg-surface-white rounded-2xl border border-dashed border-outline-variant">
-                        <span class="material-symbols-outlined text-4xl text-outline mb-3">group_off</span>
-                        <p class="font-body-md text-on-surface">No hay citas pendientes de atención próximas</p>
-                    </div>
-                `;
-                return;
-            }
-
-            pacientesHoy.forEach(item => {
-                const { paciente, cita } = item;
-                const initials = paciente.nombre.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
-                const colors = ['bg-primary-container text-on-primary-container', 'bg-secondary-container text-on-secondary-container', 'bg-tertiary-fixed text-on-tertiary-fixed'];
-                const randomColor = colors[Math.abs(paciente.id.hashCode ? paciente.id.hashCode() : paciente.nombre.charCodeAt(0)) % colors.length];
-                
-                let horaFormat = cita.hora;
-                if (cita.hora) {
-                    const [h, m] = cita.hora.split(':');
-                    const hInt = parseInt(h);
-                    const ampm = hInt >= 12 ? 'PM' : 'AM';
-                    const h12 = hInt > 12 ? hInt - 12 : (hInt === 0 ? 12 : hInt);
-                    horaFormat = `${h12.toString().padStart(2, '0')}:${m} ${ampm}`;
-                }
-
-                let dateLabel = '';
-                if (cita.fecha === today) {
-                    dateLabel = `Hoy, ${horaFormat}`;
-                } else {
-                    const [y, m, d] = cita.fecha.split('-');
-                    dateLabel = `${d}/${m}, ${horaFormat}`;
-                }
-
-                const cardHTML = `
-                    <div class="bg-surface-white rounded-2xl p-6 shadow-[0px_10px_30px_rgba(0,0,0,0.04)] flex flex-col gap-5 hover:shadow-[0px_15px_40px_rgba(0,0,0,0.08)] hover:-translate-y-1 transition-all duration-300 group cursor-pointer" onclick="const role = new URLSearchParams(window.location.search).get('role') || 'admin'; window.location.href='atencion_tiempo_real_mobile.html?cita_id=${cita.id}&role=' + role">
-                        <div class="flex justify-between items-start">
-                            <div class="flex gap-4 items-center">
-                                <div class="w-12 h-12 rounded-full ${randomColor} flex items-center justify-center font-headline-md text-headline-md">
-                                    ${initials}
-                                </div>
-                                <div>
-                                    <h3 class="font-body-lg text-body-lg font-semibold text-on-surface">${paciente.nombre}</h3>
-                                    <p class="font-label-sm text-label-sm text-primary">${dateLabel} • ${cita.tratamiento || 'Procedimiento'}</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="mt-2 flex justify-between items-center">
-                            <span class="px-3 py-1 bg-warning/10 text-warning-dark rounded-full font-label-sm text-[10px] flex items-center gap-1 uppercase tracking-wider">
-                                ${cita.estado}
-                            </span>
-                            <span class="text-primary font-bold text-sm flex items-center gap-1 group-hover:translate-x-1 transition-transform">
-                                Atender <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
-                            </span>
-                        </div>
-                    </div>
-                `;
-                gridBody.insertAdjacentHTML('beforeend', cardHTML);
-            });
-
-        } catch (error) {
-            console.error('Error al cargar pacientes:', error);
-            const gridBody = document.getElementById('patientsGrid');
-            if (gridBody) {
-                gridBody.innerHTML = `
-                    <div class="col-span-full text-center py-8 text-error">
-                        <span class="material-symbols-outlined mb-2">error</span>
-                        <p>Error al cargar los datos de pacientes.</p>
-                    </div>`;
-            }
-        }
+    // Add active state to drawer
+    const drawerLink = document.getElementById('nav-link-pacientes-drawer');
+    if(drawerLink) {
+        drawerLink.classList.remove('text-on-surface-variant');
+        drawerLink.classList.add('bg-secondary-container', 'text-on-secondary-container');
     }
-
-    document.addEventListener("DOMContentLoaded", () => {
-        
-        cargarPacientes();
-    });
-
-    function abrirModalNuevoPaciente() {
-        document.getElementById('formNuevoPaciente').reset();
-        document.getElementById('pacienteId').value = '';
-        document.getElementById('modalTitlePaciente').textContent = 'Registrar Paciente';
-        document.getElementById('btnEliminarPaciente').classList.add('hidden');
-        document.getElementById('modalNuevoPaciente').showModal();
-    }
-
-    function abrirModalEdicionPaciente(id, nombre, email, telefono, fecha_nacimiento, notas_medicas, estado) {
-        document.getElementById('formNuevoPaciente').reset();
-        document.getElementById('pacienteId').value = id;
-        document.getElementById('modalTitlePaciente').textContent = 'Editar Perfil y Notas';
-        document.getElementById('btnEliminarPaciente').classList.remove('hidden');
-        
-        const form = document.getElementById('formNuevoPaciente');
-        form.elements['nombre'].value = nombre;
-        form.elements['email'].value = email || '';
-        form.elements['telefono'].value = telefono || '';
-        form.elements['fecha_nacimiento'].value = fecha_nacimiento || '';
-        form.elements['estado'].value = estado || 'Activo';
-        
-        const stored = localStorage.getItem(`paciente_registro_${id}`);
-        if (stored) {
-            const parsed = JSON.parse(stored);
-            form.elements['alergias'].value = parsed.alergias || '';
-        } else {
-            form.elements['alergias'].value = '';
-        }
-        
-        document.getElementById('modalNuevoPaciente').showModal();
-    }
-
-    async function eliminarPaciente() {
-        const id = document.getElementById('pacienteId').value;
-        if (!id) return;
-        
-        if (!confirm('¿Estás seguro de que deseas eliminar a este paciente?')) return;
-        
-        const btnSubmit = document.getElementById('btnSubmitPaciente');
-        const spinner = document.getElementById('spinnerSubmitPaciente');
-        const btnEliminar = document.getElementById('btnEliminarPaciente');
-        
-        btnSubmit.disabled = true;
-        btnEliminar.disabled = true;
-        spinner.classList.remove('hidden');
-
-        try {
-            const { error } = await supabaseClient
-                .from('pacientes')
-                .delete()
-                .eq('id', id);
-
-            if (error) throw error;
-
-            document.getElementById('modalNuevoPaciente').close();
-            await cargarPacientes();
-        } catch (err) {
-            console.error("Error al eliminar paciente:", err);
-            alert("Hubo un error al eliminar el paciente.");
-        } finally {
-            btnSubmit.disabled = false;
-            btnEliminar.disabled = false;
-            spinner.classList.add('hidden');
-        }
-    }
-
-    document.getElementById('formNuevoPaciente').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        
-        const btnSubmit = document.getElementById('btnSubmitPaciente');
-        const spinner = document.getElementById('spinnerSubmitPaciente');
-        
-        btnSubmit.disabled = true;
-        spinner.classList.remove('hidden');
-
-        const formData = new FormData(e.target);
-        const data = Object.fromEntries(formData.entries());
-
-        const payload = {
-            nombre: data.nombre,
-            email: data.email || null,
-            telefono: data.telefono || null,
-            fecha_nacimiento: data.fecha_nacimiento || null,
-            notas_medicas: data.notas_medicas || null,
-            estado: data.estado || 'Activo'
-        };
-
-        try {
-            let error;
-            if (data.id) {
-                const res = await supabaseClient
-                    .from('pacientes')
-                    .update(payload)
-                    .eq('id', data.id);
-                error = res.error;
-                if (!error) {
-                    let stored = localStorage.getItem(`paciente_registro_${data.id}`);
-                    let pData = stored ? JSON.parse(stored) : {};
-                    pData.alergias = data.alergias || '';
-                    localStorage.setItem(`paciente_registro_${data.id}`, JSON.stringify(pData));
-                }
-            } else {
-                const res = await supabaseClient
-                    .from('pacientes')
-                    .insert([payload])
-                    .select();
-                error = res.error;
-                if (!error && res.data && res.data.length > 0) {
-                    const newId = res.data[0].id;
-                    let stored = localStorage.getItem(`paciente_registro_${newId}`);
-                    let pData = stored ? JSON.parse(stored) : {};
-                    pData.alergias = data.alergias || '';
-                    localStorage.setItem(`paciente_registro_${newId}`, JSON.stringify(pData));
-                }
-            }
-
-            if (error) throw error;
-
-            document.getElementById('modalNuevoPaciente').close();
-            e.target.reset();
-            await cargarPacientes();
-        } catch (err) {
-            console.error("Error al guardar paciente:", err);
-            alert("Hubo un error al guardar el paciente. Inténtelo de nuevo.");
-        } finally {
-            btnSubmit.disabled = false;
-            spinner.classList.add('hidden');
-        }
-    });
-
-    // ==========================================
-    // EXPORTAR E IMPORTAR DATOS (CSV)
-    // ==========================================
-    async function exportarPacientesCSV() {
-        try {
-            const { data: pacientes, error } = await supabaseClient
-                .from('pacientes')
-                .select('*');
-            if (error) throw error;
-            
-            if (!pacientes || pacientes.length === 0) {
-                alert('No hay pacientes para exportar.');
-                return;
-            }
-
-            // Generar headers
-            const headers = Object.keys(pacientes[0]).join(';');
-            // Generar filas
-            const csvRows = pacientes.map(p => {
-                return Object.values(p).map(val => {
-                    let str = val === null ? '' : String(val);
-                    if (str.includes(';') || str.includes('"') || str.includes('\n')) {
-                        str = '"' + str.replace(/"/g, '""') + '"';
-                    }
-                    return str;
-                }).join(';');
-            });
-            
-            const csvContent = "data:text/csv;charset=utf-8,\uFEFF" + headers + "\n" + csvRows.join('\n');
-            const encodedUri = encodeURI(csvContent);
-            const link = document.createElement("a");
-            link.setAttribute("href", encodedUri);
-            link.setAttribute("download", `pacientes_export_${new Date().toISOString().split('T')[0]}.csv`);
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        } catch (err) {
-            console.error('Error al exportar pacientes CSV:', err);
-            alert('Error al exportar los pacientes.');
-        }
-    }
-
-    function triggerImportarCSVMobile() {
-        document.getElementById('csvFileInputMobile').click();
-    }
-
-    async function importarPacientesCSV(event) {
-        const file = event.target.files[0];
-        if (!file) return;
-
-        const reader = new FileReader();
-        reader.onload = async function(e) {
-            try {
-                const text = e.target.result;
-                const lines = text.split('\n').filter(line => line.trim().length > 0);
-                if (lines.length < 2) {
-                    alert('El archivo CSV está vacío o no tiene el formato correcto.');
-                    return;
-                }
-                
-                const headers = lines[0].split(';').map(h => h.trim().replace(/(^"|"$)/g, ''));
-                const pacientesAImportar = [];
-                
-                for (let i = 1; i < lines.length; i++) {
-                    const row = lines[i].split(';');
-                    let obj = {};
-                    headers.forEach((header, index) => {
-                        let val = row[index] ? row[index].trim().replace(/(^"|"$)/g, '').replace(/""/g, '"') : null;
-                        if (val === "") val = null;
-                        if (header !== 'id' && header !== 'created_at') {
-                            obj[header] = val;
-                        }
-                    });
-                    pacientesAImportar.push(obj);
-                }
-                
-                if (pacientesAImportar.length > 0) {
-                    const confirmacion = confirm(`¿Estás seguro de que deseas importar ${pacientesAImportar.length} pacientes?`);
-                    if (!confirmacion) return;
-
-                    const btn = document.querySelector('button[onclick="triggerImportarCSVMobile()"]');
-                    const originalText = btn.innerHTML;
-                    btn.innerHTML = '<span class="material-symbols-outlined animate-spin text-[16px]">sync</span> Importando...';
-
-                    const { error } = await supabaseClient
-                        .from('pacientes')
-                        .insert(pacientesAImportar);
-                        
-                    if (error) throw error;
-                    
-                    alert(`¡Se importaron ${pacientesAImportar.length} pacientes correctamente!`);
-                    cargarPacientes();
-                    btn.innerHTML = originalText;
-                }
-            } catch (err) {
-                console.error('Error importando CSV:', err);
-                alert('Hubo un problema al importar. Verifica que las columnas coincidan con la BD y estén separadas por punto y coma (;).');
-            } finally {
-                event.target.value = ''; // reset
-            }
-        };
-        reader.readAsText(file);
+    // Add active state to bottom nav
+    const bottomLink = document.getElementById('nav-bottom-pacientes');
+    if(bottomLink) {
+        bottomLink.classList.remove('text-outline');
+        bottomLink.classList.add('text-primary');
     }
 </script>
 
-    <script>
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('../sw.js').then(registration => {
-                    console.log('SW registered: ', registration);
-                }).catch(registrationError => {
-                    console.log('SW registration failed: ', registrationError);
-                });
-            });
-        }
-    </script>
-</body></html>
+</body>
+</html>

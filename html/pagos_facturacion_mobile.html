@@ -1,125 +1,195 @@
 <!DOCTYPE html>
-
 <html class="light" lang="es">
-
 <head>
-    <meta charset="utf-8" />
-    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <title>Centro Eslava - Pagos y Facturación</title>
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="../js/supabase.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=block"
-        rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;700&display=block"
-        rel="stylesheet" />
-    <script id="tailwind-config">
-        tailwind.config = {
-            darkMode: "class",
-            theme: {
-                extend: {
-                    "colors": {
-                        "on-primary": "#ffffff",
-                        "primary-fixed": "#aeecff",
-                        "on-secondary-fixed": "#001f26",
-                        "surface": "#f8fafa",
-                        "tertiary-container": "#a96418",
-                        "surface-white": "#FFFFFF",
-                        "error": "#ba1a1a",
-                        "on-primary-fixed-variant": "#004e5d",
-                        "warning": "#FF9500",
-                        "secondary-container": "#89e4fd",
-                        "secondary-fixed-dim": "#78d3eb",
-                        "surface-tint": "#00687b",
-                        "on-tertiary-fixed": "#2e1600",
-                        "secondary-fixed": "#adecff",
-                        "success": "#34C759",
-                        "surface-container-lowest": "#ffffff",
-                        "text-main": "#1C1C1E",
-                        "on-secondary": "#ffffff",
-                        "outline-variant": "#bdc8cd",
-                        "on-secondary-fixed-variant": "#004e5c",
-                        "surface-container-high": "#e6e8e8",
-                        "surface-container-low": "#f2f4f4",
-                        "outline": "#6d797d",
-                        "on-primary-container": "#f9fdff",
-                        "primary": "#006578",
-                        "on-surface-variant": "#3d494c",
-                        "secondary": "#00687a",
-                        "background": "#f8fafa",
-                        "on-tertiary-container": "#fffbff",
-                        "on-error": "#ffffff",
-                        "tertiary-fixed": "#ffdcc0",
-                        "on-secondary-container": "#006779",
-                        "on-primary-fixed": "#001f26",
-                        "error-container": "#ffdad6",
-                        "inverse-primary": "#66d5f1",
-                        "on-tertiary": "#ffffff",
-                        "on-error-container": "#93000a",
-                        "primary-container": "#008097",
-                        "text-muted": "#636366",
-                        "surface-bright": "#f8fafa",
-                        "primary-fixed-dim": "#66d5f1",
-                        "surface-dim": "#d8dada",
-                        "surface-container": "#eceeee",
-                        "surface-variant": "#e1e3e3",
-                        "surface-container-highest": "#e1e3e3",
-                        "tertiary-fixed-dim": "#ffb877",
-                        "inverse-surface": "#2e3131",
-                        "on-background": "#191c1d",
-                        "inverse-on-surface": "#eff1f1",
-                        "on-tertiary-fixed-variant": "#6b3b00",
-                        "on-surface": "#191c1d",
-                        "tertiary": "#8a4d00"
-                    },
-                    "borderRadius": {
-                        "DEFAULT": "0.25rem",
-                        "lg": "0.5rem",
-                        "xl": "0.75rem",
-                        "full": "9999px"
-                    },
-                    "spacing": {
-                        "base": "8px",
-                        "margin-desktop": "80px",
-                        "margin-mobile": "20px",
-                        "gutter": "24px",
-                        "section-gap": "120px"
-                    },
-                    "fontFamily": {
-                        "body-md": ["Hanken Grotesk"],
-                        "display-lg": ["Hanken Grotesk"],
-                        "display-lg-mobile": ["Hanken Grotesk"],
-                        "label-sm": ["Hanken Grotesk"],
-                        "body-lg": ["Hanken Grotesk"],
-                        "headline-md": ["Hanken Grotesk"]
-                    },
-                    "fontSize": {
-                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
-                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
-                        "display-lg-mobile": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "700" }],
-                        "label-sm": ["13px", { "lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "600" }],
-                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
-                        "headline-md": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }]
-                    }
-                }
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Centro Eslava - Resumen Financiero</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;700;800&amp;display=block" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=block" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=block" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../js/supabase.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<!-- Design System Tokens & Configuration -->
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-container": "#eceeee",
+                    "primary-fixed-dim": "#66d5f1",
+                    "tertiary": "#8a4d00",
+                    "outline": "#6d797d",
+                    "on-tertiary-fixed": "#2e1600",
+                    "on-primary-container": "#f9fdff",
+                    "surface-container-low": "#f2f4f4",
+                    "error-container": "#ffdad6",
+                    "surface-bright": "#f8fafa",
+                    "secondary-fixed-dim": "#78d3eb",
+                    "on-primary-fixed": "#001f26",
+                    "text-muted": "#636366",
+                    "tertiary-fixed-dim": "#ffb877",
+                    "on-surface": "#191c1d",
+                    "inverse-on-surface": "#eff1f1",
+                    "outline-variant": "#bdc8cd",
+                    "error": "#ba1a1a",
+                    "tertiary-container": "#a96418",
+                    "on-surface-variant": "#3d494c",
+                    "on-tertiary": "#ffffff",
+                    "on-background": "#191c1d",
+                    "surface-container-lowest": "#ffffff",
+                    "on-secondary-fixed": "#001f26",
+                    "surface-dim": "#d8dada",
+                    "surface-white": "#FFFFFF",
+                    "surface": "#f8fafa",
+                    "inverse-surface": "#2e3131",
+                    "primary-container": "#008097",
+                    "warning": "#FF9500",
+                    "secondary-container": "#89e4fd",
+                    "on-primary-fixed-variant": "#004e5d",
+                    "background": "#f8fafa",
+                    "text-main": "#1C1C1E",
+                    "on-primary": "#ffffff",
+                    "on-error-container": "#93000a",
+                    "success": "#34C759",
+                    "on-secondary": "#ffffff",
+                    "inverse-primary": "#66d5f1",
+                    "primary-fixed": "#aeecff",
+                    "on-error": "#ffffff",
+                    "tertiary-fixed": "#ffdcc0",
+                    "secondary": "#00687a",
+                    "on-tertiary-fixed-variant": "#6b3b00",
+                    "surface-container-highest": "#e1e3e3",
+                    "secondary-fixed": "#adecff",
+                    "primary": "#006578",
+                    "on-secondary-fixed-variant": "#004e5c",
+                    "on-secondary-container": "#006779",
+                    "surface-container-high": "#e6e8e8",
+                    "surface-variant": "#e1e3e3",
+                    "surface-tint": "#00687b",
+                    "on-tertiary-container": "#fffbff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "margin-desktop": "80px",
+                    "margin-mobile": "20px",
+                    "section-gap": "120px",
+                    "base": "8px",
+                    "gutter": "24px"
+            },
+            "fontFamily": {
+                    "headline-md": ["Hanken Grotesk"],
+                    "display-lg-mobile": ["Hanken Grotesk"],
+                    "display-lg": ["Hanken Grotesk"],
+                    "body-lg": ["Hanken Grotesk"],
+                    "label-sm": ["Hanken Grotesk"],
+                    "body-md": ["Hanken Grotesk"]
+            },
+            "fontSize": {
+                    "headline-md": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "display-lg-mobile": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                    "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                    "label-sm": ["13px", {"lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "600"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}]
             }
-        }
+          },
+        },
+      }
     </script>
-    <style>
-        body {
-            font-family: 'Hanken Grotesk', sans-serif;
+<style>
+        body { font-family: 'Hanken Grotesk', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            vertical-align: middle;
         }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-        .glass-card {
-            background: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(10px);
-            box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.04);
+        /* ======= BOOK TABS (TOP HORIZONTAL) ======= */
+        .book-tabs-container {
+            display: flex;
+            flex-direction: row;
+            align-items: flex-end;
+            gap: 3px;
+            padding: 0 0 0 0;
+            overflow-x: auto;
+            scrollbar-width: none;
         }
-    </style>
-    <style>
-        body {
-            min-height: max(884px, 100dvh);
+        .book-tabs-container::-webkit-scrollbar { display: none; }
+        .book-tab {
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 7px 16px;
+            min-width: 56px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            border-radius: 10px 10px 0 0;
+            border: 1.5px solid transparent;
+            border-bottom: none;
+            transition: all 0.18s ease;
+            white-space: nowrap;
+            flex-shrink: 0;
+            position: relative;
+            bottom: 0;
+        }
+        .book-tab.active {
+            background: #006578;
+            color: #ffffff;
+            border-color: #004e5d;
+            padding-top: 10px;
+            bottom: 0;
+            box-shadow: 0 -4px 12px rgba(0,101,120,0.18);
+        }
+        .book-tab.inactive {
+            background: #f2f4f4;
+            color: #3d494c;
+            border-color: #bdc8cd;
+            bottom: -2px;
+        }
+        .book-tab.inactive:hover {
+            background: #e6e8e8;
+            color: #006578;
+            bottom: -1px;
+        }
+        .book-tab.past-data {
+            background: #dff4f8;
+            color: #006578;
+            border-color: #9fd8e8;
+            bottom: -2px;
+        }
+        .book-tab.past-data:hover {
+            background: #c8ecf5;
+            bottom: -1px;
+        }
+        .book-tab.future {
+            background: #f8fafa;
+            color: #b0bec5;
+            border-color: #e1e3e3;
+            bottom: -4px;
+            opacity: 0.55;
+            cursor: not-allowed;
+            font-size: 10px;
+        }
+        .book-tabs-bar {
+            border-bottom: 2px solid #006578;
+            margin-bottom: 0;
+        }
+        /* main content no longer needs left offset for tabs */
+        .main-with-tabs {
+            margin-left: 256px;
         }
     </style>
 
@@ -127,786 +197,326 @@
     <script src="../js/rbac.js"></script>
     <link rel="manifest" href="../manifest.json">
 </head>
+<body class="bg-background font-body-md text-on-surface">
 
-<body class="bg-surface text-on-surface min-h-screen flex flex-col md:flex-row">
-    <!-- TopAppBar (Mobile Only) -->
-    <header
-        class="md:hidden flex justify-between items-center px-margin-mobile py-4 w-full z-50 bg-surface shadow-[0px_10px_30px_rgba(0,0,0,0.04)] sticky top-0">
-        <div class="flex items-center gap-4">
-            <span
-                class="material-symbols-outlined text-primary cursor-pointer hover:bg-surface-container-low transition-colors active:scale-95 transition-transform duration-200 rounded-full p-2"
-                data-icon="menu">menu</span>
-            <span class="font-headline-md text-headline-md font-bold text-primary">Centro Eslava</span>
+<header class="flex justify-between items-center h-18 px-4 bg-surface-white dark:bg-surface-container-lowest border-b border-surface-container sticky top-0 z-50 md:hidden">
+    <div class="flex items-center gap-2">
+        <span class="material-symbols-outlined text-primary text-2xl">health_and_safety</span>
+        <span class="font-headline-md text-label-sm font-bold text-primary">Centro Eslava</span>
+    </div>
+    <button aria-label="Menu" class="md:hidden text-primary dark:text-primary-fixed hover:bg-surface-container-low dark:hover:bg-surface-container-high transition-colors active:scale-95 transition-transform duration-200 p-2 rounded-full">
+        <span class="material-symbols-outlined">menu</span>
+    </button>
+</header>
+
+<aside class="fixed left-0 top-18 h-[calc(100vh-72px)] w-72 bg-surface-white dark:bg-surface-container-lowest shadow-[0px_10px_30px_rgba(0,0,0,0.04)] z-40 hidden md:flex flex-col p-6 overflow-y-auto">
+    <div class="flex items-center gap-4 mb-8 pb-6 border-b border-surface-container">
+        <div class="h-12 w-12 rounded-full bg-surface-container-high overflow-hidden flex-shrink-0">
+            <span class="material-symbols-outlined m-3">person</span>
         </div>
-        <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-            <span class="material-symbols-outlined text-primary text-[20px]">account_circle</span>
+        <div>
+            <h2 id="drawer-profile-name" class="font-body-md text-body-md font-semibold text-primary">Dr. Eslava</h2>
+            <p id="drawer-profile-role" class="font-label-sm text-label-sm text-outline">Director Clínico</p>
+            <span id="drawer-profile-badge" class="inline-block mt-1 px-2 py-0.5 bg-secondary-container/30 text-on-secondary-container rounded font-label-sm text-[10px]">Acceso Admin</span>
         </div>
-    </header>
-    <!-- NavigationDrawer (Desktop Only) -->
-    <nav
-        class="hidden md:flex flex-col p-6 h-full w-72 bg-surface-white shadow-[0px_10px_30px_rgba(0,0,0,0.04)] fixed left-0 top-0 z-40 border-r border-surface-container-high">
-        <div class="flex items-center gap-4 mb-8 pb-8 border-b border-surface-container-low">
-            <div class="w-12 h-12 rounded-full bg-surface-container overflow-hidden">
-                <img alt="Administrador Clínico" class="w-full h-full object-cover"
-                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuDm8HuhSWf4FVoLrsjDiFTjBL4hcSzrs557rJP6c2X-sjyuADV_uZbnwuGXZDsn4VP0xphR5zh0-yR9y2dDR4xPGmVf1CiqT6pExkTCj7RoXoDuqkVfGIRmwypsOOves38TiLcU87jMXRVC0_X2xSZKCEHKbINCt-NWFDSVCPOhV0hw4090dDGbKODahdDx8nJrFipANbb1B2H9V7xuR3_2gxMLJNbBrBxJ0lSYTEnPHrUem73Y1GXLjk88gxJO9QXcimER-EaqSbE" />
-            </div>
-            <div>
-                <h2 class="font-headline-md text-headline-md text-primary font-bold text-lg">Dr. Eslava</h2>
-                <p class="font-body-md text-body-md text-on-surface-variant text-sm">Director Clínico</p>
-                <p class="font-label-sm text-label-sm text-outline text-xs mt-1">Acceso de Admin</p>
-            </div>
-        </div>
-        <ul class="flex flex-col gap-2 flex-grow">
-            <li>
-                <a class="flex items-center gap-3 px-4 py-3 rounded-xl font-body-md text-body-md text-on-surface-variant hover:bg-surface-container-low transition-all active:scale-[0.98]"
-                    href="calendario_dashboard_desktop.html" id="nav-link-calendario">
-                    <span class="material-symbols-outlined" data-icon="calendar_today">calendar_today</span>
-                    Horario
-                </a>
-            </li>
-            <li>
-                <a class="flex items-center gap-3 px-4 py-3 rounded-xl font-body-md text-body-md text-on-surface-variant hover:bg-surface-container-low transition-all active:scale-[0.98]"
-                    href="pacientes_historia_clinica_desktop.html" id="nav-link-pacientes">
-                    <span class="material-symbols-outlined" data-icon="groups">groups</span>
-                    Pacientes
-                </a>
-            </li>
-            <li>
-                <a class="flex items-center gap-3 px-4 py-3 rounded-xl font-body-md text-body-md text-on-surface-variant hover:bg-surface-container-low transition-all active:scale-[0.98]"
-                    href="tratamientos_desktop.html" id="nav-link-servicios">
-                    <span class="material-symbols-outlined" data-icon="medical_services">medical_services</span>
-                    Servicios
-                </a>
-            </li>
-            <li>
-                <a class="flex items-center gap-3 px-4 py-3 rounded-xl font-body-md text-body-md text-on-surface-variant hover:bg-surface-container-low transition-all active:scale-[0.98]"
-                    href="productos_desktop.html" id="nav-link-productos">
-                    <span class="material-symbols-outlined" data-icon="inventory_2">inventory_2</span>
-                    Productos
-                </a>
-            </li>
-            <li>
-                <a class="flex items-center gap-3 px-4 py-3 rounded-xl font-body-md text-body-md text-on-surface-variant hover:bg-surface-container-low transition-all active:scale-[0.98]"
-                    href="cobrar_desktop.html" id="nav-link-cobrar">
-                    <span class="material-symbols-outlined">point_of_sale</span>
-                    Cobrar / Caja
-                </a>
-            </li>
-            <li>
-                <a class="flex items-center gap-3 px-4 py-3 rounded-xl font-body-md text-body-md bg-secondary-container text-on-secondary-container transition-all active:scale-[0.98] font-bold"
-                    href="pagos_facturacion_desktop.html" id="nav-link-finanzas">
-                    <span class="material-symbols-outlined" data-icon="payments" data-weight="fill"
-                        style="font-variation-settings: 'FILL' 1;">payments</span>
-                    Pagos
-                </a>
-            </li>
-            <li class="mt-auto">
-                <a class="flex items-center gap-3 px-4 py-3 rounded-xl font-body-md text-body-md text-on-surface-variant hover:bg-surface-container-low transition-all active:scale-[0.98]"
-                    href="ajustes_desktop.html" id="nav-link-ajustes">
-                    <span class="material-symbols-outlined" data-icon="settings">settings</span>
-                    Configuración
-                </a>
-            </li>
-        </ul>
-    </nav>
-    <!-- Main Content Canvas -->
-    <main class="flex-grow md:ml-72 p-margin-mobile md:p-margin-desktop pb-24 md:pb-margin-desktop overflow-y-auto">
-        <header class="mb-8 flex justify-between items-start">
-            <div>
-                <!-- Badge Identificador de Versión Móvil -->
-                <div class="inline-flex items-center gap-1.5 bg-primary/10 border border-primary/20 text-primary px-3 py-1 rounded-full mb-3">
-                    <span class="material-symbols-outlined text-[14px]">smartphone</span>
-                    <span class="text-[11px] font-bold tracking-widest uppercase">Gestión Clínica Móvil</span>
-                </div>
-                <h1
-                    class="font-display-lg-mobile md:font-display-lg text-display-lg-mobile md:text-display-lg text-primary font-bold mb-2">
-                    Resumen Financiero</h1>
-                <p class="font-body-lg text-body-lg text-outline">Administre la facturación, realice un seguimiento de
-                    los ingresos y procese pagos pendientes.</p>
-            </div>
-        </header>
-        <!-- Bento Grid Layout -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <!-- Revenue Summary Card (Spans 2 cols on md) -->
-            <div class="md:col-span-2 glass-card rounded-xl p-6 md:p-8 flex flex-col justify-between">
-                <div class="flex justify-between items-start mb-6">
-                    <div>
-                        <h2 class="font-headline-md text-headline-md text-on-surface mb-1">Ingresos Mensuales</h2>
-                        <p class="font-body-md text-body-md text-outline">Octubre 2023</p>
-                    </div>
-                    <div class="bg-success/10 px-3 py-1 rounded-full flex items-center gap-1">
-                        <span class="material-symbols-outlined text-success text-sm">trending_up</span>
-                        <span class="font-label-sm text-label-sm text-success">+12.4%</span>
-                    </div>
-                </div>
-                <div class="mb-8">
-                    <span id="total-ingresos"
-                        class="font-display-lg-mobile md:font-display-lg text-display-lg-mobile md:text-display-lg text-primary font-bold">S/
-                        42,500</span>
-                    <span class="font-body-md text-body-md text-outline ml-2">/ S/ 50,000 Meta</span>
-                </div>
-                <!-- Simple Progress Bar for Revenue -->
-                <div class="w-full bg-surface-container-low rounded-full h-3 mb-2 overflow-hidden">
-                    <div class="bg-primary h-3 rounded-full" style="width: 85%;"></div>
-                </div>
-                <div class="flex justify-between text-sm font-label-sm text-outline">
-                    <span>S/ 0</span>
-                    <span>85% de la meta</span>
-                    <span>S/ 50k</span>
-                </div>
-            </div>
-            <!-- Quick Stats -->
-            <div class="glass-card rounded-xl p-6 md:p-8 flex flex-col gap-6">
-                <div class="flex-1 border-b border-surface-container-low pb-6">
-                    <div class="flex items-center gap-2 mb-2">
-                        <span
-                            class="material-symbols-outlined text-warning bg-warning/10 p-2 rounded-lg">pending_actions</span>
-                        <h3 class="font-headline-md text-base text-on-surface">Reclamos Pendientes</h3>
-                    </div>
-                    <p id="total-reclamos" class="font-display-lg-mobile text-2xl font-bold text-on-surface mt-2">S/
-                        8,240</p>
-                    <p id="count-reclamos" class="font-label-sm text-label-sm text-outline mt-1">14 Esperando Aprobación
-                    </p>
-                </div>
-                <div class="flex-1">
-                    <div class="flex items-center gap-2 mb-2">
-                        <span class="material-symbols-outlined text-error bg-error/10 p-2 rounded-lg">error</span>
-                        <h3 class="font-headline-md text-base text-on-surface">Saldos Vencidos</h3>
-                    </div>
-                    <p id="total-vencidos" class="font-display-lg-mobile text-2xl font-bold text-error mt-2">S/ 1,450
-                    </p>
-                    <p id="count-vencidos" class="font-label-sm text-label-sm text-outline mt-1">3 Pacientes Requieren
-                        Acción</p>
-                    <p class="text-[10px] text-outline mt-0.5 leading-tight">Retraso de más de 15 días</p>
-                </div>
-            </div>
-            <!-- Top Services & Top Clients Mobile -->
-            <div class="glass-card rounded-xl p-6 md:p-8 flex flex-col gap-6">
-                <!-- Top Servicios -->
-                <div class="flex-1 border-b border-surface-container-low pb-6">
-                    <h3 class="font-headline-md text-base text-on-surface mb-4 flex items-center gap-2"><span class="material-symbols-outlined text-primary">bar_chart</span> Top Servicios</h3>
-                    <div class="flex flex-col gap-3" id="top-servicios-container">
-                        <div class="flex justify-center"><span class="material-symbols-outlined animate-spin">sync</span></div>
-                    </div>
-                </div>
-                <!-- Top Pacientes -->
-                <div class="flex-1 border-b border-surface-container-low pb-6">
-                    <h3 class="font-headline-md text-base text-on-surface mb-4 flex items-center gap-2"><span class="material-symbols-outlined text-primary">group</span> Top Pacientes</h3>
-                    <div class="flex flex-col gap-3" id="top-pacientes-container">
-                        <div class="flex justify-center"><span class="material-symbols-outlined animate-spin">sync</span></div>
-                    </div>
-                </div>
-                <!-- Top Productos -->
-                <div class="flex-1 border-b border-surface-container-low pb-6">
-                    <h3 class="font-headline-md text-base text-on-surface mb-4 flex items-center gap-2"><span class="material-symbols-outlined text-primary">inventory</span> Top Productos</h3>
-                    <div class="flex flex-col gap-3" id="top-productos-container">
-                        <div class="flex justify-center"><span class="material-symbols-outlined animate-spin">sync</span></div>
-                    </div>
-                </div>
-                <!-- Medios de Pago -->
-                <div class="flex-1">
-                    <h3 class="font-headline-md text-base text-on-surface mb-4 flex items-center gap-2"><span class="material-symbols-outlined text-primary">pie_chart</span> Medios de Pago</h3>
-                    <div class="relative flex items-center justify-center min-h-[140px] cursor-pointer" onclick="toggleMediosPagoInfo()">
-                        <canvas id="mediosPagoChart"></canvas>
-                    </div>
-                    <div id="medios-pago-info" class="hidden mt-4 bg-surface-container-low border border-outline-variant p-4 rounded-xl shadow-sm text-sm">
-                        <div class="flex justify-between items-center mb-2">
-                            <h5 class="font-bold">Detalle de Cantidades</h5>
-                        </div>
-                        <ul id="medios-pago-list" class="space-y-1"></ul>
-                    </div>
-                </div>
-            </div>
-            <!-- Pending Payments List -->
-            <div class="md:col-span-2 glass-card rounded-xl p-6 md:p-8">
-                <div class="flex justify-between items-center mb-6">
-                    <h2 class="font-headline-md text-headline-md text-on-surface">Acción Necesaria: Pagos Pendientes
-                    </h2>
-                    <button
-                        class="font-label-sm text-label-sm text-primary hover:text-primary-container transition-colors">Ver
-                        Todo</button>
-                </div>
-                <div class="flex flex-col gap-4" id="pagos-pendientes-container">
-                    <!-- Dynamic content will be loaded here -->
-                </div>
-            </div>
-            <!-- Recent Transactions Mini -->
-            <div class="glass-card rounded-xl p-6 md:p-8">
-                <div class="flex justify-between items-center mb-6">
-                    <h2 class="font-headline-md text-base text-on-surface">Actividad Reciente</h2>
-                </div>
-                <div class="flex flex-col gap-5" id="actividad-reciente-container">
-                    <!-- Dynamic content will be loaded here -->
-                </div>
-                <button
-                    class="w-full mt-6 py-2 border border-surface-container-highest rounded-full font-label-sm text-label-sm text-on-surface-variant hover:bg-surface-container-low transition-colors">Ver
-                    Libro de Transacciones</button>
-            </div>
-        </div>
-        </div>
-    </main>
-    <!-- POS Modal removed as it is in cobrar_mobile.html -->
-    <!-- BottomNavBar (Mobile Only) -->
-    <nav
-        class="md:hidden fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 py-3 bg-surface-white/80 backdrop-blur-md shadow-[0px_-10px_30px_rgba(0,0,0,0.04)] rounded-t-xl border-t-0">
-        <a class="flex flex-col items-center justify-center text-outline hover:bg-surface-container-high/50 active:scale-90 transition-all duration-150 p-2 rounded-lg"
-            href="calendario_dashboard_mobile.html">
-            <span class="material-symbols-outlined" data-icon="event">event</span>
-            <span class="font-label-sm text-label-sm mt-1 text-[10px]">Calendario</span>
+    </div>
+    <nav class="flex flex-col gap-2 flex-grow">
+        <a id="nav-link-agenda-drawer" class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-low transition-all rounded-xl font-body-md" href="calendario_dashboard_mobile.html">
+            <span class="material-symbols-outlined">calendar_today</span> Calendario
         </a>
-        <a class="flex flex-col items-center justify-center text-outline hover:bg-surface-container-high/50 active:scale-90 transition-all duration-150 p-2 rounded-lg"
-            href="pacientes_historia_clinica_mobile.html">
-            <span class="material-symbols-outlined" data-icon="person_search">person_search</span>
-            <span class="font-label-sm text-label-sm mt-1 text-[10px]">Pacientes</span>
+        <a id="nav-link-citas-drawer" class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-low transition-all rounded-xl font-body-md" href="citas_listado_mobile.html">
+            <span class="material-symbols-outlined">list_alt</span> Citas
         </a>
-        <a id="nav-mobile-servicios"
-            class="flex flex-col items-center justify-center text-outline hover:bg-surface-container-high/50 active:scale-90 transition-all duration-150 p-2 rounded-lg"
-            href="tratamientos_mobile.html">
-            <span class="material-symbols-outlined" data-icon="healing">healing</span>
-            <span class="font-label-sm text-label-sm mt-1 text-[10px]">Tratamientos</span>
+        <a id="nav-link-pacientes-drawer" class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-low transition-all rounded-xl font-body-md" href="pacientes_historia_clinica_mobile.html">
+            <span class="material-symbols-outlined">groups</span> Pacientes
         </a>
-        <a class="flex flex-col items-center justify-center text-outline min-w-0 flex-1 py-1 px-1 rounded-lg hover:bg-surface-container-low active:scale-90 transition-all duration-150"
-            href="cobrar_mobile.html">
-            <span class="material-symbols-outlined mb-1 text-[22px]">point_of_sale</span>
-            <span class="text-[10px] font-semibold leading-tight truncate">Caja</span>
+        <a id="nav-link-tratamientos-drawer" class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-low transition-all rounded-xl font-body-md" href="tratamientos_mobile.html">
+            <span class="material-symbols-outlined">medical_services</span> Tratamientos
         </a>
-        <a class="flex flex-col items-center justify-center text-primary font-bold active:scale-90 transition-all duration-150 p-2 rounded-lg bg-secondary-container/20"
-            href="pagos_facturacion_mobile.html">
-            <span class="material-symbols-outlined" data-icon="account_balance_wallet" data-weight="fill"
-                style="font-variation-settings: 'FILL' 1;">account_balance_wallet</span>
-            <span class="font-label-sm text-label-sm mt-1 text-[10px]">Finanzas</span>
+        <a id="nav-link-productos-drawer" class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-low transition-all rounded-xl font-body-md" href="productos_mobile.html">
+            <span class="material-symbols-outlined">inventory_2</span> Productos
+        </a>
+        <a id="nav-link-cobrar-drawer" class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-low transition-all rounded-xl font-body-md" href="cobrar_mobile.html">
+            <span class="material-symbols-outlined">point_of_sale</span> Caja
+        </a>
+        <a id="nav-link-finanzas-drawer" class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-low transition-all rounded-xl font-body-md" href="pagos_facturacion_mobile.html">
+            <span class="material-symbols-outlined">payments</span> Finanzas
+        </a>
+        <a id="nav-link-gestion-drawer" class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-low transition-all rounded-xl font-body-md" href="gestion_pacientes_mobile.html">
+            <span class="material-symbols-outlined">monitoring</span> Gestión Estratégica
         </a>
     </nav>
-    <script>
+    <div class="mt-auto pt-6 border-t border-surface-container">
+        <a id="nav-link-ajustes-drawer" class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-low transition-all rounded-xl font-body-md" href="ajustes_mobile.html">
+            <span class="material-symbols-outlined">settings</span> Ajustes
+        </a>
+    </div>
+</aside>
 
+<main class="md:ml-72 min-h-screen px-4 py-8 pb-24 md:pb-8">
 
+<!-- Book Tabs Bar (top of content) -->
+<div class="book-tabs-bar mb-6">
+    <div class="book-tabs-container" id="bookTabs"></div>
+</div>
+<!-- Header Section -->
+<section class="mb-8 flex justify-between items-start flex-wrap gap-4">
+<div>
+    <div class="inline-flex items-center gap-1.5 bg-surface-container border border-outline-variant text-on-surface-variant px-3 py-1 rounded-full mb-3">
+        <span class="material-symbols-outlined text-[14px]">calendar_month</span>
+        <span class="text-[11px] font-bold tracking-widest uppercase">Historial Financiero Anual</span>
+    </div>
+    <h2 class="font-display-lg text-3xl font-extrabold text-on-surface mb-1">Resumen Financiero</h2>
+    <p id="mes-titulo" class="text-on-surface-variant text-base font-medium">Cargando...</p>
+</div>
+<div class="flex items-center gap-3">
+    <!-- Year Navigator -->
+    <div class="flex items-center gap-1 bg-surface-white border border-outline-variant rounded-xl px-3 py-2 shadow-sm">
+        <button onclick="cambiarAnio(-1)" class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-surface-container-low transition-colors text-on-surface-variant">
+            <span class="material-symbols-outlined text-[20px]">chevron_left</span>
+        </button>
+        <span id="anio-display" class="font-bold text-on-surface px-2 text-lg min-w-[60px] text-center">2025</span>
+        <button onclick="cambiarAnio(1)" class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-surface-container-low transition-colors text-on-surface-variant">
+            <span class="material-symbols-outlined text-[20px]">chevron_right</span>
+        </button>
+    </div>
+    <!-- Vista / Agrupación -->
+    <div class="flex items-center gap-2 bg-surface-white border border-outline-variant rounded-xl px-4 py-2 shadow-sm">
+        <input type="checkbox" id="agrupar-meses-check" onchange="toggleAgruparMeses()" class="w-4 h-4 text-primary bg-surface-container border-outline-variant rounded focus:ring-primary focus:ring-2 cursor-pointer">
+        <label for="agrupar-meses-check" class="text-sm font-bold text-on-surface-variant cursor-pointer select-none">Agrupar Meses</label>
+    </div>
+    <!-- Paciente filter (hidden, used via URL params) -->
+    <input type="hidden" id="filtro-paciente" value="">
+    <input type="hidden" id="filtro-fecha-inicio" value="">
+    <input type="hidden" id="filtro-fecha-fin" value="">
+    <button onclick="exportarLibroTransacciones()" class="flex items-center gap-2 bg-surface-container-high border border-outline-variant px-4 py-2 rounded-xl font-bold text-sm hover:bg-surface-container transition-all shadow-sm">
+        <span class="material-symbols-outlined text-[18px]">download</span> Excel
+    </button>
+    <button onclick="openModal('modal-egreso')" class="bg-error/10 text-error px-4 py-2 rounded-xl font-bold flex items-center gap-2 hover:bg-error/20 transition-all text-sm">
+        <span class="material-symbols-outlined text-[18px]">remove</span> Nuevo Egreso
+    </button>
+</div>
+</section>
+<!-- Financial Overview Bento Grid -->
+<div class="grid grid-cols-12 gap-gutter mb-6">
+<!-- Main Monthly Revenue Card -->
+<div class="col-span-6 bg-surface-white p-6 rounded-xl shadow-[0px_10px_30px_rgba(0,0,0,0.04)] relative overflow-hidden group">
+<div class="flex justify-between items-start relative z-10">
+<div>
+<p class="text-label-sm font-label-sm text-primary uppercase tracking-widest mb-2">Ingresos Mensuales</p>
+<h3 id="total-ingresos" class="font-display-lg text-display-lg text-on-surface">S/ 0.00</h3>
+</div>
+<div class="text-right">
+<p class="text-label-sm font-label-sm text-on-surface-variant">Meta del Mes</p>
+<p id="meta-mes" class="font-headline-md text-headline-md text-on-surface-variant opacity-60"></p>
+</div>
+</div>
+<div class="mt-8 relative z-10">
+<div class="flex justify-between items-end mb-2">
+<span class="text-body-md font-bold text-on-surface">Progreso de Objetivos</span>
+<span id="progreso-meta" class="text-body-md font-bold text-primary">0%</span>
+</div>
+<div class="h-4 w-full bg-surface-container-highest rounded-full overflow-hidden">
+<div id="barra-progreso" class="h-full bg-primary transition-all duration-1000 ease-out" style="width: 0%"></div>
+</div>
+</div>
+<!-- Abstract Decorative Background -->
+<div class="absolute -right-10 -bottom-10 w-48 h-48 bg-primary/5 rounded-full blur-2xl group-hover:scale-110 transition-transform duration-700"></div>
+</div>
 
-        // Helper function to format currency
-        function formatCurrency(amount) {
-            return new Intl.NumberFormat('es-PE', { style: 'currency', currency: 'PEN' }).format(amount);
-        }
+<!-- Por Cobrar Card -->
+<div class="col-span-3 bg-primary text-on-primary p-6 rounded-xl shadow-[0px_10px_30px_rgba(0,0,0,0.04)] flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between mb-4">
+<span class="material-symbols-outlined text-3xl">payments</span>
+<span class="bg-primary-container text-on-primary-container px-3 py-1 rounded-full text-label-sm">Pendientes</span>
+</div>
+<h4 class="font-headline-md text-headline-md mb-1">Por Cobrar</h4>
+<p class="text-primary-fixed text-sm">Saldos pendientes de pacientes</p>
+</div>
+<div class="mt-4">
+<p id="total-reclamos" class="font-display-lg text-[32px] leading-none">S/ 0.00</p>
+<p id="count-reclamos" class="text-label-sm mt-2 opacity-80">0 pagos pendientes</p>
+</div>
+</div>
 
-        function getInitials(name) {
-            if (!name) return '??';
-            const parts = name.split(' ');
-            if (parts.length >= 2) {
-                return (parts[0][0] + parts[1][0]).toUpperCase();
-            }
-            return name.substring(0, 2).toUpperCase();
-        }
+<!-- Overdue Balances -->
+<div class="col-span-3 bg-surface-white p-6 rounded-xl shadow-[0px_10px_30px_rgba(0,0,0,0.04)] flex flex-col justify-between">
+<div class="flex items-center gap-3 mb-4">
+<div class="w-10 h-10 bg-error-container text-on-error-container rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined">warning</span>
+</div>
+<div>
+<h4 class="font-headline-md text-lg text-on-surface">Vencidos</h4>
+</div>
+</div>
+<div class="mt-4">
+<p id="total-vencidos" class="font-display-lg text-[32px] text-error mb-2">S/ 0.00</p>
+<div class="flex justify-between items-start text-sm border-t border-surface-container pt-2">
+<div class="flex flex-col">
+<span class="text-on-surface-variant">Pagos Vencidos</span>
+<span class="text-[11px] text-outline mt-0.5">Retraso de más de 15 días</span>
+</div>
+<span id="count-vencidos" class="font-bold mt-1">0</span>
+</div>
+</div>
+</div>
 
-        // --- CERRAR SESIÓN ---
-        async function cerrarSesion() {
-            const confirmado = confirm('¿Deseas cerrar sesión?');
-            if (!confirmado) return;
-            try {
-                await supabaseClient.auth.signOut();
-            } catch(e) {}
-            localStorage.clear();
-            sessionStorage.clear();
-            window.location.replace('../index.html');
-        }
+<!-- Impuestos IGV -->
+<div class="col-span-6 bg-surface-white p-6 rounded-xl shadow-[0px_10px_30px_rgba(0,0,0,0.04)] flex items-center gap-6">
+    <div class="w-14 h-14 bg-surface-container rounded-full flex items-center justify-center">
+        <span class="material-symbols-outlined text-2xl text-on-surface-variant">account_balance</span>
+    </div>
+    <div class="flex-1">
+        <h4 id="igv-header-title" class="font-bold text-on-surface">Impuestos Estimados (IGV 18%)</h4>
+        <p class="text-sm text-on-surface-variant">Calculado sobre ingresos completados</p>
+    </div>
+    <div class="text-right">
+        <p id="total-igv" class="font-display-lg text-[28px] text-on-surface font-bold">S/ 0.00</p>
+    </div>
+</div>
 
-        async function cargarDatosFinancieros() {
-            if (currentRole === 'medico' || currentRole === 'asistente') return; // Don't fetch if restricted
-
-            try {
-                // Fetch pagos
-                const { data: pagos, error } = await supabaseClient
-                    .from('pagos')
-                    .select(`
-                    id,
-                    monto,
-                    metodo,
-                    estado,
-                    fecha,
-                    descripcion,
-                    pacientes ( nombre ),
-                    citas ( tratamiento, created_at, estado )
-                `)
-                    .order('fecha', { ascending: false });
-
-                if (error) throw error;
-                
-                const { data: productosData } = await supabaseClient.from('productos').select('*');
-
-                // Calcular totales dinámicos
-                let safePagos = pagos || [];
-
-                // Filtrar todos los pagos: Solo se cuentan si la atención ya se completó
-                safePagos = safePagos.filter(p => {
-                    if (p.citas) {
-                        const estadoCita = (p.citas.estado || '').toLowerCase();
-                        return estadoCita.includes('completad') || estadoCita.includes('atendid');
-                    }
-                    return true;
-                });
-
-                // Refine sorting locally using citas.created_at if available
-                safePagos.sort((a, b) => {
-                    const dateA = new Date(a.fecha).getTime();
-                    const dateB = new Date(b.fecha).getTime();
-                    if (dateA !== dateB) return dateB - dateA;
-                    
-                    const timeA = (a.citas && a.citas.created_at) ? new Date(a.citas.created_at).getTime() : 0;
-                    const timeB = (b.citas && b.citas.created_at) ? new Date(b.citas.created_at).getTime() : 0;
-                    return timeB - timeA;
-                });
-
-                // Convertir a Vencidos los que tengan más de 15 días
-                const now = new Date();
-                safePagos.forEach(p => {
-                    if (p.estado === 'Pendiente' && p.fecha) {
-                        const pDate = new Date(p.fecha);
-                        const diffTime = Math.abs(now - pDate);
-                        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
-                        if (diffDays > 15) {
-                            p.estado = 'Vencido';
-                        }
-                    }
-                });
-
-                const totalIngresos = safePagos.filter(p => p.estado === 'Completado').reduce((sum, p) => sum + Number(p.monto), 0);
-                const pendientes = safePagos.filter(p => p.estado === 'Pendiente');
-                const totalPendientes = pendientes.reduce((sum, p) => sum + Number(p.monto), 0);
-                const vencidos = safePagos.filter(p => p.estado === 'Vencido');
-                const totalVencidos = vencidos.reduce((sum, p) => sum + Number(p.monto), 0);
-
-                // Actualizar UI
-                const elIngresos = document.getElementById('total-ingresos');
-                const elReclamos = document.getElementById('total-reclamos');
-                const elReclamosCount = document.getElementById('count-reclamos');
-                const elVencidos = document.getElementById('total-vencidos');
-                const elVencidosCount = document.getElementById('count-vencidos');
-
-                if (elIngresos) elIngresos.textContent = formatCurrency(totalIngresos);
-                if (elReclamos) elReclamos.textContent = formatCurrency(totalPendientes);
-                if (elReclamosCount) elReclamosCount.textContent = `${pendientes.length} Pendiente(s)`;
-                if (elVencidos) elVencidos.textContent = formatCurrency(totalVencidos);
-                if (elVencidosCount) elVencidosCount.textContent = `${vencidos.length} Vencido(s)`;
-
-                window.todosLosPagos = safePagos;
-
-                renderPagosPendientes(safePagos);
-                renderActividadReciente(safePagos);
-                renderTopEstadisticas(safePagos, productosData || []);
-                renderMediosPago(safePagos);
-            } catch (error) {
-                console.error("Error al cargar datos financieros:", error);
-                document.getElementById('pagos-pendientes-container').innerHTML = '<p class="text-error">Error al cargar pagos pendientes.</p>';
-                document.getElementById('actividad-reciente-container').innerHTML = '<p class="text-error">Error al cargar actividad.</p>';
-            }
-        }
-
-        let mediosPagoChart = null;
-
-        function renderMediosPago(pagos) {
-            const metodos = {};
-            let totalCompletados = 0;
-            let totalIngresos = 0;
-
-            pagos.forEach(p => {
-                if (p.estado !== 'Completado') return;
-                let metodo = p.metodo || 'No especificado';
-                
-                // Excluir "Paquete" y "Cortesía" ya que no son métodos de pago que generan ingresos
-                if (metodo.toLowerCase().includes('paquete') || metodo.toLowerCase().includes('cortes')) return;
-                
-                totalCompletados++;
-                const monto = Number(p.monto) || 0;
-                totalIngresos += monto;
-                if (!metodos[metodo]) metodos[metodo] = { count: 0, monto: 0 };
-                metodos[metodo].count++;
-                metodos[metodo].monto += monto;
-            });
-
-            const labels = Object.keys(metodos);
-            const dataCounts = labels.map(l => metodos[l].count);
-            const dataMontos = labels.map(l => metodos[l].monto);
-            const backgroundColors = ['#008097', '#89e4fd', '#ffb877', '#8a4d00', '#6d797d', '#bdc8cd'];
-
-            const ctx = document.getElementById('mediosPagoChart');
-            if (!ctx) return;
-
-            if (mediosPagoChart) {
-                mediosPagoChart.destroy();
-            }
-            
-            if (totalCompletados === 0) {
-                const parent = ctx.parentElement;
-                parent.innerHTML = '<p class="text-on-surface-variant text-sm text-center py-4">No hay pagos completados.</p>';
-                return;
-            }
-
-            mediosPagoChart = new Chart(ctx, {
-                type: 'pie',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        data: dataMontos, // Mostrar proporción de ingresos en el gráfico
-                        backgroundColor: backgroundColors,
-                        borderWidth: 0
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'right',
-                            labels: {
-                                font: { size: 10, family: 'Hanken Grotesk' },
-                                boxWidth: 10,
-                                padding: 10
-                            }
-                        },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    const monto = context.parsed;
-                                    const pct = totalIngresos > 0 ? ((monto / totalIngresos) * 100).toFixed(1) : 0;
-                                    const count = dataCounts[context.dataIndex];
-                                    const pctUso = totalCompletados > 0 ? ((count / totalCompletados) * 100).toFixed(1) : 0;
-                                    return [
-                                        `  S/ ${monto.toFixed(2)} (${pct}% ingresos)`,
-                                        `  ${count} uso(s) (${pctUso}% transacciones)`
-                                    ];
-                                }
-                            }
-                        }
-                    }
-                }
-            });
-
-            const listContainer = document.getElementById('medios-pago-list');
-            if (listContainer) {
-                listContainer.innerHTML = labels.map((l, i) => {
-                    const count = metodos[l].count;
-                    const monto = metodos[l].monto;
-                    const pctUso = totalCompletados > 0 ? ((count / totalCompletados) * 100).toFixed(1) : 0;
-                    const pctDinero = totalIngresos > 0 ? ((monto / totalIngresos) * 100).toFixed(1) : 0;
-                    return `
-                    <li class="flex justify-between items-center border-b border-outline-variant/30 py-2 last:border-0 last:pb-0">
-                        <span class="flex items-center gap-2"><div class="w-2 h-2 rounded-full" style="background:${backgroundColors[i%backgroundColors.length]}"></div>${l}</span>
-                        <div class="text-right">
-                            <p class="font-bold text-xs text-on-surface">S/ ${monto.toFixed(2)} <span class="text-primary font-normal">(${pctDinero}%)</span></p>
-                            <p class="text-[10px] text-on-surface-variant">${count} usos (${pctUso}%)</p>
-                        </div>
-                    </li>
-                    `;
-                }).join('');
-            }
-        }
-
-        function toggleMediosPagoInfo() {
-            const infoBox = document.getElementById('medios-pago-info');
-            if (infoBox) {
-                infoBox.classList.toggle('hidden');
-            }
-        }
-
-        function renderPagosPendientes(pagos) {
-            const container = document.getElementById('pagos-pendientes-container');
-            const pagosPendientes = pagos.filter(p => p.estado === 'Pendiente' || p.estado === 'Vencido');
-
-            if (pagosPendientes.length === 0) {
-                container.innerHTML = '<p class="text-outline text-center py-4">No hay pagos pendientes.</p>';
-                return;
-            }
-
-            let html = '';
-            pagosPendientes.forEach(pago => {
-                const pacienteNombre = pago.pacientes ? pago.pacientes.nombre : 'Paciente Desconocido';
-                const iniciales = getInitials(pacienteNombre);
-                const motivo = pago.citas ? (pago.citas.tratamiento || 'Consulta') : 'Consulta';
-
-                // Color logic based on status
-                let stateClass = pago.estado === 'Vencido' ? 'text-error' : 'text-on-surface-variant';
-
-                let avatarColor = 'bg-secondary-container text-on-secondary-container';
-
-                // In mobile we format it slightly differently to match the existing UI
-                html += `
-            <div class="flex flex-col gap-3 p-4 rounded-lg bg-surface-container-lowest border border-surface-container-low hover:border-primary-container transition-colors">
-                <div class="flex items-center justify-between">
-                    <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-full ${avatarColor} flex items-center justify-center font-bold text-sm">${iniciales}</div>
-                        <div>
-                            <h4 class="font-body-md text-body-md text-on-surface font-semibold">${pacienteNombre}</h4>
-                            <p class="font-label-sm text-label-sm text-outline">${motivo}</p>
-                        </div>
-                    </div>
-                    <span class="font-body-md text-body-md font-bold text-on-surface">${formatCurrency(pago.monto)}</span>
-                </div>
-                <div class="flex justify-between items-center mt-1 border-t border-surface-container-low pt-3">
-                    <span class="font-label-sm ${stateClass}">${pago.estado}</span>
-                    <div class="flex gap-2">
-                        <button class="recordatorio-btn bg-primary text-on-primary px-4 py-2 rounded-full font-label-sm text-label-sm hover:bg-primary-container transition-colors shadow-sm flex items-center gap-2">
-                            <span class="material-symbols-outlined text-[16px]">mail</span> Enviar
-                        </button>
-                        <button onclick="marcarComoPagado('${pago.id}')" class="bg-success text-white px-4 py-2 rounded-full font-label-sm text-label-sm hover:opacity-90 transition-colors shadow-sm flex items-center gap-2">
-                            <span class="material-symbols-outlined text-[16px]">check</span> Pagado
-                        </button>
-                    </div>
-                </div>
+<!-- Descuentos POS -->
+<div class="col-span-6 bg-surface-white p-6 rounded-xl shadow-[0px_10px_30px_rgba(0,0,0,0.04)] flex items-center gap-6">
+    <div class="w-14 h-14 bg-surface-container rounded-full flex items-center justify-center">
+        <span class="material-symbols-outlined text-2xl text-on-surface-variant">credit_card</span>
+    </div>
+    <div class="flex-1">
+        <h4 class="font-bold text-on-surface">Comisiones Pasarela / POS</h4>
+        <p class="text-sm text-on-surface-variant">Estimado 5% de pagos con tarjeta/transferencia</p>
+    </div>
+    <div class="text-right">
+        <p id="total-pos" class="font-display-lg text-[28px] text-warning font-bold">S/ 0.00</p>
+    </div>
+</div>
+</div>
+<!-- Top Services & Top Clients & Products -->
+<div class="col-span-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-gutter">
+    <!-- Top Servicios -->
+    <div class="bg-surface-white p-8 rounded-xl shadow-[0px_10px_30px_rgba(0,0,0,0.04)]">
+        <h4 class="font-headline-md text-headline-md text-on-surface mb-6 flex items-center gap-2"><span class="material-symbols-outlined text-primary">bar_chart</span> Servicios Más Usados</h4>
+        <div class="space-y-4" id="top-servicios-container">
+            <div class="flex justify-center items-center p-4"><span class="material-symbols-outlined animate-spin">sync</span></div>
+        </div>
+    </div>
+    <!-- Top Pacientes -->
+    <div class="bg-surface-white p-8 rounded-xl shadow-[0px_10px_30px_rgba(0,0,0,0.04)]">
+        <h4 class="font-headline-md text-headline-md text-on-surface mb-6 flex items-center gap-2"><span class="material-symbols-outlined text-primary">group</span> Clientes Frecuentes</h4>
+        <div class="space-y-4" id="top-pacientes-container">
+            <div class="flex justify-center items-center p-4"><span class="material-symbols-outlined animate-spin">sync</span></div>
+        </div>
+    </div>
+    <!-- Top Productos -->
+    <div class="bg-surface-white p-8 rounded-xl shadow-[0px_10px_30px_rgba(0,0,0,0.04)]">
+        <h4 class="font-headline-md text-headline-md text-on-surface mb-6 flex items-center gap-2"><span class="material-symbols-outlined text-primary">inventory</span> Productos Top</h4>
+        <div class="space-y-4" id="top-productos-container">
+            <div class="flex justify-center items-center p-4"><span class="material-symbols-outlined animate-spin">sync</span></div>
+        </div>
+    </div>
+    <!-- Medios de Pago -->
+    <div class="bg-surface-white p-8 rounded-xl shadow-[0px_10px_30px_rgba(0,0,0,0.04)] relative">
+        <h4 class="font-headline-md text-headline-md text-on-surface mb-6 flex items-center gap-2"><span class="material-symbols-outlined text-primary">pie_chart</span> Medios de Pago</h4>
+        <div class="relative flex justify-center items-center h-40 cursor-pointer" onclick="toggleMediosPagoInfo()">
+            <canvas id="mediosPagoChart"></canvas>
+        </div>
+        <div id="medios-pago-info" class="hidden absolute top-full left-0 mt-2 w-full bg-surface-container-high border border-outline-variant p-4 rounded-xl shadow-lg z-50 text-sm">
+            <div class="flex justify-between items-center mb-2">
+                <h5 class="font-bold">Detalle de Cantidades</h5>
+                <button onclick="event.stopPropagation(); toggleMediosPagoInfo()" class="material-symbols-outlined text-base">close</button>
             </div>
-            `;
-            });
-            container.innerHTML = html;
-            attachRecordatorioListeners();
-        }
+            <ul id="medios-pago-list" class="space-y-1"></ul>
+        </div>
+    </div>
+</div>
+<!-- Pending Payments List -->
+<div class="col-span-8 bg-surface-white p-8 rounded-xl shadow-[0px_10px_30px_rgba(0,0,0,0.04)]">
+<div class="flex justify-between items-center mb-8">
+<h4 class="font-headline-md text-headline-md text-on-surface">Pagos Pendientes</h4>
+<button class="text-primary font-bold text-body-md hover:underline">Ver todos</button>
+</div>
+<div class="space-y-4" id="pagos-pendientes-container">
+    <div class="flex justify-center items-center p-4"><span class="material-symbols-outlined animate-spin">sync</span></div>
+</div>
+</div>
+<!-- Recent Activity Ledger -->
+<div class="col-span-12 bg-surface-white p-8 rounded-xl shadow-[0px_10px_30px_rgba(0,0,0,0.04)] mb-section-gap">
+<div class="flex justify-between items-center mb-8">
+<h4 class="font-headline-md text-headline-md text-on-surface">Libro de Transacciones</h4>
+<div class="flex items-center gap-4">
+<button onclick="openModal('modal-egreso')" class="bg-error/10 text-error px-4 py-2 rounded-lg font-bold flex items-center gap-2 hover:bg-error/20 transition-all text-sm mr-2">
+    <span class="material-symbols-outlined text-sm">remove</span> Nuevo Egreso
+</button>
+<button onclick="exportarLibroTransacciones()" class="bg-surface-container-high text-on-surface px-4 py-2 rounded-lg font-bold flex items-center gap-2 hover:bg-surface-container-highest transition-all text-sm">
+    <span class="material-symbols-outlined text-sm">download</span> Excel
+</button>
+<select id="filtro-tipo-transaccion" class="bg-surface-container-low border-none rounded-lg text-label-sm px-4 py-2">
+<option value="all">Todos los tipos</option>
+<option value="Pagos">Pagos</option>
+<option value="Pendientes">Pendientes</option>
+</select>
+</div>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left">
+<thead>
+<tr class="text-label-sm text-on-surface-variant uppercase tracking-widest border-b border-surface-container-highest">
+<th class="pb-4 font-semibold">Fecha / Hora</th>
+<th class="pb-4 font-semibold">Descripción</th>
+<th class="pb-4 font-semibold">Tipo</th>
+<th class="pb-4 font-semibold text-right">Monto</th>
+<th class="pb-4 font-semibold text-right">Estado</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-surface-container" id="actividad-reciente-container">
+    <tr><td colspan="5" class="py-5 text-center"><span class="material-symbols-outlined animate-spin">sync</span></td></tr>
+</tbody>
+</table>
+</div>
+</div>
 
-        function renderTopEstadisticas(pagos, productos = []) {
-            const serviciosStats = {};
-            const pacientesStats = {};
-            const productosStats = {};
-            pagos.forEach(pago => {
-                let isServiceRendered = false;
-                if (pago.citas) {
-                    const estadoCita = (pago.citas.estado || '').toLowerCase();
-                    isServiceRendered = estadoCita.includes('completad') || estadoCita.includes('atendid');
-                } else {
-                    isServiceRendered = pago.estado === 'Completado';
-                }
+</main>
 
-                if (!isServiceRendered) return;
-                
-                const desc = pago.descripcion || '';
-                if (desc.startsWith('Productos:')) {
-                    const prodPart = desc.replace('Productos:', '').split('[')[0];
-                    const items = prodPart.split(',');
-                    items.forEach(item => {
-                        const match = item.match(/(.*?)\s*\(x(\d+)\)/);
-                        if (match) {
-                            const pName = match[1].trim();
-                            const qty = parseInt(match[2], 10);
-                            
-                            if (!productosStats[pName]) {
-                                productosStats[pName] = { count: 0, revenue: 0, cost: 0 };
-                            }
-                            productosStats[pName].count += qty;
-                            
-                            const pDb = productos.find(p => p.nombre.toLowerCase() === pName.toLowerCase());
-                            const pCosto = pDb ? (parseFloat(pDb.valor_compra) || 0) : 0;
-                            const pVenta = pDb ? (parseFloat(pDb.precio) || 0) : 0;
-                            
-                            productosStats[pName].revenue += (pVenta * qty);
-                            productosStats[pName].cost += (pCosto * qty);
-                        }
-                    });
-                }
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-2 py-3 md:hidden bg-surface-white/90 backdrop-blur-md shadow-[0px_-10px_30px_rgba(0,0,0,0.04)] rounded-t-xl border-t border-surface-container-highest overflow-x-auto no-scrollbar gap-2">
+    <a id="nav-bottom-agenda" class="flex flex-col items-center justify-center text-outline hover:text-primary transition-all p-2 rounded-lg min-w-[60px]" href="calendario_dashboard_mobile.html">
+        <span class="material-symbols-outlined">calendar_today</span><span class="font-label-sm text-[10px] mt-1">Agenda</span>
+    </a>
+    <a id="nav-bottom-citas" class="flex flex-col items-center justify-center text-outline hover:text-primary transition-all p-2 rounded-lg min-w-[60px]" href="citas_listado_mobile.html">
+        <span class="material-symbols-outlined">list_alt</span><span class="font-label-sm text-[10px] mt-1">Citas</span>
+    </a>
+    <a id="nav-bottom-pacientes" class="flex flex-col items-center justify-center text-outline hover:text-primary transition-all p-2 rounded-lg min-w-[60px]" href="pacientes_historia_clinica_mobile.html">
+        <span class="material-symbols-outlined">groups</span><span class="font-label-sm text-[10px] mt-1">Pacientes</span>
+    </a>
+    <a id="nav-bottom-tratamientos" class="flex flex-col items-center justify-center text-outline hover:text-primary transition-all p-2 rounded-lg min-w-[60px]" href="tratamientos_mobile.html">
+        <span class="material-symbols-outlined">medical_services</span><span class="font-label-sm text-[10px] mt-1">Servicios</span>
+    </a>
+    <a id="nav-bottom-productos" class="flex flex-col items-center justify-center text-outline hover:text-primary transition-all p-2 rounded-lg min-w-[60px]" href="productos_mobile.html">
+        <span class="material-symbols-outlined">inventory_2</span><span class="font-label-sm text-[10px] mt-1">Productos</span>
+    </a>
+    <a id="nav-bottom-caja" class="flex flex-col items-center justify-center text-outline hover:text-primary transition-all p-2 rounded-lg min-w-[60px]" href="cobrar_mobile.html">
+        <span class="material-symbols-outlined">point_of_sale</span><span class="font-label-sm text-[10px] mt-1">Caja</span>
+    </a>
+    <a id="nav-bottom-finanzas" class="flex flex-col items-center justify-center text-outline hover:text-primary transition-all p-2 rounded-lg min-w-[60px]" href="pagos_facturacion_mobile.html">
+        <span class="material-symbols-outlined">payments</span><span class="font-label-sm text-[10px] mt-1">Finanzas</span>
+    </a>
+    <a id="nav-bottom-gestion" class="flex flex-col items-center justify-center text-outline hover:text-primary transition-all p-2 rounded-lg min-w-[60px]" href="gestion_pacientes_mobile.html">
+        <span class="material-symbols-outlined">monitoring</span><span class="font-label-sm text-[10px] mt-1">Gestión</span>
+    </a>
+</nav>
 
-                let motivo = pago.servicio_realizado || (pago.citas ? (pago.citas.tratamiento || 'Consulta') : 'Venta General');
-                if (motivo.includes(' (Continuación)')) {
-                    motivo = motivo.replace(' (Continuación)', '');
-                }
-                
-                if (!desc.startsWith('Productos:')) {
-                    if (!serviciosStats[motivo]) {
-                        serviciosStats[motivo] = { count: 0, revenue: 0 };
-                    }
-                    serviciosStats[motivo].count += 1;
-                    serviciosStats[motivo].revenue += Number(pago.monto);
-                }
+<script>
+    // Add active state to drawer
+    const drawerLink = document.getElementById('nav-link-finanzas-drawer');
+    if(drawerLink) {
+        drawerLink.classList.remove('text-on-surface-variant');
+        drawerLink.classList.add('bg-secondary-container', 'text-on-secondary-container');
+    }
+    // Add active state to bottom nav
+    const bottomLink = document.getElementById('nav-bottom-finanzas');
+    if(bottomLink) {
+        bottomLink.classList.remove('text-outline');
+        bottomLink.classList.add('text-primary');
+    }
+</script>
 
-                // Pacientes
-                const paciente = pago.pacientes ? pago.pacientes.nombre : 'Paciente Desconocido';
-                if (!pacientesStats[paciente]) {
-                    pacientesStats[paciente] = { count: 0, revenue: 0, servicios: {} };
-                }
-                pacientesStats[paciente].count += 1;
-                pacientesStats[paciente].revenue += Number(pago.monto);
-                
-                if (!pacientesStats[paciente].servicios[motivo]) {
-                    pacientesStats[paciente].servicios[motivo] = 0;
-                }
-                pacientesStats[paciente].servicios[motivo] += 1;
-            });
-
-            const topServicios = Object.entries(serviciosStats)
-                .sort((a, b) => b[1].count - a[1].count || b[1].revenue - a[1].revenue)
-                .slice(0, 5);
-
-            const topPacientes = Object.entries(pacientesStats)
-                .sort((a, b) => b[1].count - a[1].count || b[1].revenue - a[1].revenue)
-                .slice(0, 5);
-                
-            const topProductos = Object.entries(productosStats)
-                .sort((a, b) => b[1].count - a[1].count || b[1].revenue - a[1].revenue)
-                .slice(0, 5);
-
-            const containerServicios = document.getElementById('top-servicios-container');
-            if (topServicios.length === 0) {
-                containerServicios.innerHTML = '<p class="text-outline text-center py-2 text-sm">Sin datos suficientes.</p>';
-            } else {
-                containerServicios.innerHTML = topServicios.map(s => `
-                    <div class="flex justify-between items-center border-b border-surface-container-low pb-2 last:border-0">
-                        <div class="overflow-hidden">
-                            <p class="font-bold text-on-surface text-sm truncate">\${s[0]}</p>
-                            <p class="text-[10px] text-on-surface-variant">\${s[1].count} veces</p>
-                        </div>
-                        <div class="text-right whitespace-nowrap ml-2">
-                            <p class="font-bold text-success text-sm">\${formatCurrency(s[1].revenue)}</p>
-                        </div>
-                    </div>
-                \`).join('');
-            }
-
-            const containerPacientes = document.getElementById('top-pacientes-container');
-            if (topPacientes.length === 0) {
-                containerPacientes.innerHTML = '<p class="text-outline text-center py-2 text-sm">Sin datos suficientes.</p>';
-            } else {
-                containerPacientes.innerHTML = topPacientes.map(p => {
-                    const serviciosList = Object.entries(p[1].servicios)
-                        .sort((a,b) => b[1] - a[1])
-                        .slice(0, 3)
-                        .map(s => `<span class="block">• ${s[0]} (${s[1]} veces)</span>`)
-                        .join('');
-                        
-                    return `
-                    <div class="flex justify-between items-center border-b border-surface-container-low pb-2 last:border-0 relative group">
-                        <div class="flex items-center gap-2 overflow-hidden">
-                            <div class="w-6 h-6 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center font-bold text-[10px] shrink-0">${getInitials(p[0])}</div>
-                            <div class="overflow-hidden">
-                                <p class="font-bold text-on-surface text-sm truncate">${p[0]}</p>
-                                <p class="text-[10px] text-on-surface-variant">${p[1].count} atenciones</p>
-                            </div>
-                        </div>
-                        <div class="text-right whitespace-nowrap ml-2">
-                            <p class="font-bold text-success text-sm">${formatCurrency(p[1].revenue)}</p>
-                        </div>
-                        
-                        <div class="absolute left-4 top-full mt-1 hidden group-hover:block bg-surface-container-highest text-on-surface border border-outline-variant rounded-lg p-3 shadow-lg z-[100] text-xs w-48 pointer-events-none">
-                            <p class="font-bold text-primary mb-2 border-b border-outline-variant pb-1">Top Servicios</p>
-                            <div class="space-y-1">${serviciosList}</div>
-                        </div>
-                    </div>
-                    `;
-                }).join('');
-            }
-            
-            const containerProductos = document.getElementById('top-productos-container');
-            if (topProductos.length === 0) {
-                containerProductos.innerHTML = '<p class="text-outline text-center py-2 text-sm">Sin datos suficientes.</p>';
-            } else {
-                containerProductos.innerHTML = topProductos.map(p => {
-                    const ganancia = p[1].revenue - p[1].cost;
-                    return `
-                    <div class="flex justify-between items-center border-b border-surface-container-low pb-2 last:border-0">
-                        <div class="overflow-hidden">
-                            <p class="font-bold text-on-surface text-sm truncate" title="${p[0]}">${p[0]} (${p[1].count})</p>
-                            <p class="text-[10px] text-on-surface-variant">Rotación: ${p[1].count} und(s)</p>
-                        </div>
-                        <div class="text-right whitespace-nowrap ml-2">
-                            <p class="font-bold text-success text-sm" title="Ganancia Neta">${formatCurrency(ganancia)} <span class="text-[10px] text-success/70">(G)</span></p>
-                        </div>
-                    </div>
-                    `;
-                }).join('');
-            }
-        }
-
-        function renderActividadReciente(pagos) {
-            const container = document.getElementById('actividad-reciente-container');
-            if (pagos.length === 0) {
-                container.innerHTML = '<p class="text-outline text-center py-4">No hay actividad reciente.</p>';
-                return;
-            }
-
-            let html = '';
-            pagos.slice(0, 10).forEach(pago => {
-                const pacienteNombre = pago.pacientes ? pago.pacientes.nombre : 'Desconocido';
-                const isCompletado = pago.estado === 'Completado';
-
-                let badgeClass = isCompletado ? 'bg-success/10 text-success' : 'bg-surface-container text-on-surface-variant';
-                let iconName = isCompletado ? 'check' : 'receipt_long';
-                let statusText = isCompletado ? 'Pago Recibido' : 'Pago ' + pago.estado;
-
-                let montoHtml = isCompletado
-                    ? `<span class="font-label-sm text-label-sm text-success font-bold">+${formatCurrency(pago.monto)}</span>`
-                    : `<span class="font-label-sm text-label-sm text-outline">${formatCurrency(pago.monto)}</span>`;
-
-                html += `
-            <div class="flex items-start gap-3">
-                <div class="mt-1 w-8 h-8 rounded-full ${badgeClass} flex items-center justify-center">
-                    <span class="material-symbols-outlined text-sm">${iconName}</span>
-                </div>
-                <div class="flex-grow">
-                    <p class="font-label-sm text-label-sm text-on-surface">${statusText}</p>
-                    <p class="font-body-md text-xs text-outline">${pacienteNombre} • ${pago.metodo || 'No esp.'}</p>
-                </div>
-                ${montoHtml}
-            </div>
-            `;
-            });
-            container.innerHTML = html;
-        }
-
-        function attachRecordatorioListeners() {
-            document.querySelectorAll('.recordatorio-btn').forEach(btn => {
-                btn.addEventListener('click', function () {
-                    const originalContent = this.innerHTML;
-                    this.innerHTML = '<span class="material-symbols-outlined text-[16px]">done</span> Enviado';
-                    this.classList.remove('bg-primary', 'text-on-primary');
-                    this.classList.add('bg-success', 'text-white');
-                    setTimeout(() => {
-                        this.innerHTML = originalContent;
-                        this.classList.remove('bg-success', 'text-white');
-                        this.classList.add('bg-primary', 'text-on-primary');
-                    }, 2000);
-                });
-            });
-        }
-
-        async function marcarComoPagado(pagoId) {
-            try {
-                const { error } = await supabaseClient
-                    .from('pagos')
-                    .update({ estado: 'Completado', fecha: new Date().toISOString() })
-                    .eq('id', pagoId);
-
-                if (error) throw error;
-                await cargarDatosFinancieros();
-            } catch (error) {
-                console.error("Error actualizando pago:", error);
-                alert("Hubo un error al marcar el pago como completado.");
-            }
-        }
-
-        function showToast(message, type = "success") {
-            const toast = document.createElement("div");
-            toast.className = `fixed bottom-6 right-6 px-6 py-3 rounded-xl shadow-lg font-bold text-white transition-all transform translate-y-10 opacity-0 z-[100] ${type === "success" ? "bg-success" : type === "error" ? "bg-error" : "bg-primary"
-                }`;
-            toast.textContent = message;
-            document.body.appendChild(toast);
-
-            setTimeout(() => {
-                toast.classList.remove("translate-y-10", "opacity-0");
-            }, 100);
-
-            setTimeout(() => {
-                toast.classList.add("translate-y-10", "opacity-0");
-                setTimeout(() => toast.remove(), 500);
-            }, 3000);
-        }
-
-
-        document.addEventListener("DOMContentLoaded", async () => {
-            await cargarDatosFinancieros();
-        });
-    </script>
-
-    <script>
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('../sw.js').then(registration => {
-                    console.log('SW registered: ', registration);
-                }).catch(registrationError => {
-                    console.log('SW registration failed: ', registrationError);
-                });
-            });
-        }
-    </script>
 </body>
-
 </html>
