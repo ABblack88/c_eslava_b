@@ -8,27 +8,45 @@ function getRoleFromURL() {
 function applyRBACRules() {
     const role = getRoleFromURL();
 
-    if (role === 'tratante' || role === 'medico' || role === 'asistente') {
-        // Hide all navigation links to restricted modules (desktop sidebar, mobile drawer, mobile bottom bar)
-        const restrictedHrefs = ['tratamientos_', 'cobrar_', 'pagos_facturacion_'];
+    let level = 4; // Default to level 4 (most restricted)
+    if (['developer', 'root'].includes(role)) level = 1;
+    else if (['admin'].includes(role)) level = 2;
+    else if (['admision', 'cajero'].includes(role)) level = 3;
+    else if (['medico', 'tratante', 'asistente'].includes(role)) level = 4;
+
+    // Define restrictions based on level
+    let restrictedHrefs = [];
+    if (level >= 3) {
+        // Level 3 hides Estrategia, Finanzas, Ajustes, and Panel Master
+        restrictedHrefs.push('gestion_pacientes_', 'pagos_facturacion_', 'ajustes_', 'master_root');
+    }
+    if (level === 4) {
+        // Level 4 additionally hides Tratamientos and Caja
+        restrictedHrefs.push('tratamientos_', 'cobrar_');
+    }
+
+    // Apply restrictions
+    if (restrictedHrefs.length > 0) {
         document.querySelectorAll('a').forEach(link => {
             const href = link.getAttribute('href') || '';
             if (restrictedHrefs.some(r => href.includes(r))) {
                 link.style.display = 'none';
             }
         });
-        
-        // Hide summary card for both roles
+
+        // Hide summary card for restricted roles
         const resumenCuentaCard = document.getElementById("resumen-cuenta-card");
         if (resumenCuentaCard) resumenCuentaCard.style.display = 'none';
+    }
 
-        // Hide non-account settings in Ajustes
+    // Hide non-account settings in Ajustes for Level 3 and 4 (if they somehow get there)
+    if (level >= 3) {
         const adminSettings = document.getElementById("admin-settings-section");
         if (adminSettings) adminSettings.style.display = 'none';
     }
 
-    // 2. Inyectar botón de Master Root o Admin en el SideNavBar
-    if (role === 'root' || role === 'admin') {
+    // 2. Inject Panel Master button in SideNavBar for Level 1
+    if (level === 1) {
         const navBar = document.querySelector('nav');
         if (navBar && !document.getElementById('nav-link-master')) {
             const masterLink = document.createElement('a');
@@ -37,7 +55,7 @@ function applyRBACRules() {
             masterLink.href = `master_root.html?role=${role}`;
             masterLink.innerHTML = `
                 <span class="material-symbols-outlined mr-3">admin_panel_settings</span>
-                <span class="font-bold">${role === 'root' ? 'Panel Master' : 'Panel de Usuarios'}</span>
+                <span class="font-bold">Panel Master (DB)</span>
             `;
             navBar.appendChild(masterLink);
         }
@@ -45,7 +63,7 @@ function applyRBACRules() {
 
     // 3. Dashboard Specific Rules (calendario_dashboard)
     const financialCard = document.getElementById("financial-insight-card");
-    if (financialCard && (role === 'tratante' || role === 'asistente')) {
+    if (financialCard && level === 4) {
         financialCard.innerHTML = `
             <div class="relative z-10 flex flex-col justify-between h-full">
                 <div>
