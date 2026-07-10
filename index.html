@@ -256,7 +256,9 @@
             const { data } = await supabaseClient.auth.getSession();
             if (data && data.session) {
                 const role = data.session.user?.user_metadata?.role || 'asistente';
-                window.location.href = `html/calendario_dashboard_desktop.html?role=${role}`;
+                const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth < 768;
+                const targetPage = isMobile ? 'html/calendario_dashboard_mobile.html' : 'html/calendario_dashboard_desktop.html';
+                window.location.href = `${targetPage}?role=${role}`;
             }
         });
 
@@ -306,7 +308,9 @@
                     
                     // Pequeño delay para asegurar que Supabase guarde la sesión en localStorage
                     setTimeout(() => {
-                        window.location.href = `html/calendario_dashboard_desktop.html?role=${role}`;
+                        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth < 768;
+                        const targetPage = isMobile ? 'html/calendario_dashboard_mobile.html' : 'html/calendario_dashboard_desktop.html';
+                        window.location.href = `${targetPage}?role=${role}`;
                     }, 500);
                 }
             } catch (error) {

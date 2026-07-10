@@ -1,5 +1,21 @@
 // rbac.js - Global Role-Based Access Control & Navigation Logic
 
+(function autoRedirectDevice() {
+    // Only run on actual pages, not on index.html or master_root.html
+    const path = window.location.pathname;
+    if (path.includes('index.html') || path.includes('master_root.html') || path === '/' || path.endsWith('/c_eslava_b/')) return;
+    
+    const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth < 768;
+    const isDesktopPage = path.includes('_desktop.html');
+    const isMobilePage = path.includes('_mobile.html');
+
+    if (isMobileDevice && isDesktopPage) {
+        window.location.replace(window.location.href.replace('_desktop.html', '_mobile.html'));
+    } else if (!isMobileDevice && isMobilePage) {
+        window.location.replace(window.location.href.replace('_mobile.html', '_desktop.html'));
+    }
+})();
+
 function getRoleFromURL() {
     const urlParams = new URLSearchParams(window.location.search);
     return urlParams.get('role') || 'developer';
