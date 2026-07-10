@@ -488,6 +488,7 @@
                 if (cycleSession === 0) cycleSession = duracion; // si es múltiplo exacto, es la última sesión del paquete
 
                 let totalText = duracion > 1 ? (cycleSession === 1 ? `Sesión Inicial (1 de ${duracion})` : `Continuación de Sesión ${cycleSession} de ${duracion}`) : `Cita Única`;
+                window.currentSessionText = totalText;
                 
                 // Logic for Continuación Checkbox
                 if (chkContinuacion) {
@@ -673,8 +674,12 @@
 
                 // Add to LocalStorage timeline history and update Treatment Plan
                 if (currentPaciente) {
-                    const newEvo = {
-                        headerText: `Procedimiento (Atención Virtual): ${currentCita ? currentCita.tratamiento : 'General'}`,
+                    const sessionInfo = window.currentSessionText && window.currentSessionText !== 'Cita Única' ? ` - ${window.currentSessionText}` : '';
+                        const metaInfo = ` | Cód. Cita: ${citaId.substring(0,8).toUpperCase()} | Cód. Paciente: ${currentPaciente.id.substring(0,8).toUpperCase()}`;
+                        const finalHeader = `Procedimiento: ${currentCita ? currentCita.tratamiento : 'General'}${sessionInfo}${metaInfo}`;
+                        
+                        const newEvo = {
+                            headerText: finalHeader,
                         timeStr: timeStr,
                         notas: fullObs,
                         bulletsHtml: bulletsHtml,
