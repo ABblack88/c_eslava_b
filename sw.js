@@ -1,4 +1,4 @@
-const CACHE_NAME = 'c-eslava-cache-v5';
+const CACHE_NAME = 'c-eslava-cache-v6';
 const urlsToCache = [
     './',
     './index.html',
