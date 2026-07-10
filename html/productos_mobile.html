@@ -365,8 +365,12 @@
         </div>
         <div class="grid grid-cols-2 gap-4">
             <div>
-                <label class="block text-sm font-bold text-on-surface mb-1">Precio (S/.)</label>
+                <label class="block text-sm font-bold text-on-surface mb-1">Precio de Venta (S/.)</label>
                 <input type="number" name="precio" required min="0" step="0.01" class="w-full rounded-xl border-outline-variant px-4 py-2 focus:ring-primary focus:border-primary">
+            </div>
+            <div>
+                <label class="block text-sm font-bold text-on-surface mb-1">Valor de Compra (S/.)</label>
+                <input type="number" name="valor_compra" min="0" step="0.01" class="w-full rounded-xl border-outline-variant px-4 py-2 focus:ring-primary focus:border-primary">
             </div>
             <div>
                 <label class="block text-sm font-bold text-on-surface mb-1">Stock Inicial</label>
@@ -524,7 +528,10 @@
                     <div class="flex-1 pr-6">
                         <h4 class="font-bold text-sm text-on-surface leading-tight mb-1 line-clamp-1">${p.nombre}</h4>
                         <div class="flex items-center justify-between">
-                            <span class="font-bold text-primary">S/ ${parseFloat(p.precio).toFixed(2)}</span>
+                            <div class="flex flex-col">
+                                <span class="text-[10px] text-on-surface-variant line-through">Costo: S/ ${p.valor_compra || 0}</span>
+                                <span class="font-bold text-primary">S/ ${parseFloat(p.precio).toFixed(2)}</span>
+                            </div>
                             <span class="text-[10px] bg-surface-container-high px-2 py-0.5 rounded text-on-surface-variant font-medium">${stockWarning} Stock: ${p.stock}</span>
                         </div>
                     </div>
@@ -551,6 +558,7 @@
             form.elements['nombre'].value = p.nombre;
             form.elements['descripcion'].value = p.descripcion || '';
             form.elements['precio'].value = p.precio;
+            form.elements['valor_compra'].value = p.valor_compra || 0;
             form.elements['stock'].value = p.stock;
 
             document.getElementById('modalProductTitleMobile').textContent = 'Editar Producto';
@@ -565,9 +573,10 @@
             const nombre = form.elements['nombre'].value;
             const descripcion = form.elements['descripcion'].value;
             const precio = parseFloat(form.elements['precio'].value);
+            const valor_compra = form.elements['valor_compra'].value ? parseFloat(form.elements['valor_compra'].value) : 0;
             const stock = parseInt(form.elements['stock'].value);
 
-            const payload = { nombre, descripcion, precio, stock };
+            const payload = { nombre, descripcion, precio, valor_compra, stock };
 
             try {
                 if (id) {

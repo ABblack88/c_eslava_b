@@ -334,6 +334,28 @@
             <!-- Rendered by JS -->
         </div>
     </div>
+
+    <!-- Días Feriados -->
+    <div class="mt-4 bg-surface-container-low rounded-xl p-4 border border-outline-variant/50">
+        <div class="flex items-center justify-between mb-3">
+            <div class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-primary text-[20px]">event_busy</span>
+                <p class="font-bold text-sm text-on-surface">Días Feriados (<span id="feriados-anio-label">2026</span>)</p>
+            </div>
+            <div class="flex items-center gap-1">
+                <button type="button" onclick="cambiarAnioFeriados(-1)" class="w-7 h-7 flex items-center justify-center rounded-lg bg-surface-white border border-outline-variant hover:bg-surface-container text-on-surface-variant transition-colors"><span class="material-symbols-outlined text-[18px]">chevron_left</span></button>
+                <button type="button" onclick="cambiarAnioFeriados(1)" class="w-7 h-7 flex items-center justify-center rounded-lg bg-surface-white border border-outline-variant hover:bg-surface-container text-on-surface-variant transition-colors"><span class="material-symbols-outlined text-[18px]">chevron_right</span></button>
+            </div>
+        </div>
+        <div class="flex gap-2 mb-3">
+            <input type="date" id="nuevo-feriado-fecha" class="flex-1 rounded-lg border border-outline-variant px-3 py-1.5 text-sm focus:ring-primary focus:border-primary bg-surface-white">
+            <input type="text" id="nuevo-feriado-desc" placeholder="Descripción (ej. Año Nuevo)" class="flex-[2] rounded-lg border border-outline-variant px-3 py-1.5 text-sm focus:ring-primary focus:border-primary bg-surface-white">
+            <button type="button" onclick="agregarFeriado()" class="bg-primary text-white px-3 py-1.5 rounded-lg text-sm font-bold flex items-center gap-1 hover:bg-primary-container transition-colors"><span class="material-symbols-outlined text-sm">add</span></button>
+        </div>
+        <div id="lista-feriados" class="space-y-2 max-h-40 overflow-y-auto pr-1">
+            <!-- Cargado por JS -->
+        </div>
+    </div>
 </div>
 <!-- Staff Management (Removido) -->
 </div>
@@ -747,6 +769,99 @@
 
         // Llamamos a la función apenas carga el script
         cargarAjustesFinancierosActuales();
+
+        // --- SISTEMA DE FERIADOS ---
+        let anioFeriados = new Date().getFullYear();
+        
+        async function cargarFeriados() {
+            const lbl = document.getElementById('feriados-anio-label');
+            if(lbl) lbl.textContent = anioFeriados;
+            
+            const container = document.getElementById('lista-feriados');
+            if(!container) return;
+            
+            container.innerHTML = '<p class="text-xs text-outline text-center py-2">Cargando...</p>';
+            
+            try {
+                const primerDia = `${anioFeriados}-01-01`;
+                const ultimoDia = `${anioFeriados}-12-31`;
+                
+                const { data, error } = await supabaseClient
+                    .from('dias_feriados')
+                    .select('*')
+                    .gte('fecha', primerDia)
+                    .lte('fecha', ultimoDia)
+                    .order('fecha', { ascending: true });
+                    
+                if (error) throw error;
+                
+                if (!data || data.length === 0) {
+                    container.innerHTML = '<p class="text-xs text-outline text-center py-2">No hay feriados registrados este año.</p>';
+                    return;
+                }
+                
+                container.innerHTML = data.map(f => {
+                    const d = new Date(f.fecha);
+                    // Adjust to local to prevent off-by-one errors due to timezone
+                    const localDate = new Date(d.getTime() + d.getTimezoneOffset() * 60000);
+                    return `
+                        <div class="flex items-center justify-between bg-surface-white border border-outline-variant/30 px-3 py-2 rounded-lg">
+                            <div class="flex flex-col">
+                                <span class="text-sm font-bold text-on-surface">${localDate.toLocaleDateString('es-PE', { day: 'numeric', month: 'long' })}</span>
+                                <span class="text-[11px] text-on-surface-variant">${f.descripcion || 'Feriado'}</span>
+                            </div>
+                            <button onclick="eliminarFeriado('${f.id}')" class="text-error hover:bg-error/10 w-7 h-7 flex items-center justify-center rounded-md transition-colors"><span class="material-symbols-outlined text-[16px]">delete</span></button>
+                        </div>
+                    `;
+                }).join('');
+                
+            } catch (err) {
+                console.error("Error loading feriados", err);
+                container.innerHTML = '<p class="text-xs text-error text-center py-2">Error al cargar.</p>';
+            }
+        }
+        
+        async function agregarFeriado() {
+            const fechaInput = document.getElementById('nuevo-feriado-fecha');
+            const descInput = document.getElementById('nuevo-feriado-desc');
+            if (!fechaInput.value) return alert('Por favor, selecciona una fecha.');
+            
+            try {
+                const { error } = await supabaseClient
+                    .from('dias_feriados')
+                    .insert([{ fecha: fechaInput.value, descripcion: descInput.value }]);
+                if (error) throw error;
+                
+                fechaInput.value = '';
+                descInput.value = '';
+                cargarFeriados();
+                
+            } catch (err) {
+                console.error("Error", err);
+                alert("No se pudo agregar. Revisa si ya existe.");
+            }
+        }
+        
+        async function eliminarFeriado(id) {
+            if (!confirm('¿Eliminar feriado?')) return;
+            try {
+                const { error } = await supabaseClient.from('dias_feriados').delete().eq('id', id);
+                if (error) throw error;
+                cargarFeriados();
+            } catch (err) {
+                console.error(err);
+                alert("Error al eliminar.");
+            }
+        }
+        
+        function cambiarAnioFeriados(delta) {
+            anioFeriados += delta;
+            cargarFeriados();
+        }
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            cargarFeriados();
+        });
 
         // ==========================================
         // GESTIÓN DE PRODUCTOS

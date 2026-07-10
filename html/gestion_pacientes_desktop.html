@@ -260,12 +260,12 @@
                             <input type="number" id="input-costo-fijo" value="25" min="0" step="1" class="w-16 p-1 border rounded text-center" onchange="cargarDatosEstrategicos()">
                         </div>
                         <div class="flex items-center gap-2">
-                            <label class="text-sm text-on-surface-variant">Camillas Activas:</label>
-                            <input type="number" id="input-camillas" value="3" min="1" max="10" class="w-16 p-1 border rounded text-center" onchange="cargarDatosEstrategicos()">
+                            <label class="text-xs font-bold w-24">Feriados (auto):</label>
+                            <input type="number" id="input-feriados" value="0" readonly class="w-16 p-1 border rounded text-center bg-surface-container-low" title="Calculado desde Ajustes">
                         </div>
                         <div class="flex items-center gap-2">
-                            <label class="text-sm text-on-surface-variant" title="Días no laborables en el mes a restar de los 22 hábiles por defecto">Feriados (Días):</label>
-                            <input type="number" id="input-feriados" value="0" min="0" max="15" class="w-16 p-1 border rounded text-center" onchange="cargarDatosEstrategicos()">
+                            <label class="text-sm text-on-surface-variant">Camillas Activas:</label>
+                            <input type="number" id="input-camillas" value="3" min="1" max="10" class="w-16 p-1 border rounded text-center" onchange="cargarDatosEstrategicos()">
                         </div>
                     </div>
                 </div>
@@ -448,6 +448,13 @@
                 // 4. Obtener Pacientes
                 const { data: pacientesData } = await supabaseClient.from('pacientes').select('id, nombre, telefono');
 
+                // 5. Obtener Feriados del Mes
+                const { data: feriadosData } = await supabaseClient
+                    .from('dias_feriados')
+                    .select('fecha')
+                    .gte('fecha', startMes.substring(0,10))
+                    .lt('fecha', endMes.substring(0,10));
+
                 if (citasError) throw citasError;
 
                 // --- MÓDULO 1: Ocupación ---
@@ -470,7 +477,13 @@
 
                 const horasOcupadas = minutosOcupados / 60;
                 const camillas = Number(document.getElementById('input-camillas').value) || 3;
-                const feriados = Number(document.getElementById('input-feriados').value) || 0;
+                
+                // Calcular feriados reales desde BD
+                let feriados = 0;
+                if (feriadosData) {
+                    feriados = feriadosData.length;
+                    document.getElementById('input-feriados').value = feriados;
+                }
                 
                 // Capacidad: Asumimos (22 - feriados) días hábiles x 8 horas x camillas
                 const diasHabiles = Math.max(0, 22 - feriados);
