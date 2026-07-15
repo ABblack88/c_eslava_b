@@ -21,7 +21,7 @@ class RBACService {
         let restrictedHrefs = [];
 
         if (level >= 3) {
-            restrictedHrefs.push('gestion_pacientes_', 'pagos_facturacion_', 'ajustes_', 'master_root');
+            restrictedHrefs.push('gestion_pacientes_', 'pagos_facturacion_', 'master_root');
             const adminSettings = document.getElementById("admin-settings-section");
             if (adminSettings) adminSettings.style.display = 'none';
 
@@ -186,11 +186,21 @@ class RBACService {
     }
 
     static init() {
+        // Prevent FOUC by hiding nav links initially
+        const foucStyle = document.createElement('style');
+        foucStyle.id = 'rbac-fouc-style';
+        foucStyle.innerHTML = `aside nav a, nav.fixed.bottom-0 a { opacity: 0; pointer-events: none; }`;
+        document.head.appendChild(foucStyle);
+
         this.handleDeviceRedirection();
         document.addEventListener('DOMContentLoaded', () => {
             this.applyUI_Restrictions();
             this.preserveRoleInLinks();
             this.displayCurrentUser();
+            
+            // Reveal links after applying restrictions
+            const styleEl = document.getElementById('rbac-fouc-style');
+            if (styleEl) styleEl.remove();
         });
     }
 }
