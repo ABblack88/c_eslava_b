@@ -11,40 +11,13 @@
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;700&amp;display=block" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=block" rel="stylesheet"/>
-    <script id="tailwind-config">
-      tailwind.config = {
-        darkMode: "class",
-        theme: {
-          extend: {
-            "colors": {
-              "surface-container": "#eceeee",
-              "primary-fixed-dim": "#66d5f1",
-              "outline": "#6d797d",
-              "on-surface": "#191c1d",
-              "outline-variant": "#bdc8cd",
-              "error": "#ba1a1a",
-              "on-surface-variant": "#3d494c",
-              "background": "#f8fafa",
-              "surface-white": "#FFFFFF",
-              "surface": "#f8fafa",
-              "primary": "#006578",
-              "success": "#34C759",
-              "on-primary": "#ffffff"
-            }
-          }
-        }
-      }
-    </script>
-    <style>
-        body {
-            font-family: 'Hanken Grotesk', sans-serif;
-            background-color: #f8fafa;
-            color: #191c1d;
-        }
-    </style>
+    
+    
     <!-- Supabase SDK -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="../js/config/supabase.js"></script>
+    <script src="../js/config/tailwind-theme.js"></script>
+    <link rel="stylesheet" href="../css/global.css">
     <script src="../js/core/ui.js"></script>
     <script src="../js/core/auth.js"></script>
     <script src="../js/core/rbac.js"></script>
