@@ -1,3 +1,6 @@
+// js/controllers/cajaController.js
+// Orchestrates UI using CajaRepository and CajaService
+
         // Subtle scroll behavior for the Top Bar
         window.addEventListener('scroll', () => {
             const header = document.querySelector('header');
@@ -26,10 +29,7 @@
 
         async function cargarDatosFinancieros() {
             try {
-                const { data: pagos, error } = await supabaseClient
-                    .from('pagos')
-                    .select(`id, monto, metodo, estado, fecha, pacientes ( nombre ), citas ( tratamiento, estado )`)
-                    .order('fecha', { ascending: false });
+                const { data: pagos, error } = await CajaRepository.getPagos();
 
                 if (error) throw error;
 
@@ -111,11 +111,7 @@
             lista.innerHTML = '<div class="flex justify-center py-8"><span class="material-symbols-outlined animate-spin text-primary">sync</span></div>';
 
             try {
-                const { data, error } = await supabaseClient
-                    .from('pagos')
-                    .select('id, monto, fecha, descripcion, pacientes(nombre), citas(tratamiento, estado)')
-                    .eq('estado', 'Pendiente')
-                    .order('fecha', { ascending: true });
+                const { data, error } = await CajaRepository.getCuentasPorCobrar();
 
                 if (error) throw error;
 
@@ -333,10 +329,7 @@
 
         async function marcarComoPagado(pagoId) {
             try {
-                const { error } = await supabaseClient
-                    .from('pagos')
-                    .update({ estado: 'Completado', fecha: new Date().toISOString() })
-                    .eq('id', pagoId);
+                const { error } = await CajaRepository.updatePagoEstado(pagoId, { estado: 'Completado', fecha: new Date().toISOString() });
 
                 if (error) throw error;
                 await cargarDatosFinancieros();
@@ -379,7 +372,7 @@
             // Load patients if not loaded
             if (globalPacientes.length === 0) {
                 try {
-                    const { data: pacs } = await supabaseClient.from('pacientes').select('*').order('nombre');
+                    const { data: pacs } = await CajaRepository.getPacientes();
                     globalPacientes = pacs || [];
                     const selectPac = document.getElementById('invoice-paciente');
                     selectPac.innerHTML = '<option value="">Seleccione Paciente</option>';
@@ -392,7 +385,7 @@
             // Load services if not loaded
             if (globalServicios.length === 0) {
                 try {
-                    const { data: servs } = await supabaseClient.from('servicios').select('*').order('nombre');
+                    const { data: servs } = await CajaRepository.getServicios();
                     globalServicios = servs || [];
                     const selectServ = document.getElementById('invoice-servicio');
                     selectServ.innerHTML = '<option value="" data-precio="0">Ninguno (Solo Venta)</option>';
@@ -405,7 +398,7 @@
             // Load products if not loaded
             if (globalProductos.length === 0) {
                 try {
-                    const { data: prods } = await supabaseClient.from('productos').select('*').order('nombre');
+                    const { data: prods } = await CajaRepository.getProductos();
                     globalProductos = prods || [];
                     const selectProd = document.getElementById('invoice-producto-select');
                     selectProd.innerHTML = '<option value="" data-precio="0">Seleccionar Producto...</option>';
@@ -418,7 +411,7 @@
             // Load tratantes if not loaded
             if (globalTratantes.length === 0) {
                 try {
-                    const { data: meds } = await supabaseClient.from('profiles').select('*').eq('role', 'tratante').order('full_name');
+                    const { data: meds } = await CajaRepository.getTratantes();
                     globalTratantes = meds || [];
                     const selectMed = document.getElementById('invoice-tratante');
                     selectMed.innerHTML = '<option value="">Sin Tratante (No aplica comisión)</option>';
@@ -445,7 +438,7 @@
 
             if (citaId) {
                 try {
-                    const { data: cita } = await supabaseClient.from('citas').select('*').eq('id', citaId).single();
+                    const { data: cita } = await CajaRepository.getCita(citaId);
                     if (cita) {
                         // Pre-fill service and cost
                         setTimeout(() => {
@@ -542,12 +535,7 @@
             listContainer.innerHTML = '<div class="flex justify-center p-4"><span class="material-symbols-outlined animate-spin text-primary">sync</span></div>';
             
             try {
-                const { data, error } = await supabaseClient
-                    .from('pagos')
-                    .select('*, citas(tratamiento, estado)')
-                    .eq('paciente_id', id)
-                    .in('estado', ['Pendiente', 'Vencido'])
-                    .order('fecha', { ascending: true });
+                const { data, error } = await CajaRepository.getCobrosPendientesPorPaciente(id);
                     
                 if (error) throw error;
                 
@@ -560,7 +548,7 @@
                 });
                 
                 if (globalServicios.length === 0) {
-                    const { data: servs } = await supabaseClient.from('servicios').select('*').order('nombre');
+                    const { data: servs } = await CajaRepository.getServicios();
                     globalServicios = servs || [];
                 }
 
@@ -645,6 +633,7 @@
         };
 
         function calcularTotalesFactura() {
+            /* LOGIC EXTRACTED TO CajaService */
             let subtotal = 0;
             let descuentoMonto = 0;
             const selectMetodo = document.getElementById('invoice-metodo');
@@ -997,10 +986,7 @@
             }
             try {
                 // Obtener todos los pagos, ordenados por fecha
-                const { data, error } = await window.supabaseClient
-                    .from('pagos')
-                    .select('*, pacientes(nombre)')
-                    .order('fecha_emision', { ascending: false });
+                const { data, error } = await CajaRepository.getAllPagosExport();
 
                 if (error) throw error;
                 if (!data || data.length === 0) {
@@ -1094,11 +1080,7 @@
             if (!container) return;
 
             try {
-                const { data, error } = await supabaseClient
-                    .from('pagos')
-                    .select('id, monto, fecha, descripcion, pacientes(id, nombre), citas(tratamiento, estado)')
-                    .eq('estado', 'Pendiente')
-                    .order('fecha', { ascending: false }); // Sort by newest date to get most recent activity
+                const { data, error } = await CajaRepository.getCobrosPendientesGlobal(); // Sort by newest date to get most recent activity
 
                 if (error) throw error;
                 
@@ -1193,7 +1175,7 @@
             // Load patients
             if (globalPacientes.length === 0) {
                 try {
-                    const { data: pacs } = await supabaseClient.from('pacientes').select('*').order('nombre');
+                    const { data: pacs } = await CajaRepository.getPacientes();
                     globalPacientes = pacs || [];
                 } catch(e) { console.error(e); }
             }
@@ -1201,7 +1183,7 @@
             // Load services
             if (globalServicios.length === 0) {
                 try {
-                    const { data: servs } = await supabaseClient.from('servicios').select('*').order('nombre');
+                    const { data: servs } = await CajaRepository.getServicios();
                     globalServicios = servs || [];
                     const selectServ = document.getElementById('invoice-servicio');
                     if (selectServ) {
@@ -1216,7 +1198,7 @@
             // Load products
             if (globalProductos.length === 0) {
                 try {
-                    const { data: prods } = await supabaseClient.from('productos').select('*').order('nombre');
+                    const { data: prods } = await CajaRepository.getProductos();
                     globalProductos = prods || [];
                     const selectProd = document.getElementById('invoice-producto-select');
                     if (selectProd) {
@@ -1231,7 +1213,7 @@
             // Load tratantes
             if (globalMedicos.length === 0) {
                 try {
-                    const { data: meds } = await supabaseClient.from('profiles').select('*').eq('role', 'tratante').order('full_name');
+                    const { data: meds } = await CajaRepository.getTratantes();
                     if (meds) globalMedicos = meds;
                     const selectMed = document.getElementById('invoice-tratante');
                     if (selectMed) {
@@ -1261,7 +1243,7 @@
 
             if (citaId) {
                 try {
-                    const { data: cita } = await supabaseClient.from('citas').select('*').eq('id', citaId).single();
+                    const { data: cita } = await CajaRepository.getCita(citaId);
                     if (cita) {
                         setTimeout(() => {
                             const servSelect = document.getElementById('invoice-servicio');

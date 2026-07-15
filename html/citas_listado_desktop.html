@@ -1,6 +1,10 @@
 <!DOCTYPE html>
 
 <html class="light" lang="es"><head>
+    <link rel="icon" sizes="192x192" href="https://static.wixstatic.com/media/2a2885_0faab9c802fb481587f8d8fee5fa0eee%7Emv2.png/v1/fill/w_192%2Ch_192%2Clg_1%2Cusm_0.66_1.00_0.01/2a2885_0faab9c802fb481587f8d8fee5fa0eee%7Emv2.png" type="image/png"/>
+    <link rel="shortcut icon" href="https://static.wixstatic.com/media/2a2885_0faab9c802fb481587f8d8fee5fa0eee%7Emv2.png/v1/fill/w_32%2Ch_32%2Clg_1%2Cusm_0.66_1.00_0.01/2a2885_0faab9c802fb481587f8d8fee5fa0eee%7Emv2.png" type="image/png"/>
+    <link rel="apple-touch-icon" href="https://static.wixstatic.com/media/2a2885_0faab9c802fb481587f8d8fee5fa0eee%7Emv2.png/v1/fill/w_180%2Ch_180%2Clg_1%2Cusm_0.66_1.00_0.01/2a2885_0faab9c802fb481587f8d8fee5fa0eee%7Emv2.png" type="image/png"/>
+
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
@@ -9,7 +13,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=block" rel="stylesheet"/>
 <!-- Supabase -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="../js/supabase.js"></script>
+<script src="../js/config/supabase.js"></script>
 <style>
         body {
             font-family: 'Hanken Grotesk', sans-serif;
@@ -124,8 +128,9 @@
       }
     </script>
 
-    <script src="../js/app.js"></script>
-    <script src="../js/rbac.js"></script>
+    <script src="../js/core/ui.js"></script>
+    <script src="../js/core/auth.js"></script>
+    <script src="../js/core/rbac.js"></script>
     <link rel="manifest" href="../manifest.json">
 </head>
 <body class="bg-background text-on-surface">
@@ -270,239 +275,10 @@
 <div class="h-section-gap"></div>
 </main>
 
-<script>
-        // Micro-interaction: Active tab logic
-        const navLinks = document.querySelectorAll('aside nav a');
-        navLinks.forEach(link => {
-            link.addEventListener('click', (e) => {
-                navLinks.forEach(l => {
-                    l.classList.remove('text-primary', 'border-r-4', 'border-primary', 'font-bold', 'bg-surface-container-low');
-                    l.classList.add('text-on-surface-variant', 'hover:bg-surface-container-low');
-                });
-                link.classList.add('text-primary', 'border-r-4', 'border-primary', 'font-bold', 'bg-surface-container-low');
-                link.classList.remove('text-on-surface-variant', 'hover:bg-surface-container-low');
-            });
-        });
+<script src="../js/api/citasRepository.js"></script>
+<script src="../js/services/citasService.js"></script>
+<script src="../js/controllers/citasController.js"></script>
 
-        // Filter button interaction
-        const filterBtns = document.querySelectorAll('.bg-surface-container-low button');
-        filterBtns.forEach(btn => {
-            btn.addEventListener('click', () => {
-                filterBtns.forEach(b => {
-                    b.classList.remove('bg-surface-white', 'shadow-sm', 'text-primary');
-                    b.classList.add('text-on-surface-variant', 'hover:bg-surface-container-high');
-                });
-                btn.classList.add('bg-surface-white', 'shadow-sm', 'text-primary');
-                btn.classList.remove('text-on-surface-variant', 'hover:bg-surface-container-high');
-            });
-        });
-
-        
-
-
-        document.addEventListener("DOMContentLoaded", async () => {
-            await cargarServicios();
-            cargarCitas();
-        });
-
-        let allCitas = [];
-        let estadoFiltro = 'Todos';
-
-        async function cargarServicios() {
-            try {
-                const { data, error } = await window.supabaseClient
-                    .from('servicios')
-                    .select('*')
-                    .eq('estado', 'Activo');
-                if (!error && data) {
-                    window.serviciosActivos = data;
-                }
-            } catch (err) {
-                console.error("Error al cargar servicios:", err);
-            }
-        }
-
-        function filtrarPorEstado(estado, btnElement) {
-            estadoFiltro = estado;
-            const filterBtns = document.querySelectorAll('.bg-surface-container-low button');
-            filterBtns.forEach(b => {
-                b.classList.remove('bg-surface-white', 'shadow-sm', 'text-primary');
-                b.classList.add('text-on-surface-variant', 'hover:bg-surface-container-high');
-            });
-            btnElement.classList.add('bg-surface-white', 'shadow-sm', 'text-primary');
-            btnElement.classList.remove('text-on-surface-variant', 'hover:bg-surface-container-high');
-            
-            filtrarCitas();
-        }
-
-        function filtrarCitas() {
-            const query = document.getElementById('searchInput').value.toLowerCase();
-            
-            const filtrados = allCitas.filter(c => {
-                const nombrePaciente = c.pacientes ? c.pacientes.nombre.toLowerCase() : '';
-                const matchTexto = nombrePaciente.includes(query) || (c.tratamiento && c.tratamiento.toLowerCase().includes(query));
-                
-                let matchEstado = false;
-                if (estadoFiltro === 'Todos') matchEstado = true;
-                else if (estadoFiltro === 'Activo' && (c.estado === 'Pendiente' || c.estado === 'En Progreso' || c.estado === 'Confirmada' || c.estado === 'Confirmado')) matchEstado = true;
-                else if (estadoFiltro === 'Inactivo' && (c.estado === 'Completada' || c.estado === 'Cancelada')) matchEstado = true;
-                
-                return matchTexto && matchEstado;
-            });
-
-            renderCitas(filtrados);
-        }
-
-        async function cargarCitas() {
-            const tbody = document.getElementById('pacientes-tbody');
-            tbody.innerHTML = '<tr><td colspan="6" class="px-8 py-4 text-center">Cargando citas...</td></tr>';
-            
-            const { data, error } = await window.supabaseClient
-                .from('citas')
-                .select('*, pacientes(nombre)')
-                .order('fecha', { ascending: true })
-                .order('hora', { ascending: true });
-            
-            if (error) {
-                console.error("Error al cargar citas:", error);
-                tbody.innerHTML = '<tr><td colspan="6" class="px-8 py-4 text-center text-error">Error al cargar datos</td></tr>';
-                return;
-            }
-
-            allCitas = (data || []).filter(c => {
-                const estado = (c.estado || '').toLowerCase();
-                return !estado.includes('completad') && !estado.includes('atendid');
-            });
-            
-            const totalBadge = document.getElementById('total-citas-badge');
-            if(totalBadge) totalBadge.textContent = allCitas.length;
-            const mostrandoText = document.getElementById('mostrando-citas-text');
-            if(mostrandoText) mostrandoText.textContent = `Mostrando ${allCitas.length} citas activas`;
-
-            filtrarCitas();
-        }
-
-        function formatHora(horaStr) {
-            if (!horaStr) return '';
-            const [h, m] = horaStr.split(':');
-            let hInt = parseInt(h);
-            const ampm = hInt >= 12 ? 'PM' : 'AM';
-            hInt = hInt % 12 || 12;
-            return `${hInt}:${m} ${ampm}`;
-        }
-
-        function renderCitas(data) {
-            const tbody = document.getElementById('pacientes-tbody');
-            tbody.innerHTML = '';
-
-            data.forEach(cita => {
-                let badgeClass = 'bg-surface-container-high text-outline';
-                const estadoLower = (cita.estado || '').toLowerCase();
-                if (estadoLower.includes('pendiente') || estadoLower.includes('sin confirmar') || estadoLower.includes('por confirmar')) {
-                    badgeClass = 'bg-warning/10 text-warning-dark';
-                } else if (estadoLower.includes('confirmad')) {
-                    badgeClass = 'bg-success/10 text-success';
-                } else if (estadoLower.includes('progreso')) {
-                    badgeClass = 'bg-primary/10 text-primary';
-                } else if (estadoLower.includes('completad') || estadoLower.includes('atendid')) {
-                    badgeClass = 'bg-surface-variant text-on-surface-variant';
-                } else if (estadoLower.includes('reprogramar')) {
-                    badgeClass = 'bg-[#8b5cf6]/10 text-[#8b5cf6]';
-                }
-                
-                const nombrePaciente = cita.pacientes ? cita.pacientes.nombre : 'Paciente Desconocido';
-                
-                let sessionStr = '<span class="bg-surface-container text-outline text-xs px-2 py-1 rounded font-bold">Cita Única</span>';
-                if (cita.tratamiento) {
-                    const baseTrat = cita.tratamiento.replace('(Continuación)', '').trim();
-                    const servicioObj = window.serviciosActivos ? window.serviciosActivos.find(s => s.nombre === baseTrat) : null;
-                    
-                    if (servicioObj && servicioObj.duracion && servicioObj.duracion > 1) {
-                        const prevOccurrences = allCitas.filter(c => 
-                            c.paciente_id === cita.paciente_id && 
-                            c.tratamiento && 
-                            c.tratamiento.includes(baseTrat) && 
-                            c.estado !== 'Cancelada' &&
-                            (c.fecha < cita.fecha || (c.fecha === cita.fecha && (c.hora || '') <= (cita.hora || '')))
-                        );
-                        
-                        const totalOccurrences = allCitas.filter(c => c.paciente_id === cita.paciente_id && c.tratamiento && c.tratamiento.includes(baseTrat) && c.estado !== 'Cancelada').length;
-                        
-                        if (cita.tratamiento.includes('(Continuación)') || totalOccurrences > 1 || prevOccurrences.length > 0) {
-                            let currentSessionNum = prevOccurrences.length > 0 ? prevOccurrences.length : 1;
-                            sessionStr = `<span class="bg-primary/10 text-primary text-xs px-2 py-1 rounded font-bold">Sesión ${currentSessionNum} de ${servicioObj.duracion}</span>`;
-                        }
-                    }
-                }
-                
-                const tr = document.createElement('tr');
-                tr.className = 'hover:bg-surface-bright transition-colors cursor-pointer group';
-                tr.onclick = () => {
-                    const role = new URLSearchParams(window.location.search).get('role') || 'admin';
-                    window.location.href = `atencion_tiempo_real_desktop.html?cita_id=${cita.id}&role=${role}`;
-                };
-                
-                tr.innerHTML = `
-                    <td class="px-8 py-4">
-                        <div class="flex items-center gap-3">
-                            <div class="w-9 h-9 rounded-full bg-primary flex items-center justify-center text-white font-bold">
-                                ${nombrePaciente.charAt(0)}
-                            </div>
-                            <span class="font-bold text-on-surface group-hover:text-primary transition-colors">${nombrePaciente}</span>
-                        </div>
-                    </td>
-                    <td class="px-8 py-4" onclick="event.stopPropagation()">
-                        <select 
-                            class="px-2.5 py-1 ${badgeClass} rounded-full text-xs font-bold focus:outline-none focus:ring-2 focus:ring-primary/30 ${cita.estado === 'En Progreso' || cita.estado === 'Completada' ? 'cursor-not-allowed opacity-90' : 'cursor-pointer'} border-none"
-                            onchange="actualizarEstado(${cita.id}, this.value)"
-                            ${cita.estado === 'En Progreso' || cita.estado === 'Completada' ? 'disabled' : ''}
-                        >
-                            <option value="Por Confirmar" ${cita.estado === 'Pendiente' || cita.estado === 'Por Confirmar' ? 'selected' : ''} class="bg-surface-white text-on-surface">Por Confirmar</option>
-                            <option value="Confirmada" ${cita.estado === 'Confirmada' ? 'selected' : ''} class="bg-surface-white text-on-surface">Confirmada</option>
-                            <option value="En Progreso" ${cita.estado === 'En Progreso' ? 'selected' : ''} class="bg-surface-white text-on-surface">En Progreso</option>
-                            ${cita.estado === 'Completada' ? `<option value="Completada" selected class="bg-surface-white text-on-surface">Completada</option>` : ''}
-                            <option value="Por Reprogramar" ${cita.estado === 'Por Reprogramar' ? 'selected' : ''} class="bg-surface-white text-on-surface">Por Reprogramar</option>
-                        </select>
-                    </td>
-                    <td class="px-8 py-4 text-sm font-bold text-on-surface">${sessionStr}</td>
-                    <td class="px-8 py-4 text-sm text-on-surface-variant">${cita.fecha} <br> <span class="text-xs text-outline">${formatHora(cita.hora)}</span></td>
-                    <td class="px-8 py-4 text-right">
-                        <span class="material-symbols-outlined text-outline group-hover:text-primary">arrow_forward</span>
-                    </td>
-                `;
-                tbody.appendChild(tr);
-            });
-        }
-
-        async function actualizarEstado(citaId, nuevoEstado) {
-            try {
-                // Notificación visual de carga (opcional)
-                const trElement = document.querySelector(`select[onchange="actualizarEstado(${citaId}, this.value)"]`).closest('tr');
-                trElement.style.opacity = '0.5';
-
-                const { error } = await window.supabaseClient
-                    .from('citas')
-                    .update({ estado: nuevoEstado })
-                    .eq('id', citaId);
-
-                if (error) throw error;
-                
-                // Actualizar array local
-                const index = allCitas.findIndex(c => c.id === citaId);
-                if (index !== -1) {
-                    allCitas[index].estado = nuevoEstado;
-                }
-                
-                // Re-renderizar lista para actualizar colores
-                filtrarCitas();
-            } catch (error) {
-                console.error("Error actualizando estado:", error);
-                alert("Hubo un error al actualizar el estado de la cita.");
-                // Revertir a la vista original si falla
-                filtrarCitas();
-            }
-        }
-</script>
 
     <script>
         if ('serviceWorker' in navigator) {
