@@ -97,7 +97,7 @@
             }
 
             let html = '';
-            const role = getRoleFromURL();
+            const role = typeof RBACService !== 'undefined' ? RBACService.getRoleFromURL() : '';
             const isAdmin = role === 'admin' || role === 'root';
             
             productos.forEach(p => {
