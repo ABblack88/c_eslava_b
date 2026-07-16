@@ -144,15 +144,18 @@
                 };
                 
                 tr.innerHTML = `
-                    <td class="px-8 py-4">
+                    <td class="px-4 md:px-8 py-4">
                         <div class="flex items-center gap-3">
-                            <div class="w-9 h-9 rounded-full bg-primary flex items-center justify-center text-white font-bold">
+                            <div class="w-9 h-9 rounded-full bg-primary flex items-center justify-center text-white font-bold flex-shrink-0">
                                 ${nombrePaciente.charAt(0)}
                             </div>
-                            <span class="font-bold text-on-surface group-hover:text-primary transition-colors">${nombrePaciente}</span>
+                            <div class="flex flex-col">
+                                <span class="font-bold text-on-surface group-hover:text-primary transition-colors">${nombrePaciente}</span>
+                                <span class="text-xs text-on-surface-variant md:hidden">${cita.fecha} • ${CitasService.formatHora(cita.hora)}</span>
+                            </div>
                         </div>
                     </td>
-                    <td class="px-8 py-4" onclick="event.stopPropagation()">
+                    <td class="px-4 md:px-8 py-4" onclick="event.stopPropagation()">
                         <select 
                             class="px-2.5 py-1 ${badgeClass} rounded-full text-xs font-bold focus:outline-none focus:ring-2 focus:ring-primary/30 ${cita.estado === 'En Progreso' || cita.estado === 'Completada' ? 'cursor-not-allowed opacity-90' : 'cursor-pointer'} border-none"
                             onchange="actualizarEstado(${cita.id}, this.value)"
@@ -165,9 +168,9 @@
                             <option value="Por Reprogramar" ${cita.estado === 'Por Reprogramar' ? 'selected' : ''} class="bg-surface-white text-on-surface">Por Reprogramar</option>
                         </select>
                     </td>
-                    <td class="px-8 py-4 text-sm font-bold text-on-surface">${sessionStr}</td>
-                    <td class="px-8 py-4 text-sm text-on-surface-variant">${cita.fecha} <br> <span class="text-xs text-outline">${CitasService.formatHora(cita.hora)}</span></td>
-                    <td class="px-8 py-4 text-right">
+                    <td class="px-8 py-4 text-sm font-bold text-on-surface hidden md:table-cell">${sessionStr}</td>
+                    <td class="px-8 py-4 text-sm text-on-surface-variant hidden md:table-cell">${cita.fecha} <br> <span class="text-xs text-outline">${CitasService.formatHora(cita.hora)}</span></td>
+                    <td class="px-8 py-4 text-right hidden md:table-cell">
                         <span class="material-symbols-outlined text-outline group-hover:text-primary">arrow_forward</span>
                     </td>
                 `;
