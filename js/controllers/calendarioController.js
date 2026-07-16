@@ -18,8 +18,9 @@
         alert(`Tu próxima cita es hoy a las ${horaFormat} con ${proxima.pacientes?.nombre || 'Paciente'}\nTratamiento: ${proxima.tratamiento}\nTratante: ${proxima.consultorio}`);
     }
 
-    // Set today's date as default in date input
-    document.getElementById('appt-date').value = new Date().toISOString().split('T')[0];
+    // Set today's date as default in date input if it exists
+    const apptDateEl = document.getElementById('appt-date');
+    if (apptDateEl) apptDateEl.value = new Date().toISOString().split('T')[0];
 
     // Enforce role-based element locking/hiding inside the page
 
@@ -250,35 +251,6 @@
             console.error('Error al cambiar estado:', err);
             alert('Hubo un problema al cambiar el estado.');
         }
-    }
-
-    function CalendarioService.generateGoogleCalendarUrl(appointment) {
-        const title = encodeURIComponent(`Cita Centro Eslava - ${appointment.name}`);
-        const details = encodeURIComponent(`Cita médica programada en Centro Eslava.\nPaciente: ${appointment.name}\nTratante: ${appointment.doctor}\nNotas: ${appointment.notes || 'Ninguna'}`);
-        const location = encodeURIComponent("Centro Eslava, Lima, Perú");
-        
-        let time24 = appointment.time;
-        if (appointment.time.includes('AM') || appointment.time.includes('PM')) {
-            const [timeStr, modifier] = appointment.time.split(' ');
-            let [hours, minutes] = timeStr.split(':');
-            if (hours === '12') hours = '00';
-            if (modifier === 'PM') hours = parseInt(hours, 10) + 12;
-            time24 = `${hours.toString().padStart(2, '0')}:${minutes}`;
-        }
-        
-        const dateStr = appointment.date.replace(/-/g, '');
-        const timeStr = time24.replace(/:/g, '') + '00';
-        const startDateTime = `${dateStr}T${timeStr}`;
-        
-        const endHours = (parseInt(time24.split(':')[0], 10) + 1).toString().padStart(2, '0');
-        const endMinutes = time24.split(':')[1];
-        const endDateTime = `${dateStr}T${endHours}${endMinutes}00`;
-        
-        let url = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${startDateTime}/${endDateTime}&details=${details}&location=${location}`;
-        if (appointment.email) {
-            url += `&add=${encodeURIComponent(appointment.email)}`;
-        }
-        return url;
     }
 
     window.serviciosActivos = [];
