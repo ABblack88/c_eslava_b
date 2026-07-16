@@ -271,7 +271,6 @@
                 renderPagosPendientes(safePagos);
                 if (true) {
                     renderTopEstadisticas(safePagos, productosData || []);
-                    renderResumenCards(safePagos);
                 }
                 renderActividadReciente(safePagos);
                 renderMediosPago(safePagos);
