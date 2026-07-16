@@ -641,11 +641,11 @@ const { data: citasPrevias, error: countError } = await window.db.from('citas').
             if (!fullCalendarInstance) {
                 fullCalendarInstance = new FullCalendar.Calendar(calendarEl, {
                     nowIndicator: true,
-                    initialView: 'timeGridWeek',
+                    initialView: window.innerWidth < 768 ? 'timeGridDay' : 'timeGridWeek',
                     headerToolbar: {
                         left: 'prev,next today',
                         center: 'title',
-                        right: 'timeGridDay,timeGridWeek,dayGridMonth'
+                        right: window.innerWidth < 768 ? 'timeGridDay,listWeek' : 'timeGridDay,timeGridWeek,dayGridMonth'
                     },
                     buttonText: {
                         today: 'Hoy',
