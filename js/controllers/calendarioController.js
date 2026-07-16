@@ -840,10 +840,3 @@ const { data: citasPrevias, error: countError } = await window.db.from('citas').
         });
     });
 
-
-document.addEventListener('DOMContentLoaded', () => {
-    cargarServicios();
-    cargarPacientesSelect();
-    cargarEstadisticas();
-    cargarCitas();
-});

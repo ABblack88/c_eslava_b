@@ -390,15 +390,20 @@
                         }
                     }
                     
-                    function formatDate(dStr) {
-                        if (!dStr) return '';
-                        const [y,m,d] = dStr.split('-');
-                        return `${d}/${m}`;
+                    function formatDate(c) {
+                        if (!c || !c.fecha) return '';
+                        const [y,m,d] = c.fecha.split('-');
+                        let hStr = '';
+                        if (c.hora) {
+                            const [h, min] = c.hora.split(':');
+                            hStr = ` ${h}:${min}`;
+                        }
+                        return `${d}/${m}${hStr}`;
                     }
                     
                     let sessionText = '';
                     let prefix = nextCita ? 'Próx. Cita' : 'Última Cita';
-                    let dateToShow = formatDate(targetCita.fecha);
+                    let dateToShow = formatDate(targetCita);
                     
                     if (isPackage) {
                         sessionText = `${prefix} ${dateToShow} - Sesión ${currentSessionNum} de ${totalSessions}`;

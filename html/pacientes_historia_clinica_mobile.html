@@ -95,16 +95,19 @@
 <h2 class="font-display-lg text-4xl font-extrabold text-on-surface tracking-tight">Registros de Pacientes</h2>
 <p class="text-on-surface-variant mt-2 font-body-md">Gestiona el historial clínico y el progreso de recuperación de tu clínica.</p>
 </div>
-<div class="flex gap-4">
-<div class="bg-surface-white p-4 rounded-2xl shadow-[0px_10px_30px_rgba(0,0,0,0.04)] min-w-[140px]">
+<div class="flex flex-col md:flex-row gap-4 items-start md:items-center">
+<button onclick="abrirModalNuevoPaciente()" class="w-full flex items-center justify-center gap-2 px-6 py-3 bg-primary text-on-primary rounded-xl font-bold hover:shadow-lg transition-all active:scale-95">
+<span class="material-symbols-outlined">person_add</span> Registrar Paciente
+</button>
+<div class="w-full bg-surface-white p-4 rounded-2xl shadow-[0px_10px_30px_rgba(0,0,0,0.04)]">
 <p class="text-label-sm text-outline">Total Pacientes</p>
 <p class="text-2xl font-bold text-primary" id="stat-total-pacientes">Cargando...</p>
 </div>
 </div>
 </div>
 <!-- Filters Section -->
-<div class="flex items-center justify-between mb-8">
-<div class="flex gap-2 bg-surface-container-low p-1.5 rounded-xl">
+<div class="flex flex-wrap items-center justify-between mb-8 gap-4">
+<div class="flex flex-wrap gap-2 bg-surface-container-low p-1.5 rounded-xl">
 <button onclick="filtrarPorEstado('Todos', this)" class="px-6 py-2 rounded-lg font-bold transition-all bg-surface-white shadow-sm text-primary">Todos</button>
 <button onclick="filtrarPorEstado('Activo', this)" class="px-6 py-2 rounded-lg font-bold transition-all text-on-surface-variant hover:bg-surface-container-high">Activos</button>
 <button onclick="filtrarPorEstado('Inactivo', this)" class="px-6 py-2 rounded-lg font-bold transition-all text-on-surface-variant hover:bg-surface-container-high">Inactivos</button>
@@ -113,15 +116,6 @@
 <button onclick="alert('Próximamente: Panel de filtros avanzados.')" class="flex items-center gap-2 px-5 py-2.5 bg-surface-white border border-outline-variant rounded-xl font-bold text-on-surface-variant hover:bg-surface-container-low transition-all">
 <span class="material-symbols-outlined text-[20px]">filter_list</span>
                     Filtrar
-                </button>
-<input type="file" id="csvFileInput" accept=".csv" style="display: none;" onchange="importarPacientesCSV(event)">
-<button onclick="triggerImportarCSV()" class="flex items-center gap-2 px-5 py-2.5 bg-surface-white border border-outline-variant rounded-xl font-bold text-on-surface-variant hover:bg-surface-container-low transition-all">
-<span class="material-symbols-outlined text-[20px]">upload</span>
-                    Importar
-                </button>
-<button onclick="exportarPacientesCSV()" class="flex items-center gap-2 px-5 py-2.5 bg-primary text-white rounded-xl font-bold hover:bg-primary-fixed-dim transition-all shadow-md">
-<span class="material-symbols-outlined text-[20px] text-white">download</span>
-                    Exportar
                 </button>
 </div>
 </div>
@@ -144,7 +138,8 @@
 </div>
 </div>
 </div>
-<table class="w-full text-left">
+<div class="overflow-x-auto w-full pb-4">
+<table class="w-full text-left min-w-[500px]">
 <thead class="bg-surface-container-low/50">
 <tr>
 <th class="px-8 py-4 text-xs font-bold uppercase tracking-widest text-outline">Paciente</th>
@@ -217,8 +212,8 @@
 </script>
 
 
-<!-- Floating Action Button for Patients Screen -->
-<button onclick="abrirModalNuevoPaciente()" class="fixed bottom-10 right-10 w-16 h-16 bg-primary text-on-primary rounded-full shadow-2xl flex items-center justify-center hover:scale-110 active:scale-95 transition-all z-50 group">
+<!-- Floating Action Button for Patients Screen (Hidden) -->
+<button onclick="abrirModalNuevoPaciente()" class="hidden fixed bottom-20 right-4 w-16 h-16 bg-primary text-on-primary rounded-full shadow-2xl items-center justify-center hover:scale-110 active:scale-95 transition-all z-50 group">
 <span class="material-symbols-outlined text-3xl">person_add</span>
 <div class="absolute right-20 bg-inverse-surface text-inverse-on-surface px-4 py-2 rounded-xl text-sm font-bold opacity-0 group-hover:opacity-100 pointer-events-none transition-all whitespace-nowrap">
             Registrar Nuevo Paciente
