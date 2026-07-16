@@ -296,13 +296,17 @@
 <script>
         // Simple toggle simulation for the notification switch
         const toggle = document.querySelector('.relative.inline-flex');
-        const knob = toggle.querySelector('span');
-        toggle.addEventListener('click', () => {
-            toggle.classList.toggle('bg-primary');
-            toggle.classList.toggle('bg-outline-variant');
-            knob.classList.toggle('translate-x-6');
-            knob.classList.toggle('translate-x-1');
-        });
+        if (toggle) {
+            const knob = toggle.querySelector('span');
+            toggle.addEventListener('click', () => {
+                toggle.classList.toggle('bg-primary');
+                toggle.classList.toggle('bg-outline-variant');
+                if (knob) {
+                    knob.classList.toggle('translate-x-6');
+                    knob.classList.toggle('translate-x-1');
+                }
+            });
+        }
 
         // Hover effect for side nav items
         const navItems = document.querySelectorAll('nav a');
