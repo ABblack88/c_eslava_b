@@ -307,12 +307,23 @@
                 await cargarServicios();
 
                 if (currentPaciente) {
-                    document.getElementById('patient-name').textContent = currentPaciente.nombre;
-                    document.getElementById('patient-id').textContent = 'ID: #' + currentPaciente.id.substring(0,8).toUpperCase();
-                    document.getElementById('patient-phone').textContent = currentPaciente.telefono || '--';
-                    document.getElementById('patient-email').textContent = currentPaciente.email || '--';
-                    document.getElementById('patient-status').textContent = currentPaciente.estado || 'Activo';
-                    document.getElementById('patient-initials').textContent = currentPaciente.nombre.charAt(0).toUpperCase();
+                    const elName = document.getElementById('patient-name');
+                    if (elName) elName.textContent = currentPaciente.nombre;
+                    
+                    const elId = document.getElementById('patient-id');
+                    if (elId) elId.textContent = 'ID: #' + currentPaciente.id.substring(0,8).toUpperCase();
+                    
+                    const elPhone = document.getElementById('patient-phone');
+                    if (elPhone) elPhone.textContent = currentPaciente.telefono || '--';
+                    
+                    const elEmail = document.getElementById('patient-email');
+                    if (elEmail) elEmail.textContent = currentPaciente.email || '--';
+                    
+                    const elStatus = document.getElementById('patient-status');
+                    if (elStatus) elStatus.textContent = currentPaciente.estado || 'Activo';
+                    
+                    const elInit = document.getElementById('patient-initials');
+                    if (elInit) elInit.textContent = currentPaciente.nombre.charAt(0).toUpperCase();
                     
                     const storedRegistro = localStorage.getItem(`paciente_registro_${currentPaciente.id}`);
                     let alergiasLocal = '';
@@ -320,11 +331,15 @@
                         const parsed = JSON.parse(storedRegistro);
                         if (parsed.alergias) alergiasLocal = parsed.alergias;
                     }
-                    document.getElementById('patient-allergies').textContent = alergiasLocal || currentPaciente.notas_medicas || 'Sin alergias o riesgos reportados.';
+                    const elAllergies = document.getElementById('patient-allergies');
+                    if (elAllergies) elAllergies.textContent = alergiasLocal || currentPaciente.notas_medicas || 'Sin alergias o riesgos reportados.';
                 }
 
-                document.getElementById('appt-treatment').textContent = cita.tratamiento || 'Procedimiento general';
-                document.getElementById('appt-time').textContent = `${cita.fecha} • ${cita.hora}`;
+                const elTrat = document.getElementById('appt-treatment');
+                if (elTrat) elTrat.textContent = cita.tratamiento || 'Procedimiento general';
+                
+                const elTime = document.getElementById('appt-time');
+                if (elTime) elTime.textContent = `${cita.fecha} • ${cita.hora}`;
 
                 if (cita.notas) {
                     const notas = cita.notas;
