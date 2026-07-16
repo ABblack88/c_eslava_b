@@ -1,0 +1,33 @@
+{
+  "build_config": {
+    "build_command": "bash build.sh",
+    "destination_dir": "",
+    "root_dir": ""
+  },
+  "deployment_configs": {
+    "production": {
+      "env_vars": {
+        "SUPABASE_URL": {
+          "value": "https://scubijqoifshvyotrlgx.supabase.co",
+          "type": "plain_text"
+        },
+        "SUPABASE_ANON_KEY": {
+          "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNjdWJpanFvaWZzaHZ5b3RybGd4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODExODczMjcsImV4cCI6MjA5Njc2MzMyN30.w0DalpbHcDboZooz9RtoGcNiYfGe51wx5JSEvqYSXn0",
+          "type": "secret_text"
+        }
+      }
+    },
+    "preview": {
+      "env_vars": {
+        "SUPABASE_URL": {
+          "value": "https://scubijqoifshvyotrlgx.supabase.co",
+          "type": "plain_text"
+        },
+        "SUPABASE_ANON_KEY": {
+          "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNjdWJpanFvaWZzaHZ5b3RybGd4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODExODczMjcsImV4cCI6MjA5Njc2MzMyN30.w0DalpbHcDboZooz9RtoGcNiYfGe51wx5JSEvqYSXn0",
+          "type": "secret_text"
+        }
+      }
+    }
+  }
+}

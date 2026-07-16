@@ -1,0 +1,253 @@
+{
+  "result": {
+    "id": "4afb0eb3-85d0-4a2b-8ec0-076225fb5402",
+    "name": "c-eslava-b",
+    "subdomain": "c-eslava-b.pages.dev",
+    "domains": [
+      "c-eslava-b.pages.dev"
+    ],
+    "source": {
+      "type": "github",
+      "config": {
+        "owner": "ABblack88",
+        "owner_id": "233786474",
+        "repo_name": "c_eslava_b",
+        "repo_id": "1264193068",
+        "production_branch": "main",
+        "pr_comments_enabled": true,
+        "deployments_enabled": true,
+        "production_deployments_enabled": true,
+        "preview_deployment_setting": "all",
+        "preview_branch_includes": [
+          "*"
+        ],
+        "preview_branch_excludes": [],
+        "path_includes": [
+          "*"
+        ],
+        "path_excludes": []
+      }
+    },
+    "build_config": {
+      "build_command": "bash build.sh",
+      "destination_dir": "",
+      "root_dir": "",
+      "web_analytics_tag": null,
+      "web_analytics_token": null
+    },
+    "deployment_configs": {
+      "preview": {
+        "env_vars": {
+          "SUPABASE_ANON_KEY": {
+            "type": "secret_text",
+            "value": ""
+          },
+          "SUPABASE_URL": {
+            "type": "plain_text",
+            "value": "https://scubijqoifshvyotrlgx.supabase.co"
+          }
+        },
+        "fail_open": true,
+        "always_use_latest_compatibility_date": false,
+        "compatibility_date": "2026-06-30",
+        "compatibility_flags": [],
+        "build_image_major_version": 3,
+        "usage_model": "standard"
+      },
+      "production": {
+        "env_vars": {
+          "SUPABASE_ANON_KEY": {
+            "type": "secret_text",
+            "value": ""
+          },
+          "SUPABASE_URL": {
+            "type": "plain_text",
+            "value": "https://scubijqoifshvyotrlgx.supabase.co"
+          }
+        },
+        "fail_open": true,
+        "always_use_latest_compatibility_date": false,
+        "compatibility_date": "2026-06-30",
+        "compatibility_flags": [],
+        "build_image_major_version": 3,
+        "usage_model": "standard"
+      }
+    },
+    "latest_deployment": {
+      "id": "7712408f-a825-4a3d-a0f3-f021364707d3",
+      "short_id": "7712408f",
+      "project_id": "4afb0eb3-85d0-4a2b-8ec0-076225fb5402",
+      "project_name": "c-eslava-b",
+      "environment": "production",
+      "url": "https://7712408f.c-eslava-b.pages.dev",
+      "created_on": "2026-07-16T14:58:19.254888Z",
+      "modified_on": "2026-07-16T14:58:33.721451Z",
+      "latest_stage": {
+        "name": "deploy",
+        "started_on": "2026-07-16T14:58:27.097153Z",
+        "ended_on": "2026-07-16T14:58:33.721451Z",
+        "status": "success"
+      },
+      "deployment_trigger": {
+        "type": "github:push",
+        "metadata": {
+          "branch": "main",
+          "commit_hash": "e3187af66c96a583f8f979bff50145deb94edac7",
+          "commit_message": "build: setup secure injection of supabase config via build.sh",
+          "commit_dirty": false
+        }
+      },
+      "stages": [
+        {
+          "name": "queued",
+          "started_on": "2026-07-16T14:58:19.537287Z",
+          "ended_on": "2026-07-16T14:58:19.540137Z",
+          "status": "success"
+        },
+        {
+          "name": "initialize",
+          "started_on": "2026-07-16T14:58:19.540137Z",
+          "ended_on": "2026-07-16T14:58:22.521416Z",
+          "status": "success"
+        },
+        {
+          "name": "clone_repo",
+          "started_on": "2026-07-16T14:58:22.521416Z",
+          "ended_on": "2026-07-16T14:58:24.173831Z",
+          "status": "success"
+        },
+        {
+          "name": "build",
+          "started_on": "2026-07-16T14:58:24.173831Z",
+          "ended_on": "2026-07-16T14:58:27.097153Z",
+          "status": "success"
+        },
+        {
+          "name": "deploy",
+          "started_on": "2026-07-16T14:58:27.097153Z",
+          "ended_on": "2026-07-16T14:58:33.721451Z",
+          "status": "success"
+        }
+      ],
+      "build_config": {
+        "build_command": "",
+        "destination_dir": "",
+        "build_caching": null,
+        "root_dir": "",
+        "web_analytics_tag": null,
+        "web_analytics_token": null
+      },
+      "source": {
+        "type": "github",
+        "config": {
+          "owner": "ABblack88",
+          "repo_name": "c_eslava_b",
+          "production_branch": "main",
+          "pr_comments_enabled": false
+        }
+      },
+      "env_vars": {},
+      "compatibility_date": "2026-06-30",
+      "compatibility_flags": [],
+      "build_image_major_version": 3,
+      "usage_model": null,
+      "aliases": null,
+      "is_skipped": false,
+      "production_branch": "main",
+      "uses_functions": false
+    },
+    "canonical_deployment": {
+      "id": "7712408f-a825-4a3d-a0f3-f021364707d3",
+      "short_id": "7712408f",
+      "project_id": "4afb0eb3-85d0-4a2b-8ec0-076225fb5402",
+      "project_name": "c-eslava-b",
+      "environment": "production",
+      "url": "https://7712408f.c-eslava-b.pages.dev",
+      "created_on": "2026-07-16T14:58:19.254888Z",
+      "modified_on": "2026-07-16T14:58:33.721451Z",
+      "latest_stage": {
+        "name": "deploy",
+        "started_on": "2026-07-16T14:58:27.097153Z",
+        "ended_on": "2026-07-16T14:58:33.721451Z",
+        "status": "success"
+      },
+      "deployment_trigger": {
+        "type": "github:push",
+        "metadata": {
+          "branch": "main",
+          "commit_hash": "e3187af66c96a583f8f979bff50145deb94edac7",
+          "commit_message": "build: setup secure injection of supabase config via build.sh",
+          "commit_dirty": false
+        }
+      },
+      "stages": [
+        {
+          "name": "queued",
+          "started_on": "2026-07-16T14:58:19.537287Z",
+          "ended_on": "2026-07-16T14:58:19.540137Z",
+          "status": "success"
+        },
+        {
+          "name": "initialize",
+          "started_on": "2026-07-16T14:58:19.540137Z",
+          "ended_on": "2026-07-16T14:58:22.521416Z",
+          "status": "success"
+        },
+        {
+          "name": "clone_repo",
+          "started_on": "2026-07-16T14:58:22.521416Z",
+          "ended_on": "2026-07-16T14:58:24.173831Z",
+          "status": "success"
+        },
+        {
+          "name": "build",
+          "started_on": "2026-07-16T14:58:24.173831Z",
+          "ended_on": "2026-07-16T14:58:27.097153Z",
+          "status": "success"
+        },
+        {
+          "name": "deploy",
+          "started_on": "2026-07-16T14:58:27.097153Z",
+          "ended_on": "2026-07-16T14:58:33.721451Z",
+          "status": "success"
+        }
+      ],
+      "build_config": {
+        "build_command": "",
+        "destination_dir": "",
+        "build_caching": null,
+        "root_dir": "",
+        "web_analytics_tag": null,
+        "web_analytics_token": null
+      },
+      "source": {
+        "type": "github",
+        "config": {
+          "owner": "ABblack88",
+          "repo_name": "c_eslava_b",
+          "production_branch": "main",
+          "pr_comments_enabled": false
+        }
+      },
+      "env_vars": {},
+      "compatibility_date": "2026-06-30",
+      "compatibility_flags": [],
+      "build_image_major_version": 3,
+      "usage_model": null,
+      "aliases": null,
+      "is_skipped": false,
+      "production_branch": "main",
+      "uses_functions": false
+    },
+    "created_on": "2026-06-30T23:28:16.209705Z",
+    "production_branch": "main",
+    "production_script_name": "pages-worker--15698623-production",
+    "preview_script_name": "pages-worker--15698623-preview",
+    "uses_functions": false,
+    "framework": "",
+    "framework_version": ""
+  },
+  "success": true,
+  "errors": [],
+  "messages": []
+}

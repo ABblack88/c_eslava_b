@@ -1,0 +1,97 @@
+{
+  "result": {
+    "id": "71f602f4-04ba-458f-8f2e-5c849692aab1",
+    "short_id": "71f602f4",
+    "project_id": "4afb0eb3-85d0-4a2b-8ec0-076225fb5402",
+    "project_name": "c-eslava-b",
+    "environment": "production",
+    "url": "https://71f602f4.c-eslava-b.pages.dev",
+    "created_on": "2026-07-16T15:26:06.527004Z",
+    "modified_on": "2026-07-16T15:26:06.527004Z",
+    "latest_stage": {
+      "name": "queued",
+      "started_on": null,
+      "ended_on": null,
+      "status": "idle"
+    },
+    "deployment_trigger": {
+      "type": "ad_hoc",
+      "metadata": {
+        "branch": "main",
+        "commit_hash": "e3187af66c96a583f8f979bff50145deb94edac7",
+        "commit_message": "build: setup secure injection of supabase config via build.sh",
+        "commit_dirty": false
+      }
+    },
+    "stages": [
+      {
+        "name": "queued",
+        "started_on": null,
+        "ended_on": null,
+        "status": "idle"
+      },
+      {
+        "name": "initialize",
+        "started_on": null,
+        "ended_on": null,
+        "status": "idle"
+      },
+      {
+        "name": "clone_repo",
+        "started_on": null,
+        "ended_on": null,
+        "status": "idle"
+      },
+      {
+        "name": "build",
+        "started_on": null,
+        "ended_on": null,
+        "status": "idle"
+      },
+      {
+        "name": "deploy",
+        "started_on": null,
+        "ended_on": null,
+        "status": "idle"
+      }
+    ],
+    "build_config": {
+      "build_command": "bash build.sh",
+      "destination_dir": "",
+      "build_caching": null,
+      "root_dir": "",
+      "web_analytics_tag": null,
+      "web_analytics_token": null
+    },
+    "source": {
+      "type": "github",
+      "config": {
+        "owner": "ABblack88",
+        "repo_name": "c_eslava_b",
+        "production_branch": "main",
+        "pr_comments_enabled": false
+      }
+    },
+    "env_vars": {
+      "SUPABASE_ANON_KEY": {
+        "type": "secret_text",
+        "value": ""
+      },
+      "SUPABASE_URL": {
+        "type": "plain_text",
+        "value": "https://scubijqoifshvyotrlgx.supabase.co"
+      }
+    },
+    "compatibility_date": "2026-06-30",
+    "compatibility_flags": [],
+    "build_image_major_version": 3,
+    "usage_model": null,
+    "aliases": null,
+    "is_skipped": false,
+    "production_branch": "main",
+    "uses_functions": null
+  },
+  "success": true,
+  "errors": [],
+  "messages": []
+}

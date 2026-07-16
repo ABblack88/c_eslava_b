@@ -62,7 +62,8 @@
         }
 
         function filtrarCitas() {
-            const query = document.getElementById('searchInput').value.toLowerCase();
+            const searchInput = document.getElementById('searchInput');
+            const query = searchInput ? searchInput.value.toLowerCase() : '';
             
             const filtrados = allCitas.filter(c => {
                 const nombrePaciente = c.pacientes ? c.pacientes.nombre.toLowerCase() : '';

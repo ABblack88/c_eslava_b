@@ -186,10 +186,29 @@ class RBACService {
     }
 
     static init() {
-        // Prevent FOUC by hiding nav links initially
+        // Prevent FOUC by injecting CSS to hide restricted links immediately
+        const role = this.getRoleFromURL();
+        const level = this.getAccessLevel(role);
+        let restrictedHrefs = [];
+
+        if (level >= 3) {
+            restrictedHrefs.push('gestion_pacientes_', 'pagos_facturacion_', 'master_root');
+        }
+        if (level === 4) {
+            restrictedHrefs.push('tratamientos_', 'cobrar_');
+        }
+
         const foucStyle = document.createElement('style');
         foucStyle.id = 'rbac-fouc-style';
-        foucStyle.innerHTML = `aside nav a, nav.fixed.bottom-0 a { opacity: 0; pointer-events: none; }`;
+        let cssRules = `aside nav a, nav.fixed.bottom-0 a { opacity: 0; transition: none !important; }`;
+        if (restrictedHrefs.length > 0) {
+            cssRules += `\n` + restrictedHrefs.map(r => `a[href*="${r}"] { display: none !important; }`).join('\n');
+            cssRules += `\n#resumen-cuenta-card { display: none !important; }`;
+        }
+        if (level >= 3) {
+            cssRules += `\n#admin-settings-section, #btn-cobrar-inmediato { display: none !important; }`;
+        }
+        foucStyle.innerHTML = cssRules;
         document.head.appendChild(foucStyle);
 
         this.handleDeviceRedirection();
