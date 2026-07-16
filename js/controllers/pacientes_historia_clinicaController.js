@@ -195,7 +195,8 @@
         }
 
         function filtrarPacientes() {
-            const query = document.getElementById('searchInput').value.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+            const searchInput = document.getElementById('searchInput');
+            const query = searchInput ? searchInput.value.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "") : '';
             
             const filtrados = allPacientes.filter(p => {
                 const nombreNormalizado = p.nombre.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
