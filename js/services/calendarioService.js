@@ -56,7 +56,7 @@ class CalendarioService {
             }
         }
         
-        return {
+        let eventObj = {
             id: c.id,
             title: c.consultorio ? `${c.pacientes?.nombre || 'Desconocido'} - ${c.consultorio}` : (c.pacientes?.nombre || 'Desconocido'),
             start: `${c.fecha}T${c.hora}`,
@@ -69,6 +69,12 @@ class CalendarioService {
                 sessionStr: sessionStr
             }
         };
+        
+        if (c.hora_fin) {
+            eventObj.end = `${c.fecha}T${c.hora_fin}`;
+        }
+        
+        return eventObj;
     }
 
     static generateGoogleCalendarUrl(appointment) {

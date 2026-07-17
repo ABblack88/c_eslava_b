@@ -26,6 +26,7 @@
 
     function populateTimeOptions() {
         const selectTime = document.getElementById('appt-time');
+        const selectTimeEnd = document.getElementById('appt-time-end');
         if (!selectTime) return;
         
         const dateInput = document.getElementById('appt-date')?.value;
@@ -45,7 +46,11 @@
         const closeHour = parseInt(closing.split(':')[0]);
         
         const prevValue = selectTime.value;
+        let prevEndValue = selectTimeEnd ? selectTimeEnd.value : null;
+        
         selectTime.innerHTML = '';
+        if (selectTimeEnd) selectTimeEnd.innerHTML = '<option value="">(Sin definir)</option>';
+        
         let hasOptions = false;
         
         for (let i = openHour; i < closeHour; i++) {
@@ -58,19 +63,25 @@
             
             if (!isToday || isEditMode || i > currentHour) {
                 selectTime.innerHTML += `<option value="${val00}">${val00}</option>`;
+                if (selectTimeEnd) selectTimeEnd.innerHTML += `<option value="${val00}">${val00}</option>`;
                 hasOptions = true;
             }
             if (!isToday || isEditMode || i > currentHour || (i === currentHour && currentMinute <= 30)) {
                 selectTime.innerHTML += `<option value="${val30}">${val30}</option>`;
+                if (selectTimeEnd) selectTimeEnd.innerHTML += `<option value="${val30}">${val30}</option>`;
                 hasOptions = true;
             }
         }
         
         if (!hasOptions) {
              selectTime.innerHTML = `<option value="">No hay horarios disponibles hoy</option>`;
-        } else if (prevValue) {
-             selectTime.value = prevValue;
-             if (selectTime.selectedIndex === -1) selectTime.selectedIndex = 0;
+             if (selectTimeEnd) selectTimeEnd.innerHTML = `<option value="">No hay horarios disponibles hoy</option>`;
+        }
+        if (prevValue && selectTime.querySelector(`option[value="${prevValue}"]`)) {
+            selectTime.value = prevValue;
+        }
+        if (selectTimeEnd && prevEndValue && selectTimeEnd.querySelector(`option[value="${prevEndValue}"]`)) {
+            selectTimeEnd.value = prevEndValue;
         }
     }
 
@@ -194,9 +205,18 @@
                     let displayTime = `${h12.toString().padStart(2, '0')}:${m} ${ampm}`;
                     
                     const timeSelect = document.getElementById('appt-time');
-                    timeSelect.value = displayTime;
+                    if (timeSelect) timeSelect.value = displayTime;
                     
-                    
+                    // Match end time
+                    const timeEndSelect = document.getElementById('appt-time-end');
+                    if (timeEndSelect && cita.hora_fin) {
+                        let teh = cita.hora_fin.split(':');
+                        let eh = parseInt(teh[0], 10);
+                        let em = teh[1];
+                        let eampm = eh >= 12 ? 'PM' : 'AM';
+                        let eh12 = eh % 12 || 12;
+                        timeEndSelect.value = `${eh12.toString().padStart(2, '0')}:${em} ${eampm}`;
+                    }
                     
                     // Update Modal Title & Button
                     const modalTitle = document.querySelector('#new-appointment-modal h3');
@@ -465,11 +485,27 @@
 
             if (errorCitas || errorCitasM) throw new Error("Error fetching stats");
 
-            const countCitasHoy = citasHoy ? citasHoy.length : 0;
-            const countCompletadas = citasHoy ? citasHoy.filter(c => (c.estado || '').toLowerCase().includes('completad')).length : 0;
+            const now = new Date();
+            const filterFn = (c) => {
+                const estado = (c.estado || '').toLowerCase();
+                if (estado.includes('completad') || estado.includes('atendid') || estado.includes('progreso') || estado.includes('cancelad')) {
+                    return true;
+                }
+                if (c.fecha && c.hora) {
+                    const [year, month, day] = c.fecha.split('-');
+                    const [hour, minute] = c.hora.split(':');
+                    const citaDate = new Date(year, month - 1, day, hour, minute);
+                    if (citaDate < now) return false;
+                }
+                return true;
+            };
+
+            const citasHoyFiltradas = citasHoy ? citasHoy.filter(filterFn) : [];
+            const countCitasHoy = citasHoyFiltradas.length;
+            const countCompletadas = citasHoyFiltradas.filter(c => (c.estado || '').toLowerCase().includes('completad')).length;
             const countCitasPendientesHoy = countCitasHoy - countCompletadas;
-            const countPorConfirmar = citasHoy ? citasHoy.filter(c => c.estado === 'Pendiente').length : 0; 
-            const countCitasManana = citasManana ? citasManana.length : 0;
+            const countPorConfirmar = citasHoyFiltradas.filter(c => c.estado === 'Pendiente').length; 
+            const countCitasManana = citasManana ? citasManana.filter(filterFn).length : 0;
 
             const elCitasHoy = document.getElementById('stat-citas-hoy');
             if (elCitasHoy) elCitasHoy.textContent = countCitasPendientesHoy;
@@ -517,6 +553,20 @@
             if (modifier === 'PM') hours = (parseInt(hours, 10) + 12).toString();
             time24 = `${hours.padStart(2, '0')}:${minutes}:00`;
         }
+
+        let timeEnd = document.getElementById("appt-time-end")?.value;
+        let timeEnd24 = null;
+        if (timeEnd && timeEnd !== '') {
+            if (timeEnd.includes('AM') || timeEnd.includes('PM')) {
+                const [timeStr, modifier] = timeEnd.split(' ');
+                let [hours, minutes] = timeStr.split(':');
+                if (hours === '12') hours = '00';
+                if (modifier === 'PM') hours = (parseInt(hours, 10) + 12).toString();
+                timeEnd24 = `${hours.padStart(2, '0')}:${minutes}:00`;
+            } else {
+                timeEnd24 = timeEnd;
+            }
+        }
         
         const notes = document.getElementById("appt-notes").value;
 
@@ -545,6 +595,7 @@
                         paciente_id: paciente_id,
                         fecha: date,
                         hora: time24,
+                        hora_fin: timeEnd24,
                         notas: notes,
                         tratamiento: treatment,
                         consultorio: doctor
@@ -557,6 +608,7 @@
                         paciente_id: paciente_id,
                         fecha: date,
                         hora: time24,
+                        hora_fin: timeEnd24,
                         estado: 'Pendiente',
                         notas: notes,
                         tratamiento: treatment,
@@ -632,9 +684,26 @@ const { data: citasPrevias, error: countError } = await window.db.from('citas').
             const d = new Date();
             const today = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
 
-            const { data, error } = await CalendarioRepository.getCitasPorRangoOpciones();
+            let { data, error } = await CalendarioRepository.getCitasPorRangoOpciones();
                 
             if (error) throw error;
+
+            const now = new Date();
+            data = data.filter(c => {
+                const estado = (c.estado || '').toLowerCase();
+                if (estado.includes('completad') || estado.includes('atendid') || estado.includes('progreso') || estado.includes('cancelad')) {
+                    return true;
+                }
+                if (c.fecha && c.hora) {
+                    const [year, month, day] = c.fecha.split('-');
+                    const [hour, minute] = c.hora.split(':');
+                    const citaDate = new Date(year, month - 1, day, hour, minute);
+                    if (citaDate < now) {
+                        return false;
+                    }
+                }
+                return true;
+            });
 
             const events = data.filter(c => c.estado !== 'Cancelada' && c.estado !== 'Cancelado').map(c => CalendarioService.mapCitaToCalendarEvent(c, data, window.serviciosActivos));
 

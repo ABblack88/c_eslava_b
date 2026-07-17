@@ -2,9 +2,25 @@
 
 class CitasService {
     static filterActivas(citas) {
+        const now = new Date();
         return (citas || []).filter(c => {
             const estado = (c.estado || '').toLowerCase();
-            return !estado.includes('completad') && !estado.includes('atendid');
+            
+            if (estado.includes('completad') || estado.includes('atendid')) {
+                return false;
+            }
+
+            if (c.fecha && c.hora && !estado.includes('progreso')) {
+                const [year, month, day] = c.fecha.split('-');
+                const [hour, minute] = c.hora.split(':');
+                const citaDate = new Date(year, month - 1, day, hour, minute);
+                
+                if (citaDate < now) {
+                    return false;
+                }
+            }
+            
+            return true;
         });
     }
 
