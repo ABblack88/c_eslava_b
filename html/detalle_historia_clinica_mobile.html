@@ -190,8 +190,7 @@
 <div>
 <h4 class="text-sm font-semibold text-text-muted mb-1 uppercase tracking-wider">Alergias & Riesgos</h4>
 <div class="flex flex-wrap gap-2 mt-2" id="patient-alergias-container">
-<span class="bg-error-container text-on-error-container px-3 py-1 rounded-md text-sm">Penicilina</span>
-<span class="bg-surface-container-high text-on-surface-variant px-3 py-1 rounded-md text-sm">Ácaros</span>
+<span class="text-xs italic text-outline">Ninguna registrada</span>
 </div>
 </div>
 </div>
@@ -300,52 +299,7 @@
                                 </h3>
 <button class="text-primary hover:text-surface-tint text-sm font-semibold">Ver Todos</button>
 </div>
-<div class="space-y-3 overflow-y-auto flex-grow pr-2">
-<!-- File Item -->
-<div class="flex items-center justify-between p-3 rounded-lg border border-surface-variant hover:bg-surface transition-colors cursor-pointer group">
-<div class="flex items-center space-x-3">
-<div class="bg-error-container text-on-error-container p-2 rounded-md flex items-center justify-center">
-<span class="material-symbols-outlined" data-icon="picture_as_pdf">picture_as_pdf</span>
-</div>
-<div>
-<p class="font-body-md text-body-md text-on-surface font-medium group-hover:text-primary transition-colors">Reporte_Cirugia_LCA.pdf</p>
-<p class="text-xs text-text-muted">28 Sep, 2023 • 1.2 MB</p>
-</div>
-</div>
-<button class="text-outline hover:text-primary transition-colors">
-<span class="material-symbols-outlined" data-icon="download">download</span>
-</button>
-</div>
-<!-- File Item -->
-<div class="flex items-center justify-between p-3 rounded-lg border border-surface-variant hover:bg-surface transition-colors cursor-pointer group" onclick="abrirPreviewImagen('https://lh3.googleusercontent.com/aida-public/AB6AXuDQMytbQE7oL4ZVAVNzdmYWOj4Vob2optKypGi0Nm5AP727Rxi2yJ6nICqra0EU5l0Tq5Z0J5cF7N4jEXz8DUgqOS966S7-gZ-FdksVid3GN25j8KDaQSK0LDj_nBpzlGTYLOP4ja-7kmFugBh0QAB_aglFd8UnEtsskwkPAaitAZ2LBrB4jeZ7QixraF-8QvNXH8qtkaOUo-q2K4YOt84_LpKUlsnlkWTpB8bx363GOB1lNr8wpC8Ldnq8lDTZ0XA2W32SEM5c3H0')">
-<div class="flex items-center space-x-3">
-<div class="bg-surface-container-highest text-on-surface p-2 rounded-md flex items-center justify-center">
-<span class="material-symbols-outlined" data-icon="image">image</span>
-</div>
-<div>
-<p class="font-body-md text-body-md text-on-surface font-medium group-hover:text-primary transition-colors">RM_Rodilla_Derecha_PreOp.jpg</p>
-<p class="text-xs text-text-muted">15 Sep, 2023 • 4.5 MB</p>
-</div>
-</div>
-<button class="text-outline hover:text-primary transition-colors">
-<span class="material-symbols-outlined" data-icon="download">download</span>
-</button>
-</div>
-<!-- File Item -->
-<div class="flex items-center justify-between p-3 rounded-lg border border-surface-variant hover:bg-surface transition-colors cursor-pointer group" onclick="abrirPreviewImagen('https://lh3.googleusercontent.com/aida-public/AB6AXuDQMytbQE7oL4ZVAVNzdmYWOj4Vob2optKypGi0Nm5AP727Rxi2yJ6nICqra0EU5l0Tq5Z0J5cF7N4jEXz8DUgqOS966S7-gZ-FdksVid3GN25j8KDaQSK0LDj_nBpzlGTYLOP4ja-7kmFugBh0QAB_aglFd8UnEtsskwkPAaitAZ2LBrB4jeZ7QixraF-8QvNXH8qtkaOUo-q2K4YOt84_LpKUlsnlkWTpB8bx363GOB1lNr8wpC8Ldnq8lDTZ0XA2W32SEM5c3H0')">
-<div class="flex items-center space-x-3">
-<div class="bg-surface-container-highest text-on-surface p-2 rounded-md flex items-center justify-center">
-<span class="material-symbols-outlined" data-icon="image">image</span>
-</div>
-<div>
-<p class="font-body-md text-body-md text-on-surface font-medium group-hover:text-primary transition-colors">Radiografia_PostOp_Alta.png</p>
-<p class="text-xs text-text-muted">05 Oct, 2023 • 2.8 MB</p>
-</div>
-</div>
-<button class="text-outline hover:text-primary transition-colors">
-<span class="material-symbols-outlined" data-icon="download">download</span>
-</button>
-</div>
+<div class="space-y-3 overflow-y-auto flex-grow pr-2" id="medical-files-container">
 </div>
 </div>
 </div>
@@ -790,22 +744,6 @@
                         </div>
                     </div>`).join('');
                 }
-            } else if (pacId === '1' || pacId === currentPatientId) {
-                // Fallback for demo
-                const demoTrat = {
-                    nombre: 'Protocolo de Reconstrucción LCA', 
-                    desc: 'Ligamento Cruzado Anterior - Rodilla Derecha', 
-                    fase: 'Fase 3 de 5',
-                    fase_num: '3',
-                    fase_total: '5',
-                    progreso: 65, 
-                    estado: 'En curso',
-                    anterior: 'Evaluación inicial y reducción de inflamación',
-                    actual: 'Lograr flexión de rodilla 90°',
-                    siguiente: 'Inicio de propiocepción'
-                };
-                localStorage.setItem(`paciente_tratamiento_${pacId}`, JSON.stringify(demoTrat));
-                cargarDatosLocales(pacId);
             }
         }
 

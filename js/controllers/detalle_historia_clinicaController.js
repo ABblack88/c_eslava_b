@@ -355,15 +355,6 @@
                         </div>
                     </div>`).join('');
                 }
-                // Fallback for demo
-                const demoTrat = {
-                    motivo: 'Dolor lumbar mecánico, EVA 7/10',
-                    historial: 'Ninguno relevante',
-                    estilo: 'Sedentario, oficinista 8h/día',
-                    evaluacion: 'Tensión muscular en cuadrado lumbar bilateral'
-                };
-                localStorage.setItem(`paciente_tratamiento_${pacId}`, JSON.stringify(demoTrat));
-                cargarDatosLocales(pacId);
             }
         }
 

@@ -55,7 +55,7 @@
             document.getElementById('modalNuevoPaciente').showModal();
         }
 
-        function abrirModalEdicionPaciente(id, nombre, email, telefono, fecha_nacimiento, notas_medicas, estado) {
+        function abrirModalEdicionPaciente(id, nombre, email, telefono, fecha_nacimiento, notas_medicas, estado, dni) {
             document.getElementById('formNuevoPaciente').reset();
             document.getElementById('pacienteId').value = id;
             document.getElementById('modalTitlePaciente').textContent = 'Editar Perfil y Notas';
@@ -67,6 +67,7 @@
             form.elements['telefono'].value = telefono || '';
             form.elements['fecha_nacimiento'].value = fecha_nacimiento || '';
             form.elements['estado'].value = estado || 'Activo';
+            if(form.elements['dni']) form.elements['dni'].value = dni || '';
             
             const stored = localStorage.getItem(`paciente_registro_${id}`);
             if (stored) {
@@ -131,7 +132,8 @@
                 telefono: data.telefono || null,
                 fecha_nacimiento: data.fecha_nacimiento || null,
                 notas_medicas: data.notas_medicas || null,
-                estado: data.estado || 'Activo'
+                estado: data.estado || 'Activo',
+                dni: data.dni || null
             };
 
             try {
@@ -203,7 +205,8 @@
                 const matchTexto = 
                     nombreNormalizado.includes(query) || 
                     (p.id && p.id.toLowerCase().includes(query)) ||
-                    (p.telefono && p.telefono.includes(query));
+                    (p.telefono && p.telefono.includes(query)) ||
+                    (p.dni && p.dni.includes(query));
                 
                 const matchEstado = (estadoFiltro === 'Todos') || (p.estado === estadoFiltro);
                 
@@ -468,7 +471,7 @@
                     <td class="px-8 py-4 text-sm text-on-surface-variant">${sesionesHTML}</td>
                     <td class="px-8 py-4 text-sm text-on-surface-variant">${pagosHTML}</td>
                     <td class="px-8 py-4 text-right">
-                        <button onclick="event.stopPropagation(); abrirModalEdicionPaciente('${paciente.id}', '${safeName}', '${safeEmail}', '${safeTelefono}', '${fnac}', '${safeNotas}', '${safeEstado}')" class="p-2 text-outline hover:text-primary transition-colors">
+                        <button onclick="event.stopPropagation(); abrirModalEdicionPaciente('${paciente.id}', '${safeName}', '${safeEmail}', '${safeTelefono}', '${fnac}', '${safeNotas}', '${safeEstado}', '${paciente.dni || ''}')" class="p-2 text-outline hover:text-primary transition-colors">
                             <span class="material-symbols-outlined">edit</span>
                         </button>
                     </td>
