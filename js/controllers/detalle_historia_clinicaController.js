@@ -93,6 +93,12 @@
                     
                     document.getElementById('patient-phone-card').textContent = pac.telefono || 'Sin teléfono';
                     document.getElementById('patient-email-card').textContent = pac.email || 'Sin correo';
+                    
+                    const dniCard = document.getElementById('patient-dni-card');
+                    if (dniCard) dniCard.textContent = pac.dni || 'No registrado';
+                    
+                    const dniTitle = document.getElementById('patient-dni-title');
+                    if (dniTitle) dniTitle.textContent = pac.dni || 'No registrado';
                 }
 
                 // Fetch total pending/overdue and paid balances from 'pagos'

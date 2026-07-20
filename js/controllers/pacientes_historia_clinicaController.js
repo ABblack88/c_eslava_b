@@ -320,8 +320,9 @@
                         <div class="w-12 h-12 rounded-2xl bg-primary flex items-center justify-center text-white font-bold text-lg flex-shrink-0">
                             ${paciente.nombre.charAt(0)}
                         </div>
-                        <div class="overflow-hidden">
+                        <div class="overflow-hidden flex flex-col">
                             <h3 class="font-headline-md text-base font-bold text-on-surface truncate pr-2">${paciente.nombre}</h3>
+                            <span class="text-[10px] text-on-surface-variant font-medium uppercase tracking-wider mb-0.5">${paciente.dni ? 'DNI: ' + paciente.dni : 'Sin DNI'}</span>
                             <p class="text-label-sm text-primary">${dateLabel} • ${cita.tratamiento || 'Procedimiento'}</p>
                         </div>
                     </div>
@@ -462,7 +463,10 @@
                             <div class="w-9 h-9 rounded-full bg-primary flex items-center justify-center text-white font-bold">
                                 ${paciente.nombre.charAt(0)}
                             </div>
-                            <span class="font-bold text-on-surface group-hover:text-primary transition-colors">${paciente.nombre}</span>
+                            <div class="flex flex-col">
+                                <span class="font-bold text-on-surface group-hover:text-primary transition-colors">${paciente.nombre}</span>
+                                <span class="text-[11px] text-on-surface-variant font-medium">${paciente.dni ? 'DNI: ' + paciente.dni : 'Sin DNI'}</span>
+                            </div>
                         </div>
                     </td>
                     <td class="px-8 py-4">
