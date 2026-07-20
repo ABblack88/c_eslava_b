@@ -282,7 +282,7 @@
         }
 
         // Logic to store specific medical info in local storage (since the db schema is unknown)
-        function cargarDatosLocales(pacId) {
+        async function cargarDatosLocales(pacId) {
             const storedRegistro = localStorage.getItem(`paciente_registro_${pacId}`);
             if (storedRegistro) {
                 const data = JSON.parse(storedRegistro);
@@ -334,27 +334,48 @@
                 `;
             }
             
-            const storedEvos = localStorage.getItem(`paciente_evoluciones_${pacId}`);
-            if (storedEvos) {
-                const evos = JSON.parse(storedEvos);
-                if (evos.length > 0) {
-                    const timeline = document.getElementById('timeline-container');
-                    timeline.innerHTML = evos.map(evo => `
-                    <div class="relative flex items-start group">
-                        <div class="absolute left-0 mt-1.5 w-10 h-10 rounded-full bg-success/20 border-4 border-surface-white flex items-center justify-center text-success z-10 transition-transform group-hover:scale-110">
-                            <span class="material-symbols-outlined text-[20px]">task_alt</span>
-                        </div>
-                        <div class="ml-14 bg-surface-container-lowest p-5 rounded-xl border border-surface-container-high w-full">
-                            <div class="flex justify-between mb-2">
-                                <h5 class="font-body-md text-body-md font-bold text-on-surface">${evo.headerText}</h5>
-                                <span class="font-label-sm text-label-sm text-outline">Hoy, ${evo.timeStr}</span>
+            // Reemplazar la carga de evoluciones por la BD Supabase
+            try {
+                const { data: consultas, error: consultasError } = await supabaseClient
+                    .from('consultas_medicas')
+                    .select('*')
+                    .eq('paciente_id', pacId)
+                    .order('created_at', { ascending: false });
+
+                const timelineContainer = document.getElementById('timeline-container');
+                if (consultasError) throw consultasError;
+
+                if (consultas && consultas.length > 0 && timelineContainer) {
+                    timelineContainer.innerHTML = consultas.map(evo => {
+                        const dateObj = new Date(evo.created_at);
+                        const dateStr = dateObj.toLocaleDateString('es-PE', { day: '2-digit', month: 'short', year: 'numeric' });
+                        const timeStr = dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                        
+                        return `
+                        <div class="relative flex items-start group">
+                            <div class="absolute left-0 mt-1.5 w-10 h-10 rounded-full bg-success/20 border-4 border-surface-white flex items-center justify-center text-success z-10 transition-transform group-hover:scale-110">
+                                <span class="material-symbols-outlined text-[20px]">task_alt</span>
                             </div>
-                            <p class="font-body-md text-body-md text-on-surface-variant">${evo.notas}</p>
-                            ${evo.bulletsHtml}
-                            ${evo.imgHtml}
-                        </div>
-                    </div>`).join('');
+                            <div class="ml-14 bg-surface-container-lowest p-5 rounded-xl border border-surface-container-high w-full">
+                                <div class="flex justify-between mb-2">
+                                    <h5 class="font-body-md text-body-md font-bold text-on-surface">Consulta Médica</h5>
+                                    <span class="font-label-sm text-label-sm text-outline">${dateStr}, ${timeStr}</span>
+                                </div>
+                                <div class="space-y-3 mt-4">
+                                    ${evo.subjetivo ? `<div><span class="font-bold text-sm text-primary">S:</span> <span class="text-sm text-on-surface-variant">${evo.subjetivo}</span></div>` : ''}
+                                    ${evo.objetivo ? `<div><span class="font-bold text-sm text-primary">O:</span> <span class="text-sm text-on-surface-variant">${evo.objetivo}</span></div>` : ''}
+                                    ${evo.apreciacion ? `<div><span class="font-bold text-sm text-primary">A:</span> <span class="text-sm text-on-surface-variant">${evo.apreciacion}</span></div>` : ''}
+                                    ${evo.plan ? `<div><span class="font-bold text-sm text-primary">P:</span> <span class="text-sm text-on-surface-variant">${evo.plan}</span></div>` : ''}
+                                </div>
+                                ${evo.medico_tratante ? `<div class="mt-4 pt-3 border-t border-outline-variant/30 text-xs text-outline text-right">${evo.medico_tratante}</div>` : ''}
+                            </div>
+                        </div>`;
+                    }).join('');
+                } else if (timelineContainer) {
+                    timelineContainer.innerHTML = '<p class="text-outline text-center py-6">No hay consultas registradas aún.</p>';
                 }
+            } catch(e) {
+                console.error("Error al cargar consultas médicas:", e);
             }
         }
 
@@ -462,56 +483,47 @@
             textarea.focus();
         }
 
-        function guardarNuevaEvolucion(pacId) {
-            const tipo = document.getElementById('inputTipoEvo').value;
-            const sesion = document.getElementById('inputNumSesionEvo').value;
-            const titulo = document.getElementById('inputTituloEvo').value;
-            const notas = document.getElementById('inputNotasEvo').value;
-            const rawAcc = document.getElementById('inputAccionesEvo').value;
-            const accList = rawAcc.split('\n').map(x=>x.trim()).filter(x=>x);
+        async function guardarNuevaEvolucion(pacId) {
+            const btn = document.querySelector('#formNuevaEvolucion button[type="submit"]');
+            btn.disabled = true;
+            btn.innerHTML = '<span class="material-symbols-outlined animate-spin text-sm">progress_activity</span>...';
 
-            let headerText = '';
-            if (tipo === 'Sesión') {
-                headerText = `Sesión ${sesion}: ${titulo}`;
-                // Auto-increment session input for next time
-                document.getElementById('inputNumSesionEvo').value = parseInt(sesion) + 1;
-            } else {
-                headerText = `Procedimiento: ${titulo}`;
+            const subjetivo = document.getElementById('inputSubjetivo').value;
+            const objetivo = document.getElementById('inputObjetivo').value;
+            const apreciacion = document.getElementById('inputApreciacion').value;
+            const plan = document.getElementById('inputPlan').value;
+
+            const session = await supabaseClient.auth.getSession();
+            let medico_tratante = 'Especialista';
+            if (session.data.session && session.data.session.user && session.data.session.user.user_metadata) {
+                medico_tratante = session.data.session.user.user_metadata.full_name || 'Especialista';
             }
 
-            const now = new Date();
-            const timeStr = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            try {
+                const { error } = await supabaseClient.from('consultas_medicas').insert([{
+                    paciente_id: pacId,
+                    subjetivo,
+                    objetivo,
+                    apreciacion,
+                    plan,
+                    medico_tratante
+                }]);
 
-            let bulletsHtml = '';
-            if (accList.length > 0) {
-                bulletsHtml = `<div class="mt-4"><p class="text-xs font-bold text-outline uppercase mb-2">Acciones:</p><ul class="space-y-1">` + 
-                    accList.map(a => `<li class="text-sm text-on-surface-variant flex items-center gap-2"><span class="material-symbols-outlined text-[14px] text-success">check</span> ${a}</li>`).join('') +
-                `</ul></div>`;
+                if (error) throw error;
+
+                await cargarDatosLocales(pacId);
+
+                document.getElementById('formNuevaEvolucion').reset();
+                if(document.getElementById('evoImgName')) {
+                    document.getElementById('evoImgName').textContent = '';
+                }
+                document.getElementById('modalNuevaEvolucion').close();
+            } catch (err) {
+                console.error("Error al guardar consulta:", err);
+                alert("Hubo un error al guardar la consulta.");
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Guardar Procedimiento';
             }
-
-            let imgHtml = '';
-            const imgInput = document.getElementById('inputImagenEvo');
-            if (imgInput.files && imgInput.files[0]) {
-                const imgUrl = URL.createObjectURL(imgInput.files[0]);
-                imgHtml = `<div class="mt-4 flex gap-2"><img src="${imgUrl}" class="w-24 h-24 object-cover rounded-lg border border-outline-variant cursor-pointer hover:opacity-80 transition-opacity"></div>`;
-            }
-
-            const newEvo = {
-                headerText,
-                timeStr,
-                notas,
-                bulletsHtml,
-                imgHtml
-            };
-
-            let evos = JSON.parse(localStorage.getItem(`paciente_evoluciones_${pacId}`) || '[]');
-            evos.unshift(newEvo);
-            localStorage.setItem(`paciente_evoluciones_${pacId}`, JSON.stringify(evos));
-
-            cargarDatosLocales(pacId);
-
-            document.getElementById('formNuevaEvolucion').reset();
-            document.getElementById('evoImgName').textContent = '';
-            document.getElementById('modalNuevaEvolucion').close();
         }
     

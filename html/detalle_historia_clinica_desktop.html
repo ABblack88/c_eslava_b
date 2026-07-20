@@ -455,34 +455,20 @@
     <form id="formNuevaEvolucion" class="space-y-4">
         <div class="grid grid-cols-2 gap-4">
             <div>
-                <label class="block text-sm font-bold text-on-surface mb-1">Tipo de Procedimiento</label>
-                <select id="inputTipoEvo" class="w-full rounded-xl border border-outline-variant px-4 py-3 focus:ring-2 focus:ring-primary outline-none bg-white" onchange="document.getElementById('divNumSesion').classList.toggle('hidden', this.value==='Único')">
-                    <option value="Sesión">Sesión de Tratamiento</option>
-                    <option value="Único">Procedimiento Único</option>
-                </select>
+                <label class="block text-sm font-bold text-on-surface mb-1">Subjetivo (S)</label>
+                <textarea id="inputSubjetivo" rows="3" placeholder="Síntomas, motivo de consulta, dolor (EVA)..." class="w-full rounded-xl border border-outline-variant px-4 py-3 focus:ring-2 focus:ring-primary outline-none resize-none"></textarea>
             </div>
-            <div id="divNumSesion">
-                <label class="block text-sm font-bold text-on-surface mb-1">N° de Sesión</label>
-                <input type="number" id="inputNumSesionEvo" min="1" value="1" class="w-full rounded-xl border border-outline-variant px-4 py-3 focus:ring-2 focus:ring-primary outline-none">
+            <div>
+                <label class="block text-sm font-bold text-on-surface mb-1">Objetivo (O)</label>
+                <textarea id="inputObjetivo" rows="3" placeholder="Signos vitales, examen físico, hallazgos..." class="w-full rounded-xl border border-outline-variant px-4 py-3 focus:ring-2 focus:ring-primary outline-none resize-none"></textarea>
             </div>
-        </div>
-        <div>
-            <label class="block text-sm font-bold text-on-surface mb-1">Título / Motivo</label>
-            <input type="text" id="inputTituloEvo" placeholder="Ej. Terapia Manual y Ultrasonido" class="w-full rounded-xl border border-outline-variant px-4 py-3 focus:ring-2 focus:ring-primary outline-none" required>
-        </div>
-        <div>
-            <label class="block text-sm font-bold text-on-surface mb-1">Detalles Clínicos</label>
-            <textarea id="inputNotasEvo" rows="3" placeholder="Evolución del paciente, hallazgos, dolor (VAS)..." class="w-full rounded-xl border border-outline-variant px-4 py-3 focus:ring-2 focus:ring-primary outline-none resize-none" required></textarea>
-        </div>
-        <div>
-            <label class="block text-sm font-bold text-on-surface mb-1">Acciones Realizadas (Bullets)</label>
-            <textarea id="inputAccionesEvo" rows="2" placeholder="Ej. Magneto&#10;Masajes" class="w-full rounded-xl border border-outline-variant px-4 py-3 focus:ring-2 focus:ring-primary outline-none resize-none"></textarea>
-            <div class="mt-2 flex flex-wrap gap-2">
-                <button type="button" onclick="agregarAccionEvo('Magneto')" class="px-3 py-1 bg-surface-container text-on-surface-variant text-xs font-bold rounded-full hover:bg-primary/10 hover:text-primary transition-colors">+ Magneto</button>
-                <button type="button" onclick="agregarAccionEvo('Masajes')" class="px-3 py-1 bg-surface-container text-on-surface-variant text-xs font-bold rounded-full hover:bg-primary/10 hover:text-primary transition-colors">+ Masajes</button>
-                <button type="button" onclick="agregarAccionEvo('C. Calientes')" class="px-3 py-1 bg-surface-container text-on-surface-variant text-xs font-bold rounded-full hover:bg-primary/10 hover:text-primary transition-colors">+ C. Calientes</button>
-                <button type="button" onclick="agregarAccionEvo('C. Frías')" class="px-3 py-1 bg-surface-container text-on-surface-variant text-xs font-bold rounded-full hover:bg-primary/10 hover:text-primary transition-colors">+ C. Frías</button>
-                <button type="button" onclick="agregarAccionEvo('Electricidad')" class="px-3 py-1 bg-surface-container text-on-surface-variant text-xs font-bold rounded-full hover:bg-primary/10 hover:text-primary transition-colors">+ Electricidad</button>
+            <div>
+                <label class="block text-sm font-bold text-on-surface mb-1">Apreciación (A)</label>
+                <textarea id="inputApreciacion" rows="3" placeholder="Diagnóstico, evolución, impresión clínica..." class="w-full rounded-xl border border-outline-variant px-4 py-3 focus:ring-2 focus:ring-primary outline-none resize-none"></textarea>
+            </div>
+            <div>
+                <label class="block text-sm font-bold text-on-surface mb-1">Plan (P)</label>
+                <textarea id="inputPlan" rows="3" placeholder="Tratamiento, medicamentos, próxima cita..." class="w-full rounded-xl border border-outline-variant px-4 py-3 focus:ring-2 focus:ring-primary outline-none resize-none"></textarea>
             </div>
         </div>
         <div>
