@@ -413,12 +413,13 @@
         btn.disabled = true;
 
         const nombre = document.getElementById('full-patient-name').value;
+        const dni = document.getElementById('full-patient-dni').value;
         const telefono = document.getElementById('full-patient-phone').value;
         const fecha_nacimiento = document.getElementById('full-patient-dob').value || null;
         const email = document.getElementById('full-patient-email').value;
         
         try {
-            const { data, error } = await CalendarioRepository.insertPaciente({ nombre, telefono, fecha_nacimiento, email, estado: 'Activo' });
+            const { data, error } = await CalendarioRepository.insertPaciente({ nombre, dni, telefono, fecha_nacimiento, email, estado: 'Activo' });
                 
             if (error) throw error;
             
