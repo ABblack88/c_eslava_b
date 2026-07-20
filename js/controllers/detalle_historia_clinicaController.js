@@ -1,5 +1,6 @@
 
         let currentPatientId = null;
+        let globalCitaId = null;
 
         function jalarAPagar() {
             if (!currentPatientId) return;
@@ -28,6 +29,13 @@
                 currentPatientId = id;
                 cargarDatosPaciente(id);
                 cargarDatosLocales(id);
+                
+                const atenderCitaId = urlParams.get('atender_cita_id');
+                if (atenderCitaId) {
+                    globalCitaId = atenderCitaId;
+                    const modalEvo = document.getElementById('modalNuevaEvolucion');
+                    if (modalEvo) modalEvo.showModal();
+                }
             }
 
             // Forms setup
@@ -500,14 +508,19 @@
             }
 
             try {
-                const { error } = await supabaseClient.from('consultas_medicas').insert([{
+                const insertData = {
                     paciente_id: pacId,
                     subjetivo,
                     objetivo,
                     apreciacion,
                     plan,
                     medico_tratante
-                }]);
+                };
+                if (globalCitaId) {
+                    insertData.cita_id = globalCitaId;
+                }
+
+                const { error } = await supabaseClient.from('consultas_medicas').insert([insertData]);
 
                 if (error) throw error;
 
@@ -518,6 +531,16 @@
                     document.getElementById('evoImgName').textContent = '';
                 }
                 document.getElementById('modalNuevaEvolucion').close();
+                
+                // If it came from an appointment, maybe update appointment status to 'Atendido'
+                if (globalCitaId) {
+                    await supabaseClient.from('citas').update({ estado: 'Completado' }).eq('id', globalCitaId);
+                    globalCitaId = null; // reset
+                    
+                    // Cleanup URL to avoid reopening modal on refresh
+                    const newUrl = window.location.protocol + "//" + window.location.host + window.location.pathname + `?id=${pacId}`;
+                    window.history.pushState({path:newUrl}, '', newUrl);
+                }
             } catch (err) {
                 console.error("Error al guardar consulta:", err);
                 alert("Hubo un error al guardar la consulta.");

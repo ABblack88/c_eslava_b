@@ -470,7 +470,8 @@
                     evos.unshift(newEvo);
                     localStorage.setItem(`paciente_evoluciones_${currentPaciente.id}`, JSON.stringify(evos));
 
-                    // Shift Treatment Dashboard (Using SOAP fields)
+                // Shift Treatment Dashboard (Using SOAP fields)
+                if (currentPaciente) {
                     const storedTrat = localStorage.getItem(`paciente_tratamiento_${currentPaciente.id}`);
                     if (storedTrat) {
                         const tratData = JSON.parse(storedTrat);
@@ -480,6 +481,19 @@
                         localStorage.setItem(`paciente_tratamiento_${currentPaciente.id}`, JSON.stringify(tratData));
                     }
                 }
+                
+                // Insert into consultas_medicas
+                const { error: errorEvolucion } = await supabaseClient.from('consultas_medicas').insert([{
+                    paciente_id: currentPaciente.id,
+                    cita_id: citaId,
+                    subjetivo: s,
+                    objetivo: o,
+                    apreciacion: a,
+                    plan: p,
+                    medico_tratante: 'Profesional (Atención)' // Or real professional name if available
+                }]);
+                
+                if (errorEvolucion) throw errorEvolucion;
 
                 // Update appointment state to Completado and save final notes
                 const tratData = getTratamientosSeleccionados();
@@ -541,6 +555,16 @@
                     .eq('id', citaId);
 
                 if (error) throw error;
+                
+                // Update consultas_medicas
+                if (currentPaciente) {
+                    await supabaseClient.from('consultas_medicas').update({
+                        subjetivo: s,
+                        objetivo: o,
+                        apreciacion: a,
+                        plan: p
+                    }).eq('cita_id', citaId);
+                }
 
                 await syncPagos(citaId, currentPaciente, currentCita, tratData);
 
