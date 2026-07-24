@@ -9,3 +9,4 @@ run_*
 
 # Security
 js/config/supabase.js
+.env
