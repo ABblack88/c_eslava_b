@@ -680,10 +680,10 @@
                 { name: 'productos', label: 'productos', filter: null },
                 { name: 'servicios', label: 'servicios', filter: null },
                 { name: 'dias_feriados', label: 'días feriados', filter: null },
-                { name: 'profiles', label: 'perfiles de usuario no root', filter: (query) => query.not('role', 'eq', 'root') }
+                { name: 'profiles', label: 'perfiles de usuario no root', filter: (query) => query.neq('role', 'root') }
             ];
 
-            let errorEncontrado = false;
+            const errores = [];
 
             try {
                 for (const tabla of tablas) {
@@ -695,11 +695,12 @@
                     const { error } = await query;
                     if (error) {
                         console.warn(`Error borrando ${tabla.name}:`, error);
-                        errorEncontrado = true;
+                        errores.push(`${tabla.label}: ${error.message || JSON.stringify(error)}`);
                     }
                 }
 
-                if (errorEncontrado) {
+                if (errores.length > 0) {
+                    console.warn('Errores de purga:', errores);
                     alert('La purga terminó, pero hubo errores en algunas tablas. Revisa la consola para más detalles.');
                 } else {
                     alert('Base de datos formateada. La aplicación está lista para el Día 0.');
