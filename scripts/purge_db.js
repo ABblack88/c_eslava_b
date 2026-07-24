@@ -26,7 +26,9 @@ const tablas = [
 ];
 
 async function deleteAll(table) {
-  const url = `${SUPABASE_URL.replace(/\/+$/, '')}/rest/v1/${table}`;
+  // PostgREST exige un filtro para las operaciones DELETE. Todos los registros
+  // de estas tablas tienen un id no nulo, por lo que este filtro abarca la tabla.
+  const url = `${SUPABASE_URL.replace(/\/+$/, '')}/rest/v1/${table}?id=not.is.null`;
   console.log(`-> Borrando tabla: ${table}`);
   const res = await fetch(url, {
     method: 'DELETE',

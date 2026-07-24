@@ -662,10 +662,6 @@
                 return;
             }
 
-            if (!confirm('Última advertencia: Escribe "CONFIRMAR" para proceder.')) {
-                return;
-            }
-
             const confirmar = prompt('Escribe "CONFIRMAR" para proceder con la eliminación.');
             if (confirmar !== 'CONFIRMAR') {
                 alert('Operación cancelada.');
@@ -673,41 +669,49 @@
             }
 
             const tablas = [
-                { name: 'consultas_medicas', label: 'consultas médicas / historia clínica', filter: null },
-                { name: 'pagos', label: 'pagos', filter: null },
-                { name: 'citas', label: 'citas', filter: null },
-                { name: 'pacientes', label: 'pacientes', filter: null },
-                { name: 'productos', label: 'productos', filter: null },
-                { name: 'servicios', label: 'servicios', filter: null },
-                { name: 'dias_feriados', label: 'días feriados', filter: null },
-                { name: 'profiles', label: 'perfiles de usuario no root', filter: (query) => query.neq('role', 'root') }
+                { name: 'consultas_medicas', label: 'consultas médicas / historia clínica' },
+                { name: 'pagos', label: 'pagos' },
+                { name: 'citas', label: 'citas' },
+                { name: 'pacientes', label: 'pacientes' },
+                { name: 'productos', label: 'productos' },
+                { name: 'servicios', label: 'servicios' },
+                { name: 'dias_feriados', label: 'días feriados' },
+                {
+                    name: 'profiles',
+                    label: 'perfiles de usuario no root',
+                    filter: (query) => query.or('role.is.null,role.neq.root')
+                }
             ];
 
             const errores = [];
 
             try {
                 for (const tabla of tablas) {
-                    let query = supabaseClient.from(tabla.name).delete();
-                    if (tabla.filter) {
-                        query = tabla.filter(query);
-                    }
+                    // PostgREST requiere un filtro explícito para un DELETE masivo.
+                    // En las tablas normales, todos los registros tienen un id no nulo.
+                    const aplicarFiltro = tabla.filter || ((query) => query.not('id', 'is', null));
+                    const query = aplicarFiltro(
+                        supabaseClient.from(tabla.name).delete()
+                    ).select('id');
 
-                    const { error } = await query;
+                    const { data: eliminados, error } = await query;
                     if (error) {
                         console.warn(`Error borrando ${tabla.name}:`, error);
                         errores.push(`${tabla.label}: ${error.message || JSON.stringify(error)}`);
+                    } else {
+                        console.info(`${tabla.name}: ${eliminados?.length || 0} registros eliminados`);
                     }
                 }
 
                 if (errores.length > 0) {
                     console.warn('Errores de purga:', errores);
-                    alert('La purga terminó, pero hubo errores en algunas tablas. Revisa la consola para más detalles.');
+                    alert(`La purga terminó con errores:\n\n${errores.join('\n')}`);
                 } else {
                     alert('Base de datos formateada. La aplicación está lista para el Día 0.');
                 }
             } catch (e) {
                 console.error('Error al purgar datos:', e);
-                alert('Ocurrió un error al formatear la base de datos. Revisa la consola.');
+                alert(`Ocurrió un error al formatear la base de datos: ${e.message || e}`);
             }
         }
     </script>
