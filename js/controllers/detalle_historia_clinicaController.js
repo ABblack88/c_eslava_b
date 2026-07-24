@@ -11,6 +11,118 @@
             window.location.href = dest;
         }
 
+        function escapeClinicalText(value) {
+            const div = document.createElement('div');
+            div.textContent = value == null ? '' : String(value);
+            return div.innerHTML;
+        }
+
+        function abrirDetalleAtencion(citaId) {
+            if (!citaId) {
+                showToast('Este procedimiento no está asociado a una cita.', 'error');
+                return;
+            }
+            const role = new URLSearchParams(window.location.search).get('role');
+            const params = new URLSearchParams({ cita_id: citaId });
+            if (currentPatientId) params.set('paciente_id', currentPatientId);
+            if (role) params.set('role', role);
+            window.location.href = `atencion_tiempo_real_desktop.html?${params.toString()}`;
+        }
+
+        async function abrirExportacionHistoria() {
+            const modal = document.getElementById('modalExportarHistoria');
+            const errorEl = document.getElementById('export-history-error');
+            errorEl.classList.add('hidden');
+            errorEl.textContent = '';
+            try {
+                const { data, error } = await supabaseClient
+                    .from('citas')
+                    .select('fecha')
+                    .eq('paciente_id', currentPatientId)
+                    .order('fecha', { ascending: true });
+                if (error) throw error;
+                if (!data || data.length === 0) {
+                    showToast('No hay citas clínicas para exportar.', 'error');
+                    return;
+                }
+                document.getElementById('export-history-from').value = data[0].fecha;
+                document.getElementById('export-history-to').value = data[data.length - 1].fecha;
+                modal.showModal();
+            } catch (error) {
+                console.error('Error preparando exportación:', error);
+                showToast('No se pudieron consultar las fechas disponibles.', 'error');
+            }
+        }
+
+        async function exportarHistoriaPorFechas(event) {
+            event.preventDefault();
+            const from = document.getElementById('export-history-from').value;
+            const to = document.getElementById('export-history-to').value;
+            const errorEl = document.getElementById('export-history-error');
+            const button = document.getElementById('btn-export-history');
+            errorEl.classList.add('hidden');
+
+            if (!from || !to || from > to) {
+                errorEl.textContent = 'La fecha inicial debe ser anterior o igual a la fecha final.';
+                errorEl.classList.remove('hidden');
+                return;
+            }
+
+            // Se abre durante el gesto del usuario para evitar el bloqueo de ventanas emergentes.
+            const printWindow = window.open('', '_blank');
+            if (!printWindow) {
+                errorEl.textContent = 'El navegador bloqueó la ventana del PDF. Habilita ventanas emergentes e inténtalo nuevamente.';
+                errorEl.classList.remove('hidden');
+                return;
+            }
+            printWindow.document.write('<p style="font-family:sans-serif;padding:24px">Preparando historia clínica...</p>');
+            button.disabled = true;
+            button.innerHTML = '<span class="material-symbols-outlined text-[18px] animate-spin">progress_activity</span> Preparando...';
+
+            try {
+                const { data: citas, error: citasError } = await supabaseClient
+                    .from('citas')
+                    .select('id, fecha, hora, tratamiento, estado, consultorio')
+                    .eq('paciente_id', currentPatientId)
+                    .gte('fecha', from)
+                    .lte('fecha', to)
+                    .order('fecha', { ascending: true })
+                    .order('hora', { ascending: true });
+                if (citasError) throw citasError;
+                if (!citas || citas.length === 0) throw new Error('No hay citas en el rango seleccionado.');
+
+                const { data: consultas, error: consultasError } = await supabaseClient
+                    .from('consultas_medicas')
+                    .select('cita_id, subjetivo, objetivo, apreciacion, plan, medico_tratante')
+                    .in('cita_id', citas.map(cita => cita.id));
+                if (consultasError) throw consultasError;
+                const consultasPorCita = new Map((consultas || []).map(consulta => [consulta.cita_id, consulta]));
+                const atendidas = citas.filter(cita => consultasPorCita.has(cita.id));
+                if (atendidas.length === 0) throw new Error('Las citas del rango no tienen atenciones clínicas registradas.');
+
+                const patientName = document.getElementById('patient-name-card')?.textContent || 'Paciente';
+                const patientId = document.getElementById('patient-id-card')?.textContent || '';
+                const sections = atendidas.map((cita, index) => {
+                    const consulta = consultasPorCita.get(cita.id);
+                    const fecha = new Date(`${cita.fecha}T${cita.hora || '12:00:00'}`).toLocaleString('es-PE', { dateStyle: 'long', timeStyle: 'short' });
+                    const field = (label, value) => `<div class="soap"><b>${label}</b><p>${escapeClinicalText(value) || 'Sin registro'}</p></div>`;
+                    return `<section><div class="session-head"><span>ATENCIÓN ${String(index + 1).padStart(2, '0')}</span><time>${escapeClinicalText(fecha)}</time></div><h2>${escapeClinicalText(cita.tratamiento || 'Procedimiento clínico')}</h2><p class="meta">${escapeClinicalText(consulta.medico_tratante || cita.consultorio || 'Profesional no indicado')} · ${escapeClinicalText(cita.estado || '')}</p>${field('S — Subjetivo', consulta.subjetivo)}${field('O — Objetivo', consulta.objetivo)}${field('A — Análisis', consulta.apreciacion)}${field('P — Plan', consulta.plan)}</section>`;
+                }).join('');
+
+                printWindow.document.open();
+                printWindow.document.write(`<!doctype html><html lang="es"><head><meta charset="utf-8"><title>Historia clínica - ${escapeClinicalText(patientName)}</title><style>@page{margin:18mm}*{box-sizing:border-box}body{font-family:Arial,sans-serif;color:#16302b;margin:0}.header{border-bottom:3px solid #10b981;padding-bottom:14px;margin-bottom:24px}.eyebrow{font-size:10px;letter-spacing:.16em;color:#07845f;font-weight:700}.header h1{font-size:24px;margin:6px 0}.header p,.meta{color:#5f706c;font-size:12px}.range{background:#eef8f4;padding:10px 12px;border-radius:8px;font-size:12px}section{break-inside:avoid;border:1px solid #d9e5e1;border-radius:12px;padding:18px;margin:0 0 18px}.session-head{display:flex;justify-content:space-between;color:#07845f;font-size:10px;font-weight:700;letter-spacing:.08em}h2{font-size:17px;margin:8px 0 4px}.soap{border-top:1px solid #e6eeeb;padding-top:10px;margin-top:10px}.soap b{font-size:11px;color:#087f5b}.soap p{font-size:13px;line-height:1.45;white-space:pre-wrap;margin:4px 0}footer{font-size:10px;color:#71817d;text-align:center;margin-top:20px}@media print{.no-print{display:none}}</style></head><body><header class="header"><div class="eyebrow">CENTRO ESLAVA · HISTORIA CLÍNICA</div><h1>${escapeClinicalText(patientName)}</h1><p>${escapeClinicalText(patientId)}</p><div class="range">Atenciones del ${escapeClinicalText(from)} al ${escapeClinicalText(to)} · ${atendidas.length} registro(s)</div></header>${sections}<footer>Documento generado desde Centro Eslava el ${new Date().toLocaleString('es-PE')}</footer><script>window.onload=()=>{window.print()}<\/script></body></html>`);
+                printWindow.document.close();
+                document.getElementById('modalExportarHistoria').close();
+            } catch (error) {
+                printWindow.close();
+                errorEl.textContent = error.message || 'No se pudo generar el PDF.';
+                errorEl.classList.remove('hidden');
+            } finally {
+                button.disabled = false;
+                button.innerHTML = '<span class="material-symbols-outlined text-[18px]">picture_as_pdf</span> Generar PDF';
+            }
+        }
+
         document.addEventListener('DOMContentLoaded', async () => {
             const urlParams = new URLSearchParams(window.location.search);
             let id = urlParams.get('id');
@@ -27,8 +139,8 @@
 
             if (id) {
                 currentPatientId = id;
-                cargarDatosPaciente(id);
-                cargarDatosLocales(id);
+                await cargarDatosPaciente(id);
+                await cargarDatosLocales(id);
                 
                 const atenderCitaId = urlParams.get('atender_cita_id');
                 if (atenderCitaId) {
@@ -360,28 +472,48 @@
                 if (consultasError) throw consultasError;
 
                 if (consultas && consultas.length > 0 && timelineContainer) {
+                    const citaIds = consultas.map(evo => evo.cita_id).filter(Boolean);
+                    let citasPorId = new Map();
+                    if (citaIds.length > 0) {
+                        const { data: citasRelacionadas, error: citasRelacionadasError } = await supabaseClient
+                            .from('citas')
+                            .select('id, fecha, hora, tratamiento, estado, consultorio, paciente_id')
+                            .in('id', citaIds);
+                        if (citasRelacionadasError) throw citasRelacionadasError;
+                        citasPorId = new Map((citasRelacionadas || []).map(cita => [cita.id, cita]));
+                    }
                     timelineContainer.innerHTML = consultas.map(evo => {
-                        const dateObj = new Date(evo.created_at);
+                        const cita = citasPorId.get(evo.cita_id);
+                        const dateObj = cita?.fecha
+                            ? new Date(`${cita.fecha}T${cita.hora || '12:00:00'}`)
+                            : new Date(evo.created_at);
                         const dateStr = dateObj.toLocaleDateString('es-PE', { day: '2-digit', month: 'short', year: 'numeric' });
                         const timeStr = dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                        const canOpen = Boolean(evo.cita_id);
                         
                         return `
-                        <div class="relative flex items-start group">
+                        <div class="relative flex items-start group ${canOpen ? 'cursor-pointer' : ''}" ${canOpen ? `role="button" tabindex="0" onclick="abrirDetalleAtencion('${evo.cita_id}')" onkeydown="if(event.key === 'Enter' || event.key === ' '){event.preventDefault(); abrirDetalleAtencion('${evo.cita_id}')}"` : ''}>
                             <div class="absolute left-0 mt-1.5 w-10 h-10 rounded-full bg-success/20 border-4 border-surface-white flex items-center justify-center text-success z-10 transition-transform group-hover:scale-110">
                                 <span class="material-symbols-outlined text-[20px]">task_alt</span>
                             </div>
-                            <div class="ml-14 bg-surface-container-lowest p-5 rounded-xl border border-surface-container-high w-full">
+                            <div class="ml-14 bg-surface-container-lowest p-5 rounded-xl border border-surface-container-high w-full transition-all ${canOpen ? 'group-hover:border-primary group-hover:shadow-md group-focus:outline-none group-focus:ring-2 group-focus:ring-primary' : ''}">
                                 <div class="flex justify-between mb-2">
-                                    <h5 class="font-body-md text-body-md font-bold text-on-surface">Consulta Médica</h5>
+                                    <div>
+                                        <h5 class="font-body-md text-body-md font-bold text-on-surface">${escapeClinicalText(cita?.tratamiento || 'Consulta Médica')}</h5>
+                                        ${cita?.estado ? `<span class="text-[10px] font-bold uppercase text-success">${escapeClinicalText(cita.estado)}</span>` : ''}
+                                    </div>
                                     <span class="font-label-sm text-label-sm text-outline">${dateStr}, ${timeStr}</span>
                                 </div>
                                 <div class="space-y-3 mt-4">
-                                    ${evo.subjetivo ? `<div><span class="font-bold text-sm text-primary">S:</span> <span class="text-sm text-on-surface-variant">${evo.subjetivo}</span></div>` : ''}
-                                    ${evo.objetivo ? `<div><span class="font-bold text-sm text-primary">O:</span> <span class="text-sm text-on-surface-variant">${evo.objetivo}</span></div>` : ''}
-                                    ${evo.apreciacion ? `<div><span class="font-bold text-sm text-primary">A:</span> <span class="text-sm text-on-surface-variant">${evo.apreciacion}</span></div>` : ''}
-                                    ${evo.plan ? `<div><span class="font-bold text-sm text-primary">P:</span> <span class="text-sm text-on-surface-variant">${evo.plan}</span></div>` : ''}
+                                    ${evo.subjetivo ? `<div><span class="font-bold text-sm text-primary">S:</span> <span class="text-sm text-on-surface-variant">${escapeClinicalText(evo.subjetivo)}</span></div>` : ''}
+                                    ${evo.objetivo ? `<div><span class="font-bold text-sm text-primary">O:</span> <span class="text-sm text-on-surface-variant">${escapeClinicalText(evo.objetivo)}</span></div>` : ''}
+                                    ${evo.apreciacion ? `<div><span class="font-bold text-sm text-primary">A:</span> <span class="text-sm text-on-surface-variant">${escapeClinicalText(evo.apreciacion)}</span></div>` : ''}
+                                    ${evo.plan ? `<div><span class="font-bold text-sm text-primary">P:</span> <span class="text-sm text-on-surface-variant">${escapeClinicalText(evo.plan)}</span></div>` : ''}
                                 </div>
-                                ${evo.medico_tratante ? `<div class="mt-4 pt-3 border-t border-outline-variant/30 text-xs text-outline text-right">${evo.medico_tratante}</div>` : ''}
+                                <div class="mt-4 pt-3 border-t border-outline-variant/30 flex items-center justify-between gap-3">
+                                    <span class="text-xs text-outline">${escapeClinicalText(evo.medico_tratante || cita?.consultorio || '')}</span>
+                                    ${canOpen ? '<span class="inline-flex items-center gap-1 text-xs font-bold text-primary">Ver atención <span class="material-symbols-outlined text-[16px]">arrow_forward</span></span>' : '<span class="text-xs text-outline">Sin cita asociada</span>'}
+                                </div>
                             </div>
                         </div>`;
                     }).join('');
@@ -555,4 +687,3 @@
                 btn.textContent = 'Guardar Procedimiento';
             }
         }
-    

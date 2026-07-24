@@ -247,7 +247,7 @@
 <div class="flex justify-between items-center mb-8">
 <h3 class="font-headline-md text-headline-md text-on-surface">Historia Clínica (Cronológica)</h3>
 <div class="flex gap-2">
-<button onclick="window.print()" class="text-on-surface-variant font-bold flex items-center space-x-1 border border-outline-variant hover:bg-surface-container-low px-3 py-2 rounded-full transition-colors">
+<button onclick="abrirExportacionHistoria()" class="text-on-surface-variant font-bold flex items-center space-x-1 border border-outline-variant hover:bg-surface-container-low px-3 py-2 rounded-full transition-colors">
 <span class="material-symbols-outlined text-[18px]">print</span>
 <span class="font-label-sm text-label-sm">Exportar (PDF)</span>
 </button>
@@ -257,6 +257,37 @@
 </button>
 </div>
 </div>
+
+<!-- Exportar atenciones clínicas por fecha -->
+<dialog id="modalExportarHistoria" class="backdrop:bg-black/50 p-0 rounded-2xl shadow-2xl border-none max-w-lg w-[calc(100%-2rem)] bg-surface-white">
+    <form onsubmit="exportarHistoriaPorFechas(event)" class="p-6">
+        <div class="flex items-start justify-between gap-4 mb-6">
+            <div>
+                <p class="text-[11px] font-bold uppercase tracking-widest text-primary mb-1">Documento clínico</p>
+                <h3 class="text-xl font-bold text-on-surface">Exportar atenciones por fecha</h3>
+                <p class="text-sm text-on-surface-variant mt-1">El PDF incluirá las citas atendidas y su registro SOAP.</p>
+            </div>
+            <button type="button" onclick="document.getElementById('modalExportarHistoria').close()" aria-label="Cerrar" class="w-9 h-9 rounded-full hover:bg-surface-container flex items-center justify-center text-outline transition-colors">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <label class="text-sm font-bold text-on-surface">Desde
+                <input id="export-history-from" type="date" required class="mt-2 w-full rounded-xl border-outline-variant bg-surface-container-lowest focus:ring-primary focus:border-primary">
+            </label>
+            <label class="text-sm font-bold text-on-surface">Hasta
+                <input id="export-history-to" type="date" required class="mt-2 w-full rounded-xl border-outline-variant bg-surface-container-lowest focus:ring-primary focus:border-primary">
+            </label>
+        </div>
+        <p id="export-history-error" class="hidden mt-4 text-sm font-semibold text-error" role="alert"></p>
+        <div class="mt-6 flex justify-end gap-3">
+            <button type="button" onclick="document.getElementById('modalExportarHistoria').close()" class="px-4 py-2 rounded-xl font-bold text-on-surface-variant hover:bg-surface-container transition-colors">Cancelar</button>
+            <button id="btn-export-history" type="submit" class="px-5 py-2 rounded-xl font-bold bg-primary text-white hover:bg-primary/90 transition-colors flex items-center gap-2">
+                <span class="material-symbols-outlined text-[18px]">picture_as_pdf</span> Generar PDF
+            </button>
+        </div>
+    </form>
+</dialog>
 <div class="relative space-y-8 before:absolute before:inset-0 before:ml-5 before:-translate-x-px before:h-full before:w-0.5 before:bg-gradient-to-b before:from-primary before:to-surface-container" id="timeline-container">
 <!-- Timeline Item 1 -->
 <div class="relative flex items-start group">

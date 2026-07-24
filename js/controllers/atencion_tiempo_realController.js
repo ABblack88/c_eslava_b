@@ -359,6 +359,22 @@
                     }
                 }
 
+                // La consulta es la fuente clínica principal. Esto permite abrir
+                // atenciones históricas aunque la cita no conserve el texto SOAP en notas.
+                const { data: consulta, error: consultaError } = await supabaseClient
+                    .from('consultas_medicas')
+                    .select('subjetivo, objetivo, apreciacion, plan')
+                    .eq('cita_id', citaId)
+                    .limit(1)
+                    .maybeSingle();
+                if (consultaError) throw consultaError;
+                if (consulta) {
+                    document.getElementById('soap_s').value = consulta.subjetivo || '';
+                    document.getElementById('soap_o').value = consulta.objetivo || '';
+                    document.getElementById('soap_a').value = consulta.apreciacion || '';
+                    document.getElementById('soap_p').value = consulta.plan || '';
+                }
+
                 // Load Treatment Dashboard info
                 if (currentPaciente) {
                     const storedTrat = localStorage.getItem(`paciente_tratamiento_${currentPaciente.id}`);
@@ -609,4 +625,3 @@
             // Reset input so the same files can be selected again if needed
             event.target.value = '';
         }
-    

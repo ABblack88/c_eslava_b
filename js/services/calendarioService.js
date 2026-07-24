@@ -50,7 +50,8 @@ class CalendarioService {
                 ).length;
 
                 if (c.tratamiento.includes('(Continuación)') || totalOccurrences > 1 || prevOccurrences.length > 0) {
-                    let currentSessionNum = prevOccurrences.length > 0 ? prevOccurrences.length : 1;
+                    const occurrenceNumber = prevOccurrences.length || 1;
+                    const currentSessionNum = ((occurrenceNumber - 1) % servicioObj.duracion) + 1;
                     sessionStr = `Sesión ${currentSessionNum} de ${servicioObj.duracion}`;
                 }
             }

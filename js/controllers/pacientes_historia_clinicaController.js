@@ -389,7 +389,10 @@
                             const totalOccurrences = allCitasPac.filter(c => c.tratamiento && c.tratamiento.includes(baseTrat) && c.estado !== 'Cancelada').length;
                             
                             if (targetCita.tratamiento.includes('(Continuación)') || totalOccurrences > 1 || prevOccurrences.length > 0) {
-                                currentSessionNum = prevOccurrences.length > 0 ? prevOccurrences.length : 1;
+                                const occurrenceNumber = prevOccurrences.length || 1;
+                                // Al terminar un paquete, la siguiente cita inicia otro
+                                // ciclo en vez de mostrar valores como "Sesión 7 de 5".
+                                currentSessionNum = ((occurrenceNumber - 1) % totalSessions) + 1;
                             }
                         }
                     }
@@ -592,4 +595,3 @@
             };
             reader.readAsText(file);
         }
-    

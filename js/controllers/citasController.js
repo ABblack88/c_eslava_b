@@ -130,7 +130,8 @@
                         const totalOccurrences = allCitas.filter(c => c.paciente_id === cita.paciente_id && c.tratamiento && c.tratamiento.includes(baseTrat) && c.estado !== 'Cancelada').length;
                         
                         if (cita.tratamiento.includes('(Continuación)') || totalOccurrences > 1 || prevOccurrences.length > 0) {
-                            let currentSessionNum = prevOccurrences.length > 0 ? prevOccurrences.length : 1;
+                            const occurrenceNumber = prevOccurrences.length || 1;
+                            const currentSessionNum = ((occurrenceNumber - 1) % servicioObj.duracion) + 1;
                             sessionStr = `<span class="bg-primary/10 text-primary text-xs px-2 py-1 rounded font-bold">Sesión ${currentSessionNum} de ${servicioObj.duracion}</span>`;
                         }
                     }
