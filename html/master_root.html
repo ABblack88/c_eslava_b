@@ -658,47 +658,55 @@
         }
 
         async function purgarDatosPrueba() {
-            if (confirm('¿ESTÁS SEGURO? Esto eliminará todos los registros de prueba y dejará la base de datos en cero. Es irreversible.')) {
-                if (confirm('Última advertencia: Escribe "CONFIRMAR" para proceder.') === false) {
-                    return;
+            if (!confirm('¿ESTÁS SEGURO? Esto eliminará todos los registros de prueba y dejará la base de datos en cero. Es irreversible.')) {
+                return;
+            }
+
+            if (!confirm('Última advertencia: Escribe "CONFIRMAR" para proceder.')) {
+                return;
+            }
+
+            const confirmar = prompt('Escribe "CONFIRMAR" para proceder con la eliminación.');
+            if (confirmar !== 'CONFIRMAR') {
+                alert('Operación cancelada.');
+                return;
+            }
+
+            const tablas = [
+                { name: 'consultas_medicas', label: 'consultas médicas / historia clínica', filter: null },
+                { name: 'pagos', label: 'pagos', filter: null },
+                { name: 'citas', label: 'citas', filter: null },
+                { name: 'pacientes', label: 'pacientes', filter: null },
+                { name: 'productos', label: 'productos', filter: null },
+                { name: 'servicios', label: 'servicios', filter: null },
+                { name: 'dias_feriados', label: 'días feriados', filter: null },
+                { name: 'profiles', label: 'perfiles de usuario no root', filter: (query) => query.not('role', 'eq', 'root') }
+            ];
+
+            let errorEncontrado = false;
+
+            try {
+                for (const tabla of tablas) {
+                    let query = supabaseClient.from(tabla.name).delete();
+                    if (tabla.filter) {
+                        query = tabla.filter(query);
+                    }
+
+                    const { error } = await query;
+                    if (error) {
+                        console.warn(`Error borrando ${tabla.name}:`, error);
+                        errorEncontrado = true;
+                    }
                 }
-                const confirmar = prompt('Escribe "CONFIRMAR" para proceder con la eliminación.');
-                if (confirmar !== 'CONFIRMAR') {
-                    alert('Operación cancelada.');
-                    return;
-                }
-                
-                try {
-                    // Borrar en orden para respetar posibles Foreign Keys
-                    // 1. Consultas médicas / historia clínica
-                    const { error: errConsultas } = await supabaseClient.from('consultas_medicas').delete().neq('id', 0);
-                    if (errConsultas) console.warn('Error borrando consultas_medicas:', errConsultas);
 
-                    // 2. Pagos
-                    const { error: errPagos } = await supabaseClient.from('pagos').delete().neq('id', 0);
-                    if (errPagos) console.warn('Error borrando pagos:', errPagos);
-                    
-                    // 3. Citas
-                    const { error: errCitas } = await supabaseClient.from('citas').delete().neq('id', 0);
-                    if (errCitas) console.warn('Error borrando citas:', errCitas);
-
-                    // 4. Pacientes
-                    const { error: errPacientes } = await supabaseClient.from('pacientes').delete().neq('id', 0);
-                    if (errPacientes) console.warn('Error borrando pacientes:', errPacientes);
-
-                    // 5. Productos
-                    const { error: errProductos } = await supabaseClient.from('productos').delete().neq('id', 0);
-                    if (errProductos) console.warn('Error borrando productos:', errProductos);
-
-                    // 6. Servicios
-                    const { error: errServicios } = await supabaseClient.from('servicios').delete().neq('id', 0);
-                    if (errServicios) console.warn('Error borrando servicios:', errServicios);
-
+                if (errorEncontrado) {
+                    alert('La purga terminó, pero hubo errores en algunas tablas. Revisa la consola para más detalles.');
+                } else {
                     alert('Base de datos formateada. La aplicación está lista para el Día 0.');
-                } catch (e) {
-                    console.error('Error al purgar datos:', e);
-                    alert('Ocurrió un error al formatear la base de datos. Revisa la consola.');
                 }
+            } catch (e) {
+                console.error('Error al purgar datos:', e);
+                alert('Ocurrió un error al formatear la base de datos. Revisa la consola.');
             }
         }
     </script>
