@@ -302,8 +302,8 @@
                             const est = (c.estado || '').toLowerCase();
                             return est === 'completada' || est === 'completado' || est === 'atendido' || est === 'atendida';
                         }).length;
-                        const firstVisit = citas[citas.length - 1].fecha;
-                        const fObj = firstVisit ? new Date(firstVisit + (firstVisit.includes('T') ? '' : 'T12:00:00')) : null;
+                        const firstVisit = citas[citas.length - 1]?.fecha;
+                        const fObj = firstVisit ? new Date(firstVisit + (String(firstVisit).includes('T') ? '' : 'T12:00:00')) : null;
                         const dStr = fObj ? fObj.toLocaleDateString('es-PE', { day: '2-digit', month: '2-digit', year: '2-digit' }) : '--';
                         
                         // Calculate Months Since First Visit
@@ -336,8 +336,8 @@
                     const day = String(todayDate.getDate()).padStart(2, '0');
                     const todayStr = `${year}-${month}-${day}`;
                     
-                    // Filter citas where fecha > todayStr
-                    const proximasCitas = (citas || []).filter(c => c.fecha > todayStr).sort((a, b) => a.fecha.localeCompare(b.fecha));
+                    // Filter citas where fecha >= todayStr
+                    const proximasCitas = (citas || []).filter(c => c.fecha && c.fecha >= todayStr).sort((a, b) => String(a.fecha).localeCompare(String(b.fecha)));
                     
                     if (proximasCitas.length > 0) {
                         proxContainer.innerHTML = proximasCitas.map(c => {
