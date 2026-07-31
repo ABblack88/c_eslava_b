@@ -248,6 +248,9 @@ class RBACService {
             cssRules += `\n` + restrictedHrefs.map(r => `a[href*="${r}"] { display: none !important; }`).join('\n');
             cssRules += `\n#resumen-cuenta-card { display: none !important; }`;
         }
+        if (level >= 4) {
+            cssRules += `\n#ventas-totales, #ingresos-section, #metodos-pago-section { display: none !important; }`;
+        }
         if (level >= 3) {
             cssRules += `\n#admin-settings-section, #btn-cobrar-inmediato { display: none !important; }`;
         }

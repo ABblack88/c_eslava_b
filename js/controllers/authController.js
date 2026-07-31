@@ -142,7 +142,7 @@ class AuthController {
         const name = document.getElementById('signup-name').value;
         const email = document.getElementById('signup-email').value;
         const pass = document.getElementById('signup-pass').value;
-        const role = document.getElementById('signup-role').value;
+        const role = 'pendiente'; // Default to pending until admin assigns a role
 
         const submitBtn = event.target.querySelector('button[type="submit"]');
         submitBtn.disabled = true;

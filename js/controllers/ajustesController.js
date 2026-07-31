@@ -31,13 +31,20 @@
                     <div class="flex items-center justify-between p-3 bg-surface-container-low rounded-2xl border border-surface-variant/50">
                         <div class="flex-1 min-w-0">
                             <p class="font-bold text-sm text-on-surface truncate">${u.full_name || 'Sin nombre'}</p>
-                            <p class="text-[11px] text-outline truncate">${u.role || 'Desconocido'} • ${new Date(u.created_at).toLocaleDateString()}</p>
+                            <p class="text-[11px] text-outline truncate">${u.email} • ${new Date(u.created_at).toLocaleDateString()}</p>
                         </div>
-                        <div class="flex items-center gap-2 ml-4">
+                        <div class="flex items-center gap-3 ml-4">
+                            <select id="rol-aprobacion-${u.id}" class="bg-surface-container text-on-surface text-xs rounded border border-outline-variant px-2 py-1 outline-none">
+                                <option value="asistente">Asistente Clínico</option>
+                                <option value="tratante">Tratante / Especialista</option>
+                                <option value="cajero">Cajero</option>
+                                <option value="admin">Administrador</option>
+                                <option value="root">Root (Propietario)</option>
+                            </select>
                             <button onclick="rechazarUsuario('${u.id}')" class="p-2 text-error hover:bg-error/10 rounded-lg transition-colors" title="Rechazar">
                                 <span class="material-symbols-outlined text-[20px]">close</span>
                             </button>
-                            <button onclick="aprobarUsuario('${u.id}')" class="p-2 text-success bg-success/10 hover:bg-success/20 rounded-lg transition-colors font-bold" title="Aprobar">
+                            <button onclick="aprobarUsuario('${u.id}')" class="p-2 text-success bg-success/10 hover:bg-success/20 rounded-lg transition-colors font-bold" title="Aprobar y Asignar Rol">
                                 <span class="material-symbols-outlined text-[20px]">check</span>
                             </button>
                         </div>
@@ -53,9 +60,12 @@
         }
 
         async function aprobarUsuario(id) {
-            if(!confirm("¿Aprobar el acceso de este usuario?")) return;
+            const selectElement = document.getElementById(`rol-aprobacion-${id}`);
+            const selectedRole = selectElement ? selectElement.value : 'asistente';
+            
+            if(!confirm(`¿Aprobar el acceso de este usuario con el rol de ${selectedRole}?`)) return;
             try {
-                const { error } = await supabaseClient.from('profiles').update({ status: 'aprobado' }).eq('id', id);
+                const { error } = await supabaseClient.from('profiles').update({ status: 'aprobado', role: selectedRole }).eq('id', id);
                 if (error) throw error;
                 cargarUsuariosPendientes();
             } catch (err) {
