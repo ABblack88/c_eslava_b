@@ -40,7 +40,6 @@
                                 <option value="tratante">Tratante / Especialista</option>
                                 <option value="cajero">Cajero</option>
                                 <option value="admin">Administrador</option>
-                                <option value="root">Root</option>
                             </select>
                             <button onclick="rechazarUsuario('${u.id}')" class="p-2 text-error hover:bg-error/10 rounded-lg transition-colors" title="Rechazar">
                                 <span class="material-symbols-outlined text-[20px]">close</span>
@@ -113,7 +112,6 @@
                                 <option value="tratante" ${selectedTratante}>Tratante / Especialista</option>
                                 <option value="cajero" ${selectedCajero}>Cajero</option>
                                 <option value="admin" ${selectedAdmin}>Administrador</option>
-                                <option value="root" ${selectedRoot}>Root</option>
                             </select>
                             <button onclick="actualizarRolUsuarioActivo('${u.id}')" class="p-2 text-primary bg-primary/10 hover:bg-primary/20 rounded-lg transition-colors font-bold" title="Guardar Rol">
                                 <span class="material-symbols-outlined text-[20px]">save</span>
