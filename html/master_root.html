@@ -227,11 +227,46 @@
                         </div>
 
                         <div class="mt-6 p-4 bg-primary/10 rounded-xl border border-primary/20 text-center">
-                            <span class="material-symbols-outlined text-primary mb-2 text-3xl">mark_email_unread</span>
-                            <p class="text-sm font-bold text-white mb-2">Plantillas de Email</p>
-                            <p class="text-xs text-gray-400 mb-4">Para modificar el diseño y texto de los correos (Reset Password, Verificación), ve a Supabase > Authentication > Email Templates.</p>
-                            <a href="https://supabase.com/dashboard/project/_/auth/templates" target="_blank" class="text-xs font-bold bg-primary text-black px-4 py-2 rounded-lg hover:bg-primary/80 transition-colors inline-block">Abrir Dashboard Supabase</a>
+                            <span class="material-symbols-outlined text-primary mb-2 text-3xl">mail</span>
+                            <p class="text-sm font-bold text-white mb-2">Configuración y Pruebas de Correo (SMTP)</p>
+                            <p class="text-xs text-gray-400 mb-4">Para garantizar que los correos (verificación, recuperación) no lleguen a SPAM y funcionen sin límites, debes configurar un servidor SMTP (ej. Resend) en Supabase. También puedes editar el diseño (plantilla) de los correos enviados a tus pacientes/staff.</p>
+                            
+                            <div class="flex flex-wrap items-center justify-center gap-3 mb-4">
+                                <a href="https://supabase.com/dashboard/project/_/settings/auth" target="_blank" class="text-[11px] font-bold bg-white/10 text-white border border-white/20 px-3 py-1.5 rounded-lg hover:bg-white/20 transition-colors flex items-center gap-1">
+                                    <span class="material-symbols-outlined text-[14px]">settings</span> Configurar SMTP
+                                </a>
+                                <a href="https://supabase.com/dashboard/project/_/auth/templates" target="_blank" class="text-[11px] font-bold bg-white/10 text-white border border-white/20 px-3 py-1.5 rounded-lg hover:bg-white/20 transition-colors flex items-center gap-1">
+                                    <span class="material-symbols-outlined text-[14px]">edit</span> Editar Plantillas
+                                </a>
+                            </div>
+
+                            <button id="btn-test-email" onclick="window.probarEnvioCorreo()" class="text-xs font-bold bg-primary text-black px-4 py-2 rounded-lg hover:bg-primary/80 transition-colors inline-flex items-center gap-2">
+                                <span class="material-symbols-outlined text-[16px]">send</span> Enviar Correo de Prueba
+                            </button>
+                            <p class="text-[10px] text-gray-500 mt-2">Se enviará un correo de recuperación a tu cuenta actual para probar la entrega.</p>
                         </div>
+                        
+                        <script>
+                            window.probarEnvioCorreo = async function() {
+                                if(!window.db) return alert("Base de datos no conectada");
+                                const { data } = await window.db.auth.getUser();
+                                if(!data || !data.user) return alert("Debes iniciar sesión");
+                                
+                                const email = data.user.email;
+                                const btn = document.getElementById('btn-test-email');
+                                if(btn) { btn.disabled = true; btn.textContent = "Enviando..."; }
+                                
+                                try {
+                                    const { error } = await window.db.auth.resetPasswordForEmail(email);
+                                    if(error) throw error;
+                                    alert("Se ha enviado un correo de prueba (Reset Password) a: " + email + ". Por favor, revisa tu bandeja de entrada o SPAM para confirmar la entrega.");
+                                } catch(e) {
+                                    alert("Error al enviar: " + e.message + "\\n\\nAsegúrate de haber configurado tu proveedor SMTP (Resend, SendGrid, etc.) en Supabase > Settings > Auth.");
+                                } finally {
+                                    if(btn) { btn.disabled = false; btn.innerHTML = '<span class="material-symbols-outlined text-[16px]">send</span> Enviar Correo de Prueba'; }
+                                }
+                            }
+                        </script>
                     </div>
                 </div>
             </div>
