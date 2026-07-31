@@ -9,9 +9,8 @@ class RBACService {
 
     static getAccessLevel(role) {
         if (['developer', 'root'].includes(role)) return 1;
-        if (['admin'].includes(role)) return 2;
         if (['admision', 'cajero'].includes(role)) return 3;
-        if (['medico', 'tratante', 'asistente'].includes(role)) return 4;
+        if (['medico', 'tratante', 'asistente', 'especialista'].includes(role)) return 4;
         return 4; // Default to most restricted
     }
 
@@ -131,8 +130,19 @@ class RBACService {
                 const existing = document.getElementById('global-desktop-user-widget');
                 if (existing) existing.remove();
                 
-                const isRealAdmin = ['root', 'admin'].includes(realRole);
+                const isRealAdmin = ['root', 'developer'].includes(realRole);
                 let simulatorHtml = '';
+                
+                const rolesMap = {
+                    'root': 'Administrador (Total)',
+                    'admision': 'Admisión',
+                    'cajero': 'Cajero',
+                    'medico': 'Médico',
+                    'especialista': 'Especialista',
+                    'asistente': 'Asistente',
+                    'developer': 'Desarrollador'
+                };
+                const displayRole = rolesMap[simulatedRole] || simulatedRole;
                 
                 if (isRealAdmin) {
                     // Create global function for changing role safely
@@ -142,8 +152,15 @@ class RBACService {
                         window.location.assign(u.toString());
                     };
                     
-                    const roles = ['root', 'admin', 'admision', 'cajero', 'medico', 'especialista', 'asistente'];
-                    const optionsHtml = roles.map(r => `<option value="${r}" ${r === simulatedRole ? 'selected' : ''}>Simular: ${r}</option>`).join('');
+                    const roles = [
+                        {val: 'root', label: 'Administrador (Total)'},
+                        {val: 'admision', label: 'Admisión'},
+                        {val: 'cajero', label: 'Cajero'},
+                        {val: 'medico', label: 'Médico'},
+                        {val: 'especialista', label: 'Especialista'},
+                        {val: 'asistente', label: 'Asistente'}
+                    ];
+                    const optionsHtml = roles.map(r => `<option value="${r.val}" ${r.val === simulatedRole ? 'selected' : ''}>Simular: ${r.label}</option>`).join('');
                     simulatorHtml = `
                         <select onchange="window.simularRol(this.value)" class="ml-4 px-2 py-1 text-[10px] font-bold bg-primary/10 text-primary border border-primary/20 rounded-md outline-none cursor-pointer">
                             ${optionsHtml}
@@ -158,7 +175,7 @@ class RBACService {
                     ${simulatorHtml}
                     <div class="flex flex-col text-right">
                         <span class="font-bold text-sm text-on-surface leading-tight">${name}</span>
-                        <span class="text-[10px] uppercase tracking-wider text-primary font-bold">${simulatedRole}</span>
+                        <span class="text-[10px] uppercase tracking-wider text-primary font-bold">${displayRole}</span>
                     </div>
                     <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold shadow-sm">
                         ${name.charAt(0).toUpperCase()}
@@ -176,8 +193,8 @@ class RBACService {
                     <div class="flex flex-col">
                         <span class="font-label-sm text-label-sm text-primary font-bold truncate max-w-[150px]">${name}</span>
                         <div class="flex items-center gap-2 mt-0.5">
-                            <span class="text-[10px] text-outline uppercase tracking-wider font-semibold">${simulatedRole}</span>
-                            ${simulatorHtml}
+                            <span class="text-[10px] text-outline uppercase tracking-wider font-semibold">${typeof displayRole !== 'undefined' ? displayRole : simulatedRole}</span>
+                            ${typeof simulatorHtml !== 'undefined' ? simulatorHtml : ''}
                         </div>
                     </div>
                 `;
@@ -187,7 +204,7 @@ class RBACService {
             if (accountHeaderName && accountHeaderName.textContent.includes('Eslava')) {
                  accountHeaderName.textContent = name;
                  if (accountHeaderName.nextElementSibling) {
-                     accountHeaderName.nextElementSibling.textContent = simulatedRole;
+                     accountHeaderName.nextElementSibling.textContent = typeof displayRole !== 'undefined' ? displayRole : simulatedRole;
                  }
             }
         } catch (e) {
