@@ -8,10 +8,9 @@ class RBACService {
     }
 
     static getAccessLevel(role) {
-        if (['developer', 'root'].includes(role)) return 1;
-        if (['admin'].includes(role)) return 2;
+        if (['developer', 'root', 'admin'].includes(role)) return 1;
         if (['admision', 'cajero'].includes(role)) return 3;
-        if (['medico', 'tratante', 'asistente'].includes(role)) return 4;
+        if (['medico', 'tratante', 'asistente', 'especialista'].includes(role)) return 4;
         return 4; // Default to most restricted
     }
 
@@ -142,8 +141,8 @@ class RBACService {
                         window.location.assign(u.toString());
                     };
                     
-                    const roles = ['root', 'admin', 'admision', 'cajero', 'medico', 'especialista', 'asistente'];
-                    const optionsHtml = roles.map(r => `<option value="${r}" ${r === simulatedRole ? 'selected' : ''}>Simular: ${r}</option>`).join('');
+                    const roles = ['admin', 'admision', 'cajero', 'medico', 'especialista', 'asistente'];
+                    const optionsHtml = roles.map(r => `<option value="${r}" ${(r === simulatedRole || (r === 'admin' && simulatedRole === 'root')) ? 'selected' : ''}>Simular: ${r}</option>`).join('');
                     simulatorHtml = `
                         <select onchange="window.simularRol(this.value)" class="ml-4 px-2 py-1 text-[10px] font-bold bg-primary/10 text-primary border border-primary/20 rounded-md outline-none cursor-pointer">
                             ${optionsHtml}
