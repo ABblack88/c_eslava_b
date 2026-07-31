@@ -4,6 +4,7 @@
             cargarProductos();
             cargarAjustes();
             cargarUsuariosPendientes();
+            initToggleRecordatorios();
         });
 
         async function cargarUsuariosPendientes() {
@@ -97,6 +98,43 @@
 
         function guardarAjuste(key, value) {
             localStorage.setItem(key, value);
+        }
+
+        function toggleRecordatorios() {
+            const toggle = document.getElementById('toggle-recordatorios');
+            const dot = document.getElementById('toggle-recordatorios-dot');
+            if (!toggle || !dot) return;
+            
+            const isEnabled = localStorage.getItem('recordatoriosSMS') !== 'false';
+            if (isEnabled) {
+                // Turn off
+                localStorage.setItem('recordatoriosSMS', 'false');
+                toggle.classList.remove('bg-primary');
+                toggle.classList.add('bg-outline-variant');
+                dot.classList.remove('translate-x-6');
+                dot.classList.add('translate-x-1');
+            } else {
+                // Turn on
+                localStorage.setItem('recordatoriosSMS', 'true');
+                toggle.classList.add('bg-primary');
+                toggle.classList.remove('bg-outline-variant');
+                dot.classList.add('translate-x-6');
+                dot.classList.remove('translate-x-1');
+            }
+        }
+
+        function initToggleRecordatorios() {
+            const toggle = document.getElementById('toggle-recordatorios');
+            const dot = document.getElementById('toggle-recordatorios-dot');
+            if (!toggle || !dot) return;
+            
+            const isEnabled = localStorage.getItem('recordatoriosSMS') !== 'false';
+            if (!isEnabled) {
+                toggle.classList.remove('bg-primary');
+                toggle.classList.add('bg-outline-variant');
+                dot.classList.remove('translate-x-6');
+                dot.classList.add('translate-x-1');
+            }
         }
 
         function guardarAjustesFinancieros(event) {

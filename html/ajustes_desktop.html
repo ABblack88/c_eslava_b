@@ -95,12 +95,12 @@
 <div class="bg-primary/5 rounded-2xl p-4 mb-4">
 <div class="flex justify-between items-end mb-2">
 <span class="text-label-sm text-primary font-bold">Ocupación Semanal</span>
-<span class="text-headline-md font-bold text-primary">84%</span>
+<span class="text-headline-md font-bold text-primary" id="sidebar-ocupacion-pct">84%</span>
 </div>
 <div class="w-full bg-outline-variant/30 h-2 rounded-full overflow-hidden">
-<div class="bg-primary h-full rounded-full" style="width: 84%"></div>
+<div class="bg-primary h-full rounded-full" id="sidebar-ocupacion-bar" style="width: 84%"></div>
 </div>
-<p class="text-[11px] text-on-surface-variant mt-2 leading-tight">Optimización alta. Considerar apertura de agenda Sábados.</p>
+<p class="text-[11px] text-on-surface-variant mt-2 leading-tight" id="sidebar-ocupacion-msg">Optimización alta. Considerar apertura de agenda Sábados.</p>
 </div>
 <!-- Logout button en sidebar desktop -->
 <button onclick="cerrarSesion()" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-error hover:bg-error/10 transition-all font-bold group border border-error/20">
@@ -221,8 +221,8 @@
 <p class="text-xs text-on-surface-variant">Enviados 24h antes de la cita</p>
 </div>
 </div>
-<div class="relative inline-flex h-6 w-11 items-center rounded-full bg-primary cursor-pointer">
-<span class="inline-block h-4 w-4 translate-x-6 transform rounded-full bg-white transition"></span>
+<div id="toggle-recordatorios" onclick="toggleRecordatorios()" class="relative inline-flex h-6 w-11 items-center rounded-full bg-primary cursor-pointer transition-colors">
+<span id="toggle-recordatorios-dot" class="inline-block h-4 w-4 translate-x-6 transform rounded-full bg-white transition-transform"></span>
 </div>
 </div>
 <!-- Finanzas Settings -->

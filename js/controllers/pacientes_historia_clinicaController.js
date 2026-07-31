@@ -224,7 +224,7 @@
             const tbody = document.getElementById('pacientes-tbody');
             tbody.innerHTML = '<tr><td colspan="6" class="px-8 py-4 text-center">Cargando pacientes...</td></tr>';
             
-            const { data, error } = await window.supabaseClient.from('pacientes').select('*, citas(id, estado, fecha, hora, tratamiento, consultorio), pagos(id, estado, cita_id)').order('created_at', { ascending: false });
+            const { data, error } = await window.supabaseClient.from('pacientes').select('*, citas(id, estado, fecha, hora, tratamiento, consultorio), pagos(id, estado, cita_id)').order('nombre', { ascending: true });
             
             if (error) {
                 console.error("Error al cargar pacientes:", error);
