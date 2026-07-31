@@ -98,7 +98,7 @@ async function calcularOcupacionSemanalSidebar() {
     const barEl = document.getElementById('sidebar-ocupacion-bar');
     const msgEl = document.getElementById('sidebar-ocupacion-msg');
 
-    if (!pctEl || !barEl || typeof supabaseClient === 'undefined') return;
+    if (!pctEl || !barEl || typeof window.supabaseClient === 'undefined') return;
 
     try {
         // 1. Calcular fechas de la semana actual (Lunes a Domingo)
@@ -117,7 +117,7 @@ async function calcularOcupacionSemanalSidebar() {
         const endStr = domingo.toISOString().split('T')[0];
 
         // 2. Traer citas de la semana
-        const { data: citasData, error: citasError } = await supabaseClient
+        const { data: citasData, error: citasError } = await window.supabaseClient
             .from('citas')
             .select('estado, tratamiento')
             .gte('fecha', startStr)
@@ -126,7 +126,7 @@ async function calcularOcupacionSemanalSidebar() {
         if (citasError) throw citasError;
 
         // 3. Traer servicios para saber duración
-        const { data: serviciosData } = await supabaseClient.from('servicios').select('nombre, duracion');
+        const { data: serviciosData } = await window.supabaseClient.from('servicios').select('nombre, duracion');
         const serviciosMap = {};
         if (serviciosData) {
             serviciosData.forEach(s => serviciosMap[s.nombre] = s.duracion || 60);
