@@ -121,6 +121,7 @@ class AuthController {
                 
                 const role = profile?.role || data.user.user_metadata?.role || 'asistente';
                 localStorage.setItem('c-eslava-auth-token', JSON.stringify(data.session));
+                localStorage.setItem('c-eslava-real-role', role);
                 
                 setTimeout(() => {
                     const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth < 768;

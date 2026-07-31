@@ -130,10 +130,25 @@ class RBACService {
                 const existing = document.getElementById('global-desktop-user-widget');
                 if (existing) existing.remove();
                 
+                const realRole = localStorage.getItem('c-eslava-real-role') || '';
+                const isRealAdmin = ['root', 'admin'].includes(realRole);
+                let simulatorHtml = '';
+                
+                if (isRealAdmin) {
+                    const roles = ['root', 'admin', 'admision', 'cajero', 'medico', 'especialista', 'asistente'];
+                    const optionsHtml = roles.map(r => `<option value="${r}" ${r === role ? 'selected' : ''}>Simular: ${r}</option>`).join('');
+                    simulatorHtml = `
+                        <select onchange="window.location.href = window.location.pathname + '?role=' + this.value" class="ml-4 px-2 py-1 text-[10px] font-bold bg-primary/10 text-primary border border-primary/20 rounded-md outline-none cursor-pointer">
+                            ${optionsHtml}
+                        </select>
+                    `;
+                }
+
                 const widget = document.createElement('div');
                 widget.id = 'global-desktop-user-widget';
                 widget.className = 'flex items-center gap-3 pl-6 border-l border-outline-variant/30 ml-4';
                 widget.innerHTML = `
+                    ${simulatorHtml}
                     <div class="flex flex-col text-right">
                         <span class="font-bold text-sm text-on-surface leading-tight">${name}</span>
                         <span class="text-[10px] uppercase tracking-wider text-primary font-bold">${role}</span>
@@ -153,7 +168,10 @@ class RBACService {
                     </div>
                     <div class="flex flex-col">
                         <span class="font-label-sm text-label-sm text-primary font-bold truncate max-w-[150px]">${name}</span>
-                        <span class="text-[10px] text-outline mt-0.5 uppercase tracking-wider font-semibold">${role}</span>
+                        <div class="flex items-center gap-2 mt-0.5">
+                            <span class="text-[10px] text-outline uppercase tracking-wider font-semibold">${role}</span>
+                            ${simulatorHtml}
+                        </div>
                     </div>
                 `;
             }
