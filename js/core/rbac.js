@@ -135,10 +135,17 @@ class RBACService {
                 let simulatorHtml = '';
                 
                 if (isRealAdmin) {
+                    // Create global function for changing role safely
+                    window.simularRol = function(val) {
+                        const u = new URL(window.location.href);
+                        u.searchParams.set('role', val);
+                        window.location.assign(u.toString());
+                    };
+                    
                     const roles = ['root', 'admin', 'admision', 'cajero', 'medico', 'especialista', 'asistente'];
                     const optionsHtml = roles.map(r => `<option value="${r}" ${r === simulatedRole ? 'selected' : ''}>Simular: ${r}</option>`).join('');
                     simulatorHtml = `
-                        <select onchange="const u = new URL(window.location.href); u.searchParams.set('role', this.value); window.location.href = u.toString();" class="ml-4 px-2 py-1 text-[10px] font-bold bg-primary/10 text-primary border border-primary/20 rounded-md outline-none cursor-pointer">
+                        <select onchange="window.simularRol(this.value)" class="ml-4 px-2 py-1 text-[10px] font-bold bg-primary/10 text-primary border border-primary/20 rounded-md outline-none cursor-pointer">
                             ${optionsHtml}
                         </select>
                     `;
@@ -238,6 +245,12 @@ class RBACService {
             // Reveal links after applying restrictions
             const styleEl = document.getElementById('rbac-fouc-style');
             if (styleEl) styleEl.remove();
+        });
+        
+        window.addEventListener('pageshow', (event) => {
+            if (event.persisted) {
+                window.location.reload();
+            }
         });
     }
 }
