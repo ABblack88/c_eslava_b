@@ -123,22 +123,22 @@ class RBACService {
             const { data: profile } = await window.db.from('profiles').select('*').eq('id', user.id).single();
             
             const name = profile?.full_name || user.email.split('@')[0];
-            const role = profile?.role || this.getRoleFromURL() || 'Usuario';
+            const realRole = profile?.role || 'Usuario';
+            const simulatedRole = this.getRoleFromURL() || realRole;
             
             const desktopHeaderRight = document.querySelector('header div.flex.items-center.gap-6');
             if (desktopHeaderRight) {
                 const existing = document.getElementById('global-desktop-user-widget');
                 if (existing) existing.remove();
                 
-                const realRole = localStorage.getItem('c-eslava-real-role') || '';
                 const isRealAdmin = ['root', 'admin'].includes(realRole);
                 let simulatorHtml = '';
                 
                 if (isRealAdmin) {
                     const roles = ['root', 'admin', 'admision', 'cajero', 'medico', 'especialista', 'asistente'];
-                    const optionsHtml = roles.map(r => `<option value="${r}" ${r === role ? 'selected' : ''}>Simular: ${r}</option>`).join('');
+                    const optionsHtml = roles.map(r => `<option value="${r}" ${r === simulatedRole ? 'selected' : ''}>Simular: ${r}</option>`).join('');
                     simulatorHtml = `
-                        <select onchange="window.location.href = window.location.pathname + '?role=' + this.value" class="ml-4 px-2 py-1 text-[10px] font-bold bg-primary/10 text-primary border border-primary/20 rounded-md outline-none cursor-pointer">
+                        <select onchange="const u = new URL(window.location.href); u.searchParams.set('role', this.value); window.location.href = u.toString();" class="ml-4 px-2 py-1 text-[10px] font-bold bg-primary/10 text-primary border border-primary/20 rounded-md outline-none cursor-pointer">
                             ${optionsHtml}
                         </select>
                     `;
@@ -151,7 +151,7 @@ class RBACService {
                     ${simulatorHtml}
                     <div class="flex flex-col text-right">
                         <span class="font-bold text-sm text-on-surface leading-tight">${name}</span>
-                        <span class="text-[10px] uppercase tracking-wider text-primary font-bold">${role}</span>
+                        <span class="text-[10px] uppercase tracking-wider text-primary font-bold">${simulatedRole}</span>
                     </div>
                     <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold shadow-sm">
                         ${name.charAt(0).toUpperCase()}
@@ -169,7 +169,7 @@ class RBACService {
                     <div class="flex flex-col">
                         <span class="font-label-sm text-label-sm text-primary font-bold truncate max-w-[150px]">${name}</span>
                         <div class="flex items-center gap-2 mt-0.5">
-                            <span class="text-[10px] text-outline uppercase tracking-wider font-semibold">${role}</span>
+                            <span class="text-[10px] text-outline uppercase tracking-wider font-semibold">${simulatedRole}</span>
                             ${simulatorHtml}
                         </div>
                     </div>
@@ -180,7 +180,7 @@ class RBACService {
             if (accountHeaderName && accountHeaderName.textContent.includes('Eslava')) {
                  accountHeaderName.textContent = name;
                  if (accountHeaderName.nextElementSibling) {
-                     accountHeaderName.nextElementSibling.textContent = role;
+                     accountHeaderName.nextElementSibling.textContent = simulatedRole;
                  }
             }
         } catch (e) {
