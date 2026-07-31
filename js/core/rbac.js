@@ -135,7 +135,7 @@ class RBACService {
                 let simulatorHtml = '';
                 
                 const rolesMap = {
-                    'root': 'Root (Propietario)',
+                    'root': 'Root',
                     'admin': 'Administrador',
                     'cajero': 'Cajero',
                     'medico': 'Médico',
@@ -154,7 +154,7 @@ class RBACService {
                     };
                     
                     const roles = [
-                        {val: 'root', label: 'Root (Propietario)'},
+                        {val: 'root', label: 'Root'},
                         {val: 'admin', label: 'Administrador'},
                         {val: 'cajero', label: 'Cajero'},
                         {val: 'medico', label: 'Médico'},
