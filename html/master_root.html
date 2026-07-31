@@ -495,15 +495,37 @@
                         ? `<span class="bg-yellow-500/20 text-yellow-400 px-2 py-1 rounded text-xs font-bold ml-2">Pendiente</span>` 
                         : `<span class="bg-primary/20 text-primary px-2 py-1 rounded text-xs font-bold ml-2">Aprobado</span>`;
                         
+                    const selectedAsistente = user.role === 'asistente' ? 'selected' : '';
+                    const selectedTratante = user.role === 'tratante' ? 'selected' : '';
+                    const selectedCajero = user.role === 'cajero' ? 'selected' : '';
+                    const selectedAdmin = user.role === 'admin' ? 'selected' : '';
+                    const selectedRoot = user.role === 'root' ? 'selected' : '';
+
                     tr.innerHTML = `
-                        <td class="py-4 font-bold text-white">${user.full_name || user.nombre || 'Sin Nombre'} <br><span class="text-xs font-normal text-gray-500">${user.email || user.username || 'Sin correo'}</span></td>
-                        <td class="py-4"><span class="${roleColor} px-2 py-1 rounded text-xs font-bold capitalize">${user.role || 'Usuario'}</span>${statusBadge}</td>
+                        <td class="py-4 font-bold text-white flex items-center gap-2">
+                            <div>
+                                ${user.full_name || user.nombre || 'Sin Nombre'} <br>
+                                <span class="text-xs font-normal text-gray-500">${user.email || user.username || 'Sin correo'}</span>
+                            </div>
+                            <button onclick="editUserName('${user.id}', '${user.full_name || user.nombre || ''}')" title="Editar Nombre" class="text-gray-400 hover:text-white px-1 transition-colors"><span class="material-symbols-outlined text-[14px]">edit</span></button>
+                        </td>
+                        <td class="py-4">
+                            <div class="flex items-center gap-2">
+                                <select id="rol-master-${user.id}" onchange="changeUserRole('${user.id}', this.value)" class="bg-black text-white text-xs rounded border border-white/20 px-2 py-1 outline-none">
+                                    <option value="asistente" ${selectedAsistente}>Asistente Clínico</option>
+                                    <option value="tratante" ${selectedTratante}>Tratante / Especialista</option>
+                                    <option value="cajero" ${selectedCajero}>Cajero</option>
+                                    <option value="admin" ${selectedAdmin}>Administrador</option>
+                                    <option value="root" ${selectedRoot}>Root</option>
+                                </select>
+                                ${statusBadge}
+                            </div>
+                        </td>
                         <td class="py-4 text-gray-400 text-sm">${user.created_at ? new Date(user.created_at).toLocaleDateString() : '-'}</td>
                         <td class="py-4 text-right">
                             <div class="flex justify-end gap-2 items-center">
                                 ${isPending ? `<button onclick="approveUser('${user.id}')" class="text-green-400 hover:text-white px-3 text-xs font-bold border border-green-400/30 rounded py-1.5 bg-green-400/10 transition-colors">Aprobar</button>` : ''}
                                 <button onclick="resetPassword('${user.email}')" title="Restablecer Contraseña" class="text-gray-400 hover:text-secondary px-2 transition-colors"><span class="material-symbols-outlined text-[18px]">lock_reset</span></button>
-                                <button onclick="editUser('${user.id}', '${user.full_name || user.nombre || ''}', '${user.role}')" title="Editar Rol o Nombre" class="text-gray-400 hover:text-white px-2 transition-colors"><span class="material-symbols-outlined text-[18px]">edit</span></button>
                                 <button onclick="deleteUser('${user.id}')" title="Eliminar Usuario" class="text-gray-400 hover:text-error px-2 transition-colors"><span class="material-symbols-outlined text-[18px]">delete</span></button>
                             </div>
                         </td>
@@ -544,29 +566,40 @@
             }
         }
 
-        async function editUser(userId, currentName, currentRole) {
+        async function editUserName(userId, currentName) {
             const newName = prompt("Nuevo nombre del usuario:", currentName);
-            if (newName === null) return; // Cancelado
-            
-            const newRole = prompt("Nuevo rol (asistente, tratante, admin, root):", currentRole);
-            if (!newRole) return;
-            
-            if (!['asistente', 'tratante', 'admin', 'root'].includes(newRole.toLowerCase())) {
-                alert("Rol inválido. Debe ser: asistente, tratante, admin o root.");
+            if (!newName) return; 
+
+            try {
+                const { error } = await supabaseClient.from('profiles').update({ 
+                    full_name: newName
+                }).eq('id', userId);
+                
+                if (error) throw error;
+                alert("Nombre actualizado exitosamente.");
+                loadUsers();
+            } catch (err) {
+                alert("Error al actualizar nombre: " + err.message);
+            }
+        }
+
+        async function changeUserRole(userId, newRole) {
+            if (!confirm(`¿Estás seguro de cambiar el rol de este usuario a ${newRole}?`)) {
+                loadUsers(); // Reset select UI
                 return;
             }
 
             try {
                 const { error } = await supabaseClient.from('profiles').update({ 
-                    full_name: newName,
-                    role: newRole.toLowerCase()
+                    role: newRole
                 }).eq('id', userId);
                 
                 if (error) throw error;
-                alert("Usuario actualizado exitosamente (Nota: si cambió el rol de admin/root, podría requerir que el usuario vuelva a iniciar sesión o configuración desde backend para permisos profundos).");
+                alert("Rol actualizado exitosamente.");
                 loadUsers();
             } catch (err) {
-                alert("Error al actualizar usuario: " + err.message);
+                alert("Error al actualizar rol: " + err.message);
+                loadUsers();
             }
         }
 
