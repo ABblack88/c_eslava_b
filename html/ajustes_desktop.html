@@ -186,14 +186,47 @@
     </div>
 </div>
 
-<div class="bg-surface-white p-8 rounded-3xl shadow-[0px_10px_30px_rgba(0,0,0,0.04)] flex flex-col gap-8">
+<!-- Directorio de Usuarios (Gestión de Roles) -->
+<div class="bg-surface-white p-8 rounded-3xl shadow-[0px_10px_30px_rgba(0,0,0,0.04)] flex flex-col gap-6 mt-8">
+    <div class="flex items-center justify-between border-b border-surface-variant pb-4">
+        <h3 class="font-headline-md text-headline-md flex items-center gap-2">
+            <span class="material-symbols-outlined text-primary">manage_accounts</span>
+            Gestión de Usuarios y Roles
+        </h3>
+    </div>
+    <p class="text-xs text-on-surface-variant -mt-2">Modifica los roles de los usuarios que ya han sido aprobados en el sistema.</p>
+    <div id="usuarios-activos-list" class="space-y-3 max-h-[350px] overflow-y-auto pr-1">
+        <p class="text-outline text-xs text-center py-4">Cargando usuarios activos...</p>
+    </div>
+</div>
+
+<div class="bg-surface-white p-8 rounded-3xl shadow-[0px_10px_30px_rgba(0,0,0,0.04)] flex flex-col gap-8 mt-8">
 <div>
 <h3 class="font-headline-md text-headline-md flex items-center gap-2 mb-6">
 <span class="material-symbols-outlined text-primary">tune</span>
                                 Ajustes Operativos
                             </h3>
-<!-- Operating Hours -->
 <div class="space-y-4">
+<!-- Configuración del Sistema (Contacto) -->
+<div class="flex items-center justify-between pb-4 border-b border-outline-variant/30">
+<div class="flex items-center gap-3 w-full">
+<span class="material-symbols-outlined text-on-surface-variant">contact_page</span>
+<div class="flex-1">
+<p class="font-bold text-sm">Datos de la Empresa (Configuración del Sistema)</p>
+<div class="grid grid-cols-2 gap-4 mt-2">
+    <div>
+        <label class="block text-xs font-bold text-on-surface-variant mb-1">WhatsApp Business</label>
+        <input type="tel" id="setting-empresa-whatsapp" onchange="guardarAjuste('cfg_whatsapp', this.value, true)" class="w-full rounded-xl border-outline-variant px-3 py-2 focus:ring-primary focus:border-primary text-sm" placeholder="Ej. +51 987654321">
+    </div>
+    <div>
+        <label class="block text-xs font-bold text-on-surface-variant mb-1">Correo (Google Calendar)</label>
+        <input type="email" id="setting-empresa-email" onchange="guardarAjuste('cfg_gcalendar', this.value, true)" class="w-full rounded-xl border-outline-variant px-3 py-2 focus:ring-primary focus:border-primary text-sm" placeholder="ejemplo@gmail.com">
+    </div>
+</div>
+</div>
+</div>
+</div>
+
 <div class="flex items-center justify-between pb-4 border-b border-outline-variant/30">
 <div class="flex items-center gap-3 w-full">
 <span class="material-symbols-outlined text-on-surface-variant">schedule</span>

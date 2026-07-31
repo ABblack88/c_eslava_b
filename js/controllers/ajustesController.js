@@ -4,6 +4,7 @@
             cargarProductos();
             cargarAjustes();
             cargarUsuariosPendientes();
+            cargarUsuariosActivos();
             initToggleRecordatorios();
         });
 
@@ -68,9 +69,81 @@
                 const { error } = await supabaseClient.from('profiles').update({ status: 'aprobado', role: selectedRole }).eq('id', id);
                 if (error) throw error;
                 cargarUsuariosPendientes();
+                cargarUsuariosActivos(); // Refresh also the active list just in case
             } catch (err) {
-                console.error(err);
-                alert("Error al aprobar usuario.");
+                console.error("Error al aprobar:", err);
+                alert("Error al aprobar: " + err.message);
+            }
+        }
+
+        async function cargarUsuariosActivos() {
+            try {
+                const { data: usuarios, error } = await supabaseClient
+                    .from('profiles')
+                    .select('*')
+                    .neq('status', 'pendiente')
+                    .order('created_at', { ascending: false });
+
+                if (error) throw error;
+                const container = document.getElementById('usuarios-activos-list');
+                if (!container) return;
+                
+                if (!usuarios || usuarios.length === 0) {
+                    container.innerHTML = '<p class="text-outline text-[11px] text-center">No hay usuarios activos.</p>';
+                    return;
+                }
+
+                let html = '';
+                usuarios.forEach(u => {
+                    const selectedAsistente = u.role === 'asistente' ? 'selected' : '';
+                    const selectedTratante = u.role === 'tratante' ? 'selected' : '';
+                    const selectedCajero = u.role === 'cajero' ? 'selected' : '';
+                    const selectedAdmin = u.role === 'admin' ? 'selected' : '';
+                    const selectedRoot = u.role === 'root' ? 'selected' : '';
+
+                    html += `
+                    <div class="flex items-center justify-between p-3 bg-surface-container-low rounded-2xl border border-surface-variant/50">
+                        <div class="flex-1 min-w-0">
+                            <p class="font-bold text-sm text-on-surface truncate">${u.full_name || 'Sin nombre'}</p>
+                            <p class="text-[11px] text-outline truncate">${u.email || ''} • Nivel: ${u.role}</p>
+                        </div>
+                        <div class="flex items-center gap-3 ml-4">
+                            <select id="rol-activo-${u.id}" class="bg-surface-container text-on-surface text-xs rounded border border-outline-variant px-2 py-1 outline-none">
+                                <option value="asistente" ${selectedAsistente}>Asistente Clínico</option>
+                                <option value="tratante" ${selectedTratante}>Tratante / Especialista</option>
+                                <option value="cajero" ${selectedCajero}>Cajero</option>
+                                <option value="admin" ${selectedAdmin}>Administrador</option>
+                                <option value="root" ${selectedRoot}>Root (Propietario)</option>
+                            </select>
+                            <button onclick="actualizarRolUsuarioActivo('${u.id}')" class="p-2 text-primary bg-primary/10 hover:bg-primary/20 rounded-lg transition-colors font-bold" title="Guardar Rol">
+                                <span class="material-symbols-outlined text-[20px]">save</span>
+                            </button>
+                        </div>
+                    </div>
+                    `;
+                });
+                container.innerHTML = html;
+            } catch (err) {
+                console.error("Error cargando usuarios activos:", err);
+                const container = document.getElementById('usuarios-activos-list');
+                if(container) container.innerHTML = '<p class="text-error text-[11px] text-center">Error al cargar datos.</p>';
+            }
+        }
+
+        async function actualizarRolUsuarioActivo(id) {
+            const selectElement = document.getElementById(`rol-activo-${id}`);
+            if(!selectElement) return;
+            const newRole = selectElement.value;
+            
+            if(!confirm(`¿Cambiar el rol de este usuario a ${newRole}?`)) return;
+            try {
+                const { error } = await supabaseClient.from('profiles').update({ role: newRole }).eq('id', id);
+                if (error) throw error;
+                alert('Rol actualizado correctamente.');
+                cargarUsuariosActivos();
+            } catch (err) {
+                console.error("Error al actualizar rol:", err);
+                alert("Error al actualizar el rol: " + err.message);
             }
         }
 
@@ -90,25 +163,36 @@
             const comisionNacional = localStorage.getItem('comisionPOSNacional') || 4.5;
             const comisionInternacional = localStorage.getItem('comisionPOSInternacional') || 5.5;
             const igv = localStorage.getItem('igvPorcentaje') || 18;
-            const horaApertura = localStorage.getItem('horaApertura') || '08:00';
-            const horaCierre = localStorage.getItem('horaCierre') || '20:00';
             
+            const wp = document.getElementById('setting-empresa-whatsapp');
+            const em = document.getElementById('setting-empresa-email');
+            if(wp) wp.value = localStorage.getItem('cfg_whatsapp') || '';
+            if(em) em.value = localStorage.getItem('cfg_gcalendar') || '';
+
             const inputComNacional = document.getElementById('setting-comision-pos-nacional');
             const inputComInternacional = document.getElementById('setting-comision-pos-internacional');
             const inputIgv = document.getElementById('setting-igv');
             const inputApertura = document.getElementById('setting-hora-apertura');
             const inputCierre = document.getElementById('setting-hora-cierre');
-            
+
             if (inputComNacional) inputComNacional.value = comisionNacional;
             if (inputComInternacional) inputComInternacional.value = comisionInternacional;
             if (inputIgv) inputIgv.value = igv;
-            if (inputApertura) inputApertura.value = horaApertura;
-            if (inputCierre) inputCierre.value = horaCierre;
+            
+            if (inputApertura) inputApertura.value = localStorage.getItem('horaApertura') || '08:00';
+            if (inputCierre) inputCierre.value = localStorage.getItem('horaCierre') || '20:00';
         }
 
-        function guardarAjuste(key, value) {
+        window.guardarAjuste = function(key, value, showAlert = false) {
             localStorage.setItem(key, value);
-        }
+            if (showAlert) {
+                const toast = document.createElement('div');
+                toast.className = 'fixed bottom-4 right-4 bg-green-500 text-white px-4 py-2 rounded shadow-lg z-50 text-sm font-bold';
+                toast.textContent = 'Ajuste guardado';
+                document.body.appendChild(toast);
+                setTimeout(() => toast.remove(), 2000);
+            }
+        };
 
         function toggleRecordatorios() {
             const toggle = document.getElementById('toggle-recordatorios');
