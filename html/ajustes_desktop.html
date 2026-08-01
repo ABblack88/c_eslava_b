@@ -222,6 +222,11 @@
         <label class="block text-xs font-bold text-on-surface-variant mb-1">Correo (Google Calendar)</label>
         <input type="email" id="setting-empresa-email" onchange="guardarAjuste('cfg_gcalendar', this.value, true)" class="w-full rounded-xl border-outline-variant px-3 py-2 focus:ring-primary focus:border-primary text-sm" placeholder="ejemplo@gmail.com">
     </div>
+    <div class="col-span-2 pt-2">
+        <button type="button" onclick="window.location.href='importar_gcal_desktop.html'" class="bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20 px-4 py-2 rounded-xl text-sm font-bold flex items-center gap-2 w-fit transition-colors">
+            <span class="material-symbols-outlined text-[18px]">calendar_add_on</span> Importar Citas desde Google Calendar (.ics)
+        </button>
+    </div>
 </div>
 </div>
 </div>
