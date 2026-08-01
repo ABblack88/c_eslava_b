@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html class="light" lang="es">
+<head>
+    <link rel="icon" sizes="192x192" href="https://static.wixstatic.com/media/2a2885_0faab9c802fb481587f8d8fee5fa0eee%7Emv2.png/v1/fill/w_192%2Ch_192%2Clg_1%2Cusm_0.66_1.00_0.01/2a2885_0faab9c802fb481587f8d8fee5fa0eee%7Emv2.png" type="image/png"/>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Importar Google Calendar</title>
+    
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;700;800&display=block" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=block" rel="stylesheet"/>
+    
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../js/config/supabase.js"></script>
+    <script src="../js/config/tailwind-theme.js"></script>
+    <link rel="stylesheet" href="../css/global.css">
+    
+    <style>
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+    </style>
+
+    <script src="../js/core/ui.js"></script>
+    <script src="../js/core/auth.js"></script>
+    <script src="../js/core/rbac.js"></script>
+    <script src="../js/api/calendarioRepository.js"></script>
+</head>
+<body class="bg-background font-body-md text-on-surface">
+
+<main class="p-10 max-w-4xl mx-auto">
+    <div class="mb-8 flex items-center justify-between">
+        <div>
+            <h1 class="text-display-sm font-bold text-primary flex items-center gap-2">
+                <span class="material-symbols-outlined text-[32px]">calendar_add_on</span>
+                Importar Google Calendar
+            </h1>
+            <p class="text-on-surface-variant mt-2">Sube el archivo <b>.ics</b> exportado de tu Google Calendar. Se importarán las citas desde la fecha seleccionada en adelante.</p>
+        </div>
+        <a href="calendario_dashboard_desktop.html" class="flex items-center gap-2 bg-surface-container-high px-4 py-2 rounded-xl text-on-surface-variant font-bold hover:bg-surface-variant transition-colors">
+            <span class="material-symbols-outlined">arrow_back</span> Volver al Calendario
+        </a>
+    </div>
+
+    <div class="bg-surface-white p-8 rounded-3xl shadow-[0px_10px_30px_rgba(0,0,0,0.04)] border border-outline-variant/30 flex flex-col gap-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+                <label class="block text-sm font-bold text-on-surface mb-2">Importar citas a partir de la fecha:</label>
+                <input type="date" id="fecha-inicio" class="w-full rounded-xl border-outline-variant px-4 py-3 focus:ring-primary focus:border-primary text-sm bg-surface-container-low" value="2026-08-01">
+            </div>
+            <div>
+                <label class="block text-sm font-bold text-on-surface mb-2">Archivo .ics de Google Calendar:</label>
+                <input type="file" id="file-ics" accept=".ics" class="w-full rounded-xl border-outline-variant px-4 py-2 focus:ring-primary focus:border-primary text-sm file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-white hover:file:bg-primary-container cursor-pointer">
+            </div>
+        </div>
+
+        <div class="pt-4 flex items-center gap-4 border-t border-outline-variant/30">
+            <button onclick="procesarArchivo()" id="btn-importar" class="bg-primary hover:bg-primary-container text-white px-8 py-3 rounded-xl font-bold flex items-center gap-2 transition-all shadow-md active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed">
+                <span class="material-symbols-outlined">upload_file</span>
+                Procesar e Importar Citas
+            </button>
+            <span id="estado-proceso" class="text-sm font-bold text-on-surface-variant hidden flex items-center gap-2">
+                <span class="material-symbols-outlined animate-spin text-primary">progress_activity</span>
+                Procesando, por favor espera...
+            </span>
+        </div>
+    </div>
+
+    <!-- Resultados -->
+    <div id="resultados-card" class="mt-8 bg-surface-white p-8 rounded-3xl shadow-[0px_10px_30px_rgba(0,0,0,0.04)] border border-outline-variant/30 hidden">
+        <h2 class="text-xl font-bold text-on-surface mb-4">Resultados de la Importación</h2>
+        <div class="grid grid-cols-3 gap-4 mb-6">
+            <div class="bg-primary/10 rounded-2xl p-4 border border-primary/20">
+                <p class="text-sm text-primary font-bold">Eventos Encontrados</p>
+                <p id="res-total" class="text-3xl font-bold text-primary">0</p>
+            </div>
+            <div class="bg-success/10 rounded-2xl p-4 border border-success/20">
+                <p class="text-sm text-success font-bold">Importados con Éxito</p>
+                <p id="res-exito" class="text-3xl font-bold text-success">0</p>
+            </div>
+            <div class="bg-error/10 rounded-2xl p-4 border border-error/20">
+                <p class="text-sm text-error font-bold">Errores</p>
+                <p id="res-error" class="text-3xl font-bold text-error">0</p>
+            </div>
+        </div>
+        
+        <div class="max-h-64 overflow-y-auto border border-outline-variant/30 rounded-xl p-4 bg-surface-container-low">
+            <ul id="log-list" class="space-y-2 text-xs font-mono"></ul>
+        </div>
+    </div>
+</main>
+
+<script>
+    function addLog(msg, type = 'info') {
+        const ul = document.getElementById('log-list');
+        const li = document.createElement('li');
+        li.textContent = msg;
+        if(type === 'error') li.className = 'text-error font-bold';
+        if(type === 'success') li.className = 'text-success font-bold';
+        if(type === 'warning') li.className = 'text-warning font-bold';
+        ul.appendChild(li);
+        ul.parentElement.scrollTop = ul.parentElement.scrollHeight;
+    }
+
+    // Parseador básico de .ics
+    function parseICS(icsString) {
+        const lines = icsString.split(/\r?\n/);
+        const events = [];
+        let event = null;
+        let isAlarm = false;
+
+        for (let i = 0; i < lines.length; i++) {
+            let line = lines[i];
+            
+            // Manejar líneas continuas (folded lines en iCal)
+            while (i + 1 < lines.length && (lines[i+1].startsWith(' ') || lines[i+1].startsWith('\t'))) {
+                i++;
+                line += lines[i].substring(1);
+            }
+
+            if (line === 'BEGIN:VEVENT') {
+                event = {};
+            } else if (line === 'END:VEVENT') {
+                if (event) events.push(event);
+                event = null;
+            } else if (line === 'BEGIN:VALARM') {
+                isAlarm = true;
+            } else if (line === 'END:VALARM') {
+                isAlarm = false;
+            } else if (event && !isAlarm) {
+                const sep = line.indexOf(':');
+                if (sep > 0) {
+                    const keyPart = line.substring(0, sep);
+                    const value = line.substring(sep + 1);
+                    const keyName = keyPart.split(';')[0]; // ignorar parametros de zona horaria por ahora ej. DTSTART;TZID=...
+                    event[keyName] = value;
+                }
+            }
+        }
+        return events;
+    }
+
+    function formatIcsDate(icsDateStr) {
+        // Formato típico: 20260801T150000Z o 20260801T100000
+        if(!icsDateStr) return null;
+        const parts = icsDateStr.match(/(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})(\d{2})/);
+        if(!parts) return null;
+        
+        // Si no termina en Z, puede que asuma horario local (Perú es -5)
+        // Por simplicidad, extraemos los componentes directamente si no queremos pelear con zonas horarias
+        return {
+            fecha: `${parts[1]}-${parts[2]}-${parts[3]}`,
+            hora: `${parts[4]}:${parts[5]}:00`
+        };
+    }
+
+    async function procesarArchivo() {
+        const fileInput = document.getElementById('file-ics');
+        const fechaInicio = document.getElementById('fecha-inicio').value;
+        const btn = document.getElementById('btn-importar');
+        const estado = document.getElementById('estado-proceso');
+        const resCard = document.getElementById('resultados-card');
+        const logList = document.getElementById('log-list');
+
+        if (!fileInput.files || fileInput.files.length === 0) {
+            alert('Por favor, selecciona un archivo .ics primero.');
+            return;
+        }
+
+        if (!fechaInicio) {
+            alert('Por favor, selecciona una fecha de inicio.');
+            return;
+        }
+
+        btn.disabled = true;
+        estado.classList.remove('hidden');
+        resCard.classList.remove('hidden');
+        logList.innerHTML = '';
+        
+        let exito = 0;
+        let error = 0;
+        document.getElementById('res-exito').textContent = exito;
+        document.getElementById('res-error').textContent = error;
+        document.getElementById('res-total').textContent = 0;
+
+        try {
+            const file = fileInput.files[0];
+            const text = await file.text();
+            addLog(`Archivo leído: ${file.name} (${text.length} bytes)`, 'info');
+            
+            const eventos = parseICS(text);
+            addLog(`Eventos encontrados en el archivo: ${eventos.length}`, 'info');
+
+            // Filtrar eventos
+            const fechaLimiteStr = fechaInicio.replace(/-/g, ''); // 20260801
+            
+            const eventosFiltrados = eventos.filter(ev => {
+                if(!ev.DTSTART) return false;
+                const dt = ev.DTSTART.replace(/[^0-9]/g, '');
+                if(dt.length >= 8) {
+                    const datePart = dt.substring(0, 8);
+                    return datePart >= fechaLimiteStr;
+                }
+                return false;
+            });
+
+            document.getElementById('res-total').textContent = eventosFiltrados.length;
+            addLog(`Eventos a partir de ${fechaInicio}: ${eventosFiltrados.length}`, 'info');
+
+            // Procesar cada evento y guardarlo en Supabase
+            for(const ev of eventosFiltrados) {
+                try {
+                    const pacienteNombre = ev.SUMMARY || 'Sin Nombre';
+                    const dateTime = formatIcsDate(ev.DTSTART);
+                    
+                    if(!dateTime) {
+                        addLog(`Ignorado: ${pacienteNombre} (Fecha inválida)`, 'warning');
+                        error++;
+                        continue;
+                    }
+                    
+                    let timeEnd24 = null;
+                    if(ev.DTEND) {
+                        const endDateTime = formatIcsDate(ev.DTEND);
+                        if(endDateTime) timeEnd24 = endDateTime.hora;
+                    }
+
+                    // 1. Buscar o crear paciente
+                    let paciente_id = null;
+                    const { data: searchPacientes, error: errBusqueda } = await window.db
+                        .from('pacientes')
+                        .select('id')
+                        .ilike('nombre', pacienteNombre.trim())
+                        .limit(1);
+
+                    if (searchPacientes && searchPacientes.length > 0) {
+                        paciente_id = searchPacientes[0].id;
+                    } else {
+                        const { data: newPacientes, error: errInsert } = await window.db
+                            .from('pacientes')
+                            .insert([{ nombre: pacienteNombre.trim(), estado: 'Activo' }])
+                            .select('id');
+                            
+                        if(errInsert) throw errInsert;
+                        if(newPacientes && newPacientes.length > 0) paciente_id = newPacientes[0].id;
+                    }
+
+                    if(!paciente_id) throw new Error("No se pudo obtener/crear ID de paciente");
+
+                    // 2. Crear cita
+                    const { error: errCita } = await window.db
+                        .from('citas')
+                        .insert([{
+                            paciente_id: paciente_id,
+                            fecha: dateTime.fecha,
+                            hora: dateTime.hora,
+                            hora_fin: timeEnd24,
+                            estado: 'Pendiente',
+                            tratamiento: 'Por Definir en Cita',
+                            notas: ev.DESCRIPTION || 'Importado de Google Calendar'
+                        }]);
+
+                    if(errCita) throw errCita;
+
+                    addLog(`Importado éxito: ${pacienteNombre} el ${dateTime.fecha} a las ${dateTime.hora}`, 'success');
+                    exito++;
+                    document.getElementById('res-exito').textContent = exito;
+                } catch(innerErr) {
+                    console.error("Error importando evento", ev.SUMMARY, innerErr);
+                    addLog(`Error en ${ev.SUMMARY || 'Evento'}: ${innerErr.message}`, 'error');
+                    error++;
+                    document.getElementById('res-error').textContent = error;
+                }
+            }
+
+            addLog(`Proceso finalizado. ${exito} correctos, ${error} errores.`, 'info');
+            alert('Importación finalizada.');
+        } catch (err) {
+            console.error(err);
+            addLog(`Error fatal: ${err.message}`, 'error');
+            alert('Ocurrió un error al procesar el archivo. Revisa la consola o el log.');
+        } finally {
+            btn.disabled = false;
+            estado.classList.add('hidden');
+        }
+    }
+</script>
+
+</body>
+</html>
