@@ -1,19 +1,31 @@
 <!DOCTYPE html>
 <html class="light" lang="es">
-<head>
-    <link rel="icon" sizes="192x192" href="https://static.wixstatic.com/media/2a2885_0faab9c802fb481587f8d8fee5fa0eee%7Emv2.png/v1/fill/w_192%2Ch_192%2Clg_1%2Cusm_0.66_1.00_0.01/2a2885_0faab9c802fb481587f8d8fee5fa0eee%7Emv2.png" type="image/png"/>
-    <link rel="shortcut icon" href="https://static.wixstatic.com/media/2a2885_0faab9c802fb481587f8d8fee5fa0eee%7Emv2.png/v1/fill/w_32%2Ch_32%2Clg_1%2Cusm_0.66_1.00_0.01/2a2885_0faab9c802fb481587f8d8fee5fa0eee%7Emv2.png" type="image/png"/>
-    <link rel="apple-touch-icon" href="https://static.wixstatic.com/media/2a2885_0faab9c802fb481587f8d8fee5fa0eee%7Emv2.png/v1/fill/w_180%2Ch_180%2Clg_1%2Cusm_0.66_1.00_0.01/2a2885_0faab9c802fb481587f8d8fee5fa0eee%7Emv2.png" type="image/png"/>
 
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@300;400;500;600;700;800&amp;display=block" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=block" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=block" rel="stylesheet"/>
-<!-- Supabase -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="../js/config/supabase.js"></script>
+<head>
+    <link rel="icon" sizes="192x192"
+        href="https://static.wixstatic.com/media/2a2885_0faab9c802fb481587f8d8fee5fa0eee%7Emv2.png/v1/fill/w_192%2Ch_192%2Clg_1%2Cusm_0.66_1.00_0.01/2a2885_0faab9c802fb481587f8d8fee5fa0eee%7Emv2.png"
+        type="image/png" />
+    <link rel="shortcut icon"
+        href="https://static.wixstatic.com/media/2a2885_0faab9c802fb481587f8d8fee5fa0eee%7Emv2.png/v1/fill/w_32%2Ch_32%2Clg_1%2Cusm_0.66_1.00_0.01/2a2885_0faab9c802fb481587f8d8fee5fa0eee%7Emv2.png"
+        type="image/png" />
+    <link rel="apple-touch-icon"
+        href="https://static.wixstatic.com/media/2a2885_0faab9c802fb481587f8d8fee5fa0eee%7Emv2.png/v1/fill/w_180%2Ch_180%2Clg_1%2Cusm_0.66_1.00_0.01/2a2885_0faab9c802fb481587f8d8fee5fa0eee%7Emv2.png"
+        type="image/png" />
+
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@300;400;500;600;700;800&amp;display=block"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=block"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=block"
+        rel="stylesheet" />
+    <!-- Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../js/config/supabase.js"></script>
     <script src="../js/config/tailwind-theme.js"></script>
     <link rel="stylesheet" href="../css/global.css">
 
@@ -24,180 +36,236 @@
     <script src="../js/core/rbac.js"></script>
     <link rel="manifest" href="../manifest.json">
 </head>
+
 <body class="bg-background font-body-md text-on-surface">
 
-<header class="flex justify-between items-center h-18 px-4 bg-surface-white dark:bg-surface-container-lowest border-b border-surface-container sticky top-0 z-50 md:hidden">
-    <div class="flex items-center gap-2">
-        <div class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
-            <span class="material-symbols-outlined text-primary text-xl">medical_services</span>
+    <header
+        class="flex justify-between items-center h-18 px-4 bg-surface-white dark:bg-surface-container-lowest border-b border-surface-container sticky top-0 z-50 md:hidden">
+        <div class="flex items-center gap-2">
+            <div class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
+                <span class="material-symbols-outlined text-primary text-xl">medical_services</span>
+            </div>
+            <h1 class="font-display font-bold text-lg text-primary tracking-tight">Centro Eslava</h1>
         </div>
-        <h1 class="font-display font-bold text-lg text-primary tracking-tight">Centro Eslava</h1>
-    </div>
-    <button id="mobile-menu-btn" class="text-on-surface-variant hover:text-primary transition-colors p-2">
-        <span class="material-symbols-outlined">menu</span>
-    </button>
-</header>
+        <button id="mobile-menu-btn" class="text-on-surface-variant hover:text-primary transition-colors p-2">
+            <span class="material-symbols-outlined">menu</span>
+        </button>
+    </header>
 
-<aside class="fixed left-0 top-18 h-[calc(100vh-72px)] w-72 bg-surface-white dark:bg-surface-container-lowest shadow-[0px_10px_30px_rgba(0,0,0,0.04)] z-40 hidden md:flex flex-col p-6 overflow-y-auto">
-    <div class="flex items-center gap-4 mb-8 pb-6 border-b border-surface-container">
-        <div class="h-12 w-12 rounded-full bg-surface-container-high overflow-hidden flex-shrink-0">
-            <span class="material-symbols-outlined m-3">person</span>
+    <aside
+        class="fixed left-0 top-18 h-[calc(100vh-72px)] w-72 bg-surface-white dark:bg-surface-container-lowest shadow-[0px_10px_30px_rgba(0,0,0,0.04)] z-40 hidden md:flex flex-col p-6 overflow-y-auto">
+        <div class="flex items-center gap-4 mb-8 pb-6 border-b border-surface-container">
+            <div class="h-12 w-12 rounded-full bg-surface-container-high overflow-hidden flex-shrink-0">
+                <span class="material-symbols-outlined m-3">person</span>
+            </div>
+            <div>
+                <h2 id="drawer-profile-name" class="font-body-md text-body-md font-semibold text-primary">Dr. Eslava
+                </h2>
+                <p id="drawer-profile-role" class="font-label-sm text-label-sm text-outline">Director Clínico</p>
+                <span id="drawer-profile-badge"
+                    class="inline-block mt-1 px-2 py-0.5 bg-secondary-container/30 text-on-secondary-container rounded font-label-sm text-[10px]">Acceso
+                    Admin</span>
+            </div>
         </div>
-        <div>
-            <h2 id="drawer-profile-name" class="font-body-md text-body-md font-semibold text-primary">Dr. Eslava</h2>
-            <p id="drawer-profile-role" class="font-label-sm text-label-sm text-outline">Director Clínico</p>
-            <span id="drawer-profile-badge" class="inline-block mt-1 px-2 py-0.5 bg-secondary-container/30 text-on-secondary-container rounded font-label-sm text-[10px]">Acceso Admin</span>
+        <nav class="flex flex-col gap-2 flex-grow">
+            <a id="nav-link-agenda-drawer"
+                class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-low transition-all rounded-xl font-body-md"
+                href="calendario_dashboard_mobile.html">
+                <span class="material-symbols-outlined">calendar_today</span> Calendario
+            </a>
+            <a id="nav-link-citas-drawer"
+                class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-low transition-all rounded-xl font-body-md"
+                href="citas_listado_mobile.html">
+                <span class="material-symbols-outlined">list_alt</span> Citas
+            </a>
+            <a id="nav-link-pacientes-drawer"
+                class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-low transition-all rounded-xl font-body-md"
+                href="pacientes_historia_clinica_mobile.html">
+                <span class="material-symbols-outlined">groups</span> Pacientes
+            </a>
+            <a id="nav-link-tratamientos-drawer"
+                class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-low transition-all rounded-xl font-body-md"
+                href="tratamientos_mobile.html">
+                <span class="material-symbols-outlined">medical_services</span> Tratamientos
+            </a>
+            <a id="nav-link-productos-drawer"
+                class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-low transition-all rounded-xl font-body-md"
+                href="productos_mobile.html">
+                <span class="material-symbols-outlined">inventory_2</span> Productos
+            </a>
+            <a id="nav-link-cobrar-drawer"
+                class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-low transition-all rounded-xl font-body-md"
+                href="cobrar_mobile.html">
+                <span class="material-symbols-outlined">point_of_sale</span> Caja
+            </a>
+
+
+        </nav>
+        <div class="mt-auto pt-6 border-t border-surface-container">
+
         </div>
-    </div>
-    <nav class="flex flex-col gap-2 flex-grow">
-        <a id="nav-link-agenda-drawer" class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-low transition-all rounded-xl font-body-md" href="calendario_dashboard_mobile.html">
-            <span class="material-symbols-outlined">calendar_today</span> Calendario
-        </a>
-        <a id="nav-link-citas-drawer" class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-low transition-all rounded-xl font-body-md" href="citas_listado_mobile.html">
-            <span class="material-symbols-outlined">list_alt</span> Citas
-        </a>
-        <a id="nav-link-pacientes-drawer" class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-low transition-all rounded-xl font-body-md" href="pacientes_historia_clinica_mobile.html">
-            <span class="material-symbols-outlined">groups</span> Pacientes
-        </a>
-        <a id="nav-link-tratamientos-drawer" class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-low transition-all rounded-xl font-body-md" href="tratamientos_mobile.html">
-            <span class="material-symbols-outlined">medical_services</span> Tratamientos
-        </a>
-        <a id="nav-link-productos-drawer" class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-low transition-all rounded-xl font-body-md" href="productos_mobile.html">
-            <span class="material-symbols-outlined">inventory_2</span> Productos
-        </a>
-        <a id="nav-link-cobrar-drawer" class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-low transition-all rounded-xl font-body-md" href="cobrar_mobile.html">
-            <span class="material-symbols-outlined">point_of_sale</span> Caja
-        </a>
-        
-        
-    </nav>
-    <div class="mt-auto pt-6 border-t border-surface-container">
-        
-    </div>
-</aside>
+    </aside>
 
-<main class="md:ml-72 min-h-screen px-4 py-8 pb-24 md:pb-8">
+    <main class="md:ml-72 min-h-screen px-4 py-8 pb-24 md:pb-8">
 
-<!-- Page Header & Stats -->
-<div class="flex justify-between items-end mb-10">
-<div>
-<nav class="flex gap-2 text-label-sm text-outline mb-2">
-<span>Inicio</span>
-<span>/</span>
-<span class="text-primary font-bold">Listado de Citas</span>
-</nav>
-<h2 class="font-display-lg text-4xl font-extrabold text-on-surface tracking-tight">Listado de Citas</h2>
-<p class="text-on-surface-variant mt-2 font-body-md">Gestiona y visualiza todas las citas programadas.</p>
-</div>
-<div class="flex gap-4">
-<div class="bg-surface-white p-4 rounded-2xl shadow-[0px_10px_30px_rgba(0,0,0,0.04)] min-w-[140px]">
-<p class="text-label-sm text-outline">Total Citas</p>
-<p class="text-2xl font-bold text-primary" id="total-citas-badge">...</p>
-</div>
-</div>
-</div>
-<!-- Filters Section -->
-<div class="flex items-center justify-between mb-8">
-<div class="flex gap-2 bg-surface-container-low p-1.5 rounded-xl">
-<button onclick="filtrarPorEstado('Todos', this)" class="px-6 py-2 rounded-lg font-bold transition-all bg-surface-white shadow-sm text-primary">Todos</button>
-<button onclick="filtrarPorEstado('Activo', this)" class="px-6 py-2 rounded-lg font-bold transition-all text-on-surface-variant hover:bg-surface-container-high">Activos</button>
-<button onclick="filtrarPorEstado('Inactivo', this)" class="px-6 py-2 rounded-lg font-bold transition-all text-on-surface-variant hover:bg-surface-container-high">Inactivos</button>
-</div>
-<div class="flex gap-3 items-center">
-<button onclick="alert('Próximamente: Panel de filtros avanzados.')" class="flex items-center gap-2 px-5 py-2.5 bg-surface-white border border-outline-variant rounded-xl font-bold text-on-surface-variant hover:bg-surface-container-low transition-all">
-<span class="material-symbols-outlined text-[20px]">filter_list</span>
+        <!-- Page Header & Stats -->
+        <div class="flex justify-between items-end mb-10">
+            <div>
+                <nav class="flex gap-2 text-label-sm text-outline mb-2">
+                    <span>Inicio</span>
+                    <span>/</span>
+                    <span class="text-primary font-bold">Listado de Citas</span>
+                </nav>
+                <h2 class="font-display-lg text-4xl font-extrabold text-on-surface tracking-tight">Listado de Citas</h2>
+                <p class="text-on-surface-variant mt-2 font-body-md">Gestiona y visualiza todas las citas programadas.
+                </p>
+            </div>
+            <div class="flex gap-4">
+                <div class="bg-surface-white p-4 rounded-2xl shadow-[0px_10px_30px_rgba(0,0,0,0.04)] min-w-[140px]">
+                    <p class="text-label-sm text-outline">Total Citas</p>
+                    <p class="text-2xl font-bold text-primary" id="total-citas-badge">...</p>
+                </div>
+            </div>
+        </div>
+        <!-- Filters Section -->
+        <div class="flex items-center justify-between mb-8">
+            <div class="flex gap-2 bg-surface-container-low p-1.5 rounded-xl">
+                <button onclick="filtrarPorEstado('Todos', this)"
+                    class="px-6 py-2 rounded-lg font-bold transition-all bg-surface-white shadow-sm text-primary">Todos</button>
+                <button onclick="filtrarPorEstado('Activo', this)"
+                    class="px-6 py-2 rounded-lg font-bold transition-all text-on-surface-variant hover:bg-surface-container-high">Activos</button>
+                <button onclick="filtrarPorEstado('Inactivo', this)"
+                    class="px-6 py-2 rounded-lg font-bold transition-all text-on-surface-variant hover:bg-surface-container-high">Inactivos</button>
+            </div>
+            <div class="flex gap-3 items-center">
+                <button onclick="alert('Próximamente: Panel de filtros avanzados.')"
+                    class="flex items-center gap-2 px-5 py-2.5 bg-surface-white border border-outline-variant rounded-xl font-bold text-on-surface-variant hover:bg-surface-container-low transition-all">
+                    <span class="material-symbols-outlined text-[20px]">filter_list</span>
                     Filtrar
                 </button>
-</div>
-<!-- Patient Grid (Bento Style) -->
-</div>
-</div>
-<!-- Patient Table Section (Minimalist Table) -->
-<div class="col-span-full mt-8 bg-surface-white rounded-3xl shadow-[0px_10px_30px_rgba(0,0,0,0.04)] overflow-hidden">
-<div class="px-8 py-6 flex items-center justify-between border-b border-surface-container-low">
-<h3 class="font-headline-md text-xl font-bold">Listado General</h3>
-<div class="flex items-center gap-4">
-<span class="text-label-sm text-outline" id="mostrando-citas-text">Mostrando citas</span>
-<div class="flex gap-1">
-<button class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-surface-container-low"><span class="material-symbols-outlined">chevron_left</span></button>
-<button class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-surface-container-low"><span class="material-symbols-outlined">chevron_right</span></button>
-</div>
-</div>
-</div>
-<table class="w-full text-left">
-<thead class="bg-surface-container-low/50">
-<tr>
+            </div>
+            <!-- Patient Grid (Bento Style) -->
+        </div>
+        </div>
+        <!-- Patient Table Section (Minimalist Table) -->
+        <div
+            class="col-span-full mt-8 bg-surface-white rounded-3xl shadow-[0px_10px_30px_rgba(0,0,0,0.04)] overflow-hidden">
+            <div class="px-8 py-6 flex items-center justify-between border-b border-surface-container-low">
+                <h3 class="font-headline-md text-xl font-bold">Listado General</h3>
+                <div class="flex items-center gap-4">
+                    <span class="text-label-sm text-outline" id="mostrando-citas-text">Mostrando citas</span>
+                    <div class="flex gap-1">
+                        <button
+                            class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-surface-container-low"><span
+                                class="material-symbols-outlined">chevron_left</span></button>
+                        <button
+                            class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-surface-container-low"><span
+                                class="material-symbols-outlined">chevron_right</span></button>
+                    </div>
+                </div>
+            </div>
+            <table class="w-full text-left">
+                <thead class="bg-surface-container-low/50">
+                    <tr>
 
-<th class="px-4 md:px-8 py-4 text-xs font-bold uppercase tracking-widest text-outline">Paciente</th>
-<th class="px-4 md:px-8 py-4 text-xs font-bold uppercase tracking-widest text-outline">Estado</th>
-<th class="px-8 py-4 text-xs font-bold uppercase tracking-widest text-outline hidden md:table-cell">Sesión</th>
-<th class="px-8 py-4 text-xs font-bold uppercase tracking-widest text-outline hidden md:table-cell">Fecha y Hora</th>
-<th class="px-8 py-4 text-xs font-bold uppercase tracking-widest text-outline text-right hidden md:table-cell">Acciones</th>
-</tr>
-</thead>
-<tbody id="pacientes-tbody" class="divide-y divide-surface-container-low">
-<!-- Contenido dinámico desde Supabase -->
-</tbody>
-</table>
-</div>
-</div>
-<!-- Section Gap for breathing room -->
-<div class="h-section-gap"></div>
+                        <th class="px-4 md:px-8 py-4 text-xs font-bold uppercase tracking-widest text-outline">Paciente
+                        </th>
+                        <th class="px-4 md:px-8 py-4 text-xs font-bold uppercase tracking-widest text-outline">Estado
+                        </th>
+                        <th
+                            class="px-8 py-4 text-xs font-bold uppercase tracking-widest text-outline hidden md:table-cell">
+                            Sesión</th>
+                        <th
+                            class="px-8 py-4 text-xs font-bold uppercase tracking-widest text-outline hidden md:table-cell">
+                            Fecha y Hora</th>
+                        <th
+                            class="px-8 py-4 text-xs font-bold uppercase tracking-widest text-outline text-right hidden md:table-cell">
+                            Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="pacientes-tbody" class="divide-y divide-surface-container-low">
+                    <!-- Contenido dinámico desde Supabase -->
+                </tbody>
+            </table>
+        </div>
+        </div>
+        <!-- Section Gap for breathing room -->
+        <div class="h-section-gap"></div>
 
-</main>
+    </main>
 
-<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-start items-center px-2 py-3 md:hidden bg-surface-white/90 backdrop-blur-md shadow-[0px_-10px_30px_rgba(0,0,0,0.04)] rounded-t-xl border-t border-surface-container-highest overflow-x-auto touch-pan-x no-scrollbar gap-2">
-    <a id="nav-bottom-agenda" class="flex flex-col items-center justify-center shrink-0 text-outline hover:text-primary transition-all p-2 rounded-lg min-w-[60px]" href="calendario_dashboard_mobile.html">
-        <span class="material-symbols-outlined">calendar_today</span><span class="font-label-sm text-[10px] mt-1">Agenda</span>
-    </a>
-    <a id="nav-bottom-citas" class="flex flex-col items-center justify-center shrink-0 text-outline hover:text-primary transition-all p-2 rounded-lg min-w-[60px]" href="citas_listado_mobile.html">
-        <span class="material-symbols-outlined">list_alt</span><span class="font-label-sm text-[10px] mt-1">Citas</span>
-    </a>
-    <a id="nav-bottom-pacientes" class="flex flex-col items-center justify-center shrink-0 text-outline hover:text-primary transition-all p-2 rounded-lg min-w-[60px]" href="pacientes_historia_clinica_mobile.html">
-        <span class="material-symbols-outlined">groups</span><span class="font-label-sm text-[10px] mt-1">Pacientes</span>
-    </a>
-    <a id="nav-bottom-tratamientos" class="flex flex-col items-center justify-center shrink-0 text-outline hover:text-primary transition-all p-2 rounded-lg min-w-[60px]" href="tratamientos_mobile.html">
-        <span class="material-symbols-outlined">medical_services</span><span class="font-label-sm text-[10px] mt-1">Servicios</span>
-    </a>
-    <a id="nav-bottom-productos" class="flex flex-col items-center justify-center shrink-0 text-outline hover:text-primary transition-all p-2 rounded-lg min-w-[60px]" href="productos_mobile.html">
-        <span class="material-symbols-outlined">inventory_2</span><span class="font-label-sm text-[10px] mt-1">Productos</span>
-    </a>
-    <a id="nav-bottom-caja" class="flex flex-col items-center justify-center shrink-0 text-outline hover:text-primary transition-all p-2 rounded-lg min-w-[60px]" href="cobrar_mobile.html">
-        <span class="material-symbols-outlined">point_of_sale</span><span class="font-label-sm text-[10px] mt-1">Caja</span>
-    </a>
-    
-    
-</nav>
-
-<script>
-    // Add active state to drawer
-    const drawerLink = document.getElementById('nav-link-citas-drawer');
-    if(drawerLink) {
-        drawerLink.classList.remove('text-on-surface-variant');
-        drawerLink.classList.add('bg-secondary-container', 'text-on-secondary-container');
-    }
-    // Add active state to bottom nav
-    const bottomLink = document.getElementById('nav-bottom-citas');
-    if(bottomLink) {
-        bottomLink.classList.remove('text-outline');
-        bottomLink.classList.add('text-primary');
-    }
-    
-    // Toggle menu
-    const menuBtn = document.getElementById('mobile-menu-btn');
-    const drawer = document.querySelector('aside');
-    if(menuBtn && drawer) {
-        menuBtn.addEventListener('click', () => {
-            drawer.classList.toggle('hidden');
-        });
-    }
-</script>
+    <nav
+        class="fixed bottom-0 left-0 w-full z-50 flex justify-start items-center px-2 py-3 md:hidden bg-surface-white/90 backdrop-blur-md shadow-[0px_-10px_30px_rgba(0,0,0,0.04)] rounded-t-xl border-t border-surface-container-highest overflow-x-auto touch-pan-x no-scrollbar gap-2">
+        <a id="nav-bottom-agenda"
+            class="flex flex-col items-center justify-center shrink-0 text-outline hover:text-primary transition-all p-2 rounded-lg min-w-[60px]"
+            href="calendario_dashboard_mobile.html">
+            <span class="material-symbols-outlined">calendar_today</span><span
+                class="font-label-sm text-[10px] mt-1">Agenda</span>
+        </a>
+        <a id="nav-bottom-citas"
+            class="flex flex-col items-center justify-center shrink-0 text-outline hover:text-primary transition-all p-2 rounded-lg min-w-[60px]"
+            href="citas_listado_mobile.html">
+            <span class="material-symbols-outlined">list_alt</span><span
+                class="font-label-sm text-[10px] mt-1">Citas</span>
+        </a>
+        <a id="nav-bottom-pacientes"
+            class="flex flex-col items-center justify-center shrink-0 text-outline hover:text-primary transition-all p-2 rounded-lg min-w-[60px]"
+            href="pacientes_historia_clinica_mobile.html">
+            <span class="material-symbols-outlined">groups</span><span
+                class="font-label-sm text-[10px] mt-1">Pacientes</span>
+        </a>
+        <a id="nav-bottom-tratamientos"
+            class="flex flex-col items-center justify-center shrink-0 text-outline hover:text-primary transition-all p-2 rounded-lg min-w-[60px]"
+            href="tratamientos_mobile.html">
+            <span class="material-symbols-outlined">medical_services</span><span
+                class="font-label-sm text-[10px] mt-1">Servicios</span>
+        </a>
+        <a id="nav-bottom-productos"
+            class="flex flex-col items-center justify-center shrink-0 text-outline hover:text-primary transition-all p-2 rounded-lg min-w-[60px]"
+            href="productos_mobile.html">
+            <span class="material-symbols-outlined">inventory_2</span><span
+                class="font-label-sm text-[10px] mt-1">Productos</span>
+        </a>
+        <a id="nav-bottom-caja"
+            class="flex flex-col items-center justify-center shrink-0 text-outline hover:text-primary transition-all p-2 rounded-lg min-w-[60px]"
+            href="cobrar_mobile.html">
+            <span class="material-symbols-outlined">point_of_sale</span><span
+                class="font-label-sm text-[10px] mt-1">Caja</span>
+        </a>
 
 
+    </nav>
 
-<script src="../js/api/citasRepository.js"></script>
-<script src="../js/services/citasService.js"></script>
-<script src="../js/controllers/citasController.js"></script>
+    <script>
+        // Add active state to drawer
+        const drawerLink = document.getElementById('nav-link-citas-drawer');
+        if (drawerLink) {
+            drawerLink.classList.remove('text-on-surface-variant');
+            drawerLink.classList.add('bg-secondary-container', 'text-on-secondary-container');
+        }
+        // Add active state to bottom nav
+        const bottomLink = document.getElementById('nav-bottom-citas');
+        if (bottomLink) {
+            bottomLink.classList.remove('text-outline');
+            bottomLink.classList.add('text-primary');
+        }
+
+        // Toggle menu
+        const menuBtn = document.getElementById('mobile-menu-btn');
+        const drawer = document.querySelector('aside');
+        if (menuBtn && drawer) {
+            menuBtn.addEventListener('click', () => {
+                drawer.classList.toggle('hidden');
+            });
+        }
+    </script>
+    <script src="../js/api/citasRepository.js"></script>
+    <script src="../js/services/citasService.js"></script>
+    <script src="../js/controllers/citasController.js"></script>
+
+
+
+
 
 
     <script>
@@ -213,4 +281,5 @@
     </script>
 
 </body>
+
 </html>
