@@ -40,3 +40,22 @@ El código está estructurado en capas para una mayor mantenibilidad:
    ```bash
    npx serve .
    ```
+
+## 📸 Capturas de Pantalla
+
+A continuación, algunas pantallas principales de la aplicación:
+
+### Login
+![Login](screenshots/login.png)
+
+### Dashboard - Calendario
+![Calendario](screenshots/calendario.png)
+
+### Gestión de Pacientes
+![Pacientes](screenshots/pacientes.png)
+
+### Listado de Citas
+![Citas](screenshots/citas.png)
+
+### Pagos y Facturación
+![Facturación](screenshots/facturacion.png)
