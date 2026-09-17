@@ -489,14 +489,13 @@
             const now = new Date();
             const filterFn = (c) => {
                 const estado = (c.estado || '').toLowerCase();
-                if (estado.includes('completad') || estado.includes('atendid') || estado.includes('progreso') || estado.includes('cancelad')) {
-                    return true;
-                }
                 if (c.fecha && c.hora) {
                     const [year, month, day] = c.fecha.split('-');
                     const [hour, minute] = c.hora.split(':');
                     const citaDate = new Date(year, month - 1, day, hour, minute);
-                    if (citaDate < now) return false;
+                    if (citaDate < now && estado.includes('cancelad')) {
+                        return false;
+                    }
                 }
                 return true;
             };
@@ -658,7 +657,12 @@ const { data: citasPrevias, error: countError } = await window.db.from('citas').
             // Generate sync link and set it on the success modal button
             const gcalUrl = CalendarioService.generateGoogleCalendarUrl(appt);
             const gcalBtn = document.getElementById("sync-gcal-btn");
-            gcalBtn.setAttribute("href", gcalUrl);
+            if (gcalBtn) {
+                gcalBtn.setAttribute("href", gcalUrl);
+            }
+
+            // Sincronizar automáticamente abriendo Google Calendar
+            window.open(gcalUrl, '_blank');
 
             // Hide form modal and open success modal
             closeAppointmentModal();
@@ -692,21 +696,18 @@ const { data: citasPrevias, error: countError } = await window.db.from('citas').
             const now = new Date();
             data = data.filter(c => {
                 const estado = (c.estado || '').toLowerCase();
-                if (estado.includes('completad') || estado.includes('atendid') || estado.includes('progreso') || estado.includes('cancelad')) {
-                    return true;
-                }
                 if (c.fecha && c.hora) {
                     const [year, month, day] = c.fecha.split('-');
                     const [hour, minute] = c.hora.split(':');
                     const citaDate = new Date(year, month - 1, day, hour, minute);
-                    if (citaDate < now) {
+                    if (citaDate < now && estado.includes('cancelad')) {
                         return false;
                     }
                 }
                 return true;
             });
 
-            const events = data.filter(c => c.estado !== 'Cancelada' && c.estado !== 'Cancelado').map(c => CalendarioService.mapCitaToCalendarEvent(c, data, window.serviciosActivos));
+            const events = data.filter(c => !((c.estado || '').toLowerCase().includes('cancelad'))).map(c => CalendarioService.mapCitaToCalendarEvent(c, data, window.serviciosActivos));
 
             if (!fullCalendarInstance) {
                 fullCalendarInstance = new FullCalendar.Calendar(calendarEl, {
