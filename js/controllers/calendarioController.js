@@ -104,6 +104,7 @@
         document.getElementById("new-appointment-modal").classList.add("hidden");
         document.getElementById("new-appointment-form").reset();
         document.getElementById('appt-date').value = new Date().toISOString().split('T')[0];
+        if (document.getElementById('appt-color')) document.getElementById('appt-color').value = '';
         populateTimeOptions();
     }
 
@@ -190,7 +191,16 @@
                     document.getElementById('appt-treatment').value = tr;
                     if (cita.consultorio) document.getElementById('appt-doctor').value = cita.consultorio;
                     
-                    document.getElementById('appt-notes').value = cita.notas || '';
+                    let finalNotes = cita.notas || '';
+                    let colorCode = "";
+                    if (finalNotes.startsWith("[Azul]")) { colorCode = "Azul"; finalNotes = finalNotes.substring(6).trim(); }
+                    else if (finalNotes.startsWith("[Amarillo]")) { colorCode = "Amarillo"; finalNotes = finalNotes.substring(10).trim(); }
+                    else if (finalNotes.startsWith("[Rojo]")) { colorCode = "Rojo"; finalNotes = finalNotes.substring(6).trim(); }
+                    else if (finalNotes.startsWith("[Verde]")) { colorCode = "Verde"; finalNotes = finalNotes.substring(7).trim(); }
+                    
+                    document.getElementById('appt-notes').value = finalNotes;
+                    const elColor = document.getElementById('appt-color');
+                    if (elColor) elColor.value = colorCode;
                     
                     window.editingCitaId = cita.id;
                     // Populate time options first
@@ -568,7 +578,11 @@
             }
         }
         
-        const notes = document.getElementById("appt-notes").value;
+        let notes = document.getElementById("appt-notes").value;
+        const colorVal = document.getElementById("appt-color") ? document.getElementById("appt-color").value : "";
+        if (colorVal) {
+            notes = `[${colorVal}] ${notes}`;
+        }
 
         try {
             // Check if patient exists or create new
@@ -671,6 +685,7 @@ const { data: citasPrevias, error: countError } = await window.db.from('citas').
             // Reload dashboard data
             cargarCitas();
             cargarEstadisticas();
+            await cargarPacientesSelect();
 
         } catch (error) {
             console.error('Error al guardar cita:', error);

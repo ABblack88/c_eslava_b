@@ -1,6 +1,33 @@
 const puppeteer = require('puppeteer');
 const fs = require('fs');
 
+async function blurSensitiveInfo(page) {
+    await page.evaluate(() => {
+        const sensitiveTexts = [
+            'qblackx@gmail.com', 
+            'Augusto', 
+            'Dev', 
+            'Root',
+            'ROOT',
+            'Centro Eslava',
+            'Centro',
+            'Eslava'
+        ];
+        
+        const walk = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null, false);
+        let node;
+        while (node = walk.nextNode()) {
+            const text = node.nodeValue;
+            if (sensitiveTexts.some(s => text.toLowerCase().includes(s.toLowerCase()))) {
+                if (node.parentElement && node.parentElement.tagName !== 'SCRIPT' && node.parentElement.tagName !== 'STYLE') {
+                    node.parentElement.style.filter = 'blur(5px)';
+                    node.parentElement.style.opacity = '0.7';
+                }
+            }
+        }
+    });
+}
+
 (async () => {
     const browser = await puppeteer.launch({ headless: 'new' });
     const page = await browser.newPage();
@@ -19,11 +46,13 @@ const fs = require('fs');
     await page.type('#login-user', 'qblackx@gmail.com');
     await page.type('#login-pass', 'Augusto451900');
     
+    await blurSensitiveInfo(page);
     await page.screenshot({ path: `screenshots/debug_before_click.png` });
     console.log('Clicking login...');
     await page.click('#form-login button[type="submit"]');
     
     await new Promise(r => setTimeout(r, 5000));
+    await blurSensitiveInfo(page);
     await page.screenshot({ path: `screenshots/debug_after_click.png` });
 
     console.log('Taking page screenshots...');
@@ -31,38 +60,15 @@ const fs = require('fs');
         { name: 'calendario', url: 'https://c-eslava-b.pages.dev/html/calendario_dashboard_desktop.html' },
         { name: 'pacientes', url: 'https://c-eslava-b.pages.dev/html/gestion_pacientes_desktop.html' },
         { name: 'citas', url: 'https://c-eslava-b.pages.dev/html/citas_listado_desktop.html' },
-        { name: 'facturacion', url: 'https://c-eslava-b.pages.dev/html/pagos_facturacion_desktop.html' }
+        { name: 'facturacion', url: 'https://c-eslava-b.pages.dev/html/pagos_facturacion_desktop.html' },
+        { name: 'pendientes', url: 'https://c-eslava-b.pages.dev/html/pedidos_desktop.html' }
     ];
 
     for (const p of pages) {
         await page.goto(p.url, { waitUntil: 'networkidle2' });
         await new Promise(r => setTimeout(r, 2000));
         
-        // Blur sensitive information
-        await page.evaluate(() => {
-            const sensitiveTexts = [
-                'qblackx@gmail.com', 
-                'Augusto', 
-                'Dev', 
-                'Root',
-                'ROOT',
-                'Centro Eslava',
-                'Centro',
-                'Eslava'
-            ];
-            
-            const walk = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null, false);
-            let node;
-            while (node = walk.nextNode()) {
-                const text = node.nodeValue;
-                if (sensitiveTexts.some(s => text.toLowerCase().includes(s.toLowerCase()))) {
-                    if (node.parentElement && node.parentElement.tagName !== 'SCRIPT' && node.parentElement.tagName !== 'STYLE') {
-                        node.parentElement.style.filter = 'blur(5px)';
-                        node.parentElement.style.opacity = '0.7';
-                    }
-                }
-            }
-        });
+        await blurSensitiveInfo(page);
 
         await page.screenshot({ path: `screenshots/${p.name}.png` });
         console.log(`Saved screenshot for ${p.name}`);

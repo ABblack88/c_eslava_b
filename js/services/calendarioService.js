@@ -14,19 +14,32 @@ class CalendarioService {
     static mapCitaToCalendarEvent(c, data, serviciosActivos) {
         let color = '#3b82f6'; // default blue
         let classNames = [];
+        let hasCustomColor = false;
+        
+        if (c.notas) {
+            if (c.notas.includes('[Azul]')) { color = '#3b82f6'; hasCustomColor = true; }
+            else if (c.notas.includes('[Amarillo]')) { color = '#eab308'; hasCustomColor = true; }
+            else if (c.notas.includes('[Rojo]')) { color = '#ef4444'; hasCustomColor = true; }
+            else if (c.notas.includes('[Verde]')) { color = '#22c55e'; hasCustomColor = true; }
+        }
         
         const estadoLower = (c.estado || '').toLowerCase();
-        if (estadoLower.includes('pendiente') || estadoLower.includes('sin confirmar') || estadoLower.includes('por confirmar')) {
-            color = '#f59e0b'; // yellow (Por confirmar)
-        } else if (estadoLower.includes('confirmad')) {
-            color = '#10b981'; // green (Confirmada)
-        } else if (estadoLower.includes('progreso')) {
-            color = '#3b82f6'; // blue (En procedimiento)
-        } else if (estadoLower.includes('completad') || estadoLower.includes('atendida')) {
-            color = '#9ca3af'; // gray (Completada)
+        
+        if (!hasCustomColor) {
+            if (estadoLower.includes('pendiente') || estadoLower.includes('sin confirmar') || estadoLower.includes('por confirmar')) {
+                color = '#f59e0b'; // yellow (Por confirmar)
+            } else if (estadoLower.includes('confirmad')) {
+                color = '#10b981'; // green (Confirmada)
+            } else if (estadoLower.includes('progreso')) {
+                color = '#3b82f6'; // blue (En procedimiento)
+            } else if (estadoLower.includes('reprogramar')) {
+                color = '#8b5cf6'; // purple (Reprogramar)
+            }
+        }
+
+        if (estadoLower.includes('completad') || estadoLower.includes('atendida')) {
+            if (!hasCustomColor) color = '#9ca3af'; // gray (Completada)
             classNames.push('opacity-50');
-        } else if (estadoLower.includes('reprogramar')) {
-            color = '#8b5cf6'; // purple (Reprogramar)
         }
 
         let sessionStr = 'Cita Única';
@@ -79,7 +92,14 @@ class CalendarioService {
     }
 
     static generateGoogleCalendarUrl(appointment) {
-        const title = encodeURIComponent(`Cita Centro Eslava - ${appointment.name}`);
+        let titleSuffix = '';
+        if (appointment.notes) {
+            if (appointment.notes.includes('[Azul]')) titleSuffix = ' (No paga)';
+            else if (appointment.notes.includes('[Amarillo]')) titleSuffix = ' (Si paga)';
+            else if (appointment.notes.includes('[Rojo]')) titleSuffix = ' (Evaluación)';
+            else if (appointment.notes.includes('[Verde]')) titleSuffix = ' (1ra vez Descarga)';
+        }
+        const title = encodeURIComponent(`Cita Centro Eslava - ${appointment.name}${titleSuffix}`);
         const details = encodeURIComponent(`Cita médica programada en Centro Eslava.\nPaciente: ${appointment.name}\nTratante: ${appointment.doctor}\nNotas: ${appointment.notes || 'Ninguna'}`);
         const location = encodeURIComponent("Centro Eslava, Lima, Perú");
         
