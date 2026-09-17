@@ -104,7 +104,7 @@
         document.getElementById("new-appointment-modal").classList.add("hidden");
         document.getElementById("new-appointment-form").reset();
         document.getElementById('appt-date').value = new Date().toISOString().split('T')[0];
-        if (document.getElementById('appt-color')) document.getElementById('appt-color').value = '';
+        if (document.getElementById('appt-color')) document.getElementById('appt-color').value = 'Azul';
         populateTimeOptions();
     }
 
