@@ -292,6 +292,7 @@
     function autofillPatientInfo() {
         const nameInput = document.getElementById('appt-patient-name').value;
         const emailInput = document.getElementById('appt-patient-email');
+        const phoneInput = document.getElementById('appt-patient-phone');
         const statusEl = document.getElementById('patient-status');
         
         if (!nameInput.trim()) {
@@ -303,7 +304,9 @@
         statusEl.classList.remove('hidden');
 
         if (matched) {
-            if (matched.email) emailInput.value = matched.email;
+            if (matched.email && emailInput) emailInput.value = matched.email;
+            if (matched.telefono && phoneInput) phoneInput.value = matched.telefono;
+            
             statusEl.innerHTML = `<span class="text-success font-semibold flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">check_circle</span> Paciente Existente seleccionado</span>`;
             verificarSesionesPaciente();
         } else {
@@ -312,9 +315,12 @@
                 <span class="text-warning font-semibold flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">person_add</span> Se registrará rápido</span>
                 <button type="button" onclick="abrirModalFichaPaciente()" class="text-xs bg-primary text-on-primary px-3 py-1.5 rounded-lg hover:opacity-90 transition-all font-bold shadow-sm">Abrir Ficha Completa</button>
             </div>`;
-            // Clear email if it's a new patient and it was previously filled by another name
-            if(emailInput.value && !document.activeElement.isEqualNode(emailInput)) {
+            // Clear fields if it's a new patient and it was previously filled by another name
+            if(emailInput && emailInput.value && !document.activeElement.isEqualNode(emailInput)) {
                 emailInput.value = '';
+            }
+            if(phoneInput && phoneInput.value && !document.activeElement.isEqualNode(phoneInput)) {
+                phoneInput.value = '';
             }
             document.getElementById('info-sesiones-alerta').classList.add('hidden');
         }
