@@ -44,10 +44,28 @@ class CalendarioRepository {
     }
 
     static async getPacientes() {
-        return await window.db.from('pacientes').select('*');
+        let allData = [];
+        let limit = 1000;
+        let count = 0;
+        let maxCount = 10000;
+        
+        while (count < maxCount) {
+            const { data, error } = await window.db.from('pacientes').select('*').order('id', { ascending: false }).range(count, count + limit - 1);
+            if (error) {
+                if (allData.length > 0) return { data: allData, error: null }; // Return what we have
+                return { data: null, error };
+            }
+            if (!data || data.length === 0) break;
+            
+            allData = allData.concat(data);
+            if (data.length < limit) break; // Reached the end
+            count += limit;
+        }
+        return { data: allData, error: null };
     }
 
     static async insertPaciente(payload) {
+        if (payload.nombre) payload.nombre = payload.nombre.trim();
         return await window.db
             .from('pacientes')
             .insert([payload])
@@ -55,10 +73,11 @@ class CalendarioRepository {
     }
 
     static async searchPacientePorNombreExacto(nombre) {
+        const cleanNombre = nombre ? nombre.trim() : '';
         return await window.db
             .from('pacientes')
             .select('id')
-            .ilike('nombre', nombre)
+            .ilike('nombre', cleanNombre)
             .limit(1);
     }
 

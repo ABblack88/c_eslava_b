@@ -409,7 +409,7 @@
         btn.innerHTML = '<span class="material-symbols-outlined animate-spin">progress_activity</span> Guardando...';
         btn.disabled = true;
 
-        const nombre = document.getElementById('full-patient-name').value;
+        const nombre = document.getElementById('full-patient-name').value.trim();
         const dni = document.getElementById('full-patient-dni').value;
         const telefono = document.getElementById('full-patient-phone').value;
         const fecha_nacimiento = document.getElementById('full-patient-dob').value || null;
@@ -532,7 +532,7 @@
     async function saveAppointment(event) {
         event.preventDefault();
         
-        const name = document.getElementById("appt-patient-name").value;
+        const name = document.getElementById("appt-patient-name").value.trim();
         const email = document.getElementById("appt-patient-email").value;
         const phone = document.getElementById("appt-patient-phone").value;
         const baseTreatment = document.getElementById("appt-treatment").value;

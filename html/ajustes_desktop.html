@@ -328,6 +328,39 @@
 </div>
 <!-- Staff Management (Removido) -->
 </div>
+
+<!-- Mantenimiento de Datos -->
+<div class="bg-surface-white p-8 rounded-3xl shadow-[0px_10px_30px_rgba(0,0,0,0.04)] flex flex-col gap-6 mt-8">
+    <div class="flex items-center justify-between border-b border-surface-variant pb-4">
+        <h3 class="font-headline-md text-headline-md flex items-center gap-2">
+            <span class="material-symbols-outlined text-primary">database</span>
+            Mantenimiento de Base de Datos
+        </h3>
+    </div>
+    <p class="text-xs text-on-surface-variant -mt-2">Herramientas para mantener la consistencia y limpieza de los datos.</p>
+    <div class="space-y-4">
+        <div class="flex items-center justify-between p-4 bg-surface-container-low rounded-xl">
+            <div>
+                <p class="font-bold text-sm text-on-surface">Normalizar Nombres de Pacientes</p>
+                <p class="text-[11px] text-on-surface-variant">Limpia espacios en blanco extra y estandariza el uso de mayúsculas (Capitalize) para todos los pacientes registrados.</p>
+            </div>
+            <button type="button" onclick="MantenimientoController.normalizePatientNames()" class="bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20 px-4 py-2 rounded-xl text-sm font-bold flex items-center gap-2 transition-colors">
+                <span class="material-symbols-outlined text-sm">cleaning_services</span> Normalizar
+            </button>
+        </div>
+
+        <div class="flex items-center justify-between p-4 bg-surface-container-low rounded-xl">
+            <div>
+                <p class="font-bold text-sm text-on-surface">Detectar Posibles Duplicados</p>
+                <p class="text-[11px] text-on-surface-variant">Busca pacientes que tienen el mismo nombre exacto para identificar registros duplicados creados por error.</p>
+            </div>
+            <button type="button" onclick="MantenimientoController.findAndShowDuplicates()" class="bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20 px-4 py-2 rounded-xl text-sm font-bold flex items-center gap-2 transition-colors">
+                <span class="material-symbols-outlined text-sm">content_copy</span> Analizar
+            </button>
+        </div>
+    </div>
+</div>
+
 <!-- Productos Terapéuticos Card -->
 <div class="bg-surface-white p-8 rounded-3xl shadow-[0px_10px_30px_rgba(0,0,0,0.04)] flex flex-col gap-6">
     <div class="flex items-center justify-between">
@@ -619,6 +652,7 @@
         });
     </script>
     <script src="../js/controllers/ajustesController.js"></script>
+    <script src="../js/controllers/mantenimientoController.js"></script>
 
 
     <!-- ==========================================

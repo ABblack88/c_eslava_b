@@ -95,10 +95,7 @@
             spinner.classList.remove('hidden');
 
             try {
-                const { error } = await window.supabaseClient
-                    .from('pacientes')
-                    .delete()
-                    .eq('id', id);
+                const { error } = await PacientesRepository.deletePaciente(id);
 
                 if (error) throw error;
 
@@ -139,10 +136,7 @@
             try {
                 let error;
                 if (data.id) {
-                    const res = await window.supabaseClient
-                        .from('pacientes')
-                        .update(payload)
-                        .eq('id', data.id);
+                    const res = await PacientesRepository.updatePaciente(data.id, payload);
                     error = res.error;
                     if (!error) {
                         let stored = localStorage.getItem(`paciente_registro_${data.id}`);
@@ -151,10 +145,7 @@
                         localStorage.setItem(`paciente_registro_${data.id}`, JSON.stringify(pData));
                     }
                 } else {
-                    const res = await window.supabaseClient
-                        .from('pacientes')
-                        .insert([payload])
-                        .select();
+                    const res = await PacientesRepository.insertPaciente(payload);
                     error = res.error;
                     if (!error && res.data && res.data.length > 0) {
                         const newId = res.data[0].id;
@@ -224,7 +215,7 @@
             const tbody = document.getElementById('pacientes-tbody');
             tbody.innerHTML = '<tr><td colspan="6" class="px-8 py-4 text-center">Cargando pacientes...</td></tr>';
             
-            const { data, error } = await window.supabaseClient.from('pacientes').select('*, citas(id, estado, fecha, hora, tratamiento, consultorio), pagos(id, estado, cita_id)').order('nombre', { ascending: true });
+            const { data, error } = await PacientesRepository.getPacientes();
             
             if (error) {
                 console.error("Error al cargar pacientes:", error);
@@ -499,9 +490,7 @@
         // ==========================================
         async function exportarPacientesCSV() {
             try {
-                const { data: pacientes, error } = await supabaseClient
-                    .from('pacientes')
-                    .select('*');
+                const { data: pacientes, error } = await PacientesRepository.getPacientesParaExportar();
                 if (error) throw error;
                 
                 if (!pacientes || pacientes.length === 0) {
@@ -583,9 +572,7 @@
                         const originalText = btn.innerHTML;
                         btn.innerHTML = '<span class="material-symbols-outlined animate-spin text-[20px]">sync</span> Importando...';
 
-                        const { error } = await supabaseClient
-                            .from('pacientes')
-                            .insert(pacientesAImportar);
+                        const { error } = await PacientesRepository.insertMuchosPacientes(pacientesAImportar);
                             
                         if (error) throw error;
                         
