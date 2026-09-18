@@ -906,7 +906,7 @@ const { data: citasPrevias, error: countError } = await window.db.from('citas').
         if (paciente_id && window.pacientesList) {
             const pacienteSeleccionado = window.pacientesList.find(p => p.id === paciente_id);
             if (pacienteSeleccionado) {
-                const nameInput = document.getElementById('appt-name');
+                const nameInput = document.getElementById('appt-patient-name');
                 if (nameInput) {
                     nameInput.value = pacienteSeleccionado.nombre;
                     // Trigger input event to update autocomplete or internal state if needed
