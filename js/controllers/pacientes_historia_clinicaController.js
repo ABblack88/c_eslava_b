@@ -172,6 +172,11 @@
 
         let allPacientes = [];
         let estadoFiltro = 'Todos';
+        let currentPage = 0;
+        let currentLimit = 50;
+        let isFetching = false;
+        let hasMore = true;
+        let searchTimeout = null;
 
         function filtrarPorEstado(estado, btnElement) {
             estadoFiltro = estado;
@@ -184,116 +189,126 @@
             btnElement.classList.add('bg-surface-white', 'shadow-sm', 'text-primary');
             btnElement.classList.remove('text-on-surface-variant', 'hover:bg-surface-container-high');
             
-            filtrarPacientes();
+            filtrarPacientesLocal();
         }
 
         function filtrarPacientes() {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                currentPage = 0;
+                allPacientes = [];
+                hasMore = true;
+                cargarPacientes();
+            }, 500); // 500ms debounce para buscar en la BD
+        }
+        
+        function filtrarPacientesLocal() {
+            // Ocultar la cuadrícula si hay texto de búsqueda
             const searchInput = document.getElementById('searchInput');
-            const query = searchInput ? searchInput.value.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "") : '';
-            
-            // Ocultar la cuadrícula de "Próximos Pacientes" si el usuario está buscando algo
+            const query = searchInput ? searchInput.value.trim() : '';
             const proximosContainer = document.getElementById('proximos-pacientes-container');
             if (proximosContainer) {
                 proximosContainer.style.display = query.length > 0 ? 'none' : 'block';
             }
 
+            // Solo filtramos por estado, la búsqueda por texto ya la hizo el servidor
             const filtrados = allPacientes.filter(p => {
-                const nombreNormalizado = p.nombre.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-                const matchTexto = 
-                    nombreNormalizado.includes(query) || 
-                    (p.id && p.id.toLowerCase().includes(query)) ||
-                    (p.telefono && p.telefono.includes(query)) ||
-                    (p.dni && p.dni.includes(query));
-                
                 const matchEstado = (estadoFiltro === 'Todos') || (p.estado === estadoFiltro);
-                
-                return matchTexto && matchEstado;
+                return matchEstado;
             });
 
             renderPacientes(filtrados);
             const countSpan = document.getElementById('pacientes-count');
             if (countSpan) {
-                countSpan.textContent = `Mostrando ${filtrados.length} de ${allPacientes.length} pacientes`;
+                countSpan.textContent = `Mostrando ${filtrados.length} pacientes`;
+            }
+            
+            // Agregar botón "Cargar más" si hay más páginas
+            if (hasMore) {
+                const tbody = document.getElementById('pacientes-tbody');
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td colspan="6" class="px-8 py-4 text-center">
+                        <button onclick="cargarPacientes()" class="px-4 py-2 bg-surface-container text-primary rounded-xl font-bold hover:bg-surface-container-high transition-colors">
+                            Cargar más
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
             }
         }
 
         async function cargarPacientes() {
-            const tbody = document.getElementById('pacientes-tbody');
-            tbody.innerHTML = '<tr><td colspan="6" class="px-8 py-4 text-center">Cargando pacientes...</td></tr>';
+            if (isFetching || !hasMore) return;
+            isFetching = true;
             
-            const { data, error } = await PacientesRepository.getPacientes();
+            const tbody = document.getElementById('pacientes-tbody');
+            if (currentPage === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" class="px-8 py-4 text-center">Cargando pacientes...</td></tr>';
+            } else {
+                // Remover el botón de "Cargar más" temporalmente
+                if(tbody.lastElementChild && tbody.lastElementChild.querySelector('button')) {
+                    tbody.lastElementChild.remove();
+                }
+            }
+            
+            const searchInput = document.getElementById('searchInput');
+            const query = searchInput ? searchInput.value.trim() : '';
+
+            const { data, count, error } = await PacientesRepository.getPacientes(currentLimit, currentPage * currentLimit, query);
+            
+            isFetching = false;
             
             if (error) {
                 console.error("Error al cargar pacientes:", error);
-                tbody.innerHTML = '<tr><td colspan="6" class="px-8 py-4 text-center text-error">Error al cargar datos</td></tr>';
+                if (currentPage === 0) {
+                    tbody.innerHTML = '<tr><td colspan="6" class="px-8 py-4 text-center text-error">Error al cargar datos</td></tr>';
+                }
                 return;
             }
 
-            allPacientes = data || [];
-            allPacientes.sort((a, b) => {
-                const nameA = (a.nombre || '').toLowerCase();
-                const nameB = (b.nombre || '').toLowerCase();
-                if (nameA < nameB) return -1;
-                if (nameA > nameB) return 1;
-                return 0;
-            });
-            
-            // Actualizar estadísticas simples
-            const total = allPacientes.length;
-            const statElement = document.getElementById('stat-total-pacientes');
-            if (statElement) {
-                statElement.textContent = total;
+            if (!data || data.length < currentLimit) {
+                hasMore = false;
             }
 
-            filtrarPacientes(); // Usamos la función de filtrar para inicializar
-            renderPacientesHoy(allPacientes);
+            if (currentPage === 0) {
+                allPacientes = data || [];
+                const statElement = document.getElementById('stat-total-pacientes');
+                if (statElement && !query) {
+                    statElement.textContent = count;
+                }
+            } else {
+                allPacientes = allPacientes.concat(data || []);
+            }
+            
+            currentPage++;
+
+            filtrarPacientesLocal();
+            
+            if (currentPage === 1 && !query) {
+                renderPacientesHoy();
+            }
         }
 
-        function renderPacientesHoy(data) {
+        async function renderPacientesHoy() {
             const gridContainer = document.getElementById('pacientes-grid');
-            gridContainer.innerHTML = '';
+            if (!gridContainer) return;
             
-            const now = new Date();
-            const year = now.getFullYear();
-            const month = String(now.getMonth() + 1).padStart(2, '0');
-            const day = String(now.getDate()).padStart(2, '0');
-            const today = `${year}-${month}-${day}`;
+            gridContainer.innerHTML = '<p class="text-on-surface-variant col-span-full py-2 italic text-sm">Cargando próximas citas...</p>';
             
-            const pacientesProximos = [];
-            data.forEach(p => {
-                if (!p.citas) return;
-                const citasFuturas = p.citas.filter(c => c.fecha >= today && (c.estado === 'Pendiente' || c.estado === 'Sin confirmar' || c.estado === 'Confirmada' || c.estado === 'Confirmado' || c.estado === 'En Progreso'));
-                
-                citasFuturas.forEach(cita => {
-                    pacientesProximos.push({ paciente: p, cita: cita });
-                });
-            });
-
-            pacientesProximos.sort((a, b) => {
-                if (a.cita.fecha === b.cita.fecha) {
-                    return a.cita.hora.localeCompare(b.cita.hora);
-                }
-                return a.cita.fecha.localeCompare(b.cita.fecha);
-            });
-
-            const pacientesHoy = [];
-            for (const item of pacientesProximos) {
-                if (item.cita.fecha === today) {
-                    pacientesHoy.push(item);
-                } else if (pacientesHoy.length < 3) {
-                    pacientesHoy.push(item);
-                } else {
-                    break;
-                }
-            }
-
-            if (pacientesHoy.length === 0) {
+            const { data, error } = await PacientesRepository.getProximosPacientesProgramados(10);
+            
+            if (error || !data || data.length === 0) {
                 gridContainer.innerHTML = '<p class="text-on-surface-variant col-span-full py-2 italic text-sm">No hay citas pendientes de atención próximas.</p>';
                 return;
             }
-
-            pacientesHoy.forEach(item => {
-                const { paciente, cita } = item;
+            
+            gridContainer.innerHTML = '';
+            const today = new Date().toISOString().split('T')[0];
+            
+            data.forEach(cita => {
+                const paciente = cita.pacientes;
+                if (!paciente) return;
                 
                 let horaFormat = cita.hora;
                 if (cita.hora) {
