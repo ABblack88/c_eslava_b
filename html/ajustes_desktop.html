@@ -193,6 +193,9 @@
             <span class="material-symbols-outlined text-primary">manage_accounts</span>
             Gestión de Usuarios y Roles
         </h3>
+        <button onclick="document.getElementById('modalCrearUsuario').showModal()" class="px-4 py-2 bg-primary text-on-primary rounded-lg font-bold text-sm flex items-center gap-2 hover:opacity-90 transition-all">
+            <span class="material-symbols-outlined text-[18px]">person_add</span> Nuevo Usuario
+        </button>
     </div>
     <p class="text-xs text-on-surface-variant -mt-2">Modifica los roles de los usuarios que ya han sido aprobados en el sistema.</p>
     <div id="usuarios-activos-list" class="space-y-3 max-h-[350px] overflow-y-auto pr-1">
@@ -651,7 +654,45 @@
             item.style.transition = 'all 0.2s ease';
         });
     </script>
-    <script src="../js/controllers/ajustesController.js"></script>
+    <!-- Modal Nuevo Usuario -->
+<dialog id="modalCrearUsuario" class="backdrop:bg-black/50 p-6 rounded-2xl shadow-xl border-none w-full max-w-md bg-surface-white">
+    <div class="flex justify-between items-center mb-6">
+        <h3 class="text-xl font-bold text-on-surface flex items-center gap-2"><span class="material-symbols-outlined text-primary">person_add</span> Crear Nuevo Usuario</h3>
+        <button onclick="document.getElementById('modalCrearUsuario').close()" class="text-on-surface-variant hover:text-error transition-colors">
+            <span class="material-symbols-outlined">close</span>
+        </button>
+    </div>
+    <form id="formCrearUsuario" class="space-y-4">
+        <div>
+            <label class="block text-sm font-semibold text-on-surface-variant mb-1">Nombre Completo *</label>
+            <input type="text" name="full_name" required class="w-full bg-surface-container-low border-none rounded-xl py-3 px-4 text-body-md focus:ring-2 focus:ring-primary" placeholder="Ej: Juan Pérez">
+        </div>
+        <div>
+            <label class="block text-sm font-semibold text-on-surface-variant mb-1">Correo Electrónico *</label>
+            <input type="email" name="email" required class="w-full bg-surface-container-low border-none rounded-xl py-3 px-4 text-body-md focus:ring-2 focus:ring-primary" placeholder="correo@ejemplo.com">
+        </div>
+        <div>
+            <label class="block text-sm font-semibold text-on-surface-variant mb-1">Contraseña (Opcional)</label>
+            <input type="password" name="password" class="w-full bg-surface-container-low border-none rounded-xl py-3 px-4 text-body-md focus:ring-2 focus:ring-primary" placeholder="Dejar vacío para simular">
+            <p class="text-[10px] text-outline mt-1">Si dejas esto vacío, el usuario solo se creará en la tabla local.</p>
+        </div>
+        <div>
+            <label class="block text-sm font-semibold text-on-surface-variant mb-1">Rol Asignado *</label>
+            <select name="role" required class="w-full bg-surface-container-low border-none rounded-xl py-3 px-4 text-body-md focus:ring-2 focus:ring-primary">
+                <option value="asistente">Asistente Clínico</option>
+                <option value="tratante">Tratante / Especialista</option>
+                <option value="cajero">Cajero</option>
+                <option value="admin">Administrador</option>
+            </select>
+        </div>
+        <div class="flex justify-end gap-3 mt-6">
+            <button type="button" onclick="document.getElementById('modalCrearUsuario').close()" class="px-5 py-2.5 rounded-xl font-bold text-on-surface-variant hover:bg-surface-container-low transition-colors">Cancelar</button>
+            <button type="submit" class="px-5 py-2.5 bg-primary text-on-primary rounded-xl font-bold hover:shadow-lg transition-all active:scale-95">Crear Usuario</button>
+        </div>
+    </form>
+</dialog>
+
+<script type="module" src="../js/controllers/ajustesController.js"></script>
     <script src="../js/controllers/mantenimientoController.js"></script>
 
 

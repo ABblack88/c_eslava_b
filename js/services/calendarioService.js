@@ -21,6 +21,7 @@ class CalendarioService {
             else if (c.notas.includes('[Amarillo]')) { color = '#eab308'; hasCustomColor = true; }
             else if (c.notas.includes('[Rojo]')) { color = '#ef4444'; hasCustomColor = true; }
             else if (c.notas.includes('[Verde]')) { color = '#22c55e'; hasCustomColor = true; }
+            else if (c.notas.includes('[Gris]')) { color = '#6b7280'; hasCustomColor = true; }
         }
         
         const estadoLower = (c.estado || '').toLowerCase();
@@ -98,6 +99,7 @@ class CalendarioService {
             else if (appointment.notes.includes('[Amarillo]')) titleSuffix = ' (Si paga)';
             else if (appointment.notes.includes('[Rojo]')) titleSuffix = ' (Evaluación)';
             else if (appointment.notes.includes('[Verde]')) titleSuffix = ' (1ra vez Descarga)';
+            else if (appointment.notes.includes('[Gris]')) titleSuffix = ' (Finaliza PQT)';
         }
         const title = encodeURIComponent(`Cita Centro Eslava - ${appointment.name}${titleSuffix}`);
         const details = encodeURIComponent(`Cita médica programada en Centro Eslava.\nPaciente: ${appointment.name}\nTratante: ${appointment.doctor}\nNotas: ${appointment.notes || 'Ninguna'}`);

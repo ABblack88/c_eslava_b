@@ -116,6 +116,9 @@
                             <button onclick="actualizarRolUsuarioActivo('${u.id}')" class="p-2 text-primary bg-primary/10 hover:bg-primary/20 rounded-lg transition-colors font-bold" title="Guardar Rol">
                                 <span class="material-symbols-outlined text-[20px]">save</span>
                             </button>
+                            <button onclick="eliminarUsuarioActivo('${u.id}')" class="p-2 text-error bg-error/10 hover:bg-error/20 rounded-lg transition-colors font-bold" title="Eliminar Usuario">
+                                <span class="material-symbols-outlined text-[20px]">delete</span>
+                            </button>
                         </div>
                     </div>
                     `;
@@ -142,6 +145,21 @@
             } catch (err) {
                 console.error("Error al actualizar rol:", err);
                 alert("Error al actualizar el rol: " + err.message);
+            }
+        }
+
+        async function eliminarUsuarioActivo(id) {
+            if(!confirm("¿Estás seguro de que deseas eliminar permanentemente a este usuario activo? Perderá el acceso al sistema.")) return;
+            try {
+                // Para una eliminación real de auth, se requeriría supabase.auth.admin.deleteUser (que necesita Service Key).
+                // Eliminar el registro en profiles quitará el acceso dentro de nuestra lógica de roles.
+                const { error } = await supabaseClient.from('profiles').delete().eq('id', id);
+                if (error) throw error;
+                alert('Usuario eliminado correctamente.');
+                cargarUsuariosActivos();
+            } catch (err) {
+                console.error(err);
+                alert("Error al eliminar usuario.");
             }
         }
 

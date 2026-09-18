@@ -184,6 +184,7 @@
                     else if (finalNotes.startsWith("[Amarillo]")) { colorCode = "Amarillo"; finalNotes = finalNotes.substring(10).trim(); }
                     else if (finalNotes.startsWith("[Rojo]")) { colorCode = "Rojo"; finalNotes = finalNotes.substring(6).trim(); }
                     else if (finalNotes.startsWith("[Verde]")) { colorCode = "Verde"; finalNotes = finalNotes.substring(7).trim(); }
+                    else if (finalNotes.startsWith("[Gris]")) { colorCode = "Gris"; finalNotes = finalNotes.substring(6).trim(); }
                     
                     document.getElementById('appt-notes').value = finalNotes;
                     const elColor = document.getElementById('appt-color');
@@ -899,6 +900,22 @@ const { data: citasPrevias, error: countError } = await window.db.from('citas').
         populateTimeOptions();
         await cargarServicios();
         await cargarPacientesSelect();
+        
+        // Auto-fill patient if paciente_id is in URL
+        const paciente_id = urlParams.get('paciente_id');
+        if (paciente_id && window.pacientesList) {
+            const pacienteSeleccionado = window.pacientesList.find(p => p.id === paciente_id);
+            if (pacienteSeleccionado) {
+                const nameInput = document.getElementById('appt-name');
+                if (nameInput) {
+                    nameInput.value = pacienteSeleccionado.nombre;
+                    // Trigger input event to update autocomplete or internal state if needed
+                    nameInput.dispatchEvent(new Event('input'));
+                    autofillPatientInfo();
+                }
+            }
+        }
+        
         cargarCitas();
         cargarEstadisticas();
 

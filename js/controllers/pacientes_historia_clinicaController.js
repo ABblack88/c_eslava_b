@@ -191,6 +191,12 @@
             const searchInput = document.getElementById('searchInput');
             const query = searchInput ? searchInput.value.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "") : '';
             
+            // Ocultar la cuadrícula de "Próximos Pacientes" si el usuario está buscando algo
+            const proximosContainer = document.getElementById('proximos-pacientes-container');
+            if (proximosContainer) {
+                proximosContainer.style.display = query.length > 0 ? 'none' : 'block';
+            }
+
             const filtrados = allPacientes.filter(p => {
                 const nombreNormalizado = p.nombre.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
                 const matchTexto = 

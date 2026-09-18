@@ -119,10 +119,10 @@
 <button onclick="filtrarPorEstado('Inactivo', this)" class="px-6 py-2 rounded-lg font-bold transition-all text-on-surface-variant hover:bg-surface-container-high">Inactivos</button>
 </div>
 <div class="flex gap-3 items-center">
-<button onclick="const s = document.getElementById('searchInput'); s.focus(); s.scrollIntoView({behavior: 'smooth', block: 'center'});" class="flex items-center gap-2 px-5 py-2.5 bg-surface-white border border-outline-variant rounded-xl font-bold text-on-surface-variant hover:bg-surface-container-low transition-all">
-<span class="material-symbols-outlined text-[20px]">filter_list</span>
-                    Filtrar
-                </button>
+<div class="relative w-full md:w-64">
+    <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+    <input type="text" id="searchInput" placeholder="Buscar por nombre o DNI..." onkeyup="filtrarPacientes()" class="w-full pl-10 pr-4 py-2.5 bg-surface-white border border-outline-variant rounded-xl text-sm focus:ring-primary focus:border-primary transition-all">
+</div>
 <input type="file" id="csvFileInput" accept=".csv" style="display: none;" onchange="importarPacientesCSV(event)">
 <button onclick="triggerImportarCSV()" class="hidden md:flex items-center gap-2 px-5 py-2.5 bg-surface-white border border-outline-variant rounded-xl font-bold text-on-surface-variant hover:bg-surface-container-low transition-all">
 <span class="material-symbols-outlined text-[20px]">upload</span>
@@ -136,9 +136,11 @@
 </div>
 
 <!-- Patient Grid (Bento Style) -->
-<h3 class="font-headline-md text-xl font-bold mb-4">Próximos Pacientes Programados</h3>
-<div id="pacientes-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-<!-- Las tarjetas se insertarán dinámicamente -->
+<div id="proximos-pacientes-container">
+    <h3 class="font-headline-md text-xl font-bold mb-4">Próximos Pacientes Programados</h3>
+    <div id="pacientes-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <!-- Las tarjetas se insertarán dinámicamente -->
+    </div>
 </div>
 
 <!-- Patient Table Section (Minimalist Table) -->
