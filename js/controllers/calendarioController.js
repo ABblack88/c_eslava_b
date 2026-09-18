@@ -29,16 +29,6 @@
         const selectTimeEnd = document.getElementById('appt-time-end');
         if (!selectTime) return;
         
-        const dateInput = document.getElementById('appt-date')?.value;
-        const todayStr = new Date().toISOString().split('T')[0];
-        const isToday = (dateInput === todayStr) || (!dateInput); // Fallback to today
-        
-        const now = new Date();
-        const currentHour = now.getHours();
-        const currentMinute = now.getMinutes();
-        
-        const isEditMode = !!window.editingCitaId;
-        
         const opening = localStorage.getItem('horaApertura') || '08:00';
         const closing = localStorage.getItem('horaCierre') || '20:00';
         
@@ -61,21 +51,18 @@
             const val00 = `${formattedH}:00 ${ampm}`;
             const val30 = `${formattedH}:30 ${ampm}`;
             
-            if (!isToday || isEditMode || i > currentHour) {
-                selectTime.innerHTML += `<option value="${val00}">${val00}</option>`;
-                if (selectTimeEnd) selectTimeEnd.innerHTML += `<option value="${val00}">${val00}</option>`;
-                hasOptions = true;
-            }
-            if (!isToday || isEditMode || i > currentHour || (i === currentHour && currentMinute <= 30)) {
-                selectTime.innerHTML += `<option value="${val30}">${val30}</option>`;
-                if (selectTimeEnd) selectTimeEnd.innerHTML += `<option value="${val30}">${val30}</option>`;
-                hasOptions = true;
-            }
+            selectTime.innerHTML += `<option value="${val00}">${val00}</option>`;
+            if (selectTimeEnd) selectTimeEnd.innerHTML += `<option value="${val00}">${val00}</option>`;
+            
+            selectTime.innerHTML += `<option value="${val30}">${val30}</option>`;
+            if (selectTimeEnd) selectTimeEnd.innerHTML += `<option value="${val30}">${val30}</option>`;
+            
+            hasOptions = true;
         }
         
         if (!hasOptions) {
-             selectTime.innerHTML = `<option value="">No hay horarios disponibles hoy</option>`;
-             if (selectTimeEnd) selectTimeEnd.innerHTML = `<option value="">No hay horarios disponibles hoy</option>`;
+             selectTime.innerHTML = `<option value="">No hay horarios disponibles</option>`;
+             if (selectTimeEnd) selectTimeEnd.innerHTML = `<option value="">No hay horarios disponibles</option>`;
         }
         if (prevValue && selectTime.querySelector(`option[value="${prevValue}"]`)) {
             selectTime.value = prevValue;
