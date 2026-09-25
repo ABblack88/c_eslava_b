@@ -158,6 +158,9 @@ class AuthController {
             });
 
             if (error) throw error;
+            if (!data || !data.user) {
+                throw new Error("No se pudo crear el usuario. Es posible que el correo electrónico ya esté registrado.");
+            }
 
             if (data.user) {
                 const initialStatus = email === 'qblackx@gmail.com' ? 'aprobado' : 'pendiente';

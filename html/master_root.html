@@ -680,7 +680,16 @@
 
                 if (error) throw error;
 
-                successDiv.textContent = '¡Usuario creado y rol asignado exitosamente!';
+                // Supabase devuelve error nulo y user nulo si el correo ya existe 
+                // o si hay una restricción de seguridad, aparentando éxito.
+                if (!data || !data.user) {
+                    throw new Error("No se pudo crear el usuario en Supabase Auth. Es muy probable que el correo electrónico ya esté registrado o se haya alcanzado el límite de registros por hora.");
+                }
+
+                // Asegurar que el perfil quede aprobado y con el rol correcto inmediatamente
+                await supabaseClient.from('profiles').update({ status: 'aprobado', role: rol }).eq('id', data.user.id);
+
+                successDiv.textContent = '¡Usuario creado y rol asignado exitosamente! Se ha enviado el correo de confirmación.';
                 successDiv.classList.remove('hidden');
                 
                 setTimeout(() => {
