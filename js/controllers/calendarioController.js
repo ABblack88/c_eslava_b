@@ -896,6 +896,32 @@ const { data: citasPrevias, error: countError } = await window.db.from('citas').
         }
     }
 
+    async function cargarTratantes() {
+        try {
+            const { data: usuarios, error } = await window.db.from('profiles').select('full_name, role').order('full_name');
+            if (error) throw error;
+            
+            const selects = document.querySelectorAll('#appt-doctor');
+            if (selects.length === 0) return;
+            
+            let htmlOptions = '';
+            usuarios.forEach(u => {
+                const name = u.full_name || 'Usuario';
+                const role = u.role ? (u.role.charAt(0).toUpperCase() + u.role.slice(1)) : 'Sin rol';
+                htmlOptions += `<option value="${name}">${name} (${role})</option>`;
+            });
+            
+            selects.forEach(select => {
+                const prevValue = select.value;
+                select.innerHTML = htmlOptions;
+                const exists = [...select.options].some(opt => opt.value === prevValue);
+                if (exists) select.value = prevValue;
+            });
+        } catch (err) {
+            console.error('Error al cargar tratantes:', err);
+        }
+    }
+
     // Initialize logic
     document.addEventListener("DOMContentLoaded", async () => {
         const urlParams = new URLSearchParams(window.location.search);
@@ -905,6 +931,7 @@ const { data: citasPrevias, error: countError } = await window.db.from('citas').
         
         populateTimeOptions();
         await cargarServicios();
+        await cargarTratantes();
         await cargarPacientesSelect();
         
         // Auto-fill patient if paciente_id is in URL
