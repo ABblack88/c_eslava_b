@@ -763,4 +763,9 @@
                 }
             }
         }
+        
+        window.aprobarUsuario = aprobarUsuario;
+        window.rechazarUsuario = rechazarUsuario;
+        window.actualizarRolUsuarioActivo = actualizarRolUsuarioActivo;
+        window.eliminarUsuarioActivo = eliminarUsuarioActivo;
     
