@@ -244,9 +244,8 @@
             
             const tbody = document.getElementById('pacientes-tbody');
             if (currentPage === 0) {
-                tbody.innerHTML = '<tr><td colspan="6" class="px-8 py-4 text-center">Cargando pacientes...</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="6" class="px-8 py-4 text-center">Buscando pacientes...</td></tr>';
             } else {
-                // Remover el botón de "Cargar más" temporalmente
                 if(tbody.lastElementChild && tbody.lastElementChild.querySelector('button')) {
                     tbody.lastElementChild.remove();
                 }
@@ -254,6 +253,20 @@
             
             const searchInput = document.getElementById('searchInput');
             const query = searchInput ? searchInput.value.trim() : '';
+
+            // Si no hay búsqueda, NO cargamos toda la base de datos por rendimiento
+            if (!query && currentPage === 0) {
+                isFetching = false;
+                tbody.innerHTML = '<tr><td colspan="6" class="px-8 py-4 text-center text-on-surface-variant italic">Usa el buscador para encontrar pacientes en la base de datos.</td></tr>';
+                renderPacientesHoy(); // Carga pacientes agendados en la semana
+                
+                const statElement = document.getElementById('stat-total-pacientes');
+                if (statElement) {
+                    const { count } = await PacientesRepository.getPacientesCount();
+                    statElement.textContent = count || '...';
+                }
+                return;
+            }
 
             const { data, count, error } = await PacientesRepository.getPacientes(currentLimit, currentPage * currentLimit, query);
             
@@ -274,8 +287,8 @@
             if (currentPage === 0) {
                 allPacientes = data || [];
                 const statElement = document.getElementById('stat-total-pacientes');
-                if (statElement && !query) {
-                    statElement.textContent = count;
+                if (statElement && query) {
+                    // Si se está buscando, no modificamos el total total
                 }
             } else {
                 allPacientes = allPacientes.concat(data || []);

@@ -17,6 +17,13 @@ class PacientesRepository {
         return { data, count, error };
     }
     
+    static async getPacientesCount() {
+        const { count, error } = await window.supabaseClient
+            .from('pacientes')
+            .select('*', { count: 'exact', head: true });
+        return { count, error };
+    }
+    
     static async getProximosPacientesProgramados(limit = 10) {
         const today = new Date().toISOString().split('T')[0];
         
