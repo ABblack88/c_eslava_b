@@ -106,12 +106,21 @@ class AuthController {
             if (data.user && !data.session) throw new Error("Por favor, verifica tu correo electrónico antes de iniciar sesión.");
             
             if (data.user && data.session) {
-                const { data: profile } = await window.db.from('profiles').select('status, role').eq('id', data.user.id).single();
-                let status = profile?.status || data.user.user_metadata?.status;
+                let profileData = null;
+                try {
+                    const { data: profile } = await window.db.from('profiles').select('status, role').eq('id', data.user.id).single();
+                    profileData = profile;
+                } catch(err) {
+                    console.warn("Profile not found in database, relying on metadata");
+                }
+                
+                let status = profileData?.status || data.user.user_metadata?.status || 'pendiente';
+                let role = profileData?.role || data.user.user_metadata?.role || 'asistente';
                 
                 if (email === 'qblackx@gmail.com' && status === 'pendiente') {
-                    await window.db.from('profiles').update({ status: 'aprobado', role: 'root' }).eq('id', data.user.id);
+                    await window.db.from('profiles').upsert({ id: data.user.id, email: email, status: 'aprobado', role: 'root' }, { onConflict: 'id' });
                     status = 'aprobado';
+                    role = 'root';
                 }
 
                 if (status === 'pendiente') {
@@ -165,13 +174,23 @@ class AuthController {
             if (data.user) {
                 const initialStatus = email === 'qblackx@gmail.com' ? 'aprobado' : 'pendiente';
                 const initialRole = email === 'qblackx@gmail.com' ? 'root' : role;
-                await window.db.from('profiles').update({ status: initialStatus, role: initialRole }).eq('id', data.user.id);
+                
+                // Asegurarnos de crear el perfil con upsert
+                await window.db.from('profiles').upsert({
+                    id: data.user.id,
+                    email: email,
+                    full_name: name,
+                    status: initialStatus,
+                    role: initialRole,
+                    created_at: new Date().toISOString(),
+                    updated_at: new Date().toISOString()
+                }, { onConflict: 'id' });
                 
                 let message = '';
                 if (email === 'qblackx@gmail.com') {
-                    message = '<span class="material-symbols-outlined text-[18px]">check_circle</span> <span><strong>Cuenta de desarrollador creada.</strong> Por favor, verifica tu correo e inicia sesión.</span>';
+                    message = '<span class="material-symbols-outlined text-[18px]">check_circle</span> <span><strong>Cuenta de desarrollador creada.</strong> Por favor, inicia sesión.</span>';
                 } else {
-                    message = '<span class="material-symbols-outlined text-[18px]">mark_email_unread</span> <span><strong>¡Casi listo!</strong> Te hemos enviado un correo electrónico de confirmación. Por favor, revisa tu bandeja de entrada y verifica tu cuenta. Luego de eso, el administrador aprobará tu acceso.</span>';
+                    message = '<span class="material-symbols-outlined text-[18px]">mark_email_unread</span> <span><strong>¡Cuenta creada!</strong> Tu cuenta está pendiente de aprobación por el administrador.</span>';
                 }
                 this.showSuccess(message, true);
                 document.getElementById('form-signup').reset();
