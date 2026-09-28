@@ -144,7 +144,7 @@ async function calcularOcupacionSemanalSidebar() {
 
         // 5. Calcular capacidad
         const aperturaStr = localStorage.getItem('horaApertura') || '08:00';
-        const cierreStr = localStorage.getItem('horaCierre') || '21:00';
+        const cierreStr = localStorage.getItem('horaCierre') || '22:00';
         
         const hApertura = parseInt(aperturaStr.split(':')[0]);
         const hCierre = parseInt(cierreStr.split(':')[0]);
