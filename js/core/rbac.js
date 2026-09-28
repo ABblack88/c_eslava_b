@@ -27,6 +27,17 @@ class RBACService {
 
             const btnCobrarInmediato = document.getElementById("btn-cobrar-inmediato");
             if (btnCobrarInmediato) btnCobrarInmediato.style.display = 'none';
+
+            const adminSections = [
+                "admin-mantenimiento-section", 
+                "admin-productos-section", 
+                "admin-feriados-section", 
+                "admin-btn-nuevo-servicio"
+            ];
+            adminSections.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.style.display = 'none';
+            });
         }
         
         if (level === 4) {
@@ -256,6 +267,7 @@ class RBACService {
         }
         if (level >= 3) {
             cssRules += `\n#admin-settings-section, #btn-cobrar-inmediato { display: none !important; }`;
+            cssRules += `\n#admin-mantenimiento-section, #admin-productos-section, #admin-feriados-section, #admin-btn-nuevo-servicio { display: none !important; }`;
         }
         foucStyle.innerHTML = cssRules;
         document.head.appendChild(foucStyle);

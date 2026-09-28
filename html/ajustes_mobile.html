@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 
 <html class="light" lang="es"><head>
     <link rel="icon" sizes="192x192" href="https://static.wixstatic.com/media/2a2885_0faab9c802fb481587f8d8fee5fa0eee%7Emv2.png/v1/fill/w_192%2Ch_192%2Clg_1%2Cusm_0.66_1.00_0.01/2a2885_0faab9c802fb481587f8d8fee5fa0eee%7Emv2.png" type="image/png"/>
@@ -49,7 +49,7 @@
 <body class="text-on-surface font-body-md bg-background antialiased md:pl-72 pt-[72px] md:pt-0 pb-[72px] md:pb-0">
 <!-- TopAppBar (Mobile Only) -->
 <header class="flex justify-between items-center px-margin-mobile md:px-margin-desktop py-4 w-full z-50 bg-surface dark:bg-surface-dim shadow-[0px_10px_30px_rgba(0,0,0,0.04)] fixed top-0 md:hidden">
-<button class="text-primary dark:text-primary-fixed active:scale-95 transition-transform duration-200">
+<button id="mobile-menu-btn" class="text-primary dark:text-primary-fixed active:scale-95 transition-transform duration-200">
 <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">menu</span>
 </button>
 <div class="font-headline-md text-headline-md font-bold text-primary dark:text-primary-fixed">
@@ -60,7 +60,7 @@
 </button>
 </header>
 <!-- NavigationDrawer (Desktop Only) -->
-<nav class="hidden md:flex fixed left-0 top-0 h-full w-72 z-40 flex-col p-6 bg-surface-white dark:bg-surface-container-lowest shadow-[0px_10px_30px_rgba(0,0,0,0.04)]">
+<nav class="hidden md:flex fixed left-0 top-[72px] md:top-0 h-[calc(100vh-72px)] md:h-full w-72 z-40 flex-col p-6 bg-surface-white dark:bg-surface-container-lowest shadow-[0px_10px_30px_rgba(0,0,0,0.04)] overflow-y-auto">
 <!-- Header: Profile -->
 <div class="flex items-center gap-4 mb-8 pb-6 border-b border-surface-container-highest">
 <div class="w-12 h-12 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center overflow-hidden shrink-0">
@@ -120,7 +120,7 @@
 <h1 class="font-display-lg-mobile md:font-display-lg text-display-lg-mobile md:text-display-lg text-on-background mb-2">Ajustes</h1>
 <p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl">Ajusta los parámetros operativos de la clínica en tiempo real.</p>
 </div>
-<button onclick="abrirModalNuevoServicioMobile()" class="bg-primary hover:bg-primary-container text-on-primary font-label-sm text-label-sm px-6 py-3 rounded-full flex items-center gap-2 transition-colors active:scale-95 shadow-[0px_10px_30px_rgba(0,0,0,0.04)] whitespace-nowrap">
+<button id="admin-btn-nuevo-servicio" onclick="abrirModalNuevoServicioMobile()" class="bg-primary hover:bg-primary-container text-on-primary font-label-sm text-label-sm px-6 py-3 rounded-full flex items-center gap-2 transition-colors active:scale-95 shadow-[0px_10px_30px_rgba(0,0,0,0.04)] whitespace-nowrap">
 <span class="material-symbols-outlined text-[20px]">add</span>
                 Nuevo Servicio
             </button>
@@ -245,7 +245,7 @@
 </div>
 
 <!-- Mantenimiento de Datos -->
-<div class="bg-surface-white rounded-xl p-6 shadow-[0px_10px_30px_rgba(0,0,0,0.04)] flex flex-col gap-4 mb-4">
+<div id="admin-mantenimiento-section" class="bg-surface-white rounded-xl p-6 shadow-[0px_10px_30px_rgba(0,0,0,0.04)] flex flex-col gap-4 mb-4">
     <div class="flex items-center justify-between border-b border-surface-variant pb-4">
         <h2 class="font-headline-md text-headline-md text-on-background flex items-center gap-2">
             <span class="material-symbols-outlined text-primary">database</span>
@@ -263,7 +263,7 @@
 </div>
 
 <!-- Productos Terapéuticos Card -->
-<div class="bg-surface-white rounded-xl p-6 shadow-[0px_10px_30px_rgba(0,0,0,0.04)] flex flex-col gap-4">
+<div id="admin-productos-section" class="bg-surface-white rounded-xl p-6 shadow-[0px_10px_30px_rgba(0,0,0,0.04)] flex flex-col gap-4">
     <div class="flex items-center justify-between border-b border-surface-variant pb-4">
         <h2 class="font-headline-md text-headline-md text-on-background flex items-center gap-2">
             <span class="material-symbols-outlined text-primary">shopping_bag</span>
@@ -279,7 +279,7 @@
 </div>
 
 <!-- Días Feriados -->
-<div class="bg-surface-white rounded-xl p-6 shadow-[0px_10px_30px_rgba(0,0,0,0.04)] flex flex-col gap-4">
+<div id="admin-feriados-section" class="bg-surface-white rounded-xl p-6 shadow-[0px_10px_30px_rgba(0,0,0,0.04)] flex flex-col gap-4">
     <div class="flex items-center justify-between border-b border-surface-variant pb-4">
         <h2 class="font-headline-md text-headline-md text-on-background flex items-center gap-2">
             <span class="material-symbols-outlined text-primary">event_busy</span>
@@ -487,4 +487,15 @@
             });
         }
     </script>
+<script>
+    // Toggle menu
+    const menuBtn = document.getElementById('mobile-menu-btn');
+    const drawer = document.querySelector('nav.hidden.md\\:flex');
+    if(menuBtn && drawer) {
+        menuBtn.addEventListener('click', () => {
+            drawer.classList.toggle('hidden');
+        });
+    }
+</script>
 </body></html>
+
