@@ -660,24 +660,18 @@
             const pass = document.getElementById('nuevo-pass').value;
 
             try {
-                // Crear un cliente secundario para no sobrescribir la sesión actual del administrador
-                const adminAuthClient = window.supabase.createClient(
-                    window.supabaseClient.supabaseUrl,
-                    window.supabaseClient.supabaseKey,
-                    {
-                        auth: {
-                            persistSession: false,
-                            autoRefreshToken: false,
-                            detectSessionInUrl: false
-                        }
-                    }
-                );
-
-                // Registrar en Supabase Auth con el cliente secundario
-                const { data, error } = await adminAuthClient.auth.signUp({
-                    email: correo,
-                    password: pass,
-                    options: {
+                // Hacer la petición directamente al API de Auth de Supabase usando fetch
+                // Esto garantiza 100% que no modificará la sesión actual del administrador en el cliente
+                const signUpUrl = `${window.supabaseClient.supabaseUrl}/auth/v1/signup`;
+                const signUpResponse = await fetch(signUpUrl, {
+                    method: 'POST',
+                    headers: {
+                        'apikey': window.supabaseClient.supabaseKey,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        email: correo,
+                        password: pass,
                         data: {
                             full_name: `${nombre} ${apellido}`.trim(),
                             nombre: nombre,
@@ -688,21 +682,22 @@
                             username: usuario,
                             role: rol
                         }
-                    }
+                    })
                 });
 
-                if (error) throw error;
+                const signUpResult = await signUpResponse.json();
 
-                // Supabase devuelve error nulo y user nulo si el correo ya existe 
-                // o si hay una restricción de seguridad, aparentando éxito.
-                if (!data || !data.user) {
-                    throw new Error("No se pudo crear el usuario en Supabase Auth. Es posible que el correo electrónico ya esté registrado.");
+                if (!signUpResponse.ok) {
+                    throw new Error(signUpResult.msg || signUpResult.message || "Error desconocido al registrar el usuario");
                 }
 
-                // Asegurar que el perfil quede registrado (hacemos upsert por si el trigger falló o actualizamos si existe)
-                // Usamos el cliente principal que sí tiene la sesión del administrador
+                if (!signUpResult.user) {
+                    throw new Error("No se pudo crear el usuario. Es posible que el correo ya esté registrado.");
+                }
+
+                // Asegurar que el perfil quede registrado
                 const { error: profileError } = await window.supabaseClient.from('profiles').upsert({
-                    id: data.user.id,
+                    id: signUpResult.user.id,
                     email: correo,
                     full_name: `${nombre} ${apellido}`.trim(),
                     status: 'aprobado',
@@ -713,7 +708,7 @@
 
                 if (profileError) {
                     console.warn("Upsert failed, trying update:", profileError);
-                    await window.supabaseClient.from('profiles').update({ status: 'aprobado', role: rol }).eq('id', data.user.id);
+                    await window.supabaseClient.from('profiles').update({ status: 'aprobado', role: rol }).eq('id', signUpResult.user.id);
                 }
 
                 successDiv.textContent = '¡Usuario creado y rol asignado exitosamente! Se ha enviado el correo de confirmación.';
