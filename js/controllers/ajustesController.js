@@ -196,7 +196,7 @@
             if (inputIgv) inputIgv.value = igv;
             
             if (inputApertura) inputApertura.value = localStorage.getItem('horaApertura') || '08:00';
-            if (inputCierre) inputCierre.value = localStorage.getItem('horaCierre') || '20:00';
+            if (inputCierre) inputCierre.value = localStorage.getItem('horaCierre') || '21:00';
         }
 
         window.guardarAjuste = function(key, value, showAlert = false) {

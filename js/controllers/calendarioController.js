@@ -30,7 +30,7 @@
         if (!selectTime) return;
         
         const opening = localStorage.getItem('horaApertura') || '08:00';
-        const closing = localStorage.getItem('horaCierre') || '20:00';
+        const closing = localStorage.getItem('horaCierre') || '21:00';
         
         const openHour = parseInt(opening.split(':')[0]);
         const closeHour = parseInt(closing.split(':')[0]);
@@ -754,7 +754,7 @@ const { data: citasPrevias, error: countError } = await window.db.from('citas').
                         openAppointmentModal(fecha, horaSelect);
                     },
                     slotMinTime: (localStorage.getItem('horaApertura') || '08:00') + ':00',
-                    slotMaxTime: (localStorage.getItem('horaCierre') || '20:00') + ':00',
+                    slotMaxTime: (localStorage.getItem('horaCierre') || '21:00') + ':00',
                     slotEventOverlap: false,
                     allDaySlot: false,
                     height: '100%',
