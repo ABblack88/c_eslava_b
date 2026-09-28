@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html class="light" lang="es">
 <head>
     <link rel="icon" sizes="192x192" href="https://static.wixstatic.com/media/2a2885_0faab9c802fb481587f8d8fee5fa0eee%7Emv2.png/v1/fill/w_192%2Ch_192%2Clg_1%2Cusm_0.66_1.00_0.01/2a2885_0faab9c802fb481587f8d8fee5fa0eee%7Emv2.png" type="image/png"/>
@@ -70,7 +70,12 @@
         
     </nav>
     <div class="mt-auto pt-6 border-t border-surface-container">
-        
+        <a id="nav-link-ajustes-drawer" class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-low transition-all rounded-xl font-body-md" href="ajustes_mobile.html">
+            <span class="material-symbols-outlined">settings</span> Ajustes
+        </a>
+        <button onclick="if(confirm('¿Deseas cerrar sesión?')) { window.db.auth.signOut().then(()=>window.location.replace('../index.html')); }" class="w-full mt-2 flex items-center gap-3 px-4 py-3 text-error hover:bg-error/10 transition-all rounded-xl font-body-md text-left">
+            <span class="material-symbols-outlined">logout</span> Cerrar Sesión
+        </button>
     </div>
 </aside>
 
@@ -295,3 +300,4 @@
 
 </body>
 </html>
+

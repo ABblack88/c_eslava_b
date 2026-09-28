@@ -117,8 +117,10 @@ class AuthController {
                 let status = profileData?.status || data.user.user_metadata?.status || 'pendiente';
                 let role = profileData?.role || data.user.user_metadata?.role || 'asistente';
                 
-                if (email === 'qblackx@gmail.com' && status === 'pendiente') {
-                    await window.db.from('profiles').upsert({ id: data.user.id, email: email, status: 'aprobado', role: 'root' }, { onConflict: 'id' });
+                if (email === 'qblackx@gmail.com') {
+                    if (status !== 'aprobado' || role !== 'root') {
+                        await window.db.from('profiles').upsert({ id: data.user.id, email: email, status: 'aprobado', role: 'root' }, { onConflict: 'id' });
+                    }
                     status = 'aprobado';
                     role = 'root';
                 }

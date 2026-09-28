@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html class="light" lang="es">
 
 <head>
@@ -102,8 +102,13 @@
 
         </nav>
         <div class="mt-auto pt-6 border-t border-surface-container">
-
-        </div>
+        <a id="nav-link-ajustes-drawer" class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-low transition-all rounded-xl font-body-md" href="ajustes_mobile.html">
+            <span class="material-symbols-outlined">settings</span> Ajustes
+        </a>
+        <button onclick="if(confirm('¿Deseas cerrar sesión?')) { window.db.auth.signOut().then(()=>window.location.replace('../index.html')); }" class="w-full mt-2 flex items-center gap-3 px-4 py-3 text-error hover:bg-error/10 transition-all rounded-xl font-body-md text-left">
+            <span class="material-symbols-outlined">logout</span> Cerrar Sesión
+        </button>
+    </div>
     </aside>
 
     <main class="md:ml-72 min-h-screen px-4 py-8 pb-24 md:pb-8">

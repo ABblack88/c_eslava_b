@@ -185,20 +185,23 @@ class RBACService {
                 desktopHeaderRight.appendChild(widget);
             }
             
-            const mobileDrawerProfile = document.querySelector('nav.fixed.left-0.top-0 div.flex.items-center.gap-4');
-            if (mobileDrawerProfile) {
-                mobileDrawerProfile.innerHTML = `
-                    <div class="w-12 h-12 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center overflow-hidden shrink-0 font-bold text-xl">
-                        ${name.charAt(0).toUpperCase()}
-                    </div>
-                    <div class="flex flex-col">
-                        <span class="font-label-sm text-label-sm text-primary font-bold truncate max-w-[150px]">${name}</span>
-                        <div class="flex items-center gap-2 mt-0.5">
-                            <span class="text-[10px] text-outline uppercase tracking-wider font-semibold">${typeof displayRole !== 'undefined' ? displayRole : simulatedRole}</span>
-                            ${typeof simulatorHtml !== 'undefined' ? simulatorHtml : ''}
+            const mobileDrawerProfileName = document.getElementById('drawer-profile-name');
+            if (mobileDrawerProfileName) {
+                const container = mobileDrawerProfileName.closest('.flex.items-center.gap-4');
+                if (container) {
+                    container.innerHTML = `
+                        <div class="w-12 h-12 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center overflow-hidden shrink-0 font-bold text-xl">
+                            ${name.charAt(0).toUpperCase()}
                         </div>
-                    </div>
-                `;
+                        <div class="flex flex-col">
+                            <span id="drawer-profile-name" class="font-label-sm text-label-sm text-primary font-bold truncate max-w-[150px]">${name}</span>
+                            <div class="flex items-center gap-2 mt-0.5">
+                                <span id="drawer-profile-role" class="text-[10px] text-outline uppercase tracking-wider font-semibold">${typeof displayRole !== 'undefined' ? displayRole : simulatedRole}</span>
+                                ${typeof simulatorHtml !== 'undefined' ? simulatorHtml : ''}
+                            </div>
+                        </div>
+                    `;
+                }
             }
             
             const accountHeaderName = document.querySelector('div.flex.items-center.gap-4.py-2 p.font-bold.text-on-surface');
