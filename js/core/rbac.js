@@ -42,6 +42,18 @@ class RBACService {
         
         if (level === 4) {
             restrictedHrefs.push('tratamientos_', 'cobrar_');
+            
+            const level4Hidden = [
+                "panel-fraccionamiento-mobile",
+                "btn-opt-facturar",
+                "ventas-totales",
+                "ingresos-section",
+                "metodos-pago-section"
+            ];
+            level4Hidden.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.style.display = 'none';
+            });
         }
 
         if (restrictedHrefs.length > 0) {
@@ -263,7 +275,7 @@ class RBACService {
             cssRules += `\n#resumen-cuenta-card { display: none !important; }`;
         }
         if (level >= 4) {
-            cssRules += `\n#ventas-totales, #ingresos-section, #metodos-pago-section { display: none !important; }`;
+            cssRules += `\n#ventas-totales, #ingresos-section, #metodos-pago-section, #panel-fraccionamiento-mobile, #btn-opt-facturar { display: none !important; }`;
         }
         if (level >= 3) {
             cssRules += `\n#admin-settings-section, #btn-cobrar-inmediato { display: none !important; }`;
