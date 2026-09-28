@@ -660,8 +660,21 @@
             const pass = document.getElementById('nuevo-pass').value;
 
             try {
-                // Registrar en Supabase Auth
-                const { data, error } = await supabaseClient.auth.signUp({
+                // Crear un cliente secundario para no sobrescribir la sesión actual del administrador
+                const adminAuthClient = window.supabase.createClient(
+                    window.supabaseClient.supabaseUrl,
+                    window.supabaseClient.supabaseKey,
+                    {
+                        auth: {
+                            persistSession: false,
+                            autoRefreshToken: false,
+                            detectSessionInUrl: false
+                        }
+                    }
+                );
+
+                // Registrar en Supabase Auth con el cliente secundario
+                const { data, error } = await adminAuthClient.auth.signUp({
                     email: correo,
                     password: pass,
                     options: {
@@ -683,18 +696,32 @@
                 // Supabase devuelve error nulo y user nulo si el correo ya existe 
                 // o si hay una restricción de seguridad, aparentando éxito.
                 if (!data || !data.user) {
-                    throw new Error("No se pudo crear el usuario en Supabase Auth. Es muy probable que el correo electrónico ya esté registrado o se haya alcanzado el límite de registros por hora.");
+                    throw new Error("No se pudo crear el usuario en Supabase Auth. Es posible que el correo electrónico ya esté registrado.");
                 }
 
-                // Asegurar que el perfil quede aprobado y con el rol correcto inmediatamente
-                await supabaseClient.from('profiles').update({ status: 'aprobado', role: rol }).eq('id', data.user.id);
+                // Asegurar que el perfil quede registrado (hacemos upsert por si el trigger falló o actualizamos si existe)
+                // Usamos el cliente principal que sí tiene la sesión del administrador
+                const { error: profileError } = await window.supabaseClient.from('profiles').upsert({
+                    id: data.user.id,
+                    email: correo,
+                    full_name: `${nombre} ${apellido}`.trim(),
+                    status: 'aprobado',
+                    role: rol,
+                    created_at: new Date().toISOString(),
+                    updated_at: new Date().toISOString()
+                }, { onConflict: 'id' });
+
+                if (profileError) {
+                    console.warn("Upsert failed, trying update:", profileError);
+                    await window.supabaseClient.from('profiles').update({ status: 'aprobado', role: rol }).eq('id', data.user.id);
+                }
 
                 successDiv.textContent = '¡Usuario creado y rol asignado exitosamente! Se ha enviado el correo de confirmación.';
                 successDiv.classList.remove('hidden');
                 
                 setTimeout(() => {
                     cerrarModalNuevoRol();
-                    // Aquí se podría actualizar la tabla de usuarios localmente
+                    if (window.cargarUsuariosActivos) window.cargarUsuariosActivos();
                 }, 2000);
             } catch(e) {
                 errorDiv.textContent = 'Error al crear usuario: ' + e.message;
